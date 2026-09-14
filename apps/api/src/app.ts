@@ -1,6 +1,7 @@
 import cors from '@fastify/cors';
-import Fastify from 'fastify';
+import Fastify, { type FastifyError } from 'fastify';
 import { corsOrigins } from './config/env.js';
+import { adminMatrimonyRoutes } from './modules/admin/matrimony/routes.js';
 import { authRoutes } from './modules/auth/routes.js';
 import { healthRoutes } from './modules/health/routes.js';
 import { matrimonyRoutes } from './modules/matrimony/routes.js';
@@ -27,6 +28,7 @@ export async function buildApp() {
   await app.register(healthRoutes, { prefix: '/api/v1' });
   await app.register(authRoutes, { prefix: '/api/v1/auth' });
   await app.register(matrimonyRoutes, { prefix: '/api/v1/matrimony' });
+  await app.register(adminMatrimonyRoutes, { prefix: '/api/v1/admin/matrimony' });
 
   app.get('/', async () => ({
     name: 'Damodar Prayas API',
@@ -35,7 +37,7 @@ export async function buildApp() {
     supportedLanguages: ['hi', 'en'],
   }));
 
-  app.setErrorHandler((error, request, reply) => {
+  app.setErrorHandler((error: FastifyError, request, reply) => {
     request.log.error(error);
 
     const statusCode = error.statusCode && error.statusCode >= 400 ? error.statusCode : 500;
