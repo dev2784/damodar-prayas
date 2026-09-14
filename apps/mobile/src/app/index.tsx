@@ -16,16 +16,22 @@ const C = {
 };
 
 const quickActions = [
-  ['♥', 'Matrimony', 'जीवन साथी'],
-  ['♟', 'Community', 'समाज की आवाज़'],
-  ['▣', 'Samiti', 'हमारी समितियाँ'],
-  ['▦', 'Events', 'आगामी कार्यक्रम'],
+  ['◎', 'Samaj Members', 'समाज सदस्य'],
+  ['▦', 'Events & News', 'कार्यक्रम व समाचार'],
+  ['▣', 'Business', 'समाज व्यापार'],
+  ['✦', 'Articles', 'लेख व जानकारी'],
 ];
 
 const profiles = [
   ['प्रिया, 27', 'जबलपुर, MP', 'MBA • Banking'],
   ['राहुल, 29', 'इंदौर, MP', 'B.Tech • IT'],
   ['नेहा, 26', 'भोपाल, MP', 'M.Sc • Teaching'],
+];
+
+const ads = [
+  ['✂', 'Tailor & Boutique', 'कपड़े सिलाई • डिजाइन'],
+  ['❖', 'Wedding Services', 'कैटरिंग • डेकोरेशन'],
+  ['⌂', 'Shop / Property', 'दुकान • किराया • प्रॉपर्टी'],
 ];
 
 export default function HomeScreen() {
@@ -54,10 +60,12 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.matrimonyCard}>
-          <View style={styles.matchIcon}><Text style={styles.matchIconText}>♥</Text></View>
-          <View style={styles.matchCopy}>
-            <Text style={styles.matchTitle}>अपने जीवन साथी की खोज शुरू करें</Text>
-            <Text style={styles.matchSub}>Trusted by Darzi Samaj families</Text>
+          <View style={styles.matchTopRow}>
+            <View style={styles.matchIcon}><Text style={styles.matchIconText}>♥</Text></View>
+            <View style={styles.matchCopy}>
+              <Text style={styles.matchTitle}>अपने जीवन साथी की खोज शुरू करें</Text>
+              <Text style={styles.matchSub}>Verified Darzi Samaj profiles</Text>
+            </View>
           </View>
           <View style={styles.cta}><Text style={styles.ctaText}>Explore Matrimony  →</Text></View>
         </View>
@@ -90,6 +98,37 @@ export default function HomeScreen() {
           ))}
         </ScrollView>
 
+        <View style={styles.adsHeader}>
+          <View>
+            <View style={styles.adsTitleRow}>
+              <Text style={styles.sectionTitle}>समाज व्यापार</Text>
+              <View style={styles.freeBadge}><Text style={styles.freeBadgeText}>FREE</Text></View>
+            </View>
+            <Text style={styles.adsSubtitle}>अपने व्यवसाय, सेवा या ऑफर का विज्ञापन डालें</Text>
+          </View>
+          <View style={styles.postAdButton}><Text style={styles.postAdButtonText}>+ विज्ञापन डालें</Text></View>
+        </View>
+
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.adsRow}>
+          {ads.map(([icon, title, meta]) => (
+            <View key={title} style={styles.adCard}>
+              <View style={styles.adIcon}><Text style={styles.adIconText}>{icon}</Text></View>
+              <View style={styles.adFreePill}><Text style={styles.adFreePillText}>FREE POST</Text></View>
+              <Text style={styles.adTitle}>{title}</Text>
+              <Text style={styles.adMeta}>{meta}</Text>
+              <Text style={styles.adCta}>View / Post  →</Text>
+            </View>
+          ))}
+        </ScrollView>
+
+        <View style={styles.freeNotice}>
+          <Text style={styles.freeNoticeIcon}>✦</Text>
+          <View style={styles.freeNoticeCopy}>
+            <Text style={styles.freeNoticeTitle}>अभी विज्ञापन पोस्ट करना निःशुल्क है</Text>
+            <Text style={styles.freeNoticeText}>समाज के व्यवसाय और सेवाओं को ज्यादा लोगों तक पहुँचाइए।</Text>
+          </View>
+        </View>
+
         <View style={styles.quoteCard}>
           <Text style={styles.quote}>“ सशक्त समाज • खुशहाल परिवार • उज्ज्वल भविष्य ”</Text>
           <Text style={styles.thread}>⌁──────── 🪡 ────────⌁</Text>
@@ -117,20 +156,21 @@ const styles = StyleSheet.create({
   guruTitle: { color: C.maroonDark, fontSize: 15, fontWeight: '900' },
   guruSubtitle: { color: '#9B6551', fontSize: 11, marginTop: 7 },
   script: { color: C.maroon, fontFamily: 'serif', fontStyle: 'italic', fontSize: 24, textAlign: 'center', marginTop: 28, lineHeight: 28 },
-  matrimonyCard: { margin: 14, marginBottom: 12, backgroundColor: C.paper, borderRadius: 18, borderWidth: 1, borderColor: C.line, padding: 14, flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center' },
+  matrimonyCard: { margin: 14, marginBottom: 12, backgroundColor: C.paper, borderRadius: 18, borderWidth: 1, borderColor: C.line, padding: 14 },
+  matchTopRow: { flexDirection: 'row', alignItems: 'center' },
   matchIcon: { width: 50, height: 50, borderRadius: 25, backgroundColor: '#FFF0E3', alignItems: 'center', justifyContent: 'center' },
   matchIconText: { color: '#D9342B', fontSize: 25 },
   matchCopy: { flex: 1, paddingLeft: 12 },
-  matchTitle: { color: C.text, fontSize: 13, fontWeight: '900' },
+  matchTitle: { color: C.text, fontSize: 14, fontWeight: '900', lineHeight: 20 },
   matchSub: { color: C.muted, fontSize: 10, marginTop: 4 },
-  cta: { marginLeft: 62, marginTop: 12, flexGrow: 1, backgroundColor: C.maroon, paddingVertical: 11, borderRadius: 10, alignItems: 'center' },
+  cta: { marginTop: 12, backgroundColor: C.maroon, paddingVertical: 12, borderRadius: 10, alignItems: 'center' },
   ctaText: { color: '#FFF', fontWeight: '800', fontSize: 12 },
-  quickRow: { flexDirection: 'row', paddingHorizontal: 14, gap: 8 },
-  quickCard: { flex: 1, minWidth: 0, backgroundColor: C.paper, borderRadius: 14, borderWidth: 1, borderColor: C.line, paddingVertical: 10, alignItems: 'center' },
-  quickIcon: { width: 34, height: 34, borderRadius: 10, backgroundColor: '#FFF2E4', alignItems: 'center', justifyContent: 'center', marginBottom: 5 },
+  quickRow: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 14, gap: 8 },
+  quickCard: { width: '48.8%', backgroundColor: C.paper, borderRadius: 14, borderWidth: 1, borderColor: C.line, paddingVertical: 12, paddingHorizontal: 10, alignItems: 'center' },
+  quickIcon: { width: 36, height: 36, borderRadius: 10, backgroundColor: '#FFF2E4', alignItems: 'center', justifyContent: 'center', marginBottom: 6 },
   quickIconText: { color: C.maroon, fontSize: 18, fontWeight: '900' },
-  quickTitle: { color: C.text, fontSize: 9.5, fontWeight: '800' },
-  quickHindi: { color: C.muted, fontSize: 7.5, marginTop: 2 },
+  quickTitle: { color: C.text, fontSize: 10.5, fontWeight: '800', textAlign: 'center' },
+  quickHindi: { color: C.muted, fontSize: 8.5, marginTop: 2, textAlign: 'center' },
   sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16, marginTop: 22, marginBottom: 10 },
   sectionTitle: { color: C.text, fontSize: 18, fontWeight: '900' },
   viewAll: { color: C.maroon, fontSize: 11, fontWeight: '800' },
@@ -142,6 +182,27 @@ const styles = StyleSheet.create({
   verifiedText: { color: C.green, fontSize: 8, fontWeight: '900' },
   profileName: { color: C.text, fontSize: 12, fontWeight: '900', marginHorizontal: 8, marginTop: 7 },
   profileMeta: { color: C.muted, fontSize: 9, marginHorizontal: 8, marginTop: 2 },
+  adsHeader: { marginTop: 24, paddingHorizontal: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', gap: 12 },
+  adsTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 7 },
+  adsSubtitle: { color: C.muted, fontSize: 10, marginTop: 4, maxWidth: 220 },
+  freeBadge: { backgroundColor: '#E7F5EA', borderRadius: 6, paddingHorizontal: 7, paddingVertical: 4 },
+  freeBadgeText: { color: C.green, fontSize: 8, fontWeight: '900' },
+  postAdButton: { backgroundColor: C.maroon, borderRadius: 9, paddingHorizontal: 10, paddingVertical: 9 },
+  postAdButtonText: { color: '#FFF', fontSize: 9.5, fontWeight: '900' },
+  adsRow: { paddingHorizontal: 14, paddingTop: 12, gap: 10 },
+  adCard: { width: 160, minHeight: 152, backgroundColor: C.paper, borderRadius: 14, borderWidth: 1, borderColor: C.line, padding: 12 },
+  adIcon: { width: 42, height: 42, borderRadius: 12, backgroundColor: '#FFF0DA', alignItems: 'center', justifyContent: 'center' },
+  adIconText: { color: C.maroon, fontSize: 21, fontWeight: '900' },
+  adFreePill: { position: 'absolute', top: 12, right: 10, backgroundColor: '#E7F5EA', borderRadius: 8, paddingHorizontal: 6, paddingVertical: 4 },
+  adFreePillText: { color: C.green, fontSize: 7.5, fontWeight: '900' },
+  adTitle: { color: C.text, fontSize: 12, fontWeight: '900', marginTop: 10 },
+  adMeta: { color: C.muted, fontSize: 9, marginTop: 4, lineHeight: 13 },
+  adCta: { color: C.maroon, fontSize: 9.5, fontWeight: '900', marginTop: 10 },
+  freeNotice: { marginHorizontal: 14, marginTop: 12, backgroundColor: '#FFF2D9', borderWidth: 1, borderColor: '#F0D6A7', borderRadius: 14, padding: 13, flexDirection: 'row', alignItems: 'center' },
+  freeNoticeIcon: { color: C.gold, fontSize: 22, marginRight: 11 },
+  freeNoticeCopy: { flex: 1 },
+  freeNoticeTitle: { color: C.maroonDark, fontSize: 12, fontWeight: '900' },
+  freeNoticeText: { color: C.muted, fontSize: 9.5, marginTop: 3, lineHeight: 14 },
   quoteCard: { margin: 14, marginTop: 22, backgroundColor: '#FFF0DA', borderRadius: 16, borderWidth: 1, borderColor: '#EFCF9D', padding: 18, alignItems: 'center' },
   quote: { color: C.maroon, fontSize: 15, fontWeight: '800', textAlign: 'center', lineHeight: 23 },
   thread: { color: C.gold, marginTop: 10, fontSize: 13 },
