@@ -4,9 +4,14 @@
   "version": "0.1.0",
   "packageManager": "pnpm@10.0.0",
   "scripts": {
+    "dev": "pnpm dev:api",
     "dev:api": "pnpm --filter @damodar/api dev",
+    "build:api": "pnpm --filter @damodar/api build",
+    "typecheck:api": "pnpm --filter @damodar/api typecheck",
     "prisma:generate": "prisma generate --schema=prisma/schema.prisma",
-    "prisma:format": "prisma format --schema=prisma/schema.prisma"
+    "prisma:format": "prisma format --schema=prisma/schema.prisma",
+    "prisma:validate": "prisma validate --schema=prisma/schema.prisma",
+    "postinstall": "pnpm prisma:generate"
   },
   "devDependencies": {
     "prisma": "^6.16.2"
