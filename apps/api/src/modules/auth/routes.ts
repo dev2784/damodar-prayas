@@ -14,6 +14,7 @@ const verifySchema = phoneSchema.extend({
 const devLoginSchema = phoneSchema.extend({
   firstName: z.string().trim().min(1).max(80).optional(),
   lastName: z.string().trim().min(1).max(80).optional(),
+  role: z.enum(['MEMBER', 'ADMIN']).default('MEMBER'),
 });
 
 export async function authRoutes(app: FastifyInstance) {
@@ -63,13 +64,14 @@ export async function authRoutes(app: FastifyInstance) {
       });
     }
 
-    const { phone, firstName, lastName } = parsed.data;
+    const { phone, firstName, lastName, role } = parsed.data;
 
     const user = await prisma.user.upsert({
       where: { phone },
       update: {
         ...(firstName !== undefined ? { firstName } : {}),
         ...(lastName !== undefined ? { lastName } : {}),
+        role,
         isPhoneVerified: true,
         isActive: true,
         deletedAt: null,
@@ -79,6 +81,7 @@ export async function authRoutes(app: FastifyInstance) {
         phone,
         firstName,
         lastName,
+        role,
         isPhoneVerified: true,
         lastLoginAt: new Date(),
       },
