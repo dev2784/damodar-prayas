@@ -3,6 +3,7 @@ import Fastify from 'fastify';
 import { corsOrigins } from './config/env.js';
 import { authRoutes } from './modules/auth/routes.js';
 import { healthRoutes } from './modules/health/routes.js';
+import { matrimonyRoutes } from './modules/matrimony/routes.js';
 import { authPlugin } from './plugins/auth.js';
 
 export async function buildApp() {
@@ -25,6 +26,7 @@ export async function buildApp() {
   await app.register(authPlugin);
   await app.register(healthRoutes, { prefix: '/api/v1' });
   await app.register(authRoutes, { prefix: '/api/v1/auth' });
+  await app.register(matrimonyRoutes, { prefix: '/api/v1/matrimony' });
 
   app.get('/', async () => ({
     name: 'Damodar Prayas API',
