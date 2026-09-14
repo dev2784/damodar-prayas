@@ -12,7 +12,9 @@
   "dependencies": {
     "@fastify/cors": "^10.1.0",
     "@fastify/jwt": "^9.1.0",
+    "@fastify/multipart": "^9.2.1",
     "@prisma/client": "6.19.3",
+    "cloudinary": "^2.7.0",
     "dotenv": "^16.6.1",
     "fastify": "^5.6.1",
     "fastify-plugin": "^5.0.1",
