@@ -10,6 +10,17 @@ const optionalLongText = z.string().trim().min(1).max(3000).optional().nullable(
 const optionalEmail = z.string().trim().email().max(320).optional().nullable();
 const optionalPhone = z.string().trim().regex(/^\+?[1-9]\d{7,14}$/).optional().nullable();
 
+const dateOfBirthSchema = z.coerce.date().refine((date) => {
+  const today = new Date();
+  const minimumBirthDate = new Date(
+    Date.UTC(today.getUTCFullYear() - 18, today.getUTCMonth(), today.getUTCDate()),
+  );
+
+  return date <= minimumBirthDate;
+}, {
+  message: 'Profile must be at least 18 years old',
+});
+
 export const createMatrimonyProfileSchema = z.object({
   profileFor: profileForSchema,
   category: darziCategorySchema,
@@ -17,7 +28,7 @@ export const createMatrimonyProfileSchema = z.object({
   firstName: z.string().trim().min(1).max(100),
   middleName: z.string().trim().max(100).optional().nullable(),
   lastName: z.string().trim().min(1).max(100),
-  dateOfBirth: z.coerce.date(),
+  dateOfBirth: dateOfBirthSchema,
   heightCm: z.coerce.number().int().min(100).max(250).optional().nullable(),
   maritalStatus: maritalStatusSchema.default('NEVER_MARRIED'),
   contactPhone: optionalPhone,
