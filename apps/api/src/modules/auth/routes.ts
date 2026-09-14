@@ -1,5 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
+import { env } from '../../config/env.js';
 import { prisma } from '../../lib/prisma.js';
 
 const phoneSchema = z.object({
@@ -8,6 +9,11 @@ const phoneSchema = z.object({
 
 const verifySchema = phoneSchema.extend({
   otp: z.string().regex(/^\d{4,6}$/, 'OTP must contain 4 to 6 digits'),
+});
+
+const devLoginSchema = phoneSchema.extend({
+  firstName: z.string().trim().min(1).max(80).optional(),
+  lastName: z.string().trim().min(1).max(80).optional(),
 });
 
 export async function authRoutes(app: FastifyInstance) {
@@ -41,6 +47,66 @@ export async function authRoutes(app: FastifyInstance) {
       error: 'OTP_PROVIDER_NOT_CONFIGURED',
       message: 'OTP verification is not enabled yet.',
     });
+  });
+
+  app.post('/dev-login', async (request, reply) => {
+    if (env.NODE_ENV === 'production') {
+      return reply.code(404).send({ error: 'NOT_FOUND' });
+    }
+
+    const parsed = devLoginSchema.safeParse(request.body);
+
+    if (!parsed.success) {
+      return reply.code(400).send({
+        error: 'INVALID_DEV_LOGIN',
+        message: parsed.error.issues[0]?.message ?? 'Invalid development login request',
+      });
+    }
+
+    const { phone, firstName, lastName } = parsed.data;
+
+    const user = await prisma.user.upsert({
+      where: { phone },
+      update: {
+        ...(firstName !== undefined ? { firstName } : {}),
+        ...(lastName !== undefined ? { lastName } : {}),
+        isPhoneVerified: true,
+        isActive: true,
+        deletedAt: null,
+        lastLoginAt: new Date(),
+      },
+      create: {
+        phone,
+        firstName,
+        lastName,
+        isPhoneVerified: true,
+        lastLoginAt: new Date(),
+      },
+      select: {
+        id: true,
+        phone: true,
+        firstName: true,
+        lastName: true,
+        preferredLanguage: true,
+        role: true,
+        isPhoneVerified: true,
+      },
+    });
+
+    const accessToken = await reply.jwtSign(
+      {
+        sub: user.id,
+        role: user.role,
+      },
+      { expiresIn: '7d' },
+    );
+
+    return {
+      accessToken,
+      tokenType: 'Bearer',
+      expiresIn: '7d',
+      user,
+    };
   });
 
   app.get('/me', async (request, reply) => {
