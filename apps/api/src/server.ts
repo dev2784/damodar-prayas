@@ -1,26 +1,24 @@
 import 'dotenv/config';
-import Fastify from 'fastify';
-import cors from '@fastify/cors';
+import { buildApp } from './app.js';
+import { env } from './config/env.js';
+import { prisma } from './lib/prisma.js';
 
-const app = Fastify({ logger: true });
+const app = await buildApp();
 
-await app.register(cors, {
-  origin: true,
-  credentials: true,
-});
+const shutdown = async (signal: string) => {
+  app.log.info({ signal }, 'Shutting down API');
+  await app.close();
+  await prisma.$disconnect();
+  process.exit(0);
+};
 
-app.get('/health', async () => ({
-  ok: true,
-  service: 'damodar-prayas-api',
-  timestamp: new Date().toISOString(),
-}));
-
-const port = Number(process.env.PORT ?? 4000);
-const host = '0.0.0.0';
+process.on('SIGINT', () => void shutdown('SIGINT'));
+process.on('SIGTERM', () => void shutdown('SIGTERM'));
 
 try {
-  await app.listen({ port, host });
+  await app.listen({ port: env.PORT, host: env.HOST });
 } catch (error) {
   app.log.error(error);
+  await prisma.$disconnect();
   process.exit(1);
 }
