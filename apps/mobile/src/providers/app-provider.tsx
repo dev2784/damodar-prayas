@@ -1,13 +1,13 @@
-import { PropsWithChildren, useEffect } from 'react';
+import { useEffect, type PropsWithChildren } from 'react';
 import { Provider } from 'react-redux';
 
-import { getAccessToken } from '@/lib/auth-storage';
 import { setAccessToken, setAuthHydrated } from '@/features/auth/auth-slice';
 import {
   loadStoredLanguage,
   setLanguage,
   setPreferencesHydrated,
 } from '@/features/preferences/preferences-slice';
+import { getAccessToken } from '@/lib/auth-storage';
 import { store } from '@/store/store';
 
 function Bootstrapper({ children }: PropsWithChildren) {
