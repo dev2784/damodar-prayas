@@ -1,4 +1,5 @@
 import cors from '@fastify/cors';
+import multipart from '@fastify/multipart';
 import Fastify, { type FastifyError } from 'fastify';
 import { corsOrigins } from './config/env.js';
 import { adminCommunityRoutes } from './modules/admin/community/routes.js';
@@ -11,6 +12,7 @@ import { communityRoutes } from './modules/community/routes.js';
 import { healthRoutes } from './modules/health/routes.js';
 import { interactionRoutes } from './modules/interactions/routes.js';
 import { matrimonyRoutes } from './modules/matrimony/routes.js';
+import { mediaRoutes } from './modules/media/routes.js';
 import { notificationRoutes } from './modules/notifications/routes.js';
 import { reportRoutes } from './modules/reports/routes.js';
 import { authPlugin } from './plugins/auth.js';
@@ -32,10 +34,12 @@ export async function buildApp() {
     credentials: true,
   });
 
+  await app.register(multipart);
   await app.register(authPlugin);
   await app.register(healthRoutes, { prefix: '/api/v1' });
   await app.register(authRoutes, { prefix: '/api/v1/auth' });
   await app.register(matrimonyRoutes, { prefix: '/api/v1/matrimony' });
+  await app.register(mediaRoutes, { prefix: '/api/v1/media' });
   await app.register(interactionRoutes, { prefix: '/api/v1' });
   await app.register(communityRoutes, { prefix: '/api/v1/posts' });
   await app.register(committeeRoutes, { prefix: '/api/v1/committees' });
