@@ -4,6 +4,7 @@ import { corsOrigins } from './config/env.js';
 import { adminCommunityRoutes } from './modules/admin/community/routes.js';
 import { adminCommitteeRoutes } from './modules/admin/committees/routes.js';
 import { adminMatrimonyRoutes } from './modules/admin/matrimony/routes.js';
+import { adminReportRoutes } from './modules/admin/reports/routes.js';
 import { authRoutes } from './modules/auth/routes.js';
 import { committeeRoutes } from './modules/committees/routes.js';
 import { communityRoutes } from './modules/community/routes.js';
@@ -11,6 +12,7 @@ import { healthRoutes } from './modules/health/routes.js';
 import { interactionRoutes } from './modules/interactions/routes.js';
 import { matrimonyRoutes } from './modules/matrimony/routes.js';
 import { notificationRoutes } from './modules/notifications/routes.js';
+import { reportRoutes } from './modules/reports/routes.js';
 import { authPlugin } from './plugins/auth.js';
 
 export async function buildApp() {
@@ -38,9 +40,11 @@ export async function buildApp() {
   await app.register(communityRoutes, { prefix: '/api/v1/posts' });
   await app.register(committeeRoutes, { prefix: '/api/v1/committees' });
   await app.register(notificationRoutes, { prefix: '/api/v1/notifications' });
+  await app.register(reportRoutes, { prefix: '/api/v1/reports' });
   await app.register(adminMatrimonyRoutes, { prefix: '/api/v1/admin/matrimony' });
   await app.register(adminCommunityRoutes, { prefix: '/api/v1/admin/posts' });
   await app.register(adminCommitteeRoutes, { prefix: '/api/v1/admin/committees' });
+  await app.register(adminReportRoutes, { prefix: '/api/v1/admin/reports' });
 
   app.get('/', async () => ({
     name: 'Damodar Prayas API',
