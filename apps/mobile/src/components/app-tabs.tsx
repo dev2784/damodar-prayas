@@ -1,32 +1,40 @@
-import { NativeTabs } from 'expo-router/unstable-native-tabs';
-import { useColorScheme } from 'react-native';
+import { Tabs } from 'expo-router';
 
-import { Colors } from '@/constants/theme';
+const COLORS = {
+  cream: '#FFF8ED',
+  maroon: '#6E1F2A',
+  saffron: '#D99A2B',
+  muted: '#8C7A72',
+};
 
 export default function AppTabs() {
-  const scheme = useColorScheme();
-  const colors = Colors[scheme === 'unspecified' ? 'light' : scheme];
-
   return (
-    <NativeTabs
-      backgroundColor={colors.background}
-      indicatorColor={colors.backgroundElement}
-      labelStyle={{ selected: { color: colors.text } }}>
-      <NativeTabs.Trigger name="index">
-        <NativeTabs.Trigger.Label>Home</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon
-          src={require('@/assets/images/tabIcons/home.png')}
-          renderingMode="template"
-        />
-      </NativeTabs.Trigger>
-
-      <NativeTabs.Trigger name="explore">
-        <NativeTabs.Trigger.Label>Explore</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon
-          src={require('@/assets/images/tabIcons/explore.png')}
-          renderingMode="template"
-        />
-      </NativeTabs.Trigger>
-    </NativeTabs>
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveTintColor: COLORS.maroon,
+        tabBarInactiveTintColor: COLORS.muted,
+        tabBarStyle: {
+          backgroundColor: '#FFFDF8',
+          borderTopColor: '#EADCCB',
+          height: 68,
+          paddingTop: 8,
+          paddingBottom: 8,
+        },
+        tabBarLabelStyle: {
+          fontSize: 11,
+          fontWeight: '700',
+        },
+        sceneStyle: {
+          backgroundColor: COLORS.cream,
+        },
+      }}>
+      <Tabs.Screen name="index" options={{ title: 'होम' }} />
+      <Tabs.Screen name="matrimony" options={{ title: 'मैट्रिमोनी' }} />
+      <Tabs.Screen name="community" options={{ title: 'समाज' }} />
+      <Tabs.Screen name="samiti" options={{ title: 'समिति' }} />
+      <Tabs.Screen name="profile" options={{ title: 'प्रोफाइल' }} />
+      <Tabs.Screen name="explore" options={{ href: null }} />
+    </Tabs>
   );
 }
