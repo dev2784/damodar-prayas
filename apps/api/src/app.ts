@@ -4,6 +4,7 @@ import { corsOrigins } from './config/env.js';
 import { adminMatrimonyRoutes } from './modules/admin/matrimony/routes.js';
 import { authRoutes } from './modules/auth/routes.js';
 import { healthRoutes } from './modules/health/routes.js';
+import { interactionRoutes } from './modules/interactions/routes.js';
 import { matrimonyRoutes } from './modules/matrimony/routes.js';
 import { authPlugin } from './plugins/auth.js';
 
@@ -28,6 +29,7 @@ export async function buildApp() {
   await app.register(healthRoutes, { prefix: '/api/v1' });
   await app.register(authRoutes, { prefix: '/api/v1/auth' });
   await app.register(matrimonyRoutes, { prefix: '/api/v1/matrimony' });
+  await app.register(interactionRoutes, { prefix: '/api/v1' });
   await app.register(adminMatrimonyRoutes, { prefix: '/api/v1/admin/matrimony' });
 
   app.get('/', async () => ({
@@ -37,7 +39,7 @@ export async function buildApp() {
     supportedLanguages: ['hi', 'en'],
   }));
 
- app.setErrorHandler((error: FastifyError, request, reply) => {
+  app.setErrorHandler((error: FastifyError, request, reply) => {
     request.log.error(error);
 
     const statusCode = error.statusCode && error.statusCode >= 400 ? error.statusCode : 500;
