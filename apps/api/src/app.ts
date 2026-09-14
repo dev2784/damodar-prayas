@@ -1,5 +1,5 @@
 import cors from '@fastify/cors';
-import Fastify from 'fastify';
+import Fastify, { type FastifyError } from 'fastify';
 import { corsOrigins } from './config/env.js';
 import { authRoutes } from './modules/auth/routes.js';
 import { healthRoutes } from './modules/health/routes.js';
@@ -35,7 +35,7 @@ export async function buildApp() {
     supportedLanguages: ['hi', 'en'],
   }));
 
-  app.setErrorHandler((error, request, reply) => {
+ app.setErrorHandler((error: FastifyError, request, reply) => {
     request.log.error(error);
 
     const statusCode = error.statusCode && error.statusCode >= 400 ? error.statusCode : 500;
