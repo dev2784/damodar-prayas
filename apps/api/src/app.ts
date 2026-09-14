@@ -1,6 +1,7 @@
 import cors from '@fastify/cors';
 import Fastify, { type FastifyError } from 'fastify';
 import { corsOrigins } from './config/env.js';
+import { adminCommunityRoutes } from './modules/admin/community/routes.js';
 import { adminMatrimonyRoutes } from './modules/admin/matrimony/routes.js';
 import { authRoutes } from './modules/auth/routes.js';
 import { communityRoutes } from './modules/community/routes.js';
@@ -33,6 +34,7 @@ export async function buildApp() {
   await app.register(interactionRoutes, { prefix: '/api/v1' });
   await app.register(communityRoutes, { prefix: '/api/v1/posts' });
   await app.register(adminMatrimonyRoutes, { prefix: '/api/v1/admin/matrimony' });
+  await app.register(adminCommunityRoutes, { prefix: '/api/v1/admin/posts' });
 
   app.get('/', async () => ({
     name: 'Damodar Prayas API',
