@@ -1,30 +1,28 @@
-import { Image, ImageBackground, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { router } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const C = {
-  bg: '#FFF8EE',
+  bg: '#FFF9F1',
   paper: '#FFFDF9',
   maroon: '#A30D1E',
   maroonDark: '#7D0A16',
   gold: '#D79A25',
-  goldSoft: '#F9E8BC',
-  text: '#211B18',
-  muted: '#776A64',
-  line: '#EBDCC9',
-  green: '#0F9D63',
-  blush: '#FFF0EE',
+  text: '#1F1A18',
+  muted: '#6F6870',
+  line: '#E8D7C3',
+  green: '#0BAA67',
 };
 
-const GURU = 'https://pbs.twimg.com/media/FCJ3lLkUcAI8zGY.jpg';
-const COUPLE = 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=600&q=85';
+const TOP_REFERENCE = require('../../assets/images/home-top-reference.jpg');
 
 const quickActions = [
-  { icon: { ios: 'person.3.fill', android: 'groups', web: 'groups' } as const, title: 'समाज सदस्य', sub: '(Directory)', tint: '#B70F22', bg: '#FFF0F1' },
-  { icon: { ios: 'calendar', android: 'calendar_month', web: 'calendar_month' } as const, title: 'कार्यक्रम एवं', sub: 'समाचार', tint: '#D88400', bg: '#FFF8E8' },
-  { icon: { ios: 'storefront.fill', android: 'storefront', web: 'storefront' } as const, title: 'समाज व्यापार', sub: '(Business)', tint: '#16883B', bg: '#EEFAF2' },
-  { icon: { ios: 'book.closed.fill', android: 'menu_book', web: 'menu_book' } as const, title: 'लेख / ज्ञान', sub: '(Articles)', tint: '#56307D', bg: '#F5F0FB' },
-  { icon: { ios: 'phone.fill', android: 'support_agent', web: 'support_agent' } as const, title: 'सहायता', sub: '(Help & Support)', tint: '#154A8A', bg: '#EEF6FF' },
+  { icon: { ios: 'person.3.fill', android: 'groups', web: 'groups' } as const, title: 'समाज सदस्य', sub: '(Directory)', tint: '#B70F22', bg: '#FFF2F3' },
+  { icon: { ios: 'calendar', android: 'calendar_month', web: 'calendar_month' } as const, title: 'कार्यक्रम एवं', sub: 'समाचार', tint: '#D98A00', bg: '#FFF9ED' },
+  { icon: { ios: 'storefront.fill', android: 'storefront', web: 'storefront' } as const, title: 'समाज व्यापार', sub: '(Business)', tint: '#17893D', bg: '#EFFAF3' },
+  { icon: { ios: 'book.closed.fill', android: 'menu_book', web: 'menu_book' } as const, title: 'लेख / ज्ञान', sub: '(Articles)', tint: '#5B3180', bg: '#F5F1FB' },
+  { icon: { ios: 'phone.fill', android: 'support_agent', web: 'support_agent' } as const, title: 'सहायता', sub: '(Help & Support)', tint: '#154C8C', bg: '#EEF7FF' },
 ];
 
 const profiles = [
@@ -44,6 +42,18 @@ function Icon({ name, color, size = 24 }: { name: { ios: any; android: any; web:
   return <SymbolView name={name} tintColor={color} size={size} />;
 }
 
+function TrustStat({ icon, value, label, color = C.maroon }: { icon: { ios: any; android: any; web: any }; value?: string; label: string; color?: string }) {
+  return (
+    <View style={styles.statItem}>
+      <View style={styles.statIconWrap}><Icon name={icon} color={color} size={20} /></View>
+      <View style={styles.statCopy}>
+        {value ? <Text style={styles.statValue}>{value}</Text> : null}
+        <Text style={styles.statLabel}>{label}</Text>
+      </View>
+    </View>
+  );
+}
+
 export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
@@ -54,62 +64,37 @@ export default function HomeScreen() {
             <Text style={styles.brand}>Damodar Prayas</Text>
             <Text style={styles.brandSub}>Darzi Samaj Community & Matrimony</Text>
           </View>
-          <View style={styles.headerIcon}><Icon name={{ ios: 'bell.fill', android: 'notifications', web: 'notifications' }} color={C.maroon} size={22} /></View>
-          <View style={styles.headerIcon}><Icon name={{ ios: 'gearshape.fill', android: 'settings', web: 'settings' }} color={C.maroon} size={22} /></View>
+          <View style={styles.headerIcon}><Icon name={{ ios: 'bell.fill', android: 'notifications', web: 'notifications' }} color={C.maroon} size={21} /></View>
+          <View style={styles.headerIcon}><Icon name={{ ios: 'gearshape.fill', android: 'settings', web: 'settings' }} color={C.maroon} size={21} /></View>
         </View>
 
-        <View style={styles.hero}>
-          <View style={styles.heroGlowA} /><View style={styles.heroGlowB} />
-          <View style={styles.guruFrame}>
-            <Image source={{ uri: GURU }} style={styles.guruImage} resizeMode="cover" />
-          </View>
-          <View style={styles.heroCopy}>
-            <Text style={styles.heroTitle}>॥ जय गुरु टेकचंद महाराज ॥</Text>
-            <Text style={styles.heroSub}>समाज की शक्ति, परिवारों की खुशी</Text>
-            <View style={styles.quoteBox}>
-              <Text style={styles.quoteMark}>“</Text>
-              <Text style={styles.heroQuote}>मुश्किल की घड़ियों में वही हस्ती है{`\n`}जिनके दिल में मेरे सेठ बसते हैं</Text>
-              <Text style={[styles.quoteMark, styles.quoteRight]}>”</Text>
-            </View>
-          </View>
+        <View style={styles.referenceWrap}>
+          <Image source={TOP_REFERENCE} style={styles.referenceImage} resizeMode="stretch" />
+          <Pressable style={styles.matrimonyHotspot} onPress={() => router.push('/matrimony')} accessibilityRole="button" accessibilityLabel="Explore Matrimony" />
         </View>
 
-        <View style={styles.matrimonyCard}>
-          <ImageBackground source={{ uri: COUPLE }} style={styles.coupleImage} imageStyle={styles.coupleImageRadius} />
-          <View style={styles.matchCopy}>
-            <Text style={styles.matchTitle}>अपने जीवन साथी की खोज शुरू करें</Text>
-            <Text style={styles.matchSub}>Trusted by Darzi Samaj families</Text>
-            <View style={styles.trustRow}>
-              <View style={styles.trustItem}><Icon name={{ ios: 'checkmark.shield.fill', android: 'verified_user', web: 'verified_user' }} color={C.maroon} size={17} /><Text style={styles.trustText}>Verified</Text></View>
-              <View style={styles.trustItem}><Icon name={{ ios: 'person.3.fill', android: 'groups', web: 'groups' }} color={C.maroon} size={17} /><Text style={styles.trustText}>Same Community</Text></View>
-              <View style={styles.trustItem}><Icon name={{ ios: 'heart.fill', android: 'favorite', web: 'favorite' }} color={C.maroon} size={17} /><Text style={styles.trustText}>Safe</Text></View>
-            </View>
-          </View>
-          <View style={styles.cta}><Text style={styles.ctaText}>Explore Matrimony  →</Text></View>
-        </View>
-
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.quickRow}>
+        <View style={styles.quickRow}>
           {quickActions.map((item) => (
-            <View key={item.title} style={[styles.quickCard, { backgroundColor: item.bg }]}>
-              <View style={styles.quickIcon}><Icon name={item.icon} color={item.tint} size={29} /></View>
-              <Text style={styles.quickTitle}>{item.title}</Text>
-              <Text style={styles.quickSub}>{item.sub}</Text>
-            </View>
+            <Pressable key={item.title} style={[styles.quickCard, { backgroundColor: item.bg }]}>
+              <View style={styles.quickIcon}><Icon name={item.icon} color={item.tint} size={26} /></View>
+              <Text style={styles.quickTitle} numberOfLines={2}>{item.title}</Text>
+              <Text style={styles.quickSub} numberOfLines={1}>{item.sub}</Text>
+            </Pressable>
           ))}
-        </ScrollView>
+        </View>
 
-        <View style={styles.valueStrip}>
-          <View style={styles.valueItem}><Icon name={{ ios: 'person.3.fill', android: 'groups', web: 'groups' }} color={C.maroon} size={24} /><Text style={styles.valueMain}>समाज परिवार</Text><Text style={styles.valueSub}>साथ और विश्वास</Text></View>
-          <View style={styles.valueDivider} />
-          <View style={styles.valueItem}><Icon name={{ ios: 'heart.fill', android: 'favorite', web: 'favorite' }} color={C.maroon} size={24} /><Text style={styles.valueMain}>प्रोफाइल</Text><Text style={styles.valueSub}>सत्यापित रिश्ते</Text></View>
-          <View style={styles.valueDivider} />
-          <View style={styles.valueItem}><Icon name={{ ios: 'storefront.fill', android: 'storefront', web: 'storefront' }} color={C.maroon} size={24} /><Text style={styles.valueMain}>व्यवसाय</Text><Text style={styles.valueSub}>समाज सूची</Text></View>
-          <View style={styles.valueDivider} />
-          <View style={styles.valueItem}><Icon name={{ ios: 'star.fill', android: 'star', web: 'star' }} color={C.gold} size={24} /><Text style={styles.valueMain}>एक मजबूत</Text><Text style={styles.valueSub}>समाज के लिए साथ</Text></View>
+        <View style={styles.statsStrip}>
+          <TrustStat icon={{ ios: 'person.3.fill', android: 'groups', web: 'groups' }} value="5,000+" label="समाज परिवार" />
+          <View style={styles.statDivider} />
+          <TrustStat icon={{ ios: 'heart.fill', android: 'favorite', web: 'favorite' }} value="1,200+" label="प्रोफाइल्स" />
+          <View style={styles.statDivider} />
+          <TrustStat icon={{ ios: 'handshake.fill', android: 'handshake', web: 'handshake' }} value="150+" label="व्यवसाय सूचीबद्ध" />
+          <View style={styles.statDivider} />
+          <TrustStat icon={{ ios: 'star.fill', android: 'star', web: 'star' }} label="एक मजबूत समाज के लिए साथ" color={C.gold} />
         </View>
 
         <View style={styles.sectionHeader}>
-          <View style={styles.sectionTitleRow}><Icon name={{ ios: 'heart.fill', android: 'favorite', web: 'favorite' }} color={C.maroon} size={22} /><Text style={styles.sectionTitle}>नए Matrimony Profiles</Text></View>
+          <View style={styles.sectionTitleRow}><Icon name={{ ios: 'heart.fill', android: 'favorite', web: 'favorite' }} color={C.maroon} size={21} /><Text style={styles.sectionTitle}>नए Matrimony Profiles</Text></View>
           <Text style={styles.viewAll}>View All  →</Text>
         </View>
 
@@ -117,9 +102,9 @@ export default function HomeScreen() {
           {profiles.map((profile) => (
             <View style={styles.profileCard} key={profile.name}>
               <Image source={{ uri: profile.image }} style={styles.profilePhoto} />
-              <View style={styles.verified}><Icon name={{ ios: 'checkmark.circle.fill', android: 'verified', web: 'verified' }} color={C.green} size={13} /><Text style={styles.verifiedText}>Verified</Text></View>
+              <View style={styles.verified}><Icon name={{ ios: 'checkmark.circle.fill', android: 'verified', web: 'verified' }} color={C.green} size={12} /><Text style={styles.verifiedText}>Verified</Text></View>
               <View style={styles.profileInfo}>
-                <View style={styles.profileNameRow}><Text style={styles.profileName}>{profile.name}</Text><Icon name={{ ios: 'heart', android: 'favorite_border', web: 'favorite_border' }} color='#F04455' size={21} /></View>
+                <View style={styles.profileNameRow}><Text style={styles.profileName}>{profile.name}</Text><Icon name={{ ios: 'heart', android: 'favorite_border', web: 'favorite_border' }} color="#F04455" size={20} /></View>
                 <Text style={styles.profileMeta}>{profile.city}</Text>
                 <Text style={styles.profileMeta}>{profile.work}</Text>
               </View>
@@ -129,11 +114,16 @@ export default function HomeScreen() {
 
         <View style={styles.adsHeader}>
           <View style={styles.adsTitleWrap}>
-            <View style={styles.adsTitleRow}><Icon name={{ ios: 'megaphone.fill', android: 'campaign', web: 'campaign' }} color={C.maroon} size={25} /><Text style={styles.adsTitle}>समाज व्यापार - Free Classifieds</Text></View>
+            <View style={styles.adsTitleRow}><Icon name={{ ios: 'megaphone.fill', android: 'campaign', web: 'campaign' }} color={C.maroon} size={24} /><Text style={styles.adsTitle}>समाज व्यापार - Free Classifieds</Text></View>
             <Text style={styles.adsSubtitle}>अपने व्यवसाय, सेवा या ऑफर का विज्ञापन डालें</Text>
           </View>
-          <View style={styles.postAdButton}><Text style={styles.postAdButtonText}>+ अपना विज्ञापन डालें</Text><View style={styles.freeBadge}><Text style={styles.freeBadgeText}>FREE</Text></View></View>
+          <Text style={styles.viewAll}>View All →</Text>
         </View>
+
+        <Pressable style={styles.postAdButton}>
+          <Text style={styles.postAdButtonText}>+ अपना विज्ञापन डालें</Text>
+          <View style={styles.freeBadge}><Text style={styles.freeBadgeText}>FREE</Text></View>
+        </Pressable>
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.adsRow}>
           {ads.map((ad) => (
@@ -149,7 +139,7 @@ export default function HomeScreen() {
         </ScrollView>
 
         <View style={styles.closingBanner}>
-          <View style={styles.closingIcon}><Icon name={{ ios: 'person.3.fill', android: 'groups', web: 'groups' }} color={C.maroon} size={37} /></View>
+          <View style={styles.closingIcon}><Icon name={{ ios: 'person.3.fill', android: 'groups', web: 'groups' }} color={C.maroon} size={34} /></View>
           <View style={styles.closingCopy}><Text style={styles.closingQuote}>“मिलकर बढ़ें, जुड़े रहें, समाज को और मजबूत बनाएं”</Text><View style={styles.goldLine} /></View>
           <View style={styles.joinButton}><Text style={styles.joinTitle}>Join Our Community</Text><Text style={styles.joinSub}>Because Community Matters</Text></View>
         </View>
@@ -160,92 +150,73 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: C.bg },
-  content: { paddingBottom: 26 },
-  header: { minHeight: 72, paddingHorizontal: 15, flexDirection: 'row', alignItems: 'center', backgroundColor: C.paper, borderBottomWidth: 1, borderBottomColor: '#F3E7D7' },
+  content: { paddingBottom: 22 },
+  header: { minHeight: 70, paddingHorizontal: 14, flexDirection: 'row', alignItems: 'center', backgroundColor: C.paper, borderBottomWidth: 1, borderBottomColor: '#F2E6D8' },
   brandMark: { width: 48, height: 48, borderRadius: 24, backgroundColor: '#FFF1CF', borderWidth: 1, borderColor: '#E9C267', alignItems: 'center', justifyContent: 'center' },
   brandMarkText: { color: C.maroon, fontSize: 25, fontWeight: '900' },
   brandCopy: { flex: 1, marginLeft: 10 },
-  brand: { color: C.maroonDark, fontSize: 21, fontWeight: '900', fontFamily: 'serif' },
-  brandSub: { color: C.maroon, fontSize: 10, marginTop: 1, fontWeight: '600' },
-  headerIcon: { width: 38, height: 38, borderRadius: 19, backgroundColor: '#FFF7E8', alignItems: 'center', justifyContent: 'center', marginLeft: 6 },
+  brand: { color: C.maroonDark, fontSize: 20, fontWeight: '900', fontFamily: 'serif' },
+  brandSub: { color: C.maroon, fontSize: 9.5, marginTop: 1, fontWeight: '700' },
+  headerIcon: { width: 37, height: 37, borderRadius: 18.5, backgroundColor: '#FFF7E8', alignItems: 'center', justifyContent: 'center', marginLeft: 5 },
 
-  hero: { marginHorizontal: 12, marginTop: 10, height: 238, borderRadius: 18, overflow: 'hidden', backgroundColor: '#F9D57B', borderWidth: 1, borderColor: '#E7BB59', flexDirection: 'row', padding: 14, alignItems: 'center' },
-  heroGlowA: { position: 'absolute', width: 250, height: 250, borderRadius: 125, backgroundColor: '#FFF4B8', opacity: 0.55, left: -70, top: -60 },
-  heroGlowB: { position: 'absolute', width: 260, height: 260, borderRadius: 130, backgroundColor: '#FFF7D6', opacity: 0.72, right: -85, top: -30 },
-  guruFrame: { width: '43%', height: 205, borderRadius: 17, overflow: 'hidden', borderWidth: 2, borderColor: '#FFF7DF', backgroundColor: '#D99729' },
-  guruImage: { width: '100%', height: '100%' },
-  heroCopy: { flex: 1, paddingLeft: 14, zIndex: 2 },
-  heroTitle: { color: C.maroonDark, fontSize: 18, fontWeight: '900', textAlign: 'center', lineHeight: 25 },
-  heroSub: { color: '#985B34', fontSize: 11.5, textAlign: 'center', marginTop: 6, fontWeight: '700' },
-  quoteBox: { backgroundColor: 'rgba(255,253,244,0.82)', borderWidth: 1, borderColor: '#E3AD4C', borderRadius: 13, marginTop: 14, paddingVertical: 12, paddingHorizontal: 11 },
-  quoteMark: { color: '#D1840B', fontSize: 27, lineHeight: 20, fontWeight: '900' },
-  quoteRight: { alignSelf: 'flex-end', marginTop: -3 },
-  heroQuote: { color: '#34241D', fontSize: 10.5, lineHeight: 16, textAlign: 'center', marginVertical: -2 },
+  referenceWrap: { marginHorizontal: 12, marginTop: 10, borderRadius: 15, overflow: 'hidden', backgroundColor: '#FFF4D8', elevation: 1 },
+  referenceImage: { width: '100%', aspectRatio: 480 / 225 },
+  matrimonyHotspot: { position: 'absolute', right: '1.5%', top: '69%', width: '29%', height: '18%' },
 
-  matrimonyCard: { marginHorizontal: 12, marginTop: 11, minHeight: 132, borderRadius: 18, backgroundColor: '#FFF4F3', borderWidth: 1, borderColor: '#F1C9C8', flexDirection: 'row', alignItems: 'center', padding: 10, overflow: 'hidden' },
-  coupleImage: { width: 88, height: 110 },
-  coupleImageRadius: { borderRadius: 13 },
-  matchCopy: { flex: 1, paddingHorizontal: 10 },
-  matchTitle: { color: C.maroonDark, fontSize: 15, fontWeight: '900', lineHeight: 20 },
-  matchSub: { color: '#687080', fontSize: 10.5, marginTop: 4 },
-  trustRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 10 },
-  trustItem: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  trustText: { color: '#4B5057', fontSize: 8.5, fontWeight: '700' },
-  cta: { backgroundColor: C.maroon, borderRadius: 12, paddingHorizontal: 12, paddingVertical: 13, minWidth: 126, alignItems: 'center' },
-  ctaText: { color: '#FFF', fontSize: 11, fontWeight: '900' },
+  quickRow: { flexDirection: 'row', gap: 5, paddingHorizontal: 12, marginTop: 7 },
+  quickCard: { flex: 1, minWidth: 0, height: 90, borderRadius: 11, borderWidth: 1, borderColor: '#E8DCCF', paddingHorizontal: 3, alignItems: 'center', justifyContent: 'center' },
+  quickIcon: { height: 30, alignItems: 'center', justifyContent: 'center', marginBottom: 4 },
+  quickTitle: { color: C.text, fontSize: 10, lineHeight: 13, fontWeight: '900', textAlign: 'center' },
+  quickSub: { color: C.text, fontSize: 7.5, marginTop: 1.5, fontWeight: '700', textAlign: 'center' },
 
-  quickRow: { paddingHorizontal: 12, paddingTop: 10, gap: 8 },
-  quickCard: { width: 132, height: 112, borderRadius: 14, borderWidth: 1, borderColor: '#E8DCCF', alignItems: 'center', justifyContent: 'center', padding: 10 },
-  quickIcon: { marginBottom: 7 },
-  quickTitle: { color: C.text, fontSize: 11, fontWeight: '900', textAlign: 'center' },
-  quickSub: { color: '#242424', fontSize: 9, marginTop: 2, textAlign: 'center' },
+  statsStrip: { marginHorizontal: 12, marginTop: 7, minHeight: 64, borderRadius: 12, borderWidth: 1, borderColor: '#EFDFC6', backgroundColor: '#FFF9EE', flexDirection: 'row', alignItems: 'stretch', paddingHorizontal: 5, paddingVertical: 7 },
+  statItem: { flex: 1, minWidth: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 2 },
+  statIconWrap: { width: 29, height: 29, borderRadius: 14.5, backgroundColor: '#FFF0D9', alignItems: 'center', justifyContent: 'center', marginRight: 3 },
+  statCopy: { flexShrink: 1 },
+  statValue: { color: C.maroon, fontSize: 11, fontWeight: '900', lineHeight: 13 },
+  statLabel: { color: C.text, fontSize: 7.5, fontWeight: '700', lineHeight: 10, marginTop: 1 },
+  statDivider: { width: 1, backgroundColor: '#EAD8BE', marginVertical: 4 },
 
-  valueStrip: { marginHorizontal: 12, marginTop: 10, borderRadius: 14, borderWidth: 1, borderColor: '#ECDCC6', backgroundColor: '#FFFCF4', flexDirection: 'row', paddingVertical: 10, paddingHorizontal: 4, alignItems: 'center' },
-  valueItem: { flex: 1, alignItems: 'center', minWidth: 0 },
-  valueMain: { color: C.maroonDark, fontSize: 9.5, fontWeight: '900', marginTop: 4, textAlign: 'center' },
-  valueSub: { color: C.text, fontSize: 7.5, marginTop: 1, textAlign: 'center' },
-  valueDivider: { width: 1, height: 42, backgroundColor: '#E8D9C6' },
-
-  sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 14, marginTop: 18, marginBottom: 9 },
-  sectionTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 7 },
+  sectionHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 13, marginTop: 15, marginBottom: 7 },
+  sectionTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   sectionTitle: { color: C.text, fontSize: 16, fontWeight: '900' },
-  viewAll: { color: C.maroon, fontSize: 11, fontWeight: '900' },
-  profileRow: { paddingHorizontal: 12, gap: 9 },
-  profileCard: { width: 150, backgroundColor: C.paper, borderRadius: 13, borderWidth: 1, borderColor: C.line, overflow: 'hidden' },
-  profilePhoto: { width: '100%', height: 132 },
-  verified: { position: 'absolute', top: 112, left: 8, flexDirection: 'row', alignItems: 'center', gap: 3, backgroundColor: '#E8FFF2', borderRadius: 7, paddingHorizontal: 6, paddingVertical: 3 },
-  verifiedText: { color: C.green, fontSize: 8, fontWeight: '900' },
-  profileInfo: { padding: 9 },
-  profileNameRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  profileName: { color: C.text, fontSize: 13, fontWeight: '900' },
-  profileMeta: { color: '#677080', fontSize: 9.5, marginTop: 2 },
+  viewAll: { color: C.maroon, fontSize: 10.5, fontWeight: '900' },
+  profileRow: { paddingHorizontal: 12, gap: 8 },
+  profileCard: { width: 132, backgroundColor: '#FFFFFF', borderRadius: 11, borderWidth: 1, borderColor: '#ECE4DA', overflow: 'hidden', elevation: 2 },
+  profilePhoto: { width: '100%', height: 116, backgroundColor: '#E6D7C4' },
+  verified: { position: 'absolute', top: 104, left: 6, flexDirection: 'row', alignItems: 'center', gap: 3, backgroundColor: '#E9FAF1', borderRadius: 5, paddingHorizontal: 5, paddingVertical: 2 },
+  verifiedText: { color: C.green, fontSize: 7.5, fontWeight: '900' },
+  profileInfo: { padding: 7, paddingTop: 9 },
+  profileNameRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 3 },
+  profileName: { color: C.text, fontSize: 11.5, fontWeight: '900', flex: 1 },
+  profileMeta: { color: C.muted, fontSize: 8.5, lineHeight: 12, marginTop: 1 },
 
-  adsHeader: { marginTop: 19, paddingHorizontal: 14, flexDirection: 'row', alignItems: 'center', gap: 8 },
+  adsHeader: { marginTop: 16, paddingHorizontal: 13, flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between', gap: 8 },
   adsTitleWrap: { flex: 1 },
-  adsTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 7 },
-  adsTitle: { color: C.maroon, fontSize: 15, fontWeight: '900', flexShrink: 1 },
-  adsSubtitle: { color: '#687080', fontSize: 9.5, marginLeft: 31, marginTop: 2 },
-  postAdButton: { backgroundColor: C.maroon, borderRadius: 11, paddingLeft: 10, paddingRight: 6, paddingVertical: 9, flexDirection: 'row', alignItems: 'center', gap: 6 },
-  postAdButtonText: { color: '#FFF', fontSize: 9.5, fontWeight: '900' },
-  freeBadge: { backgroundColor: '#20AD68', borderRadius: 6, paddingHorizontal: 5, paddingVertical: 3 },
-  freeBadgeText: { color: '#FFF', fontSize: 7.5, fontWeight: '900' },
-  adsRow: { paddingHorizontal: 12, paddingTop: 10, gap: 9 },
-  adCard: { width: 225, height: 102, backgroundColor: C.paper, borderWidth: 1, borderColor: C.line, borderRadius: 12, padding: 8, flexDirection: 'row' },
-  adImage: { width: 83, height: 84, borderRadius: 9 },
-  adBody: { flex: 1, paddingLeft: 9 },
-  adTitle: { color: C.maroon, fontSize: 11.5, fontWeight: '900' },
-  adMeta: { color: '#687080', fontSize: 9, marginTop: 4 },
-  adFooter: { marginTop: 'auto', flexDirection: 'row', alignItems: 'center', gap: 5 },
-  tag: { backgroundColor: '#FFF0F1', borderRadius: 6, paddingHorizontal: 5, paddingVertical: 3 },
-  tagText: { color: C.maroon, fontSize: 7.5, fontWeight: '700' },
-  adCity: { color: '#667085', fontSize: 7.5, flexShrink: 1 },
+  adsTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  adsTitle: { color: C.maroon, fontSize: 15, fontWeight: '900' },
+  adsSubtitle: { color: C.muted, fontSize: 9, marginTop: 1 },
+  postAdButton: { marginHorizontal: 12, marginTop: 7, alignSelf: 'flex-end', flexDirection: 'row', alignItems: 'center', gap: 7, backgroundColor: C.maroon, borderRadius: 10, paddingLeft: 13, paddingRight: 7, paddingVertical: 8 },
+  postAdButtonText: { color: '#FFF', fontSize: 10.5, fontWeight: '900' },
+  freeBadge: { backgroundColor: '#16B96A', borderRadius: 6, paddingHorizontal: 6, paddingVertical: 3 },
+  freeBadgeText: { color: '#FFF', fontSize: 8, fontWeight: '900' },
+  adsRow: { paddingHorizontal: 12, paddingTop: 7, gap: 8 },
+  adCard: { width: 205, height: 83, borderRadius: 10, backgroundColor: '#FFF', borderWidth: 1, borderColor: '#ECE3D7', flexDirection: 'row', overflow: 'hidden', elevation: 1 },
+  adImage: { width: 77, height: '100%', backgroundColor: '#EBDCC9' },
+  adBody: { flex: 1, padding: 7 },
+  adTitle: { color: C.maroon, fontSize: 10.5, fontWeight: '900' },
+  adMeta: { color: C.muted, fontSize: 8, marginTop: 2 },
+  adFooter: { marginTop: 'auto', flexDirection: 'row', alignItems: 'center', gap: 4 },
+  tag: { backgroundColor: '#FFF0F1', borderRadius: 5, paddingHorizontal: 5, paddingVertical: 2 },
+  tagText: { color: '#D1293D', fontSize: 7 },
+  adCity: { color: '#637083', fontSize: 6.8, flexShrink: 1 },
 
-  closingBanner: { marginHorizontal: 12, marginTop: 15, minHeight: 94, borderRadius: 16, borderWidth: 1, borderColor: '#ECD6B3', backgroundColor: '#FFF9EF', flexDirection: 'row', alignItems: 'center', padding: 12 },
-  closingIcon: { width: 50, alignItems: 'center' },
-  closingCopy: { flex: 1, paddingHorizontal: 8 },
-  closingQuote: { color: C.maroon, fontSize: 13, fontWeight: '900', textAlign: 'center', lineHeight: 18 },
-  goldLine: { height: 1, backgroundColor: C.gold, marginTop: 8, marginHorizontal: 20 },
-  joinButton: { backgroundColor: '#FFF0DE', borderRadius: 14, paddingHorizontal: 12, paddingVertical: 10, minWidth: 112 },
-  joinTitle: { color: C.maroonDark, fontSize: 10, fontWeight: '900', textAlign: 'center' },
-  joinSub: { color: C.maroon, fontSize: 7.5, marginTop: 2, textAlign: 'center' },
+  closingBanner: { marginHorizontal: 12, marginTop: 14, borderRadius: 12, borderWidth: 1, borderColor: '#E9D1AE', backgroundColor: '#FFF6E8', minHeight: 76, padding: 10, flexDirection: 'row', alignItems: 'center' },
+  closingIcon: { width: 44, alignItems: 'center' },
+  closingCopy: { flex: 1, paddingHorizontal: 5 },
+  closingQuote: { color: C.maroon, fontSize: 11.5, lineHeight: 16, fontWeight: '900' },
+  goldLine: { width: 95, height: 1, backgroundColor: C.gold, marginTop: 7 },
+  joinButton: { minWidth: 105, borderRadius: 18, backgroundColor: '#FFEBD5', paddingHorizontal: 9, paddingVertical: 8 },
+  joinTitle: { color: C.maroon, fontSize: 8.5, fontWeight: '900' },
+  joinSub: { color: C.maroon, fontSize: 6.7, marginTop: 1 },
 });
