@@ -1,6 +1,7 @@
 import cors from '@fastify/cors';
 import Fastify from 'fastify';
 import { corsOrigins } from './config/env.js';
+import { authRoutes } from './modules/auth/routes.js';
 import { healthRoutes } from './modules/health/routes.js';
 import { authPlugin } from './plugins/auth.js';
 
@@ -23,6 +24,7 @@ export async function buildApp() {
 
   await app.register(authPlugin);
   await app.register(healthRoutes, { prefix: '/api/v1' });
+  await app.register(authRoutes, { prefix: '/api/v1/auth' });
 
   app.get('/', async () => ({
     name: 'Damodar Prayas API',
