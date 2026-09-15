@@ -81,6 +81,13 @@ enum ContactRequestStatus {
   WITHDRAWN
 }
 
+enum CommitteeStatus {
+  PENDING
+  PUBLISHED
+  REJECTED
+  ARCHIVED
+}
+
 enum PostCategory {
   NEWS
   EVENT
@@ -403,6 +410,9 @@ model Committee {
   address          String?
   phone            String?
   email            String?
+  status           CommitteeStatus         @default(PENDING)
+  rejectionReason  String?
+  publishedAt      DateTime?
   isActive         Boolean                @default(true)
   sortOrder        Int                    @default(0)
   createdAt        DateTime               @default(now())
@@ -413,6 +423,7 @@ model Committee {
   members          CommitteeMember[]
 
   @@index([isActive, sortOrder])
+  @@index([status, isActive, sortOrder])
   @@index([state, district, city])
 }
 

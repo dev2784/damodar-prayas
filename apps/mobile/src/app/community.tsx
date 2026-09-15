@@ -146,8 +146,18 @@ export default function CommunityScreen() {
         ListHeaderComponent={
           <View>
             <View style={styles.header}>
-              <Text style={styles.eyebrow}>समाज अपडेट्स</Text>
-              <Text style={styles.title}>समाचार एवं कार्यक्रम</Text>
+              <View style={styles.headerTop}>
+                <View style={styles.headerCopy}>
+                  <Text style={styles.eyebrow}>समाज अपडेट्स</Text>
+                  <Text style={styles.title}>समाचार एवं कार्यक्रम</Text>
+                </View>
+                <Pressable
+                  style={styles.addButton}
+                  onPress={() => router.push({ pathname: '/community-submit', params: { category: activeCategory } })}>
+                  <SymbolView name={{ ios: 'plus', android: 'add', web: 'add' }} tintColor="#FFFFFF" size={16} />
+                  <Text style={styles.addButtonText}>जोड़ें</Text>
+                </Pressable>
+              </View>
               <Text style={styles.subtitle}>
                 समाज की नई खबरें, घोषणाएँ और आने वाले कार्यक्रम एक ही जगह।
               </Text>
@@ -228,6 +238,10 @@ const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: C.bg },
   listContent: { paddingHorizontal: 14, paddingTop: 10, paddingBottom: 110, flexGrow: 1 },
   header: { paddingHorizontal: 2, paddingTop: 5, paddingBottom: 13 },
+  headerTop: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  headerCopy: { flex: 1 },
+  addButton: { minHeight: 36, borderRadius: 11, paddingHorizontal: 11, backgroundColor: C.maroon, flexDirection: 'row', alignItems: 'center', gap: 4 },
+  addButtonText: { color: '#FFFFFF', fontSize: 9.5, fontWeight: '900' },
   eyebrow: { color: C.gold, fontSize: 10, fontWeight: '900', letterSpacing: 1.1 },
   title: { color: C.maroonDark, fontSize: 27, lineHeight: 34, fontWeight: '900', marginTop: 3 },
   subtitle: { color: C.muted, fontSize: 11, lineHeight: 17, marginTop: 4, maxWidth: 360 },

@@ -83,8 +83,16 @@ export default function SamitiScreen() {
         }
         ListHeaderComponent={
           <View style={styles.header}>
-            <Text style={styles.eyebrow}>समाज संगठन</Text>
-            <Text style={styles.title}>समितियाँ</Text>
+            <View style={styles.headerTop}>
+              <View style={styles.headerCopy}>
+                <Text style={styles.eyebrow}>समाज संगठन</Text>
+                <Text style={styles.title}>समितियाँ</Text>
+              </View>
+              <Pressable style={styles.addButton} onPress={() => router.push('/samiti-submit')}>
+                <SymbolView name={{ ios: 'plus', android: 'add', web: 'add' }} tintColor="#FFFFFF" size={16} />
+                <Text style={styles.addButtonText}>समिति जोड़ें</Text>
+              </Pressable>
+            </View>
             <Text style={styles.subtitle}>
               शहर और राज्य के अनुसार समाज की सक्रिय समितियाँ देखें। पदाधिकारी जोड़ना वैकल्पिक है।
             </Text>
@@ -127,6 +135,10 @@ const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: C.bg },
   listContent: { paddingHorizontal: 14, paddingTop: 10, paddingBottom: 110, flexGrow: 1 },
   header: { paddingHorizontal: 2, paddingTop: 5, paddingBottom: 14 },
+  headerTop: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  headerCopy: { flex: 1 },
+  addButton: { minHeight: 36, borderRadius: 11, paddingHorizontal: 11, backgroundColor: C.maroon, flexDirection: 'row', alignItems: 'center', gap: 4 },
+  addButtonText: { color: '#FFFFFF', fontSize: 9.5, fontWeight: '900' },
   eyebrow: { color: C.gold, fontSize: 10, fontWeight: '900', letterSpacing: 1.1 },
   title: { color: C.maroonDark, fontSize: 28, lineHeight: 35, fontWeight: '900', marginTop: 3 },
   subtitle: { color: C.muted, fontSize: 11, lineHeight: 17, marginTop: 4, maxWidth: 370 },

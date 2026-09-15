@@ -60,6 +60,29 @@ export async function mediaRoutes(app: FastifyInstance) {
       .send(media.buffer);
   });
 
+  app.post('/content/banner', async (request, reply) => {
+    const userId = await getActiveUserId(request, reply);
+    if (!userId) return;
+
+    const file = await request.file({ limits: { fileSize: 5 * 1024 * 1024, files: 1 } });
+    if (!file) return reply.code(400).send({ error: 'FILE_REQUIRED' });
+    if (!PHOTO_MIME_TYPES.has(file.mimetype)) {
+      return reply.code(400).send({ error: 'UNSUPPORTED_BANNER_TYPE' });
+    }
+
+    const buffer = await file.toBuffer();
+    const uploaded = await uploadMedia({
+      buffer,
+      mimeType: file.mimetype,
+      fileName: file.filename,
+      folder: `damodar-prayas/content/${userId}/banners`,
+      kind: 'content-banner',
+      publicBaseUrl: getPublicBaseUrl(request),
+    });
+
+    return reply.code(201).send({ media: uploaded });
+  });
+
   app.post('/matrimony/:profileId/photos', async (request, reply) => {
     const userId = await getActiveUserId(request, reply);
     if (!userId) return;
