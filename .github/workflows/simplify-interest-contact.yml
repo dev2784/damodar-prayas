@@ -24,6 +24,16 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
+      - name: Repair patch-script escaping
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('scripts/simplify-interest-contact.mjs')
+          s = p.read_text()
+          s = s.replace("query: ({ profileId, ownerProfileId }) => \\\\`/contacts/\\\\${profileId}?ownerProfileId=\\\\${encodeURIComponent(ownerProfileId)}\\\\`,", "query: ({ profileId, ownerProfileId }) => '/contacts/' + profileId + '?ownerProfileId=' + encodeURIComponent(ownerProfileId),")
+          s = s.replace("query: (id) => ({ url: \\\\`/notifications/\\\\${id}/read\\\\`, method: 'PATCH' }),", "query: (id) => ({ url: '/notifications/' + id + '/read', method: 'PATCH' }),")
+          p.write_text(s)
+          PY
       - name: Apply simplified contact flow
         run: node scripts/simplify-interest-contact.mjs
       - name: Verify
