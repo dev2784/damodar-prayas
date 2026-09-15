@@ -136,7 +136,7 @@ function ProfileDetails({ profile }: { profile: MatrimonyProfile }) {
       ? acceptedInterest.receiverProfileId
       : acceptedInterest.senderProfileId
     : '';
-  const { data: contactData, isFetching: contactLoading } = useGetProfileContactQuery(
+  const { data: contactData, isFetching: contactLoading, isError: contactError } = useGetProfileContactQuery(
     { profileId: profile.id, ownerProfileId: contactOwnerProfileId },
     { skip: !accessToken || !acceptedInterest || !contactOwnerProfileId },
   );
@@ -233,7 +233,9 @@ function ProfileDetails({ profile }: { profile: MatrimonyProfile }) {
               <Text style={styles.contactHint}>रुचि स्वीकार होने के बाद यह जानकारी दोनों पक्षों को दिखाई देती है।</Text>
             </View>
           </View>
-          {contactLoading ? <ActivityIndicator color={C.green} size="small" /> : (
+          {contactLoading ? <ActivityIndicator color={C.green} size="small" /> : contactError ? (
+            <Text style={styles.contactEmpty}>संपर्क विवरण लोड नहीं हो पाया। कृपया प्रोफाइल दोबारा खोलें।</Text>
+          ) : (
             <View style={styles.contactDetails}>
               {contactData?.contactPhone ? <Text style={styles.contactValue}>📞 {contactData.contactPhone}</Text> : null}
               {contactData?.contactEmail ? <Text style={styles.contactValue}>✉️ {contactData.contactEmail}</Text> : null}
@@ -288,10 +290,12 @@ function ProfileDetails({ profile }: { profile: MatrimonyProfile }) {
         </Section>
       ) : null}
 
-      <View style={styles.privacyNote}>
-        <SymbolView name={{ ios: 'lock.shield.fill', android: 'privacy_tip', web: 'privacy_tip' }} tintColor={C.green} size={20} />
-        <Text style={styles.privacyText}>संपर्क जानकारी निजी रहती है। आगे contact request flow के बाद ही दिखाई जाएगी।</Text>
-      </View>
+      {!acceptedInterest ? (
+        <View style={styles.privacyNote}>
+          <SymbolView name={{ ios: 'lock.shield.fill', android: 'privacy_tip', web: 'privacy_tip' }} tintColor={C.green} size={20} />
+          <Text style={styles.privacyText}>संपर्क जानकारी निजी रहती है। रुचि स्वीकार होने के बाद ही दिखाई जाएगी।</Text>
+        </View>
+      ) : null}
     </ScrollView>
   );
 }
