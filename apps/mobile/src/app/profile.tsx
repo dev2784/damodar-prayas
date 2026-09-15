@@ -92,7 +92,7 @@ export default function ProfileScreen() {
             ? router.push('/my-matrimony')
             : router.push({ pathname: '/auth', params: { mode: 'register', next: '/my-matrimony' } })}>
           <View style={styles.menuIcon}>
-            <SymbolView name={{ ios: 'person.crop.circle.badge.heart', android: 'person_search', web: 'person_search' }} tintColor={C.maroon} size={27} />
+            <SymbolView name={{ ios: 'heart.circle.fill', android: 'person_search', web: 'person_search' }} tintColor={C.maroon} size={27} />
           </View>
           <View style={styles.menuCopy}>
             <Text style={styles.menuTitle}>मेरे मैट्रिमोनी प्रोफाइल</Text>
