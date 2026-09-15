@@ -9,6 +9,7 @@ const optionalText = z.string().trim().min(1).max(500).optional().nullable();
 const optionalLongText = z.string().trim().min(1).max(3000).optional().nullable();
 const optionalEmail = z.string().trim().email().max(320).optional().nullable();
 const optionalPhone = z.string().trim().regex(/^\+?[1-9]\d{7,14}$/).optional().nullable();
+const optionalPostalCode = z.string().trim().min(3).max(20).optional().nullable();
 
 const dateOfBirthSchema = z.coerce.date().refine((date) => {
   const today = new Date();
@@ -46,6 +47,7 @@ export const createMatrimonyProfileSchema = z.object({
   state: optionalText,
   country: z.string().trim().min(1).max(100).default('India'),
   fullAddress: optionalLongText,
+  postalCode: optionalPostalCode,
   nativePlace: optionalText,
   fatherName: optionalText,
   fatherOccupation: optionalText,
