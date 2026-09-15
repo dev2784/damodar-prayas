@@ -1,5 +1,6 @@
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
+import { Image as ExpoImage } from 'expo-image';
 import { SymbolView } from 'expo-symbols';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -15,12 +16,9 @@ const C = {
   green: '#0BAA67',
 };
 
-const GURU_BANNER = {
-  uri: 'https://raw.githubusercontent.com/dev2784/damodar-prayas/main/apps/mobile/assets/images/home-guru-banner.jpg',
-} as const;
-const MATRIMONY_BANNER = {
-  uri: 'https://raw.githubusercontent.com/dev2784/damodar-prayas/main/apps/mobile/assets/images/home-matrimony-banner.jpg',
-} as const;
+const GURU_BANNER = require('../../assets/images/home-guru-banner.jpg');
+const MATRIMONY_BANNER = require('../../assets/images/home-matrimony-banner.jpg');
+const HEADER_LOGO = require('../../assets/images/home-guru-banner.jpg');
 
 const quickActions = [
   { icon: { ios: 'person.3.fill', android: 'groups', web: 'groups' } as const, title: 'समाज सदस्य', sub: '(Directory)', tint: '#B70F22', bg: '#FFF2F3' },
@@ -64,7 +62,9 @@ export default function HomeScreen() {
     <SafeAreaView style={styles.safeArea} edges={['top']}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         <View style={styles.header}>
-          <View style={styles.brandMark}><Text style={styles.brandMarkText}>द</Text></View>
+          <View style={styles.brandMark}>
+            <ExpoImage source={HEADER_LOGO} style={styles.brandLogoImage} contentFit="cover" contentPosition="left center" />
+          </View>
           <View style={styles.brandCopy}>
             <Text style={styles.brand}>दामोदर प्रयास</Text>
             <Text style={styles.brandSub}>दर्जी समाज समुदाय एवं वैवाहिक</Text>
@@ -74,7 +74,7 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.heroBannerWrap}>
-          <Image source={GURU_BANNER} style={styles.heroBannerImage} resizeMode="cover" />
+          <ExpoImage source={GURU_BANNER} style={styles.heroBannerImage} contentFit="cover" transition={0} />
         </View>
 
         <Pressable
@@ -82,7 +82,7 @@ export default function HomeScreen() {
           onPress={() => router.push('/matrimony')}
           accessibilityRole="button"
           accessibilityLabel="मैट्रिमोनी देखें">
-          <Image source={MATRIMONY_BANNER} style={styles.matrimonyBannerImage} resizeMode="cover" />
+          <ExpoImage source={MATRIMONY_BANNER} style={styles.matrimonyBannerImage} contentFit="cover" transition={0} />
         </Pressable>
 
         <View style={styles.quickRow}>
@@ -170,8 +170,8 @@ const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: C.bg },
   content: { paddingBottom: 22 },
   header: { minHeight: 70, paddingHorizontal: 14, flexDirection: 'row', alignItems: 'center', backgroundColor: C.paper, borderBottomWidth: 1, borderBottomColor: '#F2E6D8' },
-  brandMark: { width: 48, height: 48, borderRadius: 24, backgroundColor: '#FFF1CF', borderWidth: 1, borderColor: '#E9C267', alignItems: 'center', justifyContent: 'center' },
-  brandMarkText: { color: C.maroon, fontSize: 25, fontWeight: '900' },
+  brandMark: { width: 48, height: 48, borderRadius: 24, backgroundColor: '#FFF1CF', borderWidth: 1, borderColor: '#E9C267', overflow: 'hidden' },
+  brandLogoImage: { width: '100%', height: '100%' },
   brandCopy: { flex: 1, marginLeft: 10 },
   brand: { color: C.maroonDark, fontSize: 21, fontWeight: '900' },
   brandSub: { color: C.maroon, fontSize: 9.5, marginTop: 2, fontWeight: '700' },
