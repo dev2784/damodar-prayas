@@ -17,6 +17,12 @@ export type Interest = {
 export type IncomingInterest = Interest & { senderProfile: MatrimonyProfile };
 export type OutgoingInterest = Interest & { receiverProfile: MatrimonyProfile };
 
+export type ProfileContact = {
+  profileId: string;
+  contactPhone: string | null;
+  contactEmail: string | null;
+};
+
 export type ShortlistItem = {
   id: string;
   userId: string;
@@ -56,6 +62,9 @@ export const interactionApi = api.injectEndpoints({
       query: () => '/interests/outgoing',
       providesTags: [{ type: 'Interests', id: 'OUTGOING' }],
     }),
+    getProfileContact: builder.query<ProfileContact, { profileId: string; ownerProfileId: string }>({
+      query: ({ profileId, ownerProfileId }) => '/contacts/' + profileId + '?ownerProfileId=' + encodeURIComponent(ownerProfileId),
+    }),
     sendInterest: builder.mutation<
       { interest: Interest },
       { senderProfileId: string; receiverProfileId: string; message?: string | null }
@@ -88,6 +97,7 @@ export const {
   useRemoveShortlistMutation,
   useGetIncomingInterestsQuery,
   useGetOutgoingInterestsQuery,
+  useGetProfileContactQuery,
   useSendInterestMutation,
   useRespondInterestMutation,
 } = interactionApi;

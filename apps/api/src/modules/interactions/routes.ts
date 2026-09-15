@@ -199,9 +199,11 @@ export async function interactionRoutes(app: FastifyInstance) {
         data: {
           userId: interest.senderProfile.createdById,
           type: status === 'ACCEPTED' ? 'INTEREST_ACCEPTED' : 'INTEREST_REJECTED',
-          titleHi: status === 'ACCEPTED' ? 'इंटरेस्ट स्वीकार हुआ' : 'इंटरेस्ट अस्वीकार हुआ',
+          titleHi: status === 'ACCEPTED' ? 'रुचि स्वीकार हुई' : 'रुचि अस्वीकार हुई',
           titleEn: status === 'ACCEPTED' ? 'Interest accepted' : 'Interest rejected',
-          data: { interestId: interest.id },
+          bodyHi: status === 'ACCEPTED' ? 'आपकी रुचि स्वीकार हो गई है। अब प्रोफाइल पर संपर्क विवरण उपलब्ध है।' : 'आपकी रुचि स्वीकार नहीं हुई।',
+          bodyEn: status === 'ACCEPTED' ? 'Your interest was accepted. Contact details are now available on the profile.' : 'Your interest was not accepted.',
+          data: { interestId: interest.id, senderProfileId: interest.senderProfileId, receiverProfileId: interest.receiverProfileId },
         },
       });
 
@@ -391,7 +393,7 @@ export async function interactionRoutes(app: FastifyInstance) {
       return reply.code(404).send({ error: 'PROFILE_NOT_FOUND' });
     }
 
-    const acceptedContact = await prisma.contactRequest.findFirst({
+    const acceptedInterest = await prisma.interest.findFirst({
       where: {
         status: 'ACCEPTED',
         OR: [
@@ -402,8 +404,8 @@ export async function interactionRoutes(app: FastifyInstance) {
       select: { id: true },
     });
 
-    if (!acceptedContact) {
-      return reply.code(403).send({ error: 'CONTACT_ACCESS_NOT_GRANTED' });
+    if (!acceptedInterest) {
+      return reply.code(403).send({ error: 'ACCEPTED_INTEREST_REQUIRED' });
     }
 
     return {

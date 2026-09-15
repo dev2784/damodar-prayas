@@ -4,7 +4,7 @@ import { Image as ExpoImage } from 'expo-image';
 import { SymbolView } from 'expo-symbols';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { useGetIncomingInterestsQuery } from '@/services/interaction-api';
+import { useGetUnreadNotificationCountQuery } from '@/services/notification-api';
 import { useAppSelector } from '@/store/hooks';
 
 const C = {
@@ -62,8 +62,8 @@ function TrustStat({ icon, value, label, color = C.maroon }: { icon: { ios: any;
 
 export default function HomeScreen() {
   const accessToken = useAppSelector((state) => state.auth.accessToken);
-  const { data: incomingInterests } = useGetIncomingInterestsQuery(undefined, { skip: !accessToken });
-  const pendingInterestCount = incomingInterests?.items.filter((item) => item.status === 'PENDING').length ?? 0;
+  const { data: notificationCount } = useGetUnreadNotificationCountQuery(undefined, { skip: !accessToken });
+  const unreadNotificationCount = notificationCount?.unreadCount ?? 0;
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
@@ -78,13 +78,13 @@ export default function HomeScreen() {
           </View>
           <Pressable
             style={styles.headerIcon}
-            onPress={() => router.push('/matrimony-interests')}
+            onPress={() => router.push('/notifications')}
             accessibilityRole="button"
-            accessibilityLabel={pendingInterestCount > 0 ? `${pendingInterestCount} matrimony interest requests` : 'Notifications'}>
+            accessibilityLabel={unreadNotificationCount > 0 ? `${unreadNotificationCount} matrimony interest requests` : 'Notifications'}>
             <Icon name={{ ios: 'bell.fill', android: 'notifications', web: 'notifications' }} color={C.maroon} size={21} />
-            {pendingInterestCount > 0 ? (
+            {unreadNotificationCount > 0 ? (
               <View style={styles.notificationBadge}>
-                <Text style={styles.notificationBadgeText}>{pendingInterestCount > 99 ? '99+' : pendingInterestCount}</Text>
+                <Text style={styles.notificationBadgeText}>{unreadNotificationCount > 99 ? '99+' : unreadNotificationCount}</Text>
               </View>
             ) : null}
           </Pressable>

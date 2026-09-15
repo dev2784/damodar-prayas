@@ -6,7 +6,7 @@ import { SymbolView } from 'expo-symbols';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { type MatrimonyProfile, useGetMatrimonyProfileQuery, useGetMyMatrimonyProfilesQuery } from '@/services/matrimony-api';
-import { useAddShortlistMutation, useGetOutgoingInterestsQuery, useGetShortlistsQuery, useRemoveShortlistMutation, useSendInterestMutation } from '@/services/interaction-api';
+import { useAddShortlistMutation, useGetIncomingInterestsQuery, useGetOutgoingInterestsQuery, useGetProfileContactQuery, useGetShortlistsQuery, useRemoveShortlistMutation, useSendInterestMutation } from '@/services/interaction-api';
 import { useAppSelector } from '@/store/hooks';
 
 const C = {
@@ -120,6 +120,7 @@ function ProfileDetails({ profile }: { profile: MatrimonyProfile }) {
   const { data: mineData } = useGetMyMatrimonyProfilesQuery(undefined, { skip: !accessToken });
   const { data: shortlistData } = useGetShortlistsQuery(undefined, { skip: !accessToken });
   const { data: outgoingData } = useGetOutgoingInterestsQuery(undefined, { skip: !accessToken });
+  const { data: incomingData } = useGetIncomingInterestsQuery(undefined, { skip: !accessToken });
   const [addShortlist, { isLoading: addingShortlist }] = useAddShortlistMutation();
   const [removeShortlist, { isLoading: removingShortlist }] = useRemoveShortlistMutation();
   const [sendInterest, { isLoading: sendingInterest }] = useSendInterestMutation();
@@ -127,6 +128,18 @@ function ProfileDetails({ profile }: { profile: MatrimonyProfile }) {
   const isOwnProfile = mineData?.items.some((item) => item.id === profile.id) ?? false;
   const shortlisted = shortlistData?.items.some((item) => item.matrimonyProfileId === profile.id) ?? false;
   const outgoingInterest = outgoingData?.items.find((item) => item.receiverProfileId === profile.id);
+  const incomingInterest = incomingData?.items.find((item) => item.senderProfileId === profile.id);
+  const relationshipInterest = outgoingInterest ?? incomingInterest;
+  const acceptedInterest = relationshipInterest?.status === 'ACCEPTED' ? relationshipInterest : undefined;
+  const contactOwnerProfileId = acceptedInterest
+    ? acceptedInterest.senderProfileId === profile.id
+      ? acceptedInterest.receiverProfileId
+      : acceptedInterest.senderProfileId
+    : '';
+  const { data: contactData, isFetching: contactLoading } = useGetProfileContactQuery(
+    { profileId: profile.id, ownerProfileId: contactOwnerProfileId },
+    { skip: !accessToken || !acceptedInterest || !contactOwnerProfileId },
+  );
 
   async function toggleShortlist() {
     if (!accessToken) { router.push('/profile'); return; }
@@ -154,8 +167,8 @@ function ProfileDetails({ profile }: { profile: MatrimonyProfile }) {
   function startInterest() {
     if (!accessToken) { router.push('/profile'); return; }
     if (isOwnProfile) return;
-    if (outgoingInterest) {
-      Alert.alert('Interest status', outgoingInterest.status === 'PENDING' ? 'आपका interest अभी pending है।' : outgoingInterest.status === 'ACCEPTED' ? 'आपका interest स्वीकार हो चुका है।' : 'यह interest पहले ही respond हो चुका है।');
+    if (relationshipInterest) {
+      Alert.alert('Interest status', relationshipInterest.status === 'PENDING' ? 'यह interest अभी pending है।' : relationshipInterest.status === 'ACCEPTED' ? 'रुचि स्वीकार हो चुकी है। संपर्क विवरण नीचे उपलब्ध है।' : 'यह interest पहले ही respond हो चुका है।');
       return;
     }
     if (approvedOwnProfiles.length === 0) {
@@ -202,7 +215,7 @@ function ProfileDetails({ profile }: { profile: MatrimonyProfile }) {
         <View style={styles.actionsCard}>
           <Pressable disabled={sendingInterest} style={[styles.primaryAction, sendingInterest && styles.disabledAction]} onPress={startInterest}>
             {sendingInterest ? <ActivityIndicator color="#FFFFFF" size="small" /> : <SymbolView name={{ ios: 'heart.fill', android: 'favorite', web: 'favorite' }} tintColor="#FFFFFF" size={18} />}
-            <Text style={styles.primaryActionText}>{outgoingInterest ? (outgoingInterest.status === 'PENDING' ? 'रुचि Pending' : outgoingInterest.status === 'ACCEPTED' ? 'रुचि Accepted' : 'रुचि भेजी गई') : 'रुचि भेजें'}</Text>
+            <Text style={styles.primaryActionText}>{relationshipInterest ? (relationshipInterest.status === 'PENDING' ? 'रुचि Pending' : relationshipInterest.status === 'ACCEPTED' ? 'रुचि Accepted' : 'रुचि भेजी गई') : 'रुचि भेजें'}</Text>
           </Pressable>
           <Pressable disabled={addingShortlist || removingShortlist} style={styles.secondaryAction} onPress={() => void toggleShortlist()}>
             <SymbolView name={{ ios: shortlisted ? 'bookmark.fill' : 'bookmark', android: shortlisted ? 'bookmark' : 'bookmark_border', web: shortlisted ? 'bookmark' : 'bookmark_border' }} tintColor={C.maroon} size={18} />
@@ -210,6 +223,25 @@ function ProfileDetails({ profile }: { profile: MatrimonyProfile }) {
           </Pressable>
         </View>
       )}
+
+      {acceptedInterest ? (
+        <View style={styles.contactCard}>
+          <View style={styles.contactHeader}>
+            <SymbolView name={{ ios: 'phone.circle.fill', android: 'contact_phone', web: 'contact_phone' }} tintColor={C.green} size={22} />
+            <View style={{ flex: 1 }}>
+              <Text style={styles.contactTitle}>संपर्क विवरण उपलब्ध</Text>
+              <Text style={styles.contactHint}>रुचि स्वीकार होने के बाद यह जानकारी दोनों पक्षों को दिखाई देती है।</Text>
+            </View>
+          </View>
+          {contactLoading ? <ActivityIndicator color={C.green} size="small" /> : (
+            <View style={styles.contactDetails}>
+              {contactData?.contactPhone ? <Text style={styles.contactValue}>📞 {contactData.contactPhone}</Text> : null}
+              {contactData?.contactEmail ? <Text style={styles.contactValue}>✉️ {contactData.contactEmail}</Text> : null}
+              {!contactData?.contactPhone && !contactData?.contactEmail ? <Text style={styles.contactEmpty}>इस प्रोफाइल ने अभी संपर्क जानकारी नहीं जोड़ी है।</Text> : null}
+            </View>
+          )}
+        </View>
+      ) : null}
 
       <Modal visible={senderModalOpen} transparent animationType="fade" onRequestClose={() => setSenderModalOpen(false)}>
         <View style={styles.modalOverlay}>
@@ -284,6 +316,13 @@ const styles = StyleSheet.create({
   location: { color: C.muted, fontSize: 11, marginTop: 4 },
   headline: { color: C.maroon, fontSize: 11, fontWeight: '800', marginTop: 5 },
 
+  contactCard: { marginTop: 12, padding: 14, borderRadius: 16, backgroundColor: '#F1FAF5', borderWidth: 1, borderColor: '#CDE9D9', gap: 10 },
+  contactHeader: { flexDirection: 'row', alignItems: 'center', gap: 9 },
+  contactTitle: { color: '#155C43', fontSize: 13, fontWeight: '900' },
+  contactHint: { color: '#4D7464', fontSize: 9.5, lineHeight: 14, marginTop: 2 },
+  contactDetails: { gap: 7, paddingTop: 2 },
+  contactValue: { color: C.text, fontSize: 12, fontWeight: '800' },
+  contactEmpty: { color: C.muted, fontSize: 10.5 },
   actionsCard: { flexDirection: 'row', gap: 9, marginTop: 11 },
   disabledAction: { opacity: 0.65 },
   ownProfileNote: { marginTop: 11, borderRadius: 12, backgroundColor: '#F4ECE6', padding: 12, alignItems: 'center' },

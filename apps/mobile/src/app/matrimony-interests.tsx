@@ -28,7 +28,7 @@ export default function MatrimonyInterestsScreen() {
   async function respondTo(id: string, action: 'ACCEPT' | 'REJECT') {
     try {
       await respond({ id, action }).unwrap();
-      Alert.alert(action === 'ACCEPT' ? 'रुचि स्वीकार हुई' : 'रुचि अस्वीकार हुई');
+      Alert.alert(action === 'ACCEPT' ? 'रुचि स्वीकार हुई' : 'रुचि अस्वीकार हुई', action === 'ACCEPT' ? 'अब दोनों प्रोफाइल पर संपर्क विवरण उपलब्ध है।' : undefined);
     } catch {
       Alert.alert('अपडेट नहीं हुआ', 'कृपया दोबारा कोशिश करें।');
     }
