@@ -1,3 +1,5 @@
+import { File, UploadType } from 'expo-file-system';
+
 import { API_BASE_URL, api } from '@/services/api';
 import type { MatrimonyKundali, MatrimonyOwnerPhoto } from '@/services/matrimony-api';
 
@@ -24,29 +26,32 @@ export async function uploadMatrimonyMediaFile({
   file: UploadableFile;
   accessToken: string;
 }) {
-  const formData = new FormData();
-  formData.append('file', {
-    uri: file.uri,
-    name: file.name,
-    type: file.type,
-  } as unknown as Blob);
-
   const suffix = kind === 'photo' ? 'photos' : 'kundali';
-  let response: Response;
+  const selectedFile = new File(file.uri);
+
+  let result: Awaited<ReturnType<File['upload']>>;
   try {
-    response = await fetch(`${API_BASE_URL}/media/matrimony/${profileId}/${suffix}`, {
-      method: 'POST',
+    result = await selectedFile.upload(`${API_BASE_URL}/media/matrimony/${profileId}/${suffix}`, {
+      httpMethod: 'POST',
+      uploadType: UploadType.MULTIPART,
+      fieldName: 'file',
+      mimeType: file.type,
       headers: {
         authorization: `Bearer ${accessToken}`,
         accept: 'application/json',
       },
-      body: formData,
     });
   } catch (error) {
-    throw { status: 'FETCH_ERROR', data: { error: 'UPLOAD_NETWORK_ERROR', message: String(error) } };
+    throw {
+      status: 'FETCH_ERROR',
+      data: {
+        error: 'UPLOAD_NETWORK_ERROR',
+        message: error instanceof Error ? error.message : String(error),
+      },
+    };
   }
 
-  const raw = await response.text();
+  const raw = result.body ?? '';
   let data: unknown = {};
   if (raw) {
     try {
@@ -56,8 +61,8 @@ export async function uploadMatrimonyMediaFile({
     }
   }
 
-  if (!response.ok) {
-    throw { status: response.status, data };
+  if (result.status < 200 || result.status >= 300) {
+    throw { status: result.status, data };
   }
 
   return data;
