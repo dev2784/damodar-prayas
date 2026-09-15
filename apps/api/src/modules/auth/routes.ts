@@ -1,10 +1,33 @@
+import { promisify } from 'node:util';
+import { randomBytes, scrypt, timingSafeEqual } from 'node:crypto';
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
 import { env } from '../../config/env.js';
 import { prisma } from '../../lib/prisma.js';
 
+const scryptAsync = promisify(scrypt);
+
 const phoneSchema = z.object({
   phone: z.string().regex(/^\+?[1-9]\d{7,14}$/, 'Use a valid phone number with country code'),
+});
+
+const passwordSchema = z
+  .string()
+  .min(8, 'Password must be at least 8 characters')
+  .max(128, 'Password is too long')
+  .refine((value) => /[A-Za-z]/.test(value) && /\d/.test(value), {
+    message: 'Password must contain at least one letter and one number',
+  });
+
+const registerSchema = phoneSchema.extend({
+  firstName: z.string().trim().min(1).max(80),
+  lastName: z.string().trim().min(1).max(80),
+  email: z.string().trim().email().max(320).optional().nullable(),
+  password: passwordSchema,
+});
+
+const loginSchema = phoneSchema.extend({
+  password: z.string().min(1).max(128),
 });
 
 const verifySchema = phoneSchema.extend({
@@ -17,7 +40,205 @@ const devLoginSchema = phoneSchema.extend({
   role: z.enum(['MEMBER', 'ADMIN']).default('MEMBER'),
 });
 
+type CredentialRow = {
+  passwordHash: string;
+};
+
+function normalizePhone(phone: string) {
+  return phone.trim();
+}
+
+async function hashPassword(password: string) {
+  const salt = randomBytes(16).toString('hex');
+  const derivedKey = (await scryptAsync(password, salt, 64)) as Buffer;
+  return `scrypt$${salt}$${derivedKey.toString('hex')}`;
+}
+
+async function verifyPassword(password: string, stored: string) {
+  const [algorithm, salt, hashHex] = stored.split('$');
+  if (algorithm !== 'scrypt' || !salt || !hashHex) return false;
+
+  const storedBuffer = Buffer.from(hashHex, 'hex');
+  if (!storedBuffer.length) return false;
+
+  const derivedKey = (await scryptAsync(password, salt, storedBuffer.length)) as Buffer;
+  if (derivedKey.length !== storedBuffer.length) return false;
+  return timingSafeEqual(derivedKey, storedBuffer);
+}
+
+async function getCredential(userId: string) {
+  const rows = await prisma.$queryRaw<CredentialRow[]>`
+    SELECT "passwordHash"
+    FROM "UserCredential"
+    WHERE "userId" = ${userId}
+    LIMIT 1
+  `;
+  return rows[0] ?? null;
+}
+
+function userSelect() {
+  return {
+    id: true,
+    phone: true,
+    email: true,
+    firstName: true,
+    lastName: true,
+    preferredLanguage: true,
+    role: true,
+    isPhoneVerified: true,
+  } as const;
+}
+
+async function signAccessToken(reply: Parameters<FastifyInstance['post']>[1] extends never ? never : any, user: { id: string; role: string }) {
+  return reply.jwtSign(
+    {
+      sub: user.id,
+      role: user.role,
+    },
+    { expiresIn: '7d' },
+  );
+}
+
 export async function authRoutes(app: FastifyInstance) {
+  app.post('/register', async (request, reply) => {
+    const parsed = registerSchema.safeParse(request.body);
+
+    if (!parsed.success) {
+      return reply.code(400).send({
+        error: 'INVALID_REGISTRATION',
+        message: parsed.error.issues[0]?.message ?? 'Invalid registration details',
+        fields: parsed.error.flatten().fieldErrors,
+      });
+    }
+
+    const phone = normalizePhone(parsed.data.phone);
+    const passwordHash = await hashPassword(parsed.data.password);
+
+    const existing = await prisma.user.findUnique({
+      where: { phone },
+      select: { id: true, deletedAt: true },
+    });
+
+    if (existing) {
+      const credential = await getCredential(existing.id);
+      if (credential) {
+        return reply.code(409).send({
+          error: 'ACCOUNT_EXISTS',
+          message: 'An account already exists for this mobile number.',
+        });
+      }
+
+      if (existing.deletedAt) {
+        return reply.code(409).send({
+          error: 'ACCOUNT_UNAVAILABLE',
+          message: 'This account is not available for registration.',
+        });
+      }
+    }
+
+    const user = await prisma.$transaction(async (tx) => {
+      const account = existing
+        ? await tx.user.update({
+            where: { id: existing.id },
+            data: {
+              firstName: parsed.data.firstName,
+              lastName: parsed.data.lastName,
+              email: parsed.data.email ?? null,
+              isActive: true,
+              lastLoginAt: new Date(),
+            },
+            select: userSelect(),
+          })
+        : await tx.user.create({
+            data: {
+              phone,
+              firstName: parsed.data.firstName,
+              lastName: parsed.data.lastName,
+              email: parsed.data.email ?? null,
+              role: 'MEMBER',
+              isPhoneVerified: false,
+              isActive: true,
+              lastLoginAt: new Date(),
+            },
+            select: userSelect(),
+          });
+
+      await tx.$executeRaw`
+        INSERT INTO "UserCredential" ("userId", "passwordHash", "updatedAt")
+        VALUES (${account.id}, ${passwordHash}, CURRENT_TIMESTAMP)
+      `;
+
+      return account;
+    });
+
+    const accessToken = await reply.jwtSign(
+      { sub: user.id, role: user.role },
+      { expiresIn: '7d' },
+    );
+
+    return reply.code(201).send({
+      accessToken,
+      tokenType: 'Bearer',
+      expiresIn: '7d',
+      user,
+    });
+  });
+
+  app.post('/login', async (request, reply) => {
+    const parsed = loginSchema.safeParse(request.body);
+
+    if (!parsed.success) {
+      return reply.code(400).send({
+        error: 'INVALID_LOGIN',
+        message: parsed.error.issues[0]?.message ?? 'Invalid login request',
+      });
+    }
+
+    const phone = normalizePhone(parsed.data.phone);
+    const user = await prisma.user.findFirst({
+      where: {
+        phone,
+        isActive: true,
+        deletedAt: null,
+      },
+      select: userSelect(),
+    });
+
+    if (!user) {
+      return reply.code(401).send({
+        error: 'INVALID_CREDENTIALS',
+        message: 'Mobile number or password is incorrect.',
+      });
+    }
+
+    const credential = await getCredential(user.id);
+    const valid = credential ? await verifyPassword(parsed.data.password, credential.passwordHash) : false;
+
+    if (!valid) {
+      return reply.code(401).send({
+        error: 'INVALID_CREDENTIALS',
+        message: 'Mobile number or password is incorrect.',
+      });
+    }
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { lastLoginAt: new Date() },
+    });
+
+    const accessToken = await reply.jwtSign(
+      { sub: user.id, role: user.role },
+      { expiresIn: '7d' },
+    );
+
+    return {
+      accessToken,
+      tokenType: 'Bearer',
+      expiresIn: '7d',
+      user,
+    };
+  });
+
   app.post('/request-otp', async (request, reply) => {
     const parsed = phoneSchema.safeParse(request.body);
 
@@ -30,7 +251,7 @@ export async function authRoutes(app: FastifyInstance) {
 
     return reply.code(501).send({
       error: 'OTP_PROVIDER_NOT_CONFIGURED',
-      message: 'OTP provider will be connected before authentication is enabled.',
+      message: 'OTP provider will be connected later as an additional sign-in method.',
     });
   });
 
@@ -85,15 +306,7 @@ export async function authRoutes(app: FastifyInstance) {
         isPhoneVerified: true,
         lastLoginAt: new Date(),
       },
-      select: {
-        id: true,
-        phone: true,
-        firstName: true,
-        lastName: true,
-        preferredLanguage: true,
-        role: true,
-        isPhoneVerified: true,
-      },
+      select: userSelect(),
     });
 
     const accessToken = await reply.jwtSign(
@@ -122,14 +335,7 @@ export async function authRoutes(app: FastifyInstance) {
           deletedAt: null,
         },
         select: {
-          id: true,
-          phone: true,
-          email: true,
-          firstName: true,
-          lastName: true,
-          preferredLanguage: true,
-          role: true,
-          isPhoneVerified: true,
+          ...userSelect(),
           createdAt: true,
         },
       });
