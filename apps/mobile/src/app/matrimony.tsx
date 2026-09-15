@@ -164,19 +164,16 @@ export default function MatrimonyScreen() {
   }), [category, gender, page, selectedAge.maxAge, selectedAge.minAge]);
 
   const { data, isLoading, isFetching, isError, refetch } = useGetMatrimonyProfilesQuery(queryArgs);
-  const { data: mineData } = useGetMyMatrimonyProfilesQuery(undefined, { skip: !accessToken });
-  const resumableProfile = mineData?.items.find((item) => item.status === 'DRAFT' || item.status === 'REJECTED');
+  const { data: mineData, isLoading: isLoadingMine } = useGetMyMatrimonyProfilesQuery(undefined, { skip: !accessToken });
+  const hasAnyOwnProfile = (mineData?.items.length ?? 0) > 0;
 
   function openOwnerFlow() {
     if (!accessToken) {
       router.push({ pathname: '/auth', params: { mode: 'register', next: '/matrimony-form' } });
       return;
     }
-    if (resumableProfile) {
-      router.push({ pathname: '/matrimony-form', params: { id: resumableProfile.id } });
-      return;
-    }
-    if ((mineData?.items.length ?? 0) > 0) {
+    if (isLoadingMine) return;
+    if (hasAnyOwnProfile) {
       router.push('/my-matrimony');
       return;
     }
@@ -231,11 +228,11 @@ export default function MatrimonyScreen() {
                 <SymbolView name={{ ios: 'heart.circle.fill', android: 'favorite', web: 'favorite' }} tintColor={C.maroon} size={26} />
               </View>
               <View style={styles.createProfileCopy}>
-                <Text style={styles.createProfileTitle}>{resumableProfile ? 'अपना ड्राफ्ट जारी रखें' : 'अपना मैट्रिमोनी प्रोफाइल बनाएँ'}</Text>
-                <Text style={styles.createProfileText}>{resumableProfile ? 'आपका अधूरा ड्राफ्ट मिल गया है। वहीं से आगे जारी रखें।' : 'अपनी जानकारी भरें, ड्राफ्ट सेव करें और तैयार होने पर समीक्षा के लिए भेजें।'}</Text>
+                <Text style={styles.createProfileTitle}>{hasAnyOwnProfile ? 'अपने मैट्रिमोनी प्रोफाइल देखें' : 'अपना मैट्रिमोनी प्रोफाइल बनाएँ'}</Text>
+                <Text style={styles.createProfileText}>{hasAnyOwnProfile ? 'आपके अकाउंट में पहले से प्रोफाइल मौजूद है। उसे देखने, एडिट करने या स्थिति जांचने के लिए आगे बढ़ें।' : 'अपनी जानकारी भरें, ड्राफ्ट सेव करें और तैयार होने पर समीक्षा के लिए भेजें।'}</Text>
               </View>
               <View style={styles.createProfileButton}>
-                <Text style={styles.createProfileButtonText}>{resumableProfile ? 'जारी रखें' : 'बनाएँ'}</Text>
+                <Text style={styles.createProfileButtonText}>{isLoadingMine ? 'जाँच रहे हैं' : hasAnyOwnProfile ? 'मेरे प्रोफाइल' : 'बनाएँ'}</Text>
                 <SymbolView name={{ ios: 'chevron.right', android: 'chevron_right', web: 'chevron_right' }} tintColor="#FFFFFF" size={14} />
               </View>
             </Pressable>
