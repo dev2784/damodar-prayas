@@ -10,6 +10,7 @@ const sourceSchema = resolve(workspaceRoot, 'prisma/schema.prisma');
 const localSchema = resolve(apiRoot, '.render-schema.prisma');
 const prismaCli = resolve(workspaceRoot, 'node_modules/prisma/build/index.js');
 
+console.log(`Generating Prisma Client from API workspace: ${apiRoot}`);
 copyFileSync(sourceSchema, localSchema);
 
 try {
