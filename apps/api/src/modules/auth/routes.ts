@@ -89,16 +89,6 @@ function userSelect() {
   } as const;
 }
 
-async function signAccessToken(reply: Parameters<FastifyInstance['post']>[1] extends never ? never : any, user: { id: string; role: string }) {
-  return reply.jwtSign(
-    {
-      sub: user.id,
-      role: user.role,
-    },
-    { expiresIn: '7d' },
-  );
-}
-
 export async function authRoutes(app: FastifyInstance) {
   app.post('/register', async (request, reply) => {
     const parsed = registerSchema.safeParse(request.body);
