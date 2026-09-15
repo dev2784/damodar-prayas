@@ -26,58 +26,7 @@ jobs:
 
       - name: Patch matrimony list
         run: |
-          python - <<'PY'
-          from pathlib import Path
-          p = Path('apps/api/src/modules/matrimony/routes.ts')
-          s = p.read_text()
-
-          marker = "function yearsAgo(years: number) {"
-          helper = """async function getOptionalActiveUserId(request: FastifyRequest) {
-  const authorization = request.headers.authorization;
-  if (!authorization?.startsWith('Bearer ')) return null;
-
-  try {
-    const payload = await request.jwtVerify<{ sub: string }>();
-    const user = await prisma.user.findFirst({
-      where: { id: payload.sub, isActive: true, deletedAt: null },
-      select: { id: true },
-    });
-    return user?.id ?? null;
-  } catch {
-    return null;
-  }
-}
-
-"""
-          if helper not in s:
-              if marker not in s:
-                  raise SystemExit('yearsAgo marker not found')
-              s = s.replace(marker, helper + marker, 1)
-
-          route_marker = """  app.get('/', async (request, reply) => {
-    const parsed = matrimonyListQuerySchema.safeParse(request.query);"""
-          route_replacement = """  app.get('/', async (request, reply) => {
-    const activeUserId = await getOptionalActiveUserId(request);
-    const parsed = matrimonyListQuerySchema.safeParse(request.query);"""
-          if route_replacement not in s:
-              if route_marker not in s:
-                  raise SystemExit('public list route marker not found')
-              s = s.replace(route_marker, route_replacement, 1)
-
-          where_marker = """    const where: Prisma.MatrimonyProfileWhereInput = {
-      status: 'APPROVED',
-      deletedAt: null,"""
-          where_replacement = """    const where: Prisma.MatrimonyProfileWhereInput = {
-      status: 'APPROVED',
-      deletedAt: null,
-      ...(activeUserId ? { createdById: { not: activeUserId } } : {}),"""
-          if where_replacement not in s:
-              if where_marker not in s:
-                  raise SystemExit('where marker not found')
-              s = s.replace(where_marker, where_replacement, 1)
-
-          p.write_text(s)
-          PY
+          python -c "from pathlib import Path; p=Path('apps/api/src/modules/matrimony/routes.ts'); s=p.read_text(); marker='function yearsAgo(years: number) {'; helper='async function getOptionalActiveUserId(request: FastifyRequest) {\\n  const authorization = request.headers.authorization;\\n  if (!authorization?.startsWith(\\'Bearer \\')) return null;\\n\\n  try {\\n    const payload = await request.jwtVerify<{ sub: string }>();\\n    const user = await prisma.user.findFirst({\\n      where: { id: payload.sub, isActive: true, deletedAt: null },\\n      select: { id: true },\\n    });\\n    return user?.id ?? null;\\n  } catch {\\n    return null;\\n  }\\n}\\n\\n'; s=s if helper in s else s.replace(marker, helper+marker, 1); old='  app.get(\\'/\\', async (request, reply) => {\\n    const parsed = matrimonyListQuerySchema.safeParse(request.query);'; new='  app.get(\\'/\\', async (request, reply) => {\\n    const activeUserId = await getOptionalActiveUserId(request);\\n    const parsed = matrimonyListQuerySchema.safeParse(request.query);'; s=s if new in s else s.replace(old,new,1); oldw='    const where: Prisma.MatrimonyProfileWhereInput = {\\n      status: \\'APPROVED\\',\\n      deletedAt: null,'; neww='    const where: Prisma.MatrimonyProfileWhereInput = {\\n      status: \\'APPROVED\\',\\n      deletedAt: null,\\n      ...(activeUserId ? { createdById: { not: activeUserId } } : {}),'; s=s if neww in s else s.replace(oldw,neww,1); p.write_text(s)"
 
       - name: Verify
         run: |
