@@ -1,0 +1,38 @@
+name: Hotfix delete request null safety
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/hotfix-delete-request-undefined.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Apply null-safe delete request access
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('apps/mobile/src/app/my-matrimony.tsx')
+          text = p.read_text()
+          old = "const activeDeleteRequest = profile.deleteRequests[0];"
+          new = "const activeDeleteRequest = profile.deleteRequests?.[0];"
+          if old not in text:
+              raise SystemExit('Target line not found')
+          p.write_text(text.replace(old, new, 1))
+          PY
+      - name: Commit hotfix
+        run: |
+          rm .github/workflows/hotfix-delete-request-undefined.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/mobile/src/app/my-matrimony.tsx .github/workflows/hotfix-delete-request-undefined.yml
+          git commit -m "fix(mobile): handle missing delete requests safely"
+          git push origin main
