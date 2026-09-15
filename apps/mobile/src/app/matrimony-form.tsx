@@ -10,6 +10,7 @@ import {
   View,
 } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
+import DateTimePicker from '@expo/ui/community/datetime-picker';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -298,6 +299,66 @@ function Field({
         autoCapitalize={autoCapitalize}
         style={[styles.input, multiline && styles.multilineInput]}
       />
+    </View>
+  );
+}
+
+function parseFormDate(value: string) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value.trim());
+  if (!match) return null;
+  const date = new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function formatFormDate(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function DateField({
+  label,
+  value,
+  onChange,
+  maximumDate,
+  required,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  maximumDate?: Date;
+  required?: boolean;
+}) {
+  const [showPicker, setShowPicker] = useState(false);
+  const selectedDate = parseFormDate(value) ?? maximumDate ?? new Date();
+
+  return (
+    <View style={styles.fieldBlock}>
+      <Text style={styles.fieldLabel}>
+        {label}{required ? <Text style={styles.required}> *</Text> : null}
+      </Text>
+      <Pressable style={[styles.input, styles.dateInput]} onPress={() => setShowPicker(true)}>
+        <Text style={value ? styles.dateText : styles.datePlaceholder}>
+          {value ? selectedDate.toLocaleDateString('hi-IN') : 'जन्मतिथि चुनें'}
+        </Text>
+        <SymbolView name={{ ios: 'calendar', android: 'calendar_month', web: 'calendar_month' }} tintColor={C.maroon} size={19} />
+      </Pressable>
+      {showPicker ? (
+        <DateTimePicker
+          value={selectedDate}
+          onValueChange={(_event, date) => {
+            setShowPicker(false);
+            onChange(formatFormDate(date));
+          }}
+          onDismiss={() => setShowPicker(false)}
+          mode="date"
+          presentation="dialog"
+          display="default"
+          maximumDate={maximumDate}
+          accentColor={C.maroon}
+        />
+      ) : null}
     </View>
   );
 }
@@ -681,7 +742,7 @@ export default function MatrimonyFormScreen() {
             <View style={styles.col}><Field label="उपनाम" value={form.lastName} onChangeText={(value) => update('lastName', value)} required /></View>
           </View>
           <Field label="मध्य नाम" value={form.middleName} onChangeText={(value) => update('middleName', value)} />
-          <Field label="जन्मतिथि" value={form.dateOfBirth} onChangeText={(value) => update('dateOfBirth', value)} placeholder="YYYY-MM-DD" keyboardType="numeric" required />
+          <DateField label="जन्मतिथि" value={form.dateOfBirth} onChange={(value) => update('dateOfBirth', value)} maximumDate={new Date(new Date().getFullYear() - 18, new Date().getMonth(), new Date().getDate())} required />
           <Field label="ऊंचाई (सेमी)" value={form.heightCm} onChangeText={(value) => update('heightCm', value)} placeholder="जैसे 170" keyboardType="numeric" />
 
           <Text style={styles.inlineLabel}>वैवाहिक स्थिति</Text>
@@ -891,6 +952,9 @@ const styles = StyleSheet.create({
   fieldLabel: { color: C.text, fontSize: 10.5, fontWeight: '900' },
   required: { color: C.red },
   input: { minHeight: 43, borderWidth: 1, borderColor: '#DFD2C6', borderRadius: 12, backgroundColor: '#FFFCF8', paddingHorizontal: 12, color: C.text, fontSize: 12 },
+  dateInput: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 10 },
+  dateText: { color: C.text, fontSize: 12, fontWeight: '700' },
+  datePlaceholder: { color: '#A69A94', fontSize: 12 },
   multilineInput: { minHeight: 88, paddingTop: 11, textAlignVertical: 'top' },
   twoCol: { flexDirection: 'row', gap: 9 },
   col: { flex: 1, minWidth: 0 },

@@ -1,6 +1,6 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { prisma } from '../../lib/prisma.js';
-import { deleteMedia, uploadMedia } from '../../lib/media-storage.js';
+import { deleteMedia, readLocalMedia, uploadMedia } from '../../lib/media-storage.js';
 
 const PHOTO_MIME_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
 const KUNDALI_MIME_TYPES = new Set(['application/pdf', 'image/jpeg', 'image/png', 'image/webp']);
@@ -37,7 +37,29 @@ async function getOwnedProfile(profileId: string, userId: string) {
   });
 }
 
+function firstHeader(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+function getPublicBaseUrl(request: FastifyRequest) {
+  const protocol = firstHeader(request.headers['x-forwarded-proto']) ?? request.protocol ?? 'http';
+  const host = firstHeader(request.headers['x-forwarded-host']) ?? request.headers.host;
+  if (!host) throw new Error('Request host is unavailable.');
+  return `${protocol}://${host}`;
+}
+
 export async function mediaRoutes(app: FastifyInstance) {
+  app.get('/files/:storageKey', async (request, reply) => {
+    const { storageKey } = request.params as { storageKey: string };
+    const media = await readLocalMedia(storageKey);
+    if (!media) return reply.code(404).send({ error: 'MEDIA_NOT_FOUND' });
+
+    return reply
+      .header('Content-Type', media.mimeType)
+      .header('Cache-Control', 'private, max-age=3600')
+      .send(media.buffer);
+  });
+
   app.post('/matrimony/:profileId/photos', async (request, reply) => {
     const userId = await getActiveUserId(request, reply);
     if (!userId) return;
@@ -68,6 +90,7 @@ export async function mediaRoutes(app: FastifyInstance) {
       fileName: file.filename,
       folder: `damodar-prayas/matrimony/${profileId}/photos`,
       kind: 'profile-photo',
+      publicBaseUrl: getPublicBaseUrl(request),
     });
 
     const existingPrimary = await prisma.profilePhoto.findFirst({
@@ -177,6 +200,7 @@ export async function mediaRoutes(app: FastifyInstance) {
       fileName: file.filename,
       folder: `damodar-prayas/matrimony/${profileId}/kundali`,
       kind: 'kundali',
+      publicBaseUrl: getPublicBaseUrl(request),
     });
 
     const kundali = await prisma.kundali.create({
