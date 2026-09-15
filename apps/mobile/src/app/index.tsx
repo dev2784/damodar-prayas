@@ -15,8 +15,12 @@ const C = {
   green: '#0BAA67',
 };
 
-const GURU_BANNER = require('../../assets/images/home-guru-banner.jpg');
-const MATRIMONY_BANNER = require('../../assets/images/home-matrimony-banner.jpg');
+const GURU_BANNER = {
+  uri: 'https://raw.githubusercontent.com/dev2784/damodar-prayas/main/apps/mobile/assets/images/home-guru-banner.jpg',
+} as const;
+const MATRIMONY_BANNER = {
+  uri: 'https://raw.githubusercontent.com/dev2784/damodar-prayas/main/apps/mobile/assets/images/home-matrimony-banner.jpg',
+} as const;
 
 const quickActions = [
   { icon: { ios: 'person.3.fill', android: 'groups', web: 'groups' } as const, title: 'समाज सदस्य', sub: '(Directory)', tint: '#B70F22', bg: '#FFF2F3' },
