@@ -34,6 +34,18 @@ export type CommunityPost = {
   translations: CommunityPostTranslation[];
 };
 
+export type CommunityPostSubmission = {
+  category: CommunityPostCategory;
+  bannerUrl?: string | null;
+  bannerStorageKey?: string | null;
+  contactName?: string | null;
+  contactPhone?: string | null;
+  location?: string | null;
+  eventDate?: string | null;
+  expiresAt?: string | null;
+  translations: CommunityPostTranslation[];
+};
+
 type CommunityPostList = {
   items: CommunityPost[];
   pagination: {
@@ -61,8 +73,19 @@ export const communityApi = api.injectEndpoints({
       query: (id) => `/posts/${id}`,
       providesTags: (_result, _error, id) => [{ type: 'Posts', id }],
     }),
+    submitCommunityPost: builder.mutation<{ post: CommunityPost }, CommunityPostSubmission>({
+      query: (body) => ({
+        url: '/posts/submit',
+        method: 'POST',
+        body,
+      }),
+    }),
   }),
   overrideExisting: false,
 });
 
-export const { useGetCommunityPostsQuery, useGetCommunityPostQuery } = communityApi;
+export const {
+  useGetCommunityPostsQuery,
+  useGetCommunityPostQuery,
+  useSubmitCommunityPostMutation,
+} = communityApi;
