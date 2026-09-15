@@ -4,6 +4,7 @@ import { Image as ExpoImage } from 'expo-image';
 import { SymbolView } from 'expo-symbols';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { useGetCommunityPostsQuery } from '@/services/community-api';
 import { useGetUnreadNotificationCountQuery } from '@/services/notification-api';
 import { useAppSelector } from '@/store/hooks';
 
@@ -38,12 +39,6 @@ const profiles = [
   { name: 'Amit, 30', city: 'Jabalpur, MP', work: 'MBA • Business', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=500&q=85' },
 ];
 
-const ads = [
-  { title: 'Tailor & Boutique', meta: 'कपड़े सिलाई • डिजाइन', tag: 'Service', city: 'Jabalpur, MP', image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=500&q=85' },
-  { title: 'Wedding Services', meta: 'कैटरिंग • डेकोरेशन', tag: 'Event', city: 'Indore, MP', image: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=500&q=85' },
-  { title: 'Garments & Fabric', meta: 'कपड़ा • होलसेल', tag: 'Business', city: 'Bhopal, MP', image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=500&q=85' },
-];
-
 function Icon({ name, color, size = 24 }: { name: { ios: any; android: any; web: any }; color: string; size?: number }) {
   return <SymbolView name={name} tintColor={color} size={size} />;
 }
@@ -67,7 +62,12 @@ export default function HomeScreen() {
     pollingInterval: 10000,
     refetchOnMountOrArgChange: true,
   });
+  const { data: advertisementData, isLoading: isAdvertisementsLoading } = useGetCommunityPostsQuery({
+    category: 'ADVERTISEMENT',
+    language: 'HI',
+  });
   const unreadNotificationCount = notificationCount?.unreadCount ?? 0;
+  const approvedAds = advertisementData?.items ?? [];
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
@@ -156,12 +156,16 @@ export default function HomeScreen() {
               <Text style={styles.adsTitle}>समाज व्यापार</Text>
               <Text style={styles.adsEnglish}>Free Classifieds</Text>
             </View>
-            <Text style={styles.viewAll}>View All →</Text>
+            <Pressable onPress={() => router.push('/community')}>
+              <Text style={styles.viewAll}>View All →</Text>
+            </Pressable>
           </View>
 
           <View style={styles.adsActionRow}>
             <Text style={styles.adsSubtitle}>अपने व्यवसाय, सेवा या ऑफर का विज्ञापन डालें</Text>
-            <Pressable style={styles.postAdButton}>
+            <Pressable
+              style={styles.postAdButton}
+              onPress={() => router.push({ pathname: '/community-submit', params: { category: 'ADVERTISEMENT' } })}>
               <Text style={styles.postAdButtonText}>+ विज्ञापन डालें</Text>
               <View style={styles.freeBadge}><Text style={styles.freeBadgeText}>FREE</Text></View>
             </Pressable>
@@ -169,16 +173,40 @@ export default function HomeScreen() {
         </View>
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.adsRow}>
-          {ads.map((ad) => (
-            <View key={ad.title} style={styles.adCard}>
-              <Image source={{ uri: ad.image }} style={styles.adImage} />
-              <View style={styles.adBody}>
-                <Text style={styles.adTitle}>{ad.title}</Text>
-                <Text style={styles.adMeta}>{ad.meta}</Text>
-                <View style={styles.adFooter}><View style={styles.tag}><Text style={styles.tagText}>{ad.tag}</Text></View><Text style={styles.adCity}>📍 {ad.city}</Text></View>
+          {approvedAds.map((ad) => {
+            const translation = ad.translations.find((item) => item.language === 'HI') ?? ad.translations[0];
+            return (
+              <Pressable
+                key={ad.id}
+                style={styles.adCard}
+                onPress={() => router.push({ pathname: '/community-post', params: { id: ad.id } })}>
+                {ad.bannerUrl ? (
+                  <Image source={{ uri: ad.bannerUrl }} style={styles.adImage} />
+                ) : (
+                  <View style={styles.adImagePlaceholder}>
+                    <Icon name={{ ios: 'megaphone.fill', android: 'campaign', web: 'campaign' }} color={C.green} size={24} />
+                  </View>
+                )}
+                <View style={styles.adBody}>
+                  <Text style={styles.adTitle} numberOfLines={1}>{translation?.title ?? 'समाज विज्ञापन'}</Text>
+                  <Text style={styles.adMeta} numberOfLines={2}>{translation?.details ?? 'विवरण उपलब्ध नहीं'}</Text>
+                  <View style={styles.adFooter}>
+                    <View style={styles.tag}><Text style={styles.tagText}>Approved</Text></View>
+                    <Text style={styles.adCity} numberOfLines={1}>📍 {ad.location ?? 'समाज'}</Text>
+                  </View>
+                </View>
+              </Pressable>
+            );
+          })}
+          {!isAdvertisementsLoading && approvedAds.length === 0 ? (
+            <View style={styles.emptyAdCard}>
+              <Icon name={{ ios: 'checkmark.shield.fill', android: 'verified_user', web: 'verified_user' }} color={C.gold} size={24} />
+              <View style={styles.emptyAdCopy}>
+                <Text style={styles.emptyAdTitle}>अभी कोई स्वीकृत विज्ञापन नहीं</Text>
+                <Text style={styles.emptyAdText}>Admin approval के बाद विज्ञापन यहाँ दिखाई देंगे।</Text>
               </View>
             </View>
-          ))}
+          ) : null}
         </ScrollView>
 
         <View style={styles.closingBanner}>
@@ -251,6 +279,7 @@ const styles = StyleSheet.create({
   adsRow: { paddingHorizontal: 12, paddingTop: 8, gap: 8 },
   adCard: { width: 205, height: 83, borderRadius: 10, backgroundColor: '#FFF', borderWidth: 1, borderColor: '#ECE3D7', flexDirection: 'row', overflow: 'hidden', elevation: 1 },
   adImage: { width: 77, height: '100%', backgroundColor: '#EBDCC9' },
+  adImagePlaceholder: { width: 77, height: '100%', backgroundColor: '#EAF7EF', alignItems: 'center', justifyContent: 'center' },
   adBody: { flex: 1, padding: 7 },
   adTitle: { color: C.maroon, fontSize: 10.5, fontWeight: '900' },
   adMeta: { color: C.muted, fontSize: 8, marginTop: 2 },
@@ -258,6 +287,10 @@ const styles = StyleSheet.create({
   tag: { backgroundColor: '#FFF0F1', borderRadius: 5, paddingHorizontal: 5, paddingVertical: 2 },
   tagText: { color: '#D1293D', fontSize: 7 },
   adCity: { color: '#637083', fontSize: 6.8, flexShrink: 1 },
+  emptyAdCard: { width: 260, minHeight: 83, borderRadius: 10, borderWidth: 1, borderColor: '#ECE3D7', backgroundColor: '#FFFDF9', flexDirection: 'row', alignItems: 'center', gap: 9, paddingHorizontal: 12 },
+  emptyAdCopy: { flex: 1 },
+  emptyAdTitle: { color: C.maroon, fontSize: 10.5, fontWeight: '900' },
+  emptyAdText: { color: C.muted, fontSize: 8, lineHeight: 12, marginTop: 2 },
 
   closingBanner: { marginHorizontal: 12, marginTop: 14, borderRadius: 12, borderWidth: 1, borderColor: '#E9D1AE', backgroundColor: '#FFF6E8', minHeight: 76, padding: 10, flexDirection: 'row', alignItems: 'center' },
   closingIcon: { width: 44, alignItems: 'center' },
