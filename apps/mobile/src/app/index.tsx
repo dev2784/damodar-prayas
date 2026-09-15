@@ -15,7 +15,8 @@ const C = {
   green: '#0BAA67',
 };
 
-const TOP_REFERENCE = require('../../assets/images/home-top-reference.jpg');
+const GURU_BANNER = require('../../assets/images/home-guru-banner.jpg');
+const MATRIMONY_BANNER = require('../../assets/images/home-matrimony-banner.jpg');
 
 const quickActions = [
   { icon: { ios: 'person.3.fill', android: 'groups', web: 'groups' } as const, title: 'समाज सदस्य', sub: '(Directory)', tint: '#B70F22', bg: '#FFF2F3' },
@@ -61,17 +62,24 @@ export default function HomeScreen() {
         <View style={styles.header}>
           <View style={styles.brandMark}><Text style={styles.brandMarkText}>द</Text></View>
           <View style={styles.brandCopy}>
-            <Text style={styles.brand}>Damodar Prayas</Text>
-            <Text style={styles.brandSub}>Darzi Samaj Community & Matrimony</Text>
+            <Text style={styles.brand}>दामोदर प्रयास</Text>
+            <Text style={styles.brandSub}>दर्जी समाज समुदाय एवं वैवाहिक</Text>
           </View>
           <View style={styles.headerIcon}><Icon name={{ ios: 'bell.fill', android: 'notifications', web: 'notifications' }} color={C.maroon} size={21} /></View>
           <View style={styles.headerIcon}><Icon name={{ ios: 'gearshape.fill', android: 'settings', web: 'settings' }} color={C.maroon} size={21} /></View>
         </View>
 
-        <View style={styles.referenceWrap}>
-          <Image source={TOP_REFERENCE} style={styles.referenceImage} resizeMode="stretch" />
-          <Pressable style={styles.matrimonyHotspot} onPress={() => router.push('/matrimony')} accessibilityRole="button" accessibilityLabel="Explore Matrimony" />
+        <View style={styles.heroBannerWrap}>
+          <Image source={GURU_BANNER} style={styles.heroBannerImage} resizeMode="cover" />
         </View>
+
+        <Pressable
+          style={styles.matrimonyBannerWrap}
+          onPress={() => router.push('/matrimony')}
+          accessibilityRole="button"
+          accessibilityLabel="मैट्रिमोनी देखें">
+          <Image source={MATRIMONY_BANNER} style={styles.matrimonyBannerImage} resizeMode="cover" />
+        </Pressable>
 
         <View style={styles.quickRow}>
           {quickActions.map((item) => (
@@ -112,18 +120,24 @@ export default function HomeScreen() {
           ))}
         </ScrollView>
 
-        <View style={styles.adsHeader}>
-          <View style={styles.adsTitleWrap}>
-            <View style={styles.adsTitleRow}><Icon name={{ ios: 'megaphone.fill', android: 'campaign', web: 'campaign' }} color={C.maroon} size={24} /><Text style={styles.adsTitle}>समाज व्यापार - Free Classifieds</Text></View>
-            <Text style={styles.adsSubtitle}>अपने व्यवसाय, सेवा या ऑफर का विज्ञापन डालें</Text>
+        <View style={styles.adsSectionHeader}>
+          <View style={styles.adsHeaderTop}>
+            <View style={styles.adsTitleRow}>
+              <Icon name={{ ios: 'megaphone.fill', android: 'campaign', web: 'campaign' }} color={C.maroon} size={24} />
+              <Text style={styles.adsTitle}>समाज व्यापार</Text>
+              <Text style={styles.adsEnglish}>Free Classifieds</Text>
+            </View>
+            <Text style={styles.viewAll}>View All →</Text>
           </View>
-          <Text style={styles.viewAll}>View All →</Text>
-        </View>
 
-        <Pressable style={styles.postAdButton}>
-          <Text style={styles.postAdButtonText}>+ अपना विज्ञापन डालें</Text>
-          <View style={styles.freeBadge}><Text style={styles.freeBadgeText}>FREE</Text></View>
-        </Pressable>
+          <View style={styles.adsActionRow}>
+            <Text style={styles.adsSubtitle}>अपने व्यवसाय, सेवा या ऑफर का विज्ञापन डालें</Text>
+            <Pressable style={styles.postAdButton}>
+              <Text style={styles.postAdButtonText}>+ विज्ञापन डालें</Text>
+              <View style={styles.freeBadge}><Text style={styles.freeBadgeText}>FREE</Text></View>
+            </Pressable>
+          </View>
+        </View>
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.adsRow}>
           {ads.map((ad) => (
@@ -155,13 +169,14 @@ const styles = StyleSheet.create({
   brandMark: { width: 48, height: 48, borderRadius: 24, backgroundColor: '#FFF1CF', borderWidth: 1, borderColor: '#E9C267', alignItems: 'center', justifyContent: 'center' },
   brandMarkText: { color: C.maroon, fontSize: 25, fontWeight: '900' },
   brandCopy: { flex: 1, marginLeft: 10 },
-  brand: { color: C.maroonDark, fontSize: 20, fontWeight: '900', fontFamily: 'serif' },
-  brandSub: { color: C.maroon, fontSize: 9.5, marginTop: 1, fontWeight: '700' },
+  brand: { color: C.maroonDark, fontSize: 21, fontWeight: '900' },
+  brandSub: { color: C.maroon, fontSize: 9.5, marginTop: 2, fontWeight: '700' },
   headerIcon: { width: 37, height: 37, borderRadius: 18.5, backgroundColor: '#FFF7E8', alignItems: 'center', justifyContent: 'center', marginLeft: 5 },
 
-  referenceWrap: { marginHorizontal: 12, marginTop: 10, borderRadius: 15, overflow: 'hidden', backgroundColor: '#FFF4D8', elevation: 1 },
-  referenceImage: { width: '100%', aspectRatio: 480 / 225 },
-  matrimonyHotspot: { position: 'absolute', right: '1.5%', top: '69%', width: '29%', height: '18%' },
+  heroBannerWrap: { marginHorizontal: 12, marginTop: 10, borderRadius: 15, overflow: 'hidden', backgroundColor: '#FFF4D8', elevation: 1 },
+  heroBannerImage: { width: '100%', aspectRatio: 480 / 146 },
+  matrimonyBannerWrap: { marginHorizontal: 12, marginTop: 7, borderRadius: 13, overflow: 'hidden', backgroundColor: '#FFF1F1', elevation: 1 },
+  matrimonyBannerImage: { width: '100%', aspectRatio: 480 / 74 },
 
   quickRow: { flexDirection: 'row', gap: 5, paddingHorizontal: 12, marginTop: 7 },
   quickCard: { flex: 1, minWidth: 0, height: 90, borderRadius: 11, borderWidth: 1, borderColor: '#E8DCCF', paddingHorizontal: 3, alignItems: 'center', justifyContent: 'center' },
@@ -191,16 +206,18 @@ const styles = StyleSheet.create({
   profileName: { color: C.text, fontSize: 11.5, fontWeight: '900', flex: 1 },
   profileMeta: { color: C.muted, fontSize: 8.5, lineHeight: 12, marginTop: 1 },
 
-  adsHeader: { marginTop: 16, paddingHorizontal: 13, flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between', gap: 8 },
-  adsTitleWrap: { flex: 1 },
-  adsTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  adsSectionHeader: { marginTop: 16, paddingHorizontal: 13 },
+  adsHeaderTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
+  adsTitleRow: { flex: 1, minWidth: 0, flexDirection: 'row', alignItems: 'center', gap: 5 },
   adsTitle: { color: C.maroon, fontSize: 15, fontWeight: '900' },
-  adsSubtitle: { color: C.muted, fontSize: 9, marginTop: 1 },
-  postAdButton: { marginHorizontal: 12, marginTop: 7, alignSelf: 'flex-end', flexDirection: 'row', alignItems: 'center', gap: 7, backgroundColor: C.maroon, borderRadius: 10, paddingLeft: 13, paddingRight: 7, paddingVertical: 8 },
-  postAdButtonText: { color: '#FFF', fontSize: 10.5, fontWeight: '900' },
-  freeBadge: { backgroundColor: '#16B96A', borderRadius: 6, paddingHorizontal: 6, paddingVertical: 3 },
-  freeBadgeText: { color: '#FFF', fontSize: 8, fontWeight: '900' },
-  adsRow: { paddingHorizontal: 12, paddingTop: 7, gap: 8 },
+  adsEnglish: { color: C.maroon, fontSize: 10.5, fontWeight: '800', fontStyle: 'italic', flexShrink: 1 },
+  adsActionRow: { marginTop: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
+  adsSubtitle: { flex: 1, color: C.muted, fontSize: 8.5, lineHeight: 12 },
+  postAdButton: { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: C.maroon, borderRadius: 9, paddingLeft: 10, paddingRight: 5, paddingVertical: 7 },
+  postAdButtonText: { color: '#FFF', fontSize: 9, fontWeight: '900' },
+  freeBadge: { backgroundColor: '#16B96A', borderRadius: 5, paddingHorizontal: 5, paddingVertical: 2.5 },
+  freeBadgeText: { color: '#FFF', fontSize: 7, fontWeight: '900' },
+  adsRow: { paddingHorizontal: 12, paddingTop: 8, gap: 8 },
   adCard: { width: 205, height: 83, borderRadius: 10, backgroundColor: '#FFF', borderWidth: 1, borderColor: '#ECE3D7', flexDirection: 'row', overflow: 'hidden', elevation: 1 },
   adImage: { width: 77, height: '100%', backgroundColor: '#EBDCC9' },
   adBody: { flex: 1, padding: 7 },
