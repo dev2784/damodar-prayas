@@ -179,6 +179,7 @@ model MatrimonyProfile {
   state             String?
   country           String                 @default("India")
   fullAddress       String?
+  postalCode        String?
   nativePlace       String?
 
   fatherName        String?
