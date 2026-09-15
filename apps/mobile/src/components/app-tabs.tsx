@@ -1,3 +1,4 @@
+import type { ColorValue } from 'react-native';
 import { Tabs } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 
@@ -8,7 +9,7 @@ const COLORS = {
 };
 
 const tabIcon = (name: { ios: any; android: any; web: any }) =>
-  ({ color, focused }: { color: string; focused: boolean }) => (
+  ({ color, focused }: { color: ColorValue; focused: boolean }) => (
     <SymbolView name={name} tintColor={color} size={focused ? 29 : 27} />
   );
 
@@ -50,7 +51,7 @@ export default function AppTabs() {
         name="matrimony"
         options={{
           title: 'मैट्रिमोनी',
-          tabBarIcon: tabIcon({ ios: 'person.crop.circle.badge.heart', android: 'person_search', web: 'person_search' }),
+          tabBarIcon: tabIcon({ ios: 'heart.circle.fill', android: 'person_search', web: 'person_search' }),
         }}
       />
       <Tabs.Screen
