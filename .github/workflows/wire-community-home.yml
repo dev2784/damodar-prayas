@@ -1,0 +1,49 @@
+name: Wire community home shortcut
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/wire-community-home.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.0.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: Wire कार्यक्रम एवं समाचार shortcut
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('apps/mobile/src/app/index.tsx')
+          s = p.read_text()
+          old = "            <Pressable key={item.title} style={[styles.quickCard, { backgroundColor: item.bg }]}>"
+          new = "            <Pressable\n              key={item.title}\n              style={[styles.quickCard, { backgroundColor: item.bg }]}\n              onPress={item.title === 'कार्यक्रम एवं' ? () => router.push('/community') : undefined}>"
+          if old not in s:
+              raise SystemExit('quick action marker not found')
+          p.write_text(s.replace(old, new, 1))
+          PY
+      - name: Verify mobile TypeScript
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm --filter mobile exec tsc --noEmit
+      - name: Commit
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git rm .github/workflows/wire-community-home.yml
+          git add apps/mobile/src/app/index.tsx
+          git commit -m "feat(home): open news and events from quick action"
+          git push origin main
