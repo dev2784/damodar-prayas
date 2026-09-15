@@ -43,6 +43,44 @@ function yearsAgo(years: number) {
   return date;
 }
 
+async function findDuplicatePersonProfile({
+  userId,
+  firstName,
+  lastName,
+  dateOfBirth,
+  gender,
+  excludeId,
+}: {
+  userId: string;
+  firstName: string;
+  lastName: string;
+  dateOfBirth: Date;
+  gender: 'MALE' | 'FEMALE' | 'OTHER';
+  excludeId?: string;
+}) {
+  return prisma.matrimonyProfile.findFirst({
+    where: {
+      createdById: userId,
+      deletedAt: null,
+      ...(excludeId ? { id: { not: excludeId } } : {}),
+      firstName: { equals: firstName, mode: 'insensitive' },
+      lastName: { equals: lastName, mode: 'insensitive' },
+      dateOfBirth,
+      gender,
+    },
+    select: {
+      id: true,
+      status: true,
+      profileFor: true,
+      firstName: true,
+      lastName: true,
+      dateOfBirth: true,
+      gender: true,
+    },
+    orderBy: { createdAt: 'desc' },
+  });
+}
+
 export async function matrimonyRoutes(app: FastifyInstance) {
   app.get('/', async (request, reply) => {
     const parsed = matrimonyListQuerySchema.safeParse(request.query);
@@ -154,22 +192,32 @@ export async function matrimonyRoutes(app: FastifyInstance) {
       });
     }
 
-    const existingEditable = await prisma.matrimonyProfile.findFirst({
-      where: {
-        createdById: userId,
-        deletedAt: null,
-        status: { in: ['DRAFT', 'REJECTED'] },
-        profileFor: parsed.data.profileFor,
-        firstName: { equals: parsed.data.firstName, mode: 'insensitive' },
-        lastName: { equals: parsed.data.lastName, mode: 'insensitive' },
-        dateOfBirth: parsed.data.dateOfBirth,
-      },
-      select: ownerMatrimonyProfileSelect,
-      orderBy: { createdAt: 'desc' },
+    const duplicate = await findDuplicatePersonProfile({
+      userId,
+      firstName: parsed.data.firstName,
+      lastName: parsed.data.lastName,
+      dateOfBirth: parsed.data.dateOfBirth,
+      gender: parsed.data.gender,
     });
 
-    if (existingEditable) {
-      return reply.send({ profile: existingEditable, reused: true });
+    if (duplicate) {
+      if (['DRAFT', 'REJECTED'].includes(duplicate.status)) {
+        const existingEditable = await prisma.matrimonyProfile.findUnique({
+          where: { id: duplicate.id },
+          select: ownerMatrimonyProfileSelect,
+        });
+
+        if (existingEditable) {
+          return reply.send({ profile: existingEditable, reused: true });
+        }
+      }
+
+      return reply.code(409).send({
+        error: 'MATRIMONY_PROFILE_ALREADY_EXISTS',
+        message: 'A matrimony profile for this person already exists in your account.',
+        profileId: duplicate.id,
+        status: duplicate.status,
+      });
     }
 
     const profile = await prisma.matrimonyProfile.create({
@@ -203,7 +251,14 @@ export async function matrimonyRoutes(app: FastifyInstance) {
         createdById: userId,
         deletedAt: null,
       },
-      select: { id: true, status: true },
+      select: {
+        id: true,
+        status: true,
+        firstName: true,
+        lastName: true,
+        dateOfBirth: true,
+        gender: true,
+      },
     });
 
     if (!existing) {
@@ -214,6 +269,28 @@ export async function matrimonyRoutes(app: FastifyInstance) {
       return reply.code(409).send({
         error: 'MATRIMONY_PROFILE_NOT_EDITABLE',
         status: existing.status,
+      });
+    }
+
+    const nextIdentity = {
+      firstName: parsed.data.firstName ?? existing.firstName,
+      lastName: parsed.data.lastName ?? existing.lastName,
+      dateOfBirth: parsed.data.dateOfBirth ?? existing.dateOfBirth,
+      gender: parsed.data.gender ?? existing.gender,
+    };
+
+    const duplicate = await findDuplicatePersonProfile({
+      userId,
+      ...nextIdentity,
+      excludeId: id,
+    });
+
+    if (duplicate) {
+      return reply.code(409).send({
+        error: 'MATRIMONY_PROFILE_ALREADY_EXISTS',
+        message: 'Another matrimony profile for this person already exists in your account.',
+        profileId: duplicate.id,
+        status: duplicate.status,
       });
     }
 
