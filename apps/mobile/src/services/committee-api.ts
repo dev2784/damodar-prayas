@@ -7,7 +7,7 @@ export type CommitteeTranslation = {
 };
 
 export type CommitteeMember = {
-  id: string;
+  id?: string;
   name: string;
   designationHi: string | null;
   designationEn: string | null;
@@ -18,8 +18,13 @@ export type CommitteeMember = {
   isActive?: boolean;
 };
 
+export type CommitteeStatus = 'PENDING' | 'PUBLISHED' | 'REJECTED' | 'ARCHIVED';
+
 export type Committee = {
   id: string;
+  status?: CommitteeStatus;
+  rejectionReason?: string | null;
+  publishedAt?: string | null;
   bannerUrl: string | null;
   logoUrl: string | null;
   city: string | null;
@@ -31,6 +36,33 @@ export type Committee = {
   sortOrder: number;
   translations: CommitteeTranslation[];
   members: CommitteeMember[];
+};
+
+export type CommitteeSubmission = {
+  bannerUrl: string;
+  bannerStorageKey?: string;
+  logoUrl?: string;
+  city: string;
+  district?: string;
+  state: string;
+  address?: string;
+  phone?: string;
+  email?: string;
+  translations: Array<{
+    language: 'HI' | 'EN';
+    name: string;
+    details?: string;
+  }>;
+  members: Array<{
+    name: string;
+    designationHi?: string;
+    designationEn?: string;
+    phone?: string;
+    email?: string;
+    photoUrl?: string;
+    sortOrder?: number;
+    isActive?: boolean;
+  }>;
 };
 
 type CommitteeList = {
@@ -56,8 +88,19 @@ export const committeeApi = api.injectEndpoints({
       query: (id) => `/committees/${id}`,
       providesTags: (_result, _error, id) => [{ type: 'Committees', id }],
     }),
+    submitCommittee: builder.mutation<{ committee: Committee; message: string }, CommitteeSubmission>({
+      query: (body) => ({
+        url: '/committees/submit',
+        method: 'POST',
+        body,
+      }),
+    }),
   }),
   overrideExisting: false,
 });
 
-export const { useGetCommitteesQuery, useGetCommitteeQuery } = committeeApi;
+export const {
+  useGetCommitteesQuery,
+  useGetCommitteeQuery,
+  useSubmitCommitteeMutation,
+} = committeeApi;
