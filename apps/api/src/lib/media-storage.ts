@@ -4,7 +4,7 @@ import { extname, join } from 'node:path';
 import { v2 as cloudinary } from 'cloudinary';
 import { env } from '../config/env.js';
 
-export type MediaKind = 'profile-photo' | 'kundali';
+export type MediaKind = 'profile-photo' | 'kundali' | 'content-banner';
 
 type UploadInput = {
   buffer: Buffer;
@@ -76,7 +76,7 @@ async function uploadLocal(input: UploadInput): Promise<UploadResult> {
 
   await mkdir(LOCAL_MEDIA_DIR, { recursive: true });
   const token = `${Date.now()}-${Math.random().toString(36).slice(2, 12)}`;
-  const kind = input.kind === 'profile-photo' ? 'photo' : 'kundali';
+  const kind = input.kind === 'profile-photo' ? 'photo' : input.kind === 'kundali' ? 'kundali' : 'banner';
   const storageKey = `${LOCAL_PREFIX}${kind}-${token}${extension}`;
   await writeFile(localPath(storageKey), input.buffer);
 
