@@ -199,11 +199,25 @@ export default function MatrimonyScreen() {
                 <Text style={styles.title}>अपना जीवनसाथी खोजें</Text>
                 <Text style={styles.subtitle}>केवल स्वीकृत और सत्यापित प्रोफाइल</Text>
               </View>
-              <Pressable style={styles.myProfileButton}>
+              <Pressable style={styles.myProfileButton} onPress={() => router.push('/my-matrimony')}>
                 <SymbolView name={{ ios: 'person.crop.circle', android: 'account_circle', web: 'account_circle' }} tintColor={C.maroon} size={22} />
                 <Text style={styles.myProfileText}>मेरा प्रोफाइल</Text>
               </Pressable>
             </View>
+
+            <Pressable style={styles.createProfileBanner} onPress={() => router.push('/matrimony-form')}>
+              <View style={styles.createProfileIcon}>
+                <SymbolView name={{ ios: 'heart.circle.fill', android: 'favorite', web: 'favorite' }} tintColor={C.maroon} size={26} />
+              </View>
+              <View style={styles.createProfileCopy}>
+                <Text style={styles.createProfileTitle}>अपना मैट्रिमोनी प्रोफाइल बनाएँ</Text>
+                <Text style={styles.createProfileText}>अपनी जानकारी भरें, ड्राफ्ट सेव करें और तैयार होने पर समीक्षा के लिए भेजें।</Text>
+              </View>
+              <View style={styles.createProfileButton}>
+                <Text style={styles.createProfileButtonText}>बनाएँ</Text>
+                <SymbolView name={{ ios: 'chevron.right', android: 'chevron_right', web: 'chevron_right' }} tintColor="#FFFFFF" size={14} />
+              </View>
+            </Pressable>
 
             <View style={styles.filterBlock}>
               <Text style={styles.filterLabel}>मैं देखना चाहता/चाहती हूँ</Text>
@@ -316,6 +330,14 @@ const styles = StyleSheet.create({
   subtitle: { color: C.muted, fontSize: 11, marginTop: 3 },
   myProfileButton: { minWidth: 74, alignItems: 'center', justifyContent: 'center', gap: 3, paddingVertical: 8, paddingHorizontal: 7, borderRadius: 12, backgroundColor: '#FFF0EC', borderWidth: 1, borderColor: '#F0D1C8' },
   myProfileText: { color: C.maroon, fontSize: 8.5, fontWeight: '900' },
+
+  createProfileBanner: { flexDirection: 'row', alignItems: 'center', gap: 10, borderRadius: 16, padding: 12, marginBottom: 12, backgroundColor: '#FFF1EC', borderWidth: 1, borderColor: '#F0CEC4' },
+  createProfileIcon: { width: 42, height: 42, borderRadius: 14, alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFFFFF' },
+  createProfileCopy: { flex: 1, minWidth: 0 },
+  createProfileTitle: { color: C.maroonDark, fontSize: 13, fontWeight: '900' },
+  createProfileText: { color: C.muted, fontSize: 9.5, lineHeight: 14, marginTop: 2 },
+  createProfileButton: { minWidth: 58, minHeight: 34, borderRadius: 11, paddingHorizontal: 10, backgroundColor: C.maroon, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 2 },
+  createProfileButtonText: { color: '#FFFFFF', fontSize: 10, fontWeight: '900' },
 
   filterBlock: { borderRadius: 15, padding: 12, backgroundColor: '#FFFDF9', borderWidth: 1, borderColor: C.line, marginBottom: 9 },
   filterBlockCompact: { marginTop: 2, marginBottom: 8 },
