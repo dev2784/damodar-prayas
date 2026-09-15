@@ -60,7 +60,7 @@ export const communityApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getCommunityPosts: builder.query<
       CommunityPostList,
-      { category: 'NEWS' | 'EVENT'; language?: 'HI' | 'EN' }
+      { category: CommunityPostCategory; language?: 'HI' | 'EN' }
     >({
       query: ({ category, language = 'HI' }) =>
         `/posts?category=${category}&language=${language}&page=1&limit=30`,
