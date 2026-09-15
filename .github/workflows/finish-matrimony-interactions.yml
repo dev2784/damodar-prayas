@@ -23,151 +23,36 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
-
-      - name: Patch profile detail
+      - name: Patch screens
         run: |
           python - <<'PY'
           from pathlib import Path
+          import base64
+          def d(value): return base64.b64decode(value).decode()
+          def rep(text, old64, new64, label):
+              old, new = d(old64), d(new64)
+              if old not in text:
+                  raise SystemExit(f'{label} not found')
+              return text.replace(old, new, 1)
           p = Path('apps/mobile/src/app/matrimony-profile.tsx')
           s = p.read_text()
-          old_import = "import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';"
-          if old_import in s:
-              s = s.replace(old_import, "import { ActivityIndicator, Alert, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';\nimport { useState } from 'react';", 1)
-          old_api = "import { type MatrimonyProfile, useGetMatrimonyProfileQuery } from '@/services/matrimony-api';"
-          if old_api in s:
-              s = s.replace(old_api, "import { type MatrimonyProfile, useGetMatrimonyProfileQuery, useGetMyMatrimonyProfilesQuery } from '@/services/matrimony-api';\nimport { useAddShortlistMutation, useGetOutgoingInterestsQuery, useGetShortlistsQuery, useRemoveShortlistMutation, useSendInterestMutation } from '@/services/interaction-api';\nimport { useAppSelector } from '@/store/hooks';", 1)
-
-          target = "function ProfileDetails({ profile }: { profile: MatrimonyProfile }) {\n  const photo"
-          if target not in s:
-              raise SystemExit('ProfileDetails marker not found')
-          replacement = """function ProfileDetails({ profile }: { profile: MatrimonyProfile }) {
-  const accessToken = useAppSelector((state) => state.auth.accessToken);
-  const [senderModalOpen, setSenderModalOpen] = useState(false);
-  const { data: mineData } = useGetMyMatrimonyProfilesQuery(undefined, { skip: !accessToken });
-  const { data: shortlistData } = useGetShortlistsQuery(undefined, { skip: !accessToken });
-  const { data: outgoingData } = useGetOutgoingInterestsQuery(undefined, { skip: !accessToken });
-  const [addShortlist, { isLoading: addingShortlist }] = useAddShortlistMutation();
-  const [removeShortlist, { isLoading: removingShortlist }] = useRemoveShortlistMutation();
-  const [sendInterest, { isLoading: sendingInterest }] = useSendInterestMutation();
-  const approvedOwnProfiles = mineData?.items.filter((item) => item.status === 'APPROVED') ?? [];
-  const isOwnProfile = mineData?.items.some((item) => item.id === profile.id) ?? false;
-  const shortlisted = shortlistData?.items.some((item) => item.matrimonyProfileId === profile.id) ?? false;
-  const outgoingInterest = outgoingData?.items.find((item) => item.receiverProfileId === profile.id);
-
-  async function toggleShortlist() {
-    if (!accessToken) { router.push('/profile'); return; }
-    try {
-      if (shortlisted) await removeShortlist(profile.id).unwrap();
-      else await addShortlist(profile.id).unwrap();
-    } catch {
-      Alert.alert('Shortlist अपडेट नहीं हुई', 'कृपया दोबारा कोशिश करें।');
-    }
-  }
-
-  async function submitInterest(senderProfileId: string) {
-    try {
-      await sendInterest({ senderProfileId, receiverProfileId: profile.id }).unwrap();
-      setSenderModalOpen(false);
-      Alert.alert('रुचि भेज दी गई', 'सामने वाले सदस्य को आपका interest request मिल गया है।');
-    } catch (error) {
-      const code = typeof error === 'object' && error && 'data' in error
-        ? String((error as { data?: { error?: string } }).data?.error ?? '')
-        : '';
-      Alert.alert('रुचि नहीं भेजी गई', code === 'INTEREST_ALREADY_EXISTS' ? 'इस प्रोफाइल को interest पहले ही भेजा जा चुका है।' : 'कृपया दोबारा कोशिश करें।');
-    }
-  }
-
-  function startInterest() {
-    if (!accessToken) { router.push('/profile'); return; }
-    if (isOwnProfile) return;
-    if (outgoingInterest) {
-      Alert.alert('Interest status', outgoingInterest.status === 'PENDING' ? 'आपका interest अभी pending है।' : outgoingInterest.status === 'ACCEPTED' ? 'आपका interest स्वीकार हो चुका है।' : 'यह interest पहले ही respond हो चुका है।');
-      return;
-    }
-    if (approvedOwnProfiles.length === 0) {
-      Alert.alert('Approved profile जरूरी है', 'रुचि भेजने के लिए आपकी कम से कम एक approved matrimony profile होनी चाहिए।');
-      return;
-    }
-    if (approvedOwnProfiles.length === 1) { void submitInterest(approvedOwnProfiles[0].id); return; }
-    setSenderModalOpen(true);
-  }
-
-  const photo"""
-          s = s.replace(target, replacement, 1)
-
-          old_actions = """      <View style={styles.actionsCard}>
-        <Pressable style={styles.primaryAction}>
-          <SymbolView name={{ ios: 'heart.fill', android: 'favorite', web: 'favorite' }} tintColor="#FFFFFF" size={18} />
-          <Text style={styles.primaryActionText}>रुचि भेजें</Text>
-        </Pressable>
-        <Pressable style={styles.secondaryAction}>
-          <SymbolView name={{ ios: 'bookmark', android: 'bookmark_border', web: 'bookmark_border' }} tintColor={C.maroon} size={18} />
-          <Text style={styles.secondaryActionText}>Shortlist</Text>
-        </Pressable>
-      </View>
-"""
-          if old_actions not in s:
-              raise SystemExit('actions block not found')
-          new_actions = """      {isOwnProfile ? (
-        <View style={styles.ownProfileNote}><Text style={styles.ownProfileText}>यह आपकी अपनी प्रोफाइल है।</Text></View>
-      ) : (
-        <View style={styles.actionsCard}>
-          <Pressable disabled={sendingInterest} style={[styles.primaryAction, sendingInterest && styles.disabledAction]} onPress={startInterest}>
-            {sendingInterest ? <ActivityIndicator color="#FFFFFF" size="small" /> : <SymbolView name={{ ios: 'heart.fill', android: 'favorite', web: 'favorite' }} tintColor="#FFFFFF" size={18} />}
-            <Text style={styles.primaryActionText}>{outgoingInterest ? (outgoingInterest.status === 'PENDING' ? 'रुचि Pending' : outgoingInterest.status === 'ACCEPTED' ? 'रुचि Accepted' : 'रुचि भेजी गई') : 'रुचि भेजें'}</Text>
-          </Pressable>
-          <Pressable disabled={addingShortlist || removingShortlist} style={styles.secondaryAction} onPress={() => void toggleShortlist()}>
-            <SymbolView name={{ ios: shortlisted ? 'bookmark.fill' : 'bookmark', android: shortlisted ? 'bookmark' : 'bookmark_border', web: shortlisted ? 'bookmark' : 'bookmark_border' }} tintColor={C.maroon} size={18} />
-            <Text style={styles.secondaryActionText}>{shortlisted ? 'Shortlisted' : 'Shortlist'}</Text>
-          </Pressable>
-        </View>
-      )}
-
-      <Modal visible={senderModalOpen} transparent animationType="fade" onRequestClose={() => setSenderModalOpen(false)}>
-        <View style={styles.modalOverlay}>
-          <View style={styles.senderModal}>
-            <Text style={styles.senderModalTitle}>किस प्रोफाइल से रुचि भेजें?</Text>
-            <Text style={styles.senderModalText}>आपके account में एक से ज्यादा approved profiles हैं।</Text>
-            {approvedOwnProfiles.map((item) => <Pressable key={item.id} style={styles.senderOption} onPress={() => void submitInterest(item.id)}><Text style={styles.senderOptionName}>{[item.firstName, item.middleName, item.lastName].filter(Boolean).join(' ')}</Text><Text style={styles.senderOptionMeta}>{item.profileFor}</Text></Pressable>)}
-            <Pressable style={styles.modalCancel} onPress={() => setSenderModalOpen(false)}><Text style={styles.modalCancelText}>रद्द करें</Text></Pressable>
-          </View>
-        </View>
-      </Modal>
-"""
-          s = s.replace(old_actions, new_actions, 1)
-
-          style_marker = "  actionsCard: { flexDirection: 'row', gap: 9, marginTop: 11 },"
-          if style_marker not in s:
-              raise SystemExit('profile styles marker not found')
-          s = s.replace(style_marker, style_marker + "\n  disabledAction: { opacity: 0.65 },\n  ownProfileNote: { marginTop: 11, borderRadius: 12, backgroundColor: '#F4ECE6', padding: 12, alignItems: 'center' },\n  ownProfileText: { color: C.muted, fontSize: 10.5, fontWeight: '800' },\n  modalOverlay: { flex: 1, backgroundColor: 'rgba(35,28,25,0.45)', justifyContent: 'center', padding: 22 },\n  senderModal: { borderRadius: 18, backgroundColor: C.paper, padding: 16 },\n  senderModalTitle: { color: C.text, fontSize: 17, fontWeight: '900' },\n  senderModalText: { color: C.muted, fontSize: 10, marginTop: 4, marginBottom: 10 },\n  senderOption: { borderWidth: 1, borderColor: C.line, borderRadius: 11, padding: 11, marginTop: 7 },\n  senderOptionName: { color: C.text, fontSize: 12, fontWeight: '900' },\n  senderOptionMeta: { color: C.muted, fontSize: 9, marginTop: 2 },\n  modalCancel: { alignItems: 'center', paddingVertical: 11, marginTop: 8 },\n  modalCancelText: { color: C.maroon, fontSize: 11, fontWeight: '900' },", 1)
+          s = rep(s, 'aW1wb3J0IHsgQWN0aXZpdHlJbmRpY2F0b3IsIFByZXNzYWJsZSwgU2Nyb2xsVmlldywgU3R5bGVTaGVldCwgVGV4dCwgVmlldyB9IGZyb20gJ3JlYWN0LW5hdGl2ZSc7', 'aW1wb3J0IHsgQWN0aXZpdHlJbmRpY2F0b3IsIEFsZXJ0LCBNb2RhbCwgUHJlc3NhYmxlLCBTY3JvbGxWaWV3LCBTdHlsZVNoZWV0LCBUZXh0LCBWaWV3IH0gZnJvbSAncmVhY3QtbmF0aXZlJzsKaW1wb3J0IHsgdXNlU3RhdGUgfSBmcm9tICdyZWFjdCc7', 'profile import')
+          s = rep(s, 'aW1wb3J0IHsgdHlwZSBNYXRyaW1vbnlQcm9maWxlLCB1c2VHZXRNYXRyaW1vbnlQcm9maWxlUXVlcnkgfSBmcm9tICdAL3NlcnZpY2VzL21hdHJpbW9ueS1hcGknOw==', 'aW1wb3J0IHsgdHlwZSBNYXRyaW1vbnlQcm9maWxlLCB1c2VHZXRNYXRyaW1vbnlQcm9maWxlUXVlcnksIHVzZUdldE15TWF0cmltb255UHJvZmlsZXNRdWVyeSB9IGZyb20gJ0Avc2VydmljZXMvbWF0cmltb255LWFwaSc7CmltcG9ydCB7IHVzZUFkZFNob3J0bGlzdE11dGF0aW9uLCB1c2VHZXRPdXRnb2luZ0ludGVyZXN0c1F1ZXJ5LCB1c2VHZXRTaG9ydGxpc3RzUXVlcnksIHVzZVJlbW92ZVNob3J0bGlzdE11dGF0aW9uLCB1c2VTZW5kSW50ZXJlc3RNdXRhdGlvbiB9IGZyb20gJ0Avc2VydmljZXMvaW50ZXJhY3Rpb24tYXBpJzsKaW1wb3J0IHsgdXNlQXBwU2VsZWN0b3IgfSBmcm9tICdAL3N0b3JlL2hvb2tzJzs=', 'api import')
+          s = rep(s, 'ZnVuY3Rpb24gUHJvZmlsZURldGFpbHMoeyBwcm9maWxlIH06IHsgcHJvZmlsZTogTWF0cmltb255UHJvZmlsZSB9KSB7CiAgY29uc3QgcGhvdG8=', 'ZnVuY3Rpb24gUHJvZmlsZURldGFpbHMoeyBwcm9maWxlIH06IHsgcHJvZmlsZTogTWF0cmltb255UHJvZmlsZSB9KSB7CiAgY29uc3QgYWNjZXNzVG9rZW4gPSB1c2VBcHBTZWxlY3Rvcigoc3RhdGUpID0+IHN0YXRlLmF1dGguYWNjZXNzVG9rZW4pOwogIGNvbnN0IFtzZW5kZXJNb2RhbE9wZW4sIHNldFNlbmRlck1vZGFsT3Blbl0gPSB1c2VTdGF0ZShmYWxzZSk7CiAgY29uc3QgeyBkYXRhOiBtaW5lRGF0YSB9ID0gdXNlR2V0TXlNYXRyaW1vbnlQcm9maWxlc1F1ZXJ5KHVuZGVmaW5lZCwgeyBza2lwOiAhYWNjZXNzVG9rZW4gfSk7CiAgY29uc3QgeyBkYXRhOiBzaG9ydGxpc3REYXRhIH0gPSB1c2VHZXRTaG9ydGxpc3RzUXVlcnkodW5kZWZpbmVkLCB7IHNraXA6ICFhY2Nlc3NUb2tlbiB9KTsKICBjb25zdCB7IGRhdGE6IG91dGdvaW5nRGF0YSB9ID0gdXNlR2V0T3V0Z29pbmdJbnRlcmVzdHNRdWVyeSh1bmRlZmluZWQsIHsgc2tpcDogIWFjY2Vzc1Rva2VuIH0pOwogIGNvbnN0IFthZGRTaG9ydGxpc3QsIHsgaXNMb2FkaW5nOiBhZGRpbmdTaG9ydGxpc3QgfV0gPSB1c2VBZGRTaG9ydGxpc3RNdXRhdGlvbigpOwogIGNvbnN0IFtyZW1vdmVTaG9ydGxpc3QsIHsgaXNMb2FkaW5nOiByZW1vdmluZ1Nob3J0bGlzdCB9XSA9IHVzZVJlbW92ZVNob3J0bGlzdE11dGF0aW9uKCk7CiAgY29uc3QgW3NlbmRJbnRlcmVzdCwgeyBpc0xvYWRpbmc6IHNlbmRpbmdJbnRlcmVzdCB9XSA9IHVzZVNlbmRJbnRlcmVzdE11dGF0aW9uKCk7CiAgY29uc3QgYXBwcm92ZWRPd25Qcm9maWxlcyA9IG1pbmVEYXRhPy5pdGVtcy5maWx0ZXIoKGl0ZW0pID0+IGl0ZW0uc3RhdHVzID09PSAnQVBQUk9WRUQnKSA/PyBbXTsKICBjb25zdCBpc093blByb2ZpbGUgPSBtaW5lRGF0YT8uaXRlbXMuc29tZSgoaXRlbSkgPT4gaXRlbS5pZCA9PT0gcHJvZmlsZS5pZCkgPz8gZmFsc2U7CiAgY29uc3Qgc2hvcnRsaXN0ZWQgPSBzaG9ydGxpc3REYXRhPy5pdGVtcy5zb21lKChpdGVtKSA9PiBpdGVtLm1hdHJpbW9ueVByb2ZpbGVJZCA9PT0gcHJvZmlsZS5pZCkgPz8gZmFsc2U7CiAgY29uc3Qgb3V0Z29pbmdJbnRlcmVzdCA9IG91dGdvaW5nRGF0YT8uaXRlbXMuZmluZCgoaXRlbSkgPT4gaXRlbS5yZWNlaXZlclByb2ZpbGVJZCA9PT0gcHJvZmlsZS5pZCk7CgogIGFzeW5jIGZ1bmN0aW9uIHRvZ2dsZVNob3J0bGlzdCgpIHsKICAgIGlmICghYWNjZXNzVG9rZW4pIHsgcm91dGVyLnB1c2goJy9wcm9maWxlJyk7IHJldHVybjsgfQogICAgdHJ5IHsKICAgICAgaWYgKHNob3J0bGlzdGVkKSBhd2FpdCByZW1vdmVTaG9ydGxpc3QocHJvZmlsZS5pZCkudW53cmFwKCk7CiAgICAgIGVsc2UgYXdhaXQgYWRkU2hvcnRsaXN0KHByb2ZpbGUuaWQpLnVud3JhcCgpOwogICAgfSBjYXRjaCB7CiAgICAgIEFsZXJ0LmFsZXJ0KCdTaG9ydGxpc3Qg4KSF4KSq4KSh4KWH4KSfIOCkqOCkueClgOCkgiDgpLngpYHgpIgnLCAn4KSV4KWD4KSq4KSv4KS+IOCkpuCli+CkrOCkvuCksOCkviDgpJXgpYvgpLbgpL/gpLYg4KSV4KSw4KWH4KSC4KWkJyk7CiAgICB9CiAgfQoKICBhc3luYyBmdW5jdGlvbiBzdWJtaXRJbnRlcmVzdChzZW5kZXJQcm9maWxlSWQ6IHN0cmluZykgewogICAgdHJ5IHsKICAgICAgYXdhaXQgc2VuZEludGVyZXN0KHsgc2VuZGVyUHJvZmlsZUlkLCByZWNlaXZlclByb2ZpbGVJZDogcHJvZmlsZS5pZCB9KS51bndyYXAoKTsKICAgICAgc2V0U2VuZGVyTW9kYWxPcGVuKGZhbHNlKTsKICAgICAgQWxlcnQuYWxlcnQoJ+CksOClgeCkmuCkvyDgpK3gpYfgpJwg4KSm4KWAIOCkl+CkiCcsICfgpLjgpL7gpK7gpKjgpYcg4KS14KS+4KSy4KWHIOCkuOCkpuCkuOCljeCkryDgpJXgpYsg4KSG4KSq4KSV4KS+IGludGVyZXN0IHJlcXVlc3Qg4KSu4KS/4KSyIOCkl+Ckr+CkviDgpLngpYjgpaQnKTsKICAgIH0gY2F0Y2ggKGVycm9yKSB7CiAgICAgIGNvbnN0IGNvZGUgPSB0eXBlb2YgZXJyb3IgPT09ICdvYmplY3QnICYmIGVycm9yICYmICdkYXRhJyBpbiBlcnJvcgogICAgICAgID8gU3RyaW5nKChlcnJvciBhcyB7IGRhdGE/OiB7IGVycm9yPzogc3RyaW5nIH0gfSkuZGF0YT8uZXJyb3IgPz8gJycpCiAgICAgICAgOiAnJzsKICAgICAgQWxlcnQuYWxlcnQoJ+CksOClgeCkmuCkvyDgpKjgpLngpYDgpIIg4KSt4KWH4KSc4KWAIOCkl+CkiCcsIGNvZGUgPT09ICdJTlRFUkVTVF9BTFJFQURZX0VYSVNUUycgPyAn4KSH4KS4IOCkquCljeCksOCli+Ckq+CkvuCkh+CksiDgpJXgpYsgaW50ZXJlc3Qg4KSq4KS54KSy4KWHIOCkueClgCDgpK3gpYfgpJzgpL4g4KSc4KS+IOCkmuClgeCkleCkviDgpLngpYjgpaQnIDogJ+CkleClg+CkquCkr+CkviDgpKbgpYvgpKzgpL7gpLDgpL4g4KSV4KWL4KS24KS/4KS2IOCkleCksOClh+CkguClpCcpOwogICAgfQogIH0KCiAgZnVuY3Rpb24gc3RhcnRJbnRlcmVzdCgpIHsKICAgIGlmICghYWNjZXNzVG9rZW4pIHsgcm91dGVyLnB1c2goJy9wcm9maWxlJyk7IHJldHVybjsgfQogICAgaWYgKGlzT3duUHJvZmlsZSkgcmV0dXJuOwogICAgaWYgKG91dGdvaW5nSW50ZXJlc3QpIHsKICAgICAgQWxlcnQuYWxlcnQoJ0ludGVyZXN0IHN0YXR1cycsIG91dGdvaW5nSW50ZXJlc3Quc3RhdHVzID09PSAnUEVORElORycgPyAn4KSG4KSq4KSV4KS+IGludGVyZXN0IOCkheCkreClgCBwZW5kaW5nIOCkueCliOClpCcgOiBvdXRnb2luZ0ludGVyZXN0LnN0YXR1cyA9PT0gJ0FDQ0VQVEVEJyA/ICfgpIbgpKrgpJXgpL4gaW50ZXJlc3Qg4KS44KWN4KS14KWA4KSV4KS+4KSwIOCkueCliyDgpJrgpYHgpJXgpL4g4KS54KWI4KWkJyA6ICfgpK/gpLkgaW50ZXJlc3Qg4KSq4KS54KSy4KWHIOCkueClgCByZXNwb25kIOCkueCliyDgpJrgpYHgpJXgpL4g4KS54KWI4KWkJyk7CiAgICAgIHJldHVybjsKICAgIH0KICAgIGlmIChhcHByb3ZlZE93blByb2ZpbGVzLmxlbmd0aCA9PT0gMCkgewogICAgICBBbGVydC5hbGVydCgnQXBwcm92ZWQgcHJvZmlsZSDgpJzgpLDgpYLgpLDgpYAg4KS54KWIJywgJ+CksOClgeCkmuCkvyDgpK3gpYfgpJzgpKjgpYcg4KSV4KWHIOCksuCkv+CkjyDgpIbgpKrgpJXgpYAg4KSV4KSuIOCkuOClhyDgpJXgpK4g4KSP4KSVIGFwcHJvdmVkIG1hdHJpbW9ueSBwcm9maWxlIOCkueCli+CkqOClgCDgpJrgpL7gpLngpL/gpI/gpaQnKTsKICAgICAgcmV0dXJuOwogICAgfQogICAgaWYgKGFwcHJvdmVkT3duUHJvZmlsZXMubGVuZ3RoID09PSAxKSB7IHZvaWQgc3VibWl0SW50ZXJlc3QoYXBwcm92ZWRPd25Qcm9maWxlc1swXS5pZCk7IHJldHVybjsgfQogICAgc2V0U2VuZGVyTW9kYWxPcGVuKHRydWUpOwogIH0KCiAgY29uc3QgcGhvdG8=', 'profile details')
+          s = rep(s, 'ICAgICAgPFZpZXcgc3R5bGU9e3N0eWxlcy5hY3Rpb25zQ2FyZH0+CiAgICAgICAgPFByZXNzYWJsZSBzdHlsZT17c3R5bGVzLnByaW1hcnlBY3Rpb259PgogICAgICAgICAgPFN5bWJvbFZpZXcgbmFtZT17eyBpb3M6ICdoZWFydC5maWxsJywgYW5kcm9pZDogJ2Zhdm9yaXRlJywgd2ViOiAnZmF2b3JpdGUnIH19IHRpbnRDb2xvcj0iI0ZGRkZGRiIgc2l6ZT17MTh9IC8+CiAgICAgICAgICA8VGV4dCBzdHlsZT17c3R5bGVzLnByaW1hcnlBY3Rpb25UZXh0fT7gpLDgpYHgpJrgpL8g4KSt4KWH4KSc4KWH4KSCPC9UZXh0PgogICAgICAgIDwvUHJlc3NhYmxlPgogICAgICAgIDxQcmVzc2FibGUgc3R5bGU9e3N0eWxlcy5zZWNvbmRhcnlBY3Rpb259PgogICAgICAgICAgPFN5bWJvbFZpZXcgbmFtZT17eyBpb3M6ICdib29rbWFyaycsIGFuZHJvaWQ6ICdib29rbWFya19ib3JkZXInLCB3ZWI6ICdib29rbWFya19ib3JkZXInIH19IHRpbnRDb2xvcj17Qy5tYXJvb259IHNpemU9ezE4fSAvPgogICAgICAgICAgPFRleHQgc3R5bGU9e3N0eWxlcy5zZWNvbmRhcnlBY3Rpb25UZXh0fT5TaG9ydGxpc3Q8L1RleHQ+CiAgICAgICAgPC9QcmVzc2FibGU+CiAgICAgIDwvVmlldz4K', 'ICAgICAge2lzT3duUHJvZmlsZSA/ICgKICAgICAgICA8VmlldyBzdHlsZT17c3R5bGVzLm93blByb2ZpbGVOb3RlfT48VGV4dCBzdHlsZT17c3R5bGVzLm93blByb2ZpbGVUZXh0fT7gpK/gpLkg4KSG4KSq4KSV4KWAIOCkheCkquCkqOClgCDgpKrgpY3gpLDgpYvgpKvgpL7gpIfgpLIg4KS54KWI4KWkPC9UZXh0PjwvVmlldz4KICAgICAgKSA6ICgKICAgICAgICA8VmlldyBzdHlsZT17c3R5bGVzLmFjdGlvbnNDYXJkfT4KICAgICAgICAgIDxQcmVzc2FibGUgZGlzYWJsZWQ9e3NlbmRpbmdJbnRlcmVzdH0gc3R5bGU9e1tzdHlsZXMucHJpbWFyeUFjdGlvbiwgc2VuZGluZ0ludGVyZXN0ICYmIHN0eWxlcy5kaXNhYmxlZEFjdGlvbl19IG9uUHJlc3M9e3N0YXJ0SW50ZXJlc3R9PgogICAgICAgICAgICB7c2VuZGluZ0ludGVyZXN0ID8gPEFjdGl2aXR5SW5kaWNhdG9yIGNvbG9yPSIjRkZGRkZGIiBzaXplPSJzbWFsbCIgLz4gOiA8U3ltYm9sVmlldyBuYW1lPXt7IGlvczogJ2hlYXJ0LmZpbGwnLCBhbmRyb2lkOiAnZmF2b3JpdGUnLCB3ZWI6ICdmYXZvcml0ZScgfX0gdGludENvbG9yPSIjRkZGRkZGIiBzaXplPXsxOH0gLz59CiAgICAgICAgICAgIDxUZXh0IHN0eWxlPXtzdHlsZXMucHJpbWFyeUFjdGlvblRleHR9PntvdXRnb2luZ0ludGVyZXN0ID8gKG91dGdvaW5nSW50ZXJlc3Quc3RhdHVzID09PSAnUEVORElORycgPyAn4KSw4KWB4KSa4KS/IFBlbmRpbmcnIDogb3V0Z29pbmdJbnRlcmVzdC5zdGF0dXMgPT09ICdBQ0NFUFRFRCcgPyAn4KSw4KWB4KSa4KS/IEFjY2VwdGVkJyA6ICfgpLDgpYHgpJrgpL8g4KSt4KWH4KSc4KWAIOCkl+CkiCcpIDogJ+CksOClgeCkmuCkvyDgpK3gpYfgpJzgpYfgpIInfTwvVGV4dD4KICAgICAgICAgIDwvUHJlc3NhYmxlPgogICAgICAgICAgPFByZXNzYWJsZSBkaXNhYmxlZD17YWRkaW5nU2hvcnRsaXN0IHx8IHJlbW92aW5nU2hvcnRsaXN0fSBzdHlsZT17c3R5bGVzLnNlY29uZGFyeUFjdGlvbn0gb25QcmVzcz17KCkgPT4gdm9pZCB0b2dnbGVTaG9ydGxpc3QoKX0+CiAgICAgICAgICAgIDxTeW1ib2xWaWV3IG5hbWU9e3sgaW9zOiBzaG9ydGxpc3RlZCA/ICdib29rbWFyay5maWxsJyA6ICdib29rbWFyaycsIGFuZHJvaWQ6IHNob3J0bGlzdGVkID8gJ2Jvb2ttYXJrJyA6ICdib29rbWFya19ib3JkZXInLCB3ZWI6IHNob3J0bGlzdGVkID8gJ2Jvb2ttYXJrJyA6ICdib29rbWFya19ib3JkZXInIH19IHRpbnRDb2xvcj17Qy5tYXJvb259IHNpemU9ezE4fSAvPgogICAgICAgICAgICA8VGV4dCBzdHlsZT17c3R5bGVzLnNlY29uZGFyeUFjdGlvblRleHR9PntzaG9ydGxpc3RlZCA/ICdTaG9ydGxpc3RlZCcgOiAnU2hvcnRsaXN0J308L1RleHQ+CiAgICAgICAgICA8L1ByZXNzYWJsZT4KICAgICAgICA8L1ZpZXc+CiAgICAgICl9CgogICAgICA8TW9kYWwgdmlzaWJsZT17c2VuZGVyTW9kYWxPcGVufSB0cmFuc3BhcmVudCBhbmltYXRpb25UeXBlPSJmYWRlIiBvblJlcXVlc3RDbG9zZT17KCkgPT4gc2V0U2VuZGVyTW9kYWxPcGVuKGZhbHNlKX0+CiAgICAgICAgPFZpZXcgc3R5bGU9e3N0eWxlcy5tb2RhbE92ZXJsYXl9PgogICAgICAgICAgPFZpZXcgc3R5bGU9e3N0eWxlcy5zZW5kZXJNb2RhbH0+CiAgICAgICAgICAgIDxUZXh0IHN0eWxlPXtzdHlsZXMuc2VuZGVyTW9kYWxUaXRsZX0+4KSV4KS/4KS4IOCkquCljeCksOCli+Ckq+CkvuCkh+CksiDgpLjgpYcg4KSw4KWB4KSa4KS/IOCkreClh+CknOClh+Ckgj88L1RleHQ+CiAgICAgICAgICAgIDxUZXh0IHN0eWxlPXtzdHlsZXMuc2VuZGVyTW9kYWxUZXh0fT7gpIbgpKrgpJXgpYcgYWNjb3VudCDgpK7gpYfgpIIg4KSP4KSVIOCkuOClhyDgpJzgpY3gpK/gpL7gpKbgpL4gYXBwcm92ZWQgcHJvZmlsZXMg4KS54KWI4KSC4KWkPC9UZXh0PgogICAgICAgICAgICB7YXBwcm92ZWRPd25Qcm9maWxlcy5tYXAoKGl0ZW0pID0+IDxQcmVzc2FibGUga2V5PXtpdGVtLmlkfSBzdHlsZT17c3R5bGVzLnNlbmRlck9wdGlvbn0gb25QcmVzcz17KCkgPT4gdm9pZCBzdWJtaXRJbnRlcmVzdChpdGVtLmlkKX0+PFRleHQgc3R5bGU9e3N0eWxlcy5zZW5kZXJPcHRpb25OYW1lfT57W2l0ZW0uZmlyc3ROYW1lLCBpdGVtLm1pZGRsZU5hbWUsIGl0ZW0ubGFzdE5hbWVdLmZpbHRlcihCb29sZWFuKS5qb2luKCcgJyl9PC9UZXh0PjxUZXh0IHN0eWxlPXtzdHlsZXMuc2VuZGVyT3B0aW9uTWV0YX0+e2l0ZW0ucHJvZmlsZUZvcn08L1RleHQ+PC9QcmVzc2FibGU+KX0KICAgICAgICAgICAgPFByZXNzYWJsZSBzdHlsZT17c3R5bGVzLm1vZGFsQ2FuY2VsfSBvblByZXNzPXsoKSA9PiBzZXRTZW5kZXJNb2RhbE9wZW4oZmFsc2UpfT48VGV4dCBzdHlsZT17c3R5bGVzLm1vZGFsQ2FuY2VsVGV4dH0+4KSw4KSm4KWN4KSmIOCkleCksOClh+CkgjwvVGV4dD48L1ByZXNzYWJsZT4KICAgICAgICAgIDwvVmlldz4KICAgICAgICA8L1ZpZXc+CiAgICAgIDwvTW9kYWw+Cg==', 'actions')
+          s = rep(s, 'ICBhY3Rpb25zQ2FyZDogeyBmbGV4RGlyZWN0aW9uOiAncm93JywgZ2FwOiA5LCBtYXJnaW5Ub3A6IDExIH0s', 'ICBhY3Rpb25zQ2FyZDogeyBmbGV4RGlyZWN0aW9uOiAncm93JywgZ2FwOiA5LCBtYXJnaW5Ub3A6IDExIH0sCiAgZGlzYWJsZWRBY3Rpb246IHsgb3BhY2l0eTogMC42NSB9LAogIG93blByb2ZpbGVOb3RlOiB7IG1hcmdpblRvcDogMTEsIGJvcmRlclJhZGl1czogMTIsIGJhY2tncm91bmRDb2xvcjogJyNGNEVDRTYnLCBwYWRkaW5nOiAxMiwgYWxpZ25JdGVtczogJ2NlbnRlcicgfSwKICBvd25Qcm9maWxlVGV4dDogeyBjb2xvcjogQy5tdXRlZCwgZm9udFNpemU6IDEwLjUsIGZvbnRXZWlnaHQ6ICc4MDAnIH0sCiAgbW9kYWxPdmVybGF5OiB7IGZsZXg6IDEsIGJhY2tncm91bmRDb2xvcjogJ3JnYmEoMzUsMjgsMjUsMC40NSknLCBqdXN0aWZ5Q29udGVudDogJ2NlbnRlcicsIHBhZGRpbmc6IDIyIH0sCiAgc2VuZGVyTW9kYWw6IHsgYm9yZGVyUmFkaXVzOiAxOCwgYmFja2dyb3VuZENvbG9yOiBDLnBhcGVyLCBwYWRkaW5nOiAxNiB9LAogIHNlbmRlck1vZGFsVGl0bGU6IHsgY29sb3I6IEMudGV4dCwgZm9udFNpemU6IDE3LCBmb250V2VpZ2h0OiAnOTAwJyB9LAogIHNlbmRlck1vZGFsVGV4dDogeyBjb2xvcjogQy5tdXRlZCwgZm9udFNpemU6IDEwLCBtYXJnaW5Ub3A6IDQsIG1hcmdpbkJvdHRvbTogMTAgfSwKICBzZW5kZXJPcHRpb246IHsgYm9yZGVyV2lkdGg6IDEsIGJvcmRlckNvbG9yOiBDLmxpbmUsIGJvcmRlclJhZGl1czogMTEsIHBhZGRpbmc6IDExLCBtYXJnaW5Ub3A6IDcgfSwKICBzZW5kZXJPcHRpb25OYW1lOiB7IGNvbG9yOiBDLnRleHQsIGZvbnRTaXplOiAxMiwgZm9udFdlaWdodDogJzkwMCcgfSwKICBzZW5kZXJPcHRpb25NZXRhOiB7IGNvbG9yOiBDLm11dGVkLCBmb250U2l6ZTogOSwgbWFyZ2luVG9wOiAyIH0sCiAgbW9kYWxDYW5jZWw6IHsgYWxpZ25JdGVtczogJ2NlbnRlcicsIHBhZGRpbmdWZXJ0aWNhbDogMTEsIG1hcmdpblRvcDogOCB9LAogIG1vZGFsQ2FuY2VsVGV4dDogeyBjb2xvcjogQy5tYXJvb24sIGZvbnRTaXplOiAxMSwgZm9udFdlaWdodDogJzkwMCcgfSw=', 'styles')
           p.write_text(s)
-          PY
-
-      - name: Patch My Matrimony links
-        run: |
-          python - <<'PY'
-          from pathlib import Path
           p = Path('apps/mobile/src/app/my-matrimony.tsx')
           s = p.read_text()
-          anchor = "      <View style={styles.infoBanner}><SymbolView name={{ ios: 'shield.checkered', android: 'verified_user', web: 'verified_user' }} tintColor={C.green} size={22} /><View style={styles.infoCopy}><Text style={styles.infoTitle}>आप नियंत्रण में हैं</Text><Text style={styles.infoText}>ड्राफ्ट सीधे हट सकता है। Submitted/approved प्रोफाइल हटाने के लिए admin request जाएगी।</Text></View></View>\n"
-          if anchor not in s:
-              raise SystemExit('info banner anchor not found')
-          links = anchor + "      <View style={styles.interactionRow}><Pressable style={styles.interactionCard} onPress={() => router.push('/matrimony-shortlist')}><SymbolView name={{ ios: 'bookmark.fill', android: 'bookmark', web: 'bookmark' }} tintColor={C.maroon} size={19} /><View><Text style={styles.interactionTitle}>मेरी Shortlist</Text><Text style={styles.interactionText}>Saved profiles देखें</Text></View></Pressable><Pressable style={styles.interactionCard} onPress={() => router.push('/matrimony-interests')}><SymbolView name={{ ios: 'heart.text.square.fill', android: 'favorite', web: 'favorite' }} tintColor={C.maroon} size={19} /><View><Text style={styles.interactionTitle}>रुचि अनुरोध</Text><Text style={styles.interactionText}>Sent & received</Text></View></Pressable></View>\n"
-          s = s.replace(anchor, links, 1)
-          style_open = "const styles = StyleSheet.create({\n"
-          if style_open not in s:
-              raise SystemExit('StyleSheet marker not found')
-          styles = "  interactionRow: { flexDirection: 'row', gap: 9, marginBottom: 11 },\n  interactionCard: { flex: 1, minHeight: 64, borderRadius: 13, borderWidth: 1, borderColor: C.line, backgroundColor: C.paper, flexDirection: 'row', alignItems: 'center', gap: 8, padding: 10 },\n  interactionTitle: { color: C.text, fontSize: 10.5, fontWeight: '900' },\n  interactionText: { color: C.muted, fontSize: 8.5, marginTop: 2 },\n"
-          s = s.replace(style_open, style_open + styles, 1)
+          s = rep(s, 'ICAgICAgPFZpZXcgc3R5bGU9e3N0eWxlcy5pbmZvQmFubmVyfT48U3ltYm9sVmlldyBuYW1lPXt7IGlvczogJ3NoaWVsZC5jaGVja2VyZWQnLCBhbmRyb2lkOiAndmVyaWZpZWRfdXNlcicsIHdlYjogJ3ZlcmlmaWVkX3VzZXInIH19IHRpbnRDb2xvcj17Qy5ncmVlbn0gc2l6ZT17MjJ9IC8+PFZpZXcgc3R5bGU9e3N0eWxlcy5pbmZvQ29weX0+PFRleHQgc3R5bGU9e3N0eWxlcy5pbmZvVGl0bGV9PuCkhuCkqiDgpKjgpL/gpK/gpILgpKTgpY3gpLDgpKMg4KSu4KWH4KSCIOCkueCliOCkgjwvVGV4dD48VGV4dCBzdHlsZT17c3R5bGVzLmluZm9UZXh0fT7gpKHgpY3gpLDgpL7gpKvgpY3gpJ8g4KS44KWA4KSn4KWHIOCkueCknyDgpLjgpJXgpKTgpL4g4KS54KWI4KWkIFN1Ym1pdHRlZC9hcHByb3ZlZCDgpKrgpY3gpLDgpYvgpKvgpL7gpIfgpLIg4KS54KSf4KS+4KSo4KWHIOCkleClhyDgpLLgpL/gpI8gYWRtaW4gcmVxdWVzdCDgpJzgpL7gpI/gpJfgpYDgpaQ8L1RleHQ+PC9WaWV3PjwvVmlldz4K', 'ICAgICAgPFZpZXcgc3R5bGU9e3N0eWxlcy5pbmZvQmFubmVyfT48U3ltYm9sVmlldyBuYW1lPXt7IGlvczogJ3NoaWVsZC5jaGVja2VyZWQnLCBhbmRyb2lkOiAndmVyaWZpZWRfdXNlcicsIHdlYjogJ3ZlcmlmaWVkX3VzZXInIH19IHRpbnRDb2xvcj17Qy5ncmVlbn0gc2l6ZT17MjJ9IC8+PFZpZXcgc3R5bGU9e3N0eWxlcy5pbmZvQ29weX0+PFRleHQgc3R5bGU9e3N0eWxlcy5pbmZvVGl0bGV9PuCkhuCkqiDgpKjgpL/gpK/gpILgpKTgpY3gpLDgpKMg4KSu4KWH4KSCIOCkueCliOCkgjwvVGV4dD48VGV4dCBzdHlsZT17c3R5bGVzLmluZm9UZXh0fT7gpKHgpY3gpLDgpL7gpKvgpY3gpJ8g4KS44KWA4KSn4KWHIOCkueCknyDgpLjgpJXgpKTgpL4g4KS54KWI4KWkIFN1Ym1pdHRlZC9hcHByb3ZlZCDgpKrgpY3gpLDgpYvgpKvgpL7gpIfgpLIg4KS54KSf4KS+4KSo4KWHIOCkleClhyDgpLLgpL/gpI8gYWRtaW4gcmVxdWVzdCDgpJzgpL7gpI/gpJfgpYDgpaQ8L1RleHQ+PC9WaWV3PjwvVmlldz4KICAgICAgPFZpZXcgc3R5bGU9e3N0eWxlcy5pbnRlcmFjdGlvblJvd30+PFByZXNzYWJsZSBzdHlsZT17c3R5bGVzLmludGVyYWN0aW9uQ2FyZH0gb25QcmVzcz17KCkgPT4gcm91dGVyLnB1c2goJy9tYXRyaW1vbnktc2hvcnRsaXN0Jyl9PjxTeW1ib2xWaWV3IG5hbWU9e3sgaW9zOiAnYm9va21hcmsuZmlsbCcsIGFuZHJvaWQ6ICdib29rbWFyaycsIHdlYjogJ2Jvb2ttYXJrJyB9fSB0aW50Q29sb3I9e0MubWFyb29ufSBzaXplPXsxOX0gLz48Vmlldz48VGV4dCBzdHlsZT17c3R5bGVzLmludGVyYWN0aW9uVGl0bGV9PuCkruClh+CksOClgCBTaG9ydGxpc3Q8L1RleHQ+PFRleHQgc3R5bGU9e3N0eWxlcy5pbnRlcmFjdGlvblRleHR9PlNhdmVkIHByb2ZpbGVzIOCkpuClh+CkluClh+CkgjwvVGV4dD48L1ZpZXc+PC9QcmVzc2FibGU+PFByZXNzYWJsZSBzdHlsZT17c3R5bGVzLmludGVyYWN0aW9uQ2FyZH0gb25QcmVzcz17KCkgPT4gcm91dGVyLnB1c2goJy9tYXRyaW1vbnktaW50ZXJlc3RzJyl9PjxTeW1ib2xWaWV3IG5hbWU9e3sgaW9zOiAnaGVhcnQudGV4dC5zcXVhcmUuZmlsbCcsIGFuZHJvaWQ6ICdmYXZvcml0ZScsIHdlYjogJ2Zhdm9yaXRlJyB9fSB0aW50Q29sb3I9e0MubWFyb29ufSBzaXplPXsxOX0gLz48Vmlldz48VGV4dCBzdHlsZT17c3R5bGVzLmludGVyYWN0aW9uVGl0bGV9PuCksOClgeCkmuCkvyDgpIXgpKjgpYHgpLDgpYvgpKc8L1RleHQ+PFRleHQgc3R5bGU9e3N0eWxlcy5pbnRlcmFjdGlvblRleHR9PlNlbnQgJiByZWNlaXZlZDwvVGV4dD48L1ZpZXc+PC9QcmVzc2FibGU+PC9WaWV3Pgo=', 'my links')
+          s = rep(s, 'Y29uc3Qgc3R5bGVzID0gU3R5bGVTaGVldC5jcmVhdGUoewo=', 'Y29uc3Qgc3R5bGVzID0gU3R5bGVTaGVldC5jcmVhdGUoewogIGludGVyYWN0aW9uUm93OiB7IGZsZXhEaXJlY3Rpb246ICdyb3cnLCBnYXA6IDksIG1hcmdpbkJvdHRvbTogMTEgfSwKICBpbnRlcmFjdGlvbkNhcmQ6IHsgZmxleDogMSwgbWluSGVpZ2h0OiA2NCwgYm9yZGVyUmFkaXVzOiAxMywgYm9yZGVyV2lkdGg6IDEsIGJvcmRlckNvbG9yOiBDLmxpbmUsIGJhY2tncm91bmRDb2xvcjogQy5wYXBlciwgZmxleERpcmVjdGlvbjogJ3JvdycsIGFsaWduSXRlbXM6ICdjZW50ZXInLCBnYXA6IDgsIHBhZGRpbmc6IDEwIH0sCiAgaW50ZXJhY3Rpb25UaXRsZTogeyBjb2xvcjogQy50ZXh0LCBmb250U2l6ZTogMTAuNSwgZm9udFdlaWdodDogJzkwMCcgfSwKICBpbnRlcmFjdGlvblRleHQ6IHsgY29sb3I6IEMubXV0ZWQsIGZvbnRTaXplOiA4LjUsIG1hcmdpblRvcDogMiB9LAo=', 'my styles')
           p.write_text(s)
           PY
-
       - name: Verify
         run: |
           pnpm install --frozen-lockfile
           pnpm --filter mobile exec tsc --noEmit
           pnpm --filter @damodar/api build
-
       - name: Commit
         run: |
           git config user.name github-actions[bot]
