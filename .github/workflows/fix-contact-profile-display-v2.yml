@@ -1,0 +1,40 @@
+name: Fix accepted contact display v2
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - scripts/fix-contact-profile-display.mjs
+      - .github/workflows/fix-contact-profile-display-v2.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.0.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: Apply patch
+        run: node scripts/fix-contact-profile-display.mjs
+      - name: Verify mobile types
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm --filter mobile exec tsc --noEmit
+      - name: Commit
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git rm scripts/fix-contact-profile-display.mjs .github/workflows/fix-contact-profile-display-v2.yml .github/workflows/fix-contact-profile-display.yml
+          git add apps/mobile/src/app/matrimony-profile.tsx
+          git commit -m "fix(matrimony): show accepted contact state correctly"
+          git push origin main
