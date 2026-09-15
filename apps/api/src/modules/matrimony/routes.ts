@@ -153,6 +153,24 @@ export async function matrimonyRoutes(app: FastifyInstance) {
       });
     }
 
+    const existingEditable = await prisma.matrimonyProfile.findFirst({
+      where: {
+        createdById: userId,
+        deletedAt: null,
+        status: { in: ['DRAFT', 'REJECTED'] },
+        profileFor: parsed.data.profileFor,
+        firstName: { equals: parsed.data.firstName, mode: 'insensitive' },
+        lastName: { equals: parsed.data.lastName, mode: 'insensitive' },
+        dateOfBirth: parsed.data.dateOfBirth,
+      },
+      select: ownerMatrimonyProfileSelect,
+      orderBy: { createdAt: 'desc' },
+    });
+
+    if (existingEditable) {
+      return reply.send({ profile: existingEditable, reused: true });
+    }
+
     const profile = await prisma.matrimonyProfile.create({
       data: {
         createdById: userId,
@@ -210,6 +228,29 @@ export async function matrimonyRoutes(app: FastifyInstance) {
     });
 
     return reply.send({ profile });
+  });
+
+  app.delete('/:id', async (request, reply) => {
+    const userId = await getActiveUserId(request, reply);
+    if (!userId) return;
+
+    const { id } = request.params as { id: string };
+    const existing = await prisma.matrimonyProfile.findFirst({
+      where: { id, createdById: userId, deletedAt: null },
+      select: { id: true, status: true },
+    });
+
+    if (!existing) return reply.code(404).send({ error: 'MATRIMONY_PROFILE_NOT_FOUND' });
+    if (!['DRAFT', 'REJECTED'].includes(existing.status)) {
+      return reply.code(409).send({ error: 'MATRIMONY_PROFILE_NOT_DELETABLE', status: existing.status });
+    }
+
+    await prisma.matrimonyProfile.update({
+      where: { id },
+      data: { deletedAt: new Date() },
+    });
+
+    return reply.code(204).send();
   });
 
   app.post('/:id/submit', async (request, reply) => {

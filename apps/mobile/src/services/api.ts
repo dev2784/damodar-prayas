@@ -2,13 +2,13 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import type { RootState } from '@/store/store';
 
-const baseUrl =
+export const API_BASE_URL =
   process.env.EXPO_PUBLIC_API_URL ?? 'https://damodar-prayas-api.onrender.com/api/v1';
 
 export const api = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({
-    baseUrl,
+    baseUrl: API_BASE_URL,
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth.accessToken;
 

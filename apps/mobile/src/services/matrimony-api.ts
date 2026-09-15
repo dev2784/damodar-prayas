@@ -202,6 +202,17 @@ export const matrimonyApi = api.injectEndpoints({
         { type: 'Matrimony', id: 'LIST' },
       ],
     }),
+    deleteMatrimonyProfile: builder.mutation<void, string>({
+      query: (id) => ({
+        url: `/matrimony/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: (_result, _error, id) => [
+        { type: 'Matrimony', id },
+        { type: 'Matrimony', id: 'MINE' },
+        { type: 'Matrimony', id: 'LIST' },
+      ],
+    }),
     submitMatrimonyProfile: builder.mutation<OwnerMatrimonyProfileResponse, string>({
       query: (id) => ({
         url: `/matrimony/${id}/submit`,
@@ -223,5 +234,6 @@ export const {
   useGetMyMatrimonyProfilesQuery,
   useCreateMatrimonyProfileMutation,
   useUpdateMatrimonyProfileMutation,
+  useDeleteMatrimonyProfileMutation,
   useSubmitMatrimonyProfileMutation,
 } = matrimonyApi;

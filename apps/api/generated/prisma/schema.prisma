@@ -1,0 +1,454 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../apps/api/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  MEMBER
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum Language {
+  HI
+  EN
+}
+
+enum DarziCategory {
+  JUNA_GUJARATI
+  PIPA
+  NAMDEV
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum ProfileFor {
+  SELF
+  SON
+  DAUGHTER
+  BROTHER
+  SISTER
+  RELATIVE
+}
+
+enum MaritalStatus {
+  NEVER_MARRIED
+  DIVORCED
+  WIDOWED
+  SEPARATED
+}
+
+enum MatrimonyProfileStatus {
+  DRAFT
+  PENDING
+  APPROVED
+  REJECTED
+  SUSPENDED
+  MARRIED
+}
+
+enum MediaStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum InterestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  WITHDRAWN
+}
+
+enum ContactRequestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  WITHDRAWN
+}
+
+enum PostCategory {
+  NEWS
+  EVENT
+  ADVERTISEMENT
+  REQUEST
+  GRATITUDE
+  WISHES
+}
+
+enum PostStatus {
+  DRAFT
+  PENDING
+  PUBLISHED
+  REJECTED
+  ARCHIVED
+}
+
+enum ReportReason {
+  FAKE_PROFILE
+  WRONG_INFORMATION
+  INAPPROPRIATE_CONTENT
+  DUPLICATE_PROFILE
+  SPAM
+  OTHER
+}
+
+enum ReportStatus {
+  OPEN
+  REVIEWING
+  RESOLVED
+  DISMISSED
+}
+
+enum NotificationType {
+  INTEREST_RECEIVED
+  INTEREST_ACCEPTED
+  INTEREST_REJECTED
+  CONTACT_REQUEST
+  CONTACT_ACCEPTED
+  PROFILE_APPROVED
+  PROFILE_REJECTED
+  COMMUNITY_POST
+  GENERAL
+}
+
+model User {
+  id                String    @id @default(cuid())
+  phone             String    @unique
+  email             String?   @unique
+  firstName         String?
+  lastName          String?
+  preferredLanguage Language  @default(HI)
+  role              UserRole  @default(MEMBER)
+  isPhoneVerified   Boolean   @default(false)
+  isActive          Boolean   @default(true)
+  lastLoginAt       DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  deletedAt         DateTime?
+
+  matrimonyProfiles MatrimonyProfile[]
+  shortlists        Shortlist[]
+  reports           ProfileReport[]
+  notifications     Notification[]
+  communityPosts    CommunityPost[]
+  committees        Committee[]
+  auditLogs         AuditLog[]         @relation("AuditActor")
+
+  @@index([isActive, createdAt])
+}
+
+model MatrimonyProfile {
+  id          String @id @default(cuid())
+  createdById String
+  createdBy   User   @relation(fields: [createdById], references: [id], onDelete: Restrict)
+
+  profileFor    ProfileFor
+  category      DarziCategory
+  gender        Gender
+  firstName     String
+  middleName    String?
+  lastName      String
+  dateOfBirth   DateTime
+  heightCm      Int?
+  maritalStatus MaritalStatus @default(NEVER_MARRIED)
+
+  contactPhone String?
+  contactEmail String?
+
+  education         String?
+  occupation        String?
+  companyOrBusiness String?
+  annualIncome      Int?
+
+  gotra      String?
+  manglik    Boolean?
+  birthTime  String?
+  birthPlace String?
+
+  currentCity String?
+  district    String?
+  state       String?
+  country     String  @default("India")
+  fullAddress String?
+  postalCode  String?
+  nativePlace String?
+
+  fatherName       String?
+  fatherOccupation String?
+  motherName       String?
+  motherOccupation String?
+  brothers         Int     @default(0)
+  sisters          Int     @default(0)
+  familyDetails    String?
+
+  about           String?
+  status          MatrimonyProfileStatus @default(DRAFT)
+  rejectionReason String?
+  isFeatured      Boolean                @default(false)
+  approvedAt      DateTime?
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
+  deletedAt       DateTime?
+
+  photos            ProfilePhoto[]
+  kundalis          Kundali[]
+  partnerPreference PartnerPreference?
+  sentInterests     Interest[]         @relation("InterestSender")
+  receivedInterests Interest[]         @relation("InterestReceiver")
+  sentContact       ContactRequest[]   @relation("ContactSender")
+  receivedContact   ContactRequest[]   @relation("ContactReceiver")
+  shortlistedBy     Shortlist[]
+  reports           ProfileReport[]
+
+  @@index([status, gender, createdAt])
+  @@index([category, status])
+  @@index([state, district, currentCity])
+  @@index([dateOfBirth])
+  @@index([isFeatured, status])
+}
+
+model PartnerPreference {
+  id                  String           @id @default(cuid())
+  matrimonyProfileId  String           @unique
+  matrimonyProfile    MatrimonyProfile @relation(fields: [matrimonyProfileId], references: [id], onDelete: Cascade)
+  minAge              Int?
+  maxAge              Int?
+  minHeightCm         Int?
+  maxHeightCm         Int?
+  maritalStatuses     MaritalStatus[]
+  preferredEducation  String?
+  preferredOccupation String?
+  preferredLocation   String?
+  notes               String?
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+}
+
+model ProfilePhoto {
+  id                 String           @id @default(cuid())
+  matrimonyProfileId String
+  matrimonyProfile   MatrimonyProfile @relation(fields: [matrimonyProfileId], references: [id], onDelete: Cascade)
+  url                String
+  storageKey         String?
+  status             MediaStatus      @default(PENDING)
+  isPrimary          Boolean          @default(false)
+  sortOrder          Int              @default(0)
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  @@index([matrimonyProfileId, status, sortOrder])
+}
+
+model Kundali {
+  id                 String           @id @default(cuid())
+  matrimonyProfileId String
+  matrimonyProfile   MatrimonyProfile @relation(fields: [matrimonyProfileId], references: [id], onDelete: Cascade)
+  fileUrl            String
+  storageKey         String?
+  fileName           String?
+  mimeType           String?
+  status             MediaStatus      @default(PENDING)
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  @@index([matrimonyProfileId, status])
+}
+
+model Interest {
+  id                String           @id @default(cuid())
+  senderProfileId   String
+  receiverProfileId String
+  senderProfile     MatrimonyProfile @relation("InterestSender", fields: [senderProfileId], references: [id], onDelete: Cascade)
+  receiverProfile   MatrimonyProfile @relation("InterestReceiver", fields: [receiverProfileId], references: [id], onDelete: Cascade)
+  status            InterestStatus   @default(PENDING)
+  message           String?
+  respondedAt       DateTime?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  @@unique([senderProfileId, receiverProfileId])
+  @@index([receiverProfileId, status, createdAt])
+  @@index([senderProfileId, status, createdAt])
+}
+
+model ContactRequest {
+  id                String               @id @default(cuid())
+  senderProfileId   String
+  receiverProfileId String
+  senderProfile     MatrimonyProfile     @relation("ContactSender", fields: [senderProfileId], references: [id], onDelete: Cascade)
+  receiverProfile   MatrimonyProfile     @relation("ContactReceiver", fields: [receiverProfileId], references: [id], onDelete: Cascade)
+  status            ContactRequestStatus @default(PENDING)
+  respondedAt       DateTime?
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+
+  @@unique([senderProfileId, receiverProfileId])
+  @@index([receiverProfileId, status, createdAt])
+}
+
+model Shortlist {
+  id                 String           @id @default(cuid())
+  userId             String
+  matrimonyProfileId String
+  user               User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  matrimonyProfile   MatrimonyProfile @relation(fields: [matrimonyProfileId], references: [id], onDelete: Cascade)
+  createdAt          DateTime         @default(now())
+
+  @@unique([userId, matrimonyProfileId])
+  @@index([userId, createdAt])
+}
+
+model ProfileReport {
+  id                 String           @id @default(cuid())
+  reporterId         String
+  matrimonyProfileId String
+  reporter           User             @relation(fields: [reporterId], references: [id], onDelete: Restrict)
+  matrimonyProfile   MatrimonyProfile @relation(fields: [matrimonyProfileId], references: [id], onDelete: Cascade)
+  reason             ReportReason
+  details            String?
+  status             ReportStatus     @default(OPEN)
+  adminNote          String?
+  resolvedAt         DateTime?
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  @@index([status, createdAt])
+  @@index([matrimonyProfileId, status])
+}
+
+model CommunityPost {
+  id               String       @id @default(cuid())
+  createdById      String?
+  createdBy        User?        @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  category         PostCategory
+  status           PostStatus   @default(DRAFT)
+  bannerUrl        String?
+  bannerStorageKey String?
+  contactName      String?
+  contactPhone     String?
+  location         String?
+  eventDate        DateTime?
+  publishedAt      DateTime?
+  expiresAt        DateTime?
+  isFeatured       Boolean      @default(false)
+  rejectionReason  String?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  deletedAt        DateTime?
+
+  translations CommunityPostTranslation[]
+
+  @@index([status, category, publishedAt])
+  @@index([isFeatured, status, publishedAt])
+  @@index([expiresAt])
+}
+
+model CommunityPostTranslation {
+  id        String        @id @default(cuid())
+  postId    String
+  post      CommunityPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  language  Language
+  title     String
+  details   String
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@unique([postId, language])
+}
+
+model Committee {
+  id               String    @id @default(cuid())
+  createdById      String?
+  createdBy        User?     @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  bannerUrl        String?
+  bannerStorageKey String?
+  logoUrl          String?
+  city             String?
+  district         String?
+  state            String?
+  address          String?
+  phone            String?
+  email            String?
+  isActive         Boolean   @default(true)
+  sortOrder        Int       @default(0)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  deletedAt        DateTime?
+
+  translations CommitteeTranslation[]
+  members      CommitteeMember[]
+
+  @@index([isActive, sortOrder])
+  @@index([state, district, city])
+}
+
+model CommitteeTranslation {
+  id          String    @id @default(cuid())
+  committeeId String
+  committee   Committee @relation(fields: [committeeId], references: [id], onDelete: Cascade)
+  language    Language
+  name        String
+  details     String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([committeeId, language])
+}
+
+model CommitteeMember {
+  id            String    @id @default(cuid())
+  committeeId   String
+  committee     Committee @relation(fields: [committeeId], references: [id], onDelete: Cascade)
+  name          String
+  designationHi String?
+  designationEn String?
+  phone         String?
+  email         String?
+  photoUrl      String?
+  sortOrder     Int       @default(0)
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([committeeId, isActive, sortOrder])
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      NotificationType
+  titleHi   String
+  titleEn   String?
+  bodyHi    String?
+  bodyEn    String?
+  data      Json?
+  readAt    DateTime?
+  createdAt DateTime         @default(now())
+
+  @@index([userId, readAt, createdAt])
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  actorUserId String?
+  actor       User?    @relation("AuditActor", fields: [actorUserId], references: [id], onDelete: SetNull)
+  action      String
+  entityType  String
+  entityId    String?
+  metadata    Json?
+  createdAt   DateTime @default(now())
+
+  @@index([actorUserId, createdAt])
+  @@index([entityType, entityId])
+}

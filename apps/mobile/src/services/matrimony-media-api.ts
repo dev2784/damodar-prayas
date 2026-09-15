@@ -1,4 +1,4 @@
-import { api } from '@/services/api';
+import { API_BASE_URL, api } from '@/services/api';
 import type { MatrimonyKundali, MatrimonyOwnerPhoto } from '@/services/matrimony-api';
 
 export type UploadableFile = {
@@ -11,6 +11,56 @@ function asFormData(file: UploadableFile) {
   const formData = new FormData();
   formData.append('file', file as unknown as Blob);
   return formData;
+}
+
+export async function uploadMatrimonyMediaFile({
+  profileId,
+  kind,
+  file,
+  accessToken,
+}: {
+  profileId: string;
+  kind: 'photo' | 'kundali';
+  file: UploadableFile;
+  accessToken: string;
+}) {
+  const formData = new FormData();
+  formData.append('file', {
+    uri: file.uri,
+    name: file.name,
+    type: file.type,
+  } as unknown as Blob);
+
+  const suffix = kind === 'photo' ? 'photos' : 'kundali';
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE_URL}/media/matrimony/${profileId}/${suffix}`, {
+      method: 'POST',
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+        accept: 'application/json',
+      },
+      body: formData,
+    });
+  } catch (error) {
+    throw { status: 'FETCH_ERROR', data: { error: 'UPLOAD_NETWORK_ERROR', message: String(error) } };
+  }
+
+  const raw = await response.text();
+  let data: unknown = {};
+  if (raw) {
+    try {
+      data = JSON.parse(raw);
+    } catch {
+      data = { message: raw };
+    }
+  }
+
+  if (!response.ok) {
+    throw { status: response.status, data };
+  }
+
+  return data;
 }
 
 export const matrimonyMediaApi = api.injectEndpoints({

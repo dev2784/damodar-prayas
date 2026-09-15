@@ -18,7 +18,9 @@ import {
   type MatrimonyGender,
   type MatrimonyProfile,
   useGetMatrimonyProfilesQuery,
+  useGetMyMatrimonyProfilesQuery,
 } from '@/services/matrimony-api';
+import { useAppSelector } from '@/store/hooks';
 
 const C = {
   bg: '#FFF9F1',
@@ -145,6 +147,7 @@ function ProfileCard({ profile }: { profile: MatrimonyProfile }) {
 }
 
 export default function MatrimonyScreen() {
+  const accessToken = useAppSelector((state) => state.auth.accessToken);
   const [gender, setGender] = useState<MatrimonyGender | undefined>();
   const [category, setCategory] = useState<MatrimonyCategory | undefined>();
   const [ageIndex, setAgeIndex] = useState(0);
@@ -161,6 +164,24 @@ export default function MatrimonyScreen() {
   }), [category, gender, page, selectedAge.maxAge, selectedAge.minAge]);
 
   const { data, isLoading, isFetching, isError, refetch } = useGetMatrimonyProfilesQuery(queryArgs);
+  const { data: mineData } = useGetMyMatrimonyProfilesQuery(undefined, { skip: !accessToken });
+  const resumableProfile = mineData?.items.find((item) => item.status === 'DRAFT' || item.status === 'REJECTED');
+
+  function openOwnerFlow() {
+    if (!accessToken) {
+      router.push({ pathname: '/auth', params: { mode: 'register', next: '/matrimony-form' } });
+      return;
+    }
+    if (resumableProfile) {
+      router.push({ pathname: '/matrimony-form', params: { id: resumableProfile.id } });
+      return;
+    }
+    if ((mineData?.items.length ?? 0) > 0) {
+      router.push('/my-matrimony');
+      return;
+    }
+    router.push('/matrimony-form');
+  }
 
   function changeGender(value?: MatrimonyGender) {
     setGender(value);
@@ -205,16 +226,16 @@ export default function MatrimonyScreen() {
               </Pressable>
             </View>
 
-            <Pressable style={styles.createProfileBanner} onPress={() => router.push('/matrimony-form')}>
+            <Pressable style={styles.createProfileBanner} onPress={openOwnerFlow}>
               <View style={styles.createProfileIcon}>
                 <SymbolView name={{ ios: 'heart.circle.fill', android: 'favorite', web: 'favorite' }} tintColor={C.maroon} size={26} />
               </View>
               <View style={styles.createProfileCopy}>
-                <Text style={styles.createProfileTitle}>अपना मैट्रिमोनी प्रोफाइल बनाएँ</Text>
-                <Text style={styles.createProfileText}>अपनी जानकारी भरें, ड्राफ्ट सेव करें और तैयार होने पर समीक्षा के लिए भेजें।</Text>
+                <Text style={styles.createProfileTitle}>{resumableProfile ? 'अपना ड्राफ्ट जारी रखें' : 'अपना मैट्रिमोनी प्रोफाइल बनाएँ'}</Text>
+                <Text style={styles.createProfileText}>{resumableProfile ? 'आपका अधूरा ड्राफ्ट मिल गया है। वहीं से आगे जारी रखें।' : 'अपनी जानकारी भरें, ड्राफ्ट सेव करें और तैयार होने पर समीक्षा के लिए भेजें।'}</Text>
               </View>
               <View style={styles.createProfileButton}>
-                <Text style={styles.createProfileButtonText}>बनाएँ</Text>
+                <Text style={styles.createProfileButtonText}>{resumableProfile ? 'जारी रखें' : 'बनाएँ'}</Text>
                 <SymbolView name={{ ios: 'chevron.right', android: 'chevron_right', web: 'chevron_right' }} tintColor="#FFFFFF" size={14} />
               </View>
             </Pressable>

@@ -18,11 +18,10 @@ import { SymbolView } from 'expo-symbols';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import {
+  uploadMatrimonyMediaFile,
   useDeleteMatrimonyKundaliMutation,
   useDeleteMatrimonyPhotoMutation,
   useSetPrimaryMatrimonyPhotoMutation,
-  useUploadMatrimonyKundaliMutation,
-  useUploadMatrimonyPhotoMutation,
 } from '@/services/matrimony-media-api';
 import {
   type MatrimonyCategory,
@@ -194,6 +193,8 @@ function mediaErrorMessage(error: unknown) {
   if (code === 'KUNDALI_ALREADY_UPLOADED') return 'एक कुंडली पहले से जुड़ी है। नई जोड़ने से पहले पुरानी हटाएँ।';
   if (code === 'UNSUPPORTED_PHOTO_TYPE') return 'केवल JPG, PNG या WEBP फोटो चुनें।';
   if (code === 'UNSUPPORTED_KUNDALI_TYPE') return 'कुंडली PDF, JPG, PNG या WEBP में होनी चाहिए।';
+  if (code === 'UPLOAD_NETWORK_ERROR') return 'Upload request server तक नहीं पहुँच पाई। इंटरनेट/API connection जाँचकर दोबारा कोशिश करें।';
+  if (code) return `Upload fail हुआ: ${code}`;
   return 'Upload पूरा नहीं हुआ। कृपया दोबारा कोशिश करें।';
 }
 
@@ -374,22 +375,23 @@ function Section({ title, subtitle, children }: { title: string; subtitle?: stri
 }
 
 export default function MatrimonyFormScreen() {
-  const params = useLocalSearchParams<{ id?: string | string[] }>();
+  const params = useLocalSearchParams<{ id?: string | string[]; newProfile?: string | string[] }>();
   const profileId = Array.isArray(params.id) ? params.id[0] : params.id;
+  const newProfileParam = Array.isArray(params.newProfile) ? params.newProfile[0] : params.newProfile;
+  const forceNewProfile = newProfileParam === '1';
   const accessToken = useAppSelector((state) => state.auth.accessToken);
   const [form, setForm] = useState<FormState>(initialForm);
   const [hydratedId, setHydratedId] = useState<string | null>(null);
 
   const { data: mineData, isLoading: isLoadingMine, refetch: refetchMine } = useGetMyMatrimonyProfilesQuery(undefined, {
-    skip: !accessToken || !profileId,
+    skip: !accessToken,
   });
   const [createProfile, { isLoading: isCreating }] = useCreateMatrimonyProfileMutation();
   const [updateProfile, { isLoading: isUpdating }] = useUpdateMatrimonyProfileMutation();
   const [submitProfile, { isLoading: isSubmitting }] = useSubmitMatrimonyProfileMutation();
-  const [uploadPhoto, { isLoading: isUploadingPhoto }] = useUploadMatrimonyPhotoMutation();
+  const [uploadingMedia, setUploadingMedia] = useState<'photo' | 'kundali' | null>(null);
   const [deletePhoto, { isLoading: isDeletingPhoto }] = useDeleteMatrimonyPhotoMutation();
   const [setPrimaryPhoto, { isLoading: isSettingPrimary }] = useSetPrimaryMatrimonyPhotoMutation();
-  const [uploadKundali, { isLoading: isUploadingKundali }] = useUploadMatrimonyKundaliMutation();
   const [deleteKundali, { isLoading: isDeletingKundali }] = useDeleteMatrimonyKundaliMutation();
 
   const editingProfile = useMemo(
@@ -404,8 +406,16 @@ export default function MatrimonyFormScreen() {
     }
   }, [editingProfile, hydratedId]);
 
+  useEffect(() => {
+    if (!accessToken || profileId || forceNewProfile || isLoadingMine || !mineData) return;
+    const resumable = mineData.items.find((item) => item.status === 'DRAFT' || item.status === 'REJECTED');
+    if (resumable) {
+      router.replace({ pathname: '/matrimony-form', params: { id: resumable.id } });
+    }
+  }, [accessToken, forceNewProfile, isLoadingMine, mineData, profileId]);
+
   const busy = isCreating || isUpdating || isSubmitting;
-  const mediaBusy = isUploadingPhoto || isDeletingPhoto || isSettingPrimary || isUploadingKundali || isDeletingKundali;
+  const mediaBusy = uploadingMedia !== null || isDeletingPhoto || isSettingPrimary || isDeletingKundali;
   const editingLocked = Boolean(
     editingProfile && editingProfile.status !== 'DRAFT' && editingProfile.status !== 'REJECTED',
   );
@@ -546,7 +556,7 @@ export default function MatrimonyFormScreen() {
   }
 
   async function pickAndUploadPhoto() {
-    if (!profileId || editingLocked) return;
+    if (!profileId || editingLocked || !accessToken) return;
 
     const result = await ImagePicker.launchImageLibraryAsync({
       allowsMultipleSelection: false,
@@ -562,23 +572,29 @@ export default function MatrimonyFormScreen() {
       return;
     }
 
+    setUploadingMedia('photo');
     try {
-      await uploadPhoto({
+      await uploadMatrimonyMediaFile({
         profileId,
+        accessToken,
+        kind: 'photo',
         file: {
           uri: asset.uri,
           name: asset.fileName || fileNameFromUri(asset.uri, `profile-${Date.now()}.jpg`),
           type,
         },
-      }).unwrap();
+      });
       await refetchMine();
+      Alert.alert('फोटो जुड़ गई', 'फोटो प्रोफाइल में जोड़ दी गई है।');
     } catch (error) {
       Alert.alert('फोटो अपलोड नहीं हुआ', mediaErrorMessage(error));
+    } finally {
+      setUploadingMedia(null);
     }
   }
 
   async function pickAndUploadKundali() {
-    if (!profileId || editingLocked) return;
+    if (!profileId || editingLocked || !accessToken) return;
 
     const result = await DocumentPicker.getDocumentAsync({
       type: ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'],
@@ -589,18 +605,24 @@ export default function MatrimonyFormScreen() {
     if (result.canceled || !result.assets[0]) return;
     const asset = result.assets[0];
 
+    setUploadingMedia('kundali');
     try {
-      await uploadKundali({
+      await uploadMatrimonyMediaFile({
         profileId,
+        accessToken,
+        kind: 'kundali',
         file: {
           uri: asset.uri,
           name: asset.name || fileNameFromUri(asset.uri, `kundali-${Date.now()}.pdf`),
           type: asset.mimeType || 'application/pdf',
         },
-      }).unwrap();
+      });
       await refetchMine();
+      Alert.alert('कुंडली जुड़ गई', 'कुंडली प्रोफाइल में जोड़ दी गई है।');
     } catch (error) {
       Alert.alert('कुंडली अपलोड नहीं हुई', mediaErrorMessage(error));
+    } finally {
+      setUploadingMedia(null);
     }
   }
 

@@ -15,6 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   type MatrimonyOwnerProfile,
   type MatrimonyProfileStatus,
+  useDeleteMatrimonyProfileMutation,
   useGetMyMatrimonyProfilesQuery,
   useSubmitMatrimonyProfileMutation,
 } from '@/services/matrimony-api';
@@ -61,10 +62,14 @@ function ProfileCard({
   profile,
   submitting,
   onSubmit,
+  deleting,
+  onDelete,
 }: {
   profile: MatrimonyOwnerProfile;
   submitting: boolean;
   onSubmit: (id: string) => void;
+  deleting: boolean;
+  onDelete: (id: string) => void;
 }) {
   const status = statusMeta[profile.status];
   const editable = profile.status === 'DRAFT' || profile.status === 'REJECTED';
@@ -144,6 +149,20 @@ function ProfileCard({
           </Pressable>
         ) : null}
       </View>
+
+      {editable ? (
+        <Pressable
+          disabled={deleting}
+          style={[styles.deleteDraftButton, deleting && styles.buttonDisabled]}
+          onPress={() => onDelete(profile.id)}>
+          {deleting ? <ActivityIndicator color={C.red} size="small" /> : (
+            <>
+              <SymbolView name={{ ios: 'trash', android: 'delete_outline', web: 'delete_outline' }} tintColor={C.red} size={15} />
+              <Text style={styles.deleteDraftText}>यह ड्राफ्ट हटाएँ</Text>
+            </>
+          )}
+        </Pressable>
+      ) : null}
     </View>
   );
 }
@@ -151,10 +170,32 @@ function ProfileCard({
 export default function MyMatrimonyScreen() {
   const accessToken = useAppSelector((state) => state.auth.accessToken);
   const [submittingId, setSubmittingId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const { data, isLoading, isFetching, isError, refetch } = useGetMyMatrimonyProfilesQuery(undefined, {
     skip: !accessToken,
   });
   const [submitProfile] = useSubmitMatrimonyProfileMutation();
+  const [deleteProfile] = useDeleteMatrimonyProfileMutation();
+
+  function handleDelete(id: string) {
+    Alert.alert('ड्राफ्ट हटाएँ?', 'यह अधूरा मैट्रिमोनी ड्राफ्ट आपकी सूची से हट जाएगा।', [
+      { text: 'रहने दें', style: 'cancel' },
+      {
+        text: 'हटाएँ',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            setDeletingId(id);
+            await deleteProfile(id).unwrap();
+          } catch {
+            Alert.alert('ड्राफ्ट नहीं हटा', 'कृपया दोबारा कोशिश करें।');
+          } finally {
+            setDeletingId(null);
+          }
+        },
+      },
+    ]);
+  }
 
   async function handleSubmit(id: string) {
     Alert.alert(
@@ -215,7 +256,7 @@ export default function MyMatrimonyScreen() {
             <Text style={styles.title}>मेरे मैट्रिमोनी प्रोफाइल</Text>
           </View>
 
-          <Pressable style={styles.addButton} onPress={() => router.push('/matrimony-form')}>
+          <Pressable style={styles.addButton} onPress={() => router.push({ pathname: '/matrimony-form', params: { newProfile: '1' } })}>
             <SymbolView name={{ ios: 'plus', android: 'add', web: 'add' }} tintColor="#FFFFFF" size={18} />
           </Pressable>
         </View>
@@ -250,7 +291,7 @@ export default function MyMatrimonyScreen() {
             <Text style={styles.emptyText}>
               बेसिक जानकारी भरकर ड्राफ्ट सेव करें। फोटो और बाकी विवरण अगले चरणों में जोड़ सकते हैं।
             </Text>
-            <Pressable style={styles.createButton} onPress={() => router.push('/matrimony-form')}>
+            <Pressable style={styles.createButton} onPress={() => router.push({ pathname: '/matrimony-form', params: { newProfile: '1' } })}>
               <SymbolView name={{ ios: 'plus.circle.fill', android: 'add_circle', web: 'add_circle' }} tintColor="#FFFFFF" size={18} />
               <Text style={styles.createButtonText}>नया प्रोफाइल बनाएँ</Text>
             </Pressable>
@@ -268,6 +309,8 @@ export default function MyMatrimonyScreen() {
                 profile={profile}
                 submitting={submittingId === profile.id}
                 onSubmit={handleSubmit}
+                deleting={deletingId === profile.id}
+                onDelete={handleDelete}
               />
             ))}
           </View>
@@ -314,6 +357,8 @@ const styles = StyleSheet.create({
   secondaryButtonText: { color: C.maroon, fontSize: 10.5, fontWeight: '900' },
   primaryButton: { flex: 1, minHeight: 40, paddingHorizontal: 12, borderRadius: 12, backgroundColor: C.maroon, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
   primaryButtonText: { color: '#FFFFFF', fontSize: 10.5, fontWeight: '900' },
+  deleteDraftButton: { alignSelf: 'flex-start', marginTop: 10, minHeight: 34, paddingHorizontal: 10, borderRadius: 10, borderWidth: 1, borderColor: '#F0C8C2', backgroundColor: '#FFF7F5', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5 },
+  deleteDraftText: { color: C.red, fontSize: 9.5, fontWeight: '900' },
   buttonDisabled: { opacity: 0.62 },
   lockedState: { flexDirection: 'row', alignItems: 'center', gap: 5 },
   lockedText: { color: '#8B7F78', fontSize: 9.5, fontWeight: '700' },
