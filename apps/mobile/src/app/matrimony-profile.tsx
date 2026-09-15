@@ -1,10 +1,13 @@
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
 import { Image } from 'expo-image';
 import { router, useLocalSearchParams } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { type MatrimonyProfile, useGetMatrimonyProfileQuery } from '@/services/matrimony-api';
+import { type MatrimonyProfile, useGetMatrimonyProfileQuery, useGetMyMatrimonyProfilesQuery } from '@/services/matrimony-api';
+import { useAddShortlistMutation, useGetOutgoingInterestsQuery, useGetShortlistsQuery, useRemoveShortlistMutation, useSendInterestMutation } from '@/services/interaction-api';
+import { useAppSelector } from '@/store/hooks';
 
 const C = {
   bg: '#FFF9F1',
@@ -112,6 +115,57 @@ export default function MatrimonyProfileScreen() {
 }
 
 function ProfileDetails({ profile }: { profile: MatrimonyProfile }) {
+  const accessToken = useAppSelector((state) => state.auth.accessToken);
+  const [senderModalOpen, setSenderModalOpen] = useState(false);
+  const { data: mineData } = useGetMyMatrimonyProfilesQuery(undefined, { skip: !accessToken });
+  const { data: shortlistData } = useGetShortlistsQuery(undefined, { skip: !accessToken });
+  const { data: outgoingData } = useGetOutgoingInterestsQuery(undefined, { skip: !accessToken });
+  const [addShortlist, { isLoading: addingShortlist }] = useAddShortlistMutation();
+  const [removeShortlist, { isLoading: removingShortlist }] = useRemoveShortlistMutation();
+  const [sendInterest, { isLoading: sendingInterest }] = useSendInterestMutation();
+  const approvedOwnProfiles = mineData?.items.filter((item) => item.status === 'APPROVED') ?? [];
+  const isOwnProfile = mineData?.items.some((item) => item.id === profile.id) ?? false;
+  const shortlisted = shortlistData?.items.some((item) => item.matrimonyProfileId === profile.id) ?? false;
+  const outgoingInterest = outgoingData?.items.find((item) => item.receiverProfileId === profile.id);
+
+  async function toggleShortlist() {
+    if (!accessToken) { router.push('/profile'); return; }
+    try {
+      if (shortlisted) await removeShortlist(profile.id).unwrap();
+      else await addShortlist(profile.id).unwrap();
+    } catch {
+      Alert.alert('Shortlist अपडेट नहीं हुई', 'कृपया दोबारा कोशिश करें।');
+    }
+  }
+
+  async function submitInterest(senderProfileId: string) {
+    try {
+      await sendInterest({ senderProfileId, receiverProfileId: profile.id }).unwrap();
+      setSenderModalOpen(false);
+      Alert.alert('रुचि भेज दी गई', 'सामने वाले सदस्य को आपका interest request मिल गया है।');
+    } catch (error) {
+      const code = typeof error === 'object' && error && 'data' in error
+        ? String((error as { data?: { error?: string } }).data?.error ?? '')
+        : '';
+      Alert.alert('रुचि नहीं भेजी गई', code === 'INTEREST_ALREADY_EXISTS' ? 'इस प्रोफाइल को interest पहले ही भेजा जा चुका है।' : 'कृपया दोबारा कोशिश करें।');
+    }
+  }
+
+  function startInterest() {
+    if (!accessToken) { router.push('/profile'); return; }
+    if (isOwnProfile) return;
+    if (outgoingInterest) {
+      Alert.alert('Interest status', outgoingInterest.status === 'PENDING' ? 'आपका interest अभी pending है।' : outgoingInterest.status === 'ACCEPTED' ? 'आपका interest स्वीकार हो चुका है।' : 'यह interest पहले ही respond हो चुका है।');
+      return;
+    }
+    if (approvedOwnProfiles.length === 0) {
+      Alert.alert('Approved profile जरूरी है', 'रुचि भेजने के लिए आपकी कम से कम एक approved matrimony profile होनी चाहिए।');
+      return;
+    }
+    if (approvedOwnProfiles.length === 1) { void submitInterest(approvedOwnProfiles[0].id); return; }
+    setSenderModalOpen(true);
+  }
+
   const photo = profile.photos[0]?.url;
   const age = calculateAge(profile.dateOfBirth);
   const location = [profile.currentCity, profile.district, profile.state].filter(Boolean).join(', ');
@@ -142,16 +196,31 @@ function ProfileDetails({ profile }: { profile: MatrimonyProfile }) {
         </View>
       </View>
 
-      <View style={styles.actionsCard}>
-        <Pressable style={styles.primaryAction}>
-          <SymbolView name={{ ios: 'heart.fill', android: 'favorite', web: 'favorite' }} tintColor="#FFFFFF" size={18} />
-          <Text style={styles.primaryActionText}>रुचि भेजें</Text>
-        </Pressable>
-        <Pressable style={styles.secondaryAction}>
-          <SymbolView name={{ ios: 'bookmark', android: 'bookmark_border', web: 'bookmark_border' }} tintColor={C.maroon} size={18} />
-          <Text style={styles.secondaryActionText}>Shortlist</Text>
-        </Pressable>
-      </View>
+      {isOwnProfile ? (
+        <View style={styles.ownProfileNote}><Text style={styles.ownProfileText}>यह आपकी अपनी प्रोफाइल है।</Text></View>
+      ) : (
+        <View style={styles.actionsCard}>
+          <Pressable disabled={sendingInterest} style={[styles.primaryAction, sendingInterest && styles.disabledAction]} onPress={startInterest}>
+            {sendingInterest ? <ActivityIndicator color="#FFFFFF" size="small" /> : <SymbolView name={{ ios: 'heart.fill', android: 'favorite', web: 'favorite' }} tintColor="#FFFFFF" size={18} />}
+            <Text style={styles.primaryActionText}>{outgoingInterest ? (outgoingInterest.status === 'PENDING' ? 'रुचि Pending' : outgoingInterest.status === 'ACCEPTED' ? 'रुचि Accepted' : 'रुचि भेजी गई') : 'रुचि भेजें'}</Text>
+          </Pressable>
+          <Pressable disabled={addingShortlist || removingShortlist} style={styles.secondaryAction} onPress={() => void toggleShortlist()}>
+            <SymbolView name={{ ios: shortlisted ? 'bookmark.fill' : 'bookmark', android: shortlisted ? 'bookmark' : 'bookmark_border', web: shortlisted ? 'bookmark' : 'bookmark_border' }} tintColor={C.maroon} size={18} />
+            <Text style={styles.secondaryActionText}>{shortlisted ? 'Shortlisted' : 'Shortlist'}</Text>
+          </Pressable>
+        </View>
+      )}
+
+      <Modal visible={senderModalOpen} transparent animationType="fade" onRequestClose={() => setSenderModalOpen(false)}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.senderModal}>
+            <Text style={styles.senderModalTitle}>किस प्रोफाइल से रुचि भेजें?</Text>
+            <Text style={styles.senderModalText}>आपके account में एक से ज्यादा approved profiles हैं।</Text>
+            {approvedOwnProfiles.map((item) => <Pressable key={item.id} style={styles.senderOption} onPress={() => void submitInterest(item.id)}><Text style={styles.senderOptionName}>{[item.firstName, item.middleName, item.lastName].filter(Boolean).join(' ')}</Text><Text style={styles.senderOptionMeta}>{item.profileFor}</Text></Pressable>)}
+            <Pressable style={styles.modalCancel} onPress={() => setSenderModalOpen(false)}><Text style={styles.modalCancelText}>रद्द करें</Text></Pressable>
+          </View>
+        </View>
+      </Modal>
 
       <Section title="व्यक्तिगत जानकारी">
         <InfoRow label="समाज" value={categoryLabel(profile.category)} />
@@ -216,6 +285,18 @@ const styles = StyleSheet.create({
   headline: { color: C.maroon, fontSize: 11, fontWeight: '800', marginTop: 5 },
 
   actionsCard: { flexDirection: 'row', gap: 9, marginTop: 11 },
+  disabledAction: { opacity: 0.65 },
+  ownProfileNote: { marginTop: 11, borderRadius: 12, backgroundColor: '#F4ECE6', padding: 12, alignItems: 'center' },
+  ownProfileText: { color: C.muted, fontSize: 10.5, fontWeight: '800' },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(35,28,25,0.45)', justifyContent: 'center', padding: 22 },
+  senderModal: { borderRadius: 18, backgroundColor: C.paper, padding: 16 },
+  senderModalTitle: { color: C.text, fontSize: 17, fontWeight: '900' },
+  senderModalText: { color: C.muted, fontSize: 10, marginTop: 4, marginBottom: 10 },
+  senderOption: { borderWidth: 1, borderColor: C.line, borderRadius: 11, padding: 11, marginTop: 7 },
+  senderOptionName: { color: C.text, fontSize: 12, fontWeight: '900' },
+  senderOptionMeta: { color: C.muted, fontSize: 9, marginTop: 2 },
+  modalCancel: { alignItems: 'center', paddingVertical: 11, marginTop: 8 },
+  modalCancelText: { color: C.maroon, fontSize: 11, fontWeight: '900' },
   primaryAction: { flex: 1, minHeight: 48, borderRadius: 13, backgroundColor: C.maroon, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 7 },
   primaryActionText: { color: '#FFFFFF', fontSize: 12, fontWeight: '900' },
   secondaryAction: { flex: 1, minHeight: 48, borderRadius: 13, borderWidth: 1, borderColor: '#E5BFC1', backgroundColor: '#FFF6F5', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 7 },
