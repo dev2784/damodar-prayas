@@ -109,7 +109,10 @@ export default function HomeScreen() {
 
         <View style={styles.quickRow}>
           {quickActions.map((item) => (
-            <Pressable key={item.title} style={[styles.quickCard, { backgroundColor: item.bg }]}>
+            <Pressable
+              key={item.title}
+              style={[styles.quickCard, { backgroundColor: item.bg }]}
+              onPress={item.title === 'कार्यक्रम एवं' ? () => router.push('/community') : undefined}>
               <View style={styles.quickIcon}><Icon name={item.icon} color={item.tint} size={26} /></View>
               <Text style={styles.quickTitle} numberOfLines={2}>{item.title}</Text>
               <Text style={styles.quickSub} numberOfLines={1}>{item.sub}</Text>
