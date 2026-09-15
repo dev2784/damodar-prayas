@@ -4,6 +4,9 @@ import { Image as ExpoImage } from 'expo-image';
 import { SymbolView } from 'expo-symbols';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { useGetIncomingInterestsQuery } from '@/services/interaction-api';
+import { useAppSelector } from '@/store/hooks';
+
 const C = {
   bg: '#FFF9F1',
   paper: '#FFFDF9',
@@ -58,6 +61,10 @@ function TrustStat({ icon, value, label, color = C.maroon }: { icon: { ios: any;
 }
 
 export default function HomeScreen() {
+  const accessToken = useAppSelector((state) => state.auth.accessToken);
+  const { data: incomingInterests } = useGetIncomingInterestsQuery(undefined, { skip: !accessToken });
+  const pendingInterestCount = incomingInterests?.items.filter((item) => item.status === 'PENDING').length ?? 0;
+
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
@@ -69,7 +76,18 @@ export default function HomeScreen() {
             <Text style={styles.brand}>दामोदर प्रयास</Text>
             <Text style={styles.brandSub}>दर्जी समाज समुदाय एवं वैवाहिक</Text>
           </View>
-          <View style={styles.headerIcon}><Icon name={{ ios: 'bell.fill', android: 'notifications', web: 'notifications' }} color={C.maroon} size={21} /></View>
+          <Pressable
+            style={styles.headerIcon}
+            onPress={() => router.push('/matrimony-interests')}
+            accessibilityRole="button"
+            accessibilityLabel={pendingInterestCount > 0 ? `${pendingInterestCount} matrimony interest requests` : 'Notifications'}>
+            <Icon name={{ ios: 'bell.fill', android: 'notifications', web: 'notifications' }} color={C.maroon} size={21} />
+            {pendingInterestCount > 0 ? (
+              <View style={styles.notificationBadge}>
+                <Text style={styles.notificationBadgeText}>{pendingInterestCount > 99 ? '99+' : pendingInterestCount}</Text>
+              </View>
+            ) : null}
+          </Pressable>
           <View style={styles.headerIcon}><Icon name={{ ios: 'gearshape.fill', android: 'settings', web: 'settings' }} color={C.maroon} size={21} /></View>
         </View>
 
@@ -175,7 +193,9 @@ const styles = StyleSheet.create({
   brandCopy: { flex: 1, marginLeft: 10 },
   brand: { color: C.maroonDark, fontSize: 21, fontWeight: '900' },
   brandSub: { color: C.maroon, fontSize: 9.5, marginTop: 2, fontWeight: '700' },
-  headerIcon: { width: 37, height: 37, borderRadius: 18.5, backgroundColor: '#FFF7E8', alignItems: 'center', justifyContent: 'center', marginLeft: 5 },
+  headerIcon: { width: 37, height: 37, borderRadius: 18.5, backgroundColor: '#FFF7E8', alignItems: 'center', justifyContent: 'center', marginLeft: 5, position: 'relative' },
+  notificationBadge: { position: 'absolute', top: -4, right: -4, minWidth: 18, height: 18, paddingHorizontal: 4, borderRadius: 9, backgroundColor: C.maroon, borderWidth: 2, borderColor: C.paper, alignItems: 'center', justifyContent: 'center' },
+  notificationBadgeText: { color: '#FFFFFF', fontSize: 8.5, fontWeight: '900', lineHeight: 11 },
 
   heroBannerWrap: { marginHorizontal: 12, marginTop: 10, borderRadius: 15, overflow: 'hidden', backgroundColor: '#FFF4D8', elevation: 1 },
   heroBannerImage: { width: '100%', aspectRatio: 480 / 146 },
