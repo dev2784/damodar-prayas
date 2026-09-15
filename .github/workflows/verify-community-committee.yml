@@ -1,0 +1,37 @@
+name: Verify community and committee
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/verify-community-committee.yml
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.0.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: Verify API and mobile
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm --filter @damodar/api build
+          pnpm --filter mobile exec tsc --noEmit
+      - name: Remove temporary workflow
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git rm .github/workflows/verify-community-committee.yml
+          git commit -m "chore: remove community committee verification workflow"
+          git push origin main
