@@ -166,6 +166,8 @@ export default function MatrimonyScreen() {
   const { data, isLoading, isFetching, isError, refetch } = useGetMatrimonyProfilesQuery(queryArgs);
   const { data: mineData, isLoading: isLoadingMine } = useGetMyMatrimonyProfilesQuery(undefined, { skip: !accessToken });
   const hasAnyOwnProfile = (mineData?.items.length ?? 0) > 0;
+  const ownProfileIds = useMemo(() => new Set(mineData?.items.map((item) => item.id) ?? []), [mineData?.items]);
+  const visibleProfiles = useMemo(() => (data?.items ?? []).filter((item) => !ownProfileIds.has(item.id)), [data?.items, ownProfileIds]);
 
   function openOwnerFlow() {
     if (!accessToken) {
@@ -201,7 +203,7 @@ export default function MatrimonyScreen() {
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
       <FlatList
-        data={data?.items ?? []}
+        data={visibleProfiles}
         numColumns={2}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <ProfileCard profile={item} />}
