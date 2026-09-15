@@ -1,0 +1,339 @@
+name: Patch datepicker and dev media
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/patch-datepicker-local-media.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.0.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: Patch date picker and local development media
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          form_path = Path('apps/mobile/src/app/matrimony-form.tsx')
+          form = form_path.read_text()
+
+          old = "import * as DocumentPicker from 'expo-document-picker';\nimport { Image } from 'expo-image';"
+          new = "import * as DocumentPicker from 'expo-document-picker';\nimport DateTimePicker from '@expo/ui/community/datetime-picker';\nimport { Image } from 'expo-image';"
+          if old not in form:
+              raise SystemExit('date picker import anchor not found')
+          form = form.replace(old, new, 1)
+
+          section_anchor = "function Section({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {"
+          date_component = r'''function parseFormDate(value: string) {
+            const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value.trim());
+            if (!match) return null;
+            const date = new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+            return Number.isNaN(date.getTime()) ? null : date;
+          }
+
+          function formatFormDate(date: Date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+          }
+
+          function DateField({
+            label,
+            value,
+            onChange,
+            maximumDate,
+            required,
+          }: {
+            label: string;
+            value: string;
+            onChange: (value: string) => void;
+            maximumDate?: Date;
+            required?: boolean;
+          }) {
+            const [showPicker, setShowPicker] = useState(false);
+            const selectedDate = parseFormDate(value) ?? maximumDate ?? new Date();
+
+            return (
+              <View style={styles.fieldBlock}>
+                <Text style={styles.fieldLabel}>
+                  {label}{required ? <Text style={styles.required}> *</Text> : null}
+                </Text>
+                <Pressable style={[styles.input, styles.dateInput]} onPress={() => setShowPicker(true)}>
+                  <Text style={value ? styles.dateText : styles.datePlaceholder}>
+                    {value ? selectedDate.toLocaleDateString('hi-IN') : 'जन्मतिथि चुनें'}
+                  </Text>
+                  <SymbolView name={{ ios: 'calendar', android: 'calendar_month', web: 'calendar_month' }} tintColor={C.maroon} size={19} />
+                </Pressable>
+                {showPicker ? (
+                  <DateTimePicker
+                    value={selectedDate}
+                    onValueChange={(_event, date) => {
+                      setShowPicker(false);
+                      onChange(formatFormDate(date));
+                    }}
+                    onDismiss={() => setShowPicker(false)}
+                    mode="date"
+                    presentation="dialog"
+                    display="default"
+                    maximumDate={maximumDate}
+                    accentColor={C.maroon}
+                  />
+                ) : null}
+              </View>
+            );
+          }
+
+          '''
+          if section_anchor not in form:
+              raise SystemExit('section anchor not found')
+          form = form.replace(section_anchor, date_component + section_anchor, 1)
+
+          old_date = '<Field label="जन्मतिथि" value={form.dateOfBirth} onChangeText={(value) => update(\'dateOfBirth\', value)} placeholder="YYYY-MM-DD" keyboardType="numeric" required />'
+          new_date = '<DateField label="जन्मतिथि" value={form.dateOfBirth} onChange={(value) => update(\'dateOfBirth\', value)} maximumDate={new Date(new Date().getFullYear() - 18, new Date().getMonth(), new Date().getDate())} required />'
+          if old_date not in form:
+              raise SystemExit('date field anchor not found')
+          form = form.replace(old_date, new_date, 1)
+
+          style_anchor = "  input: { minHeight: 43, borderWidth: 1, borderColor: '#DFD2C6', borderRadius: 12, backgroundColor: '#FFFCF8', paddingHorizontal: 12, color: C.text, fontSize: 12 },\n  multilineInput:"
+          style_replacement = "  input: { minHeight: 43, borderWidth: 1, borderColor: '#DFD2C6', borderRadius: 12, backgroundColor: '#FFFCF8', paddingHorizontal: 12, color: C.text, fontSize: 12 },\n  dateInput: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 10 },\n  dateText: { color: C.text, fontSize: 12, fontWeight: '700' },\n  datePlaceholder: { color: '#A69A94', fontSize: 12 },\n  multilineInput:"
+          if style_anchor not in form:
+              raise SystemExit('date style anchor not found')
+          form = form.replace(style_anchor, style_replacement, 1)
+          form_path.write_text(form)
+
+          env_path = Path('apps/api/src/config/env.ts')
+          env = env_path.read_text()
+          old_env = "MEDIA_PROVIDER: z.enum(['disabled', 'cloudinary']).default('disabled'),"
+          new_env = "MEDIA_PROVIDER: z.enum(['disabled', 'local', 'cloudinary']).default('disabled'),"
+          if old_env not in env:
+              raise SystemExit('env media provider anchor not found')
+          env_path.write_text(env.replace(old_env, new_env, 1))
+
+          storage_path = Path('apps/api/src/lib/media-storage.ts')
+          storage_path.write_text(r'''import { mkdir, readFile, unlink, writeFile } from 'node:fs/promises';
+          import { tmpdir } from 'node:os';
+          import { extname, join } from 'node:path';
+          import { v2 as cloudinary } from 'cloudinary';
+          import { env } from '../config/env.js';
+
+          export type MediaKind = 'profile-photo' | 'kundali';
+
+          type UploadInput = {
+            buffer: Buffer;
+            mimeType: string;
+            fileName: string;
+            folder: string;
+            kind: MediaKind;
+            publicBaseUrl?: string;
+          };
+
+          type UploadResult = {
+            url: string;
+            storageKey: string;
+            mimeType: string;
+            fileName: string;
+          };
+
+          const LOCAL_MEDIA_DIR = join(tmpdir(), 'damodar-prayas-media');
+          const LOCAL_PREFIX = 'local__';
+          const MIME_EXTENSION: Record<string, string> = {
+            'image/jpeg': '.jpg',
+            'image/png': '.png',
+            'image/webp': '.webp',
+            'application/pdf': '.pdf',
+          };
+          const EXTENSION_MIME: Record<string, string> = {
+            '.jpg': 'image/jpeg',
+            '.jpeg': 'image/jpeg',
+            '.png': 'image/png',
+            '.webp': 'image/webp',
+            '.pdf': 'application/pdf',
+          };
+
+          if (env.MEDIA_PROVIDER === 'cloudinary') {
+            cloudinary.config({
+              cloud_name: env.CLOUDINARY_CLOUD_NAME,
+              api_key: env.CLOUDINARY_API_KEY,
+              api_secret: env.CLOUDINARY_API_SECRET,
+              secure: true,
+            });
+          }
+
+          function ensureCloudinary() {
+            if (env.MEDIA_PROVIDER !== 'cloudinary') {
+              const error = new Error('Media provider is not configured.');
+              Object.assign(error, { statusCode: 503, code: 'MEDIA_PROVIDER_NOT_CONFIGURED' });
+              throw error;
+            }
+          }
+
+          function isLocalStorageKey(storageKey: string) {
+            return storageKey.startsWith(LOCAL_PREFIX) && /^local__[a-z0-9_-]+\.(jpg|jpeg|png|webp|pdf)$/i.test(storageKey);
+          }
+
+          function localPath(storageKey: string) {
+            if (!isLocalStorageKey(storageKey)) throw new Error('Invalid local media key.');
+            return join(LOCAL_MEDIA_DIR, storageKey);
+          }
+
+          async function uploadLocal(input: UploadInput): Promise<UploadResult> {
+            if (!input.publicBaseUrl) {
+              const error = new Error('Public API URL could not be determined for local media.');
+              Object.assign(error, { statusCode: 500, code: 'MEDIA_PUBLIC_URL_UNAVAILABLE' });
+              throw error;
+            }
+
+            const extension = MIME_EXTENSION[input.mimeType];
+            if (!extension) throw new Error(`Unsupported local media type: ${input.mimeType}`);
+
+            await mkdir(LOCAL_MEDIA_DIR, { recursive: true });
+            const token = `${Date.now()}-${Math.random().toString(36).slice(2, 12)}`;
+            const kind = input.kind === 'profile-photo' ? 'photo' : 'kundali';
+            const storageKey = `${LOCAL_PREFIX}${kind}-${token}${extension}`;
+            await writeFile(localPath(storageKey), input.buffer);
+
+            return {
+              url: `${input.publicBaseUrl.replace(/\/$/, '')}/api/v1/media/files/${encodeURIComponent(storageKey)}`,
+              storageKey,
+              mimeType: input.mimeType,
+              fileName: input.fileName,
+            };
+          }
+
+          export async function readLocalMedia(storageKey: string): Promise<{ buffer: Buffer; mimeType: string } | null> {
+            if (!isLocalStorageKey(storageKey)) return null;
+            try {
+              const buffer = await readFile(localPath(storageKey));
+              const mimeType = EXTENSION_MIME[extname(storageKey).toLowerCase()] ?? 'application/octet-stream';
+              return { buffer, mimeType };
+            } catch (error) {
+              if ((error as NodeJS.ErrnoException).code === 'ENOENT') return null;
+              throw error;
+            }
+          }
+
+          export async function uploadMedia(input: UploadInput): Promise<UploadResult> {
+            if (env.MEDIA_PROVIDER === 'local') return uploadLocal(input);
+            ensureCloudinary();
+
+            const dataUri = `data:${input.mimeType};base64,${input.buffer.toString('base64')}`;
+            const publicId = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+
+            const result = await cloudinary.uploader.upload(dataUri, {
+              folder: input.folder,
+              public_id: publicId,
+              resource_type: input.kind === 'kundali' ? 'auto' : 'image',
+              overwrite: false,
+              use_filename: false,
+              unique_filename: true,
+            });
+
+            return {
+              url: result.secure_url,
+              storageKey: result.public_id,
+              mimeType: input.mimeType,
+              fileName: input.fileName,
+            };
+          }
+
+          export async function deleteMedia(storageKey: string, kind: MediaKind) {
+            if (isLocalStorageKey(storageKey)) {
+              try {
+                await unlink(localPath(storageKey));
+              } catch (error) {
+                if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
+              }
+              return;
+            }
+
+            ensureCloudinary();
+            await cloudinary.uploader.destroy(storageKey, {
+              resource_type: kind === 'kundali' ? 'image' : 'image',
+              invalidate: true,
+            });
+          }
+          '''.replace('\n          ', '\n').lstrip())
+
+          routes_path = Path('apps/api/src/modules/media/routes.ts')
+          routes = routes_path.read_text()
+          old_import = "import { deleteMedia, uploadMedia } from '../../lib/media-storage.js';"
+          new_import = "import { deleteMedia, readLocalMedia, uploadMedia } from '../../lib/media-storage.js';"
+          if old_import not in routes:
+              raise SystemExit('media storage import anchor not found')
+          routes = routes.replace(old_import, new_import, 1)
+
+          export_anchor = 'export async function mediaRoutes(app: FastifyInstance) {'
+          helpers = r'''function firstHeader(value: string | string[] | undefined) {
+            return Array.isArray(value) ? value[0] : value;
+          }
+
+          function getPublicBaseUrl(request: FastifyRequest) {
+            const protocol = firstHeader(request.headers['x-forwarded-proto']) ?? request.protocol ?? 'http';
+            const host = firstHeader(request.headers['x-forwarded-host']) ?? request.headers.host;
+            if (!host) throw new Error('Request host is unavailable.');
+            return `${protocol}://${host}`;
+          }
+
+          '''
+          if export_anchor not in routes:
+              raise SystemExit('media routes export anchor not found')
+          routes = routes.replace(export_anchor, helpers + export_anchor, 1)
+
+          open_anchor = "export async function mediaRoutes(app: FastifyInstance) {\n  app.post('/matrimony/:profileId/photos', async (request, reply) => {"
+          open_replacement = """export async function mediaRoutes(app: FastifyInstance) {
+            app.get('/files/:storageKey', async (request, reply) => {
+              const { storageKey } = request.params as { storageKey: string };
+              const media = await readLocalMedia(storageKey);
+              if (!media) return reply.code(404).send({ error: 'MEDIA_NOT_FOUND' });
+
+              return reply
+                .header('Content-Type', media.mimeType)
+                .header('Cache-Control', 'private, max-age=3600')
+                .send(media.buffer);
+            });
+
+            app.post('/matrimony/:profileId/photos', async (request, reply) => {""".replace('\n            ', '\n')
+          if open_anchor not in routes:
+              raise SystemExit('media route opening anchor not found')
+          routes = routes.replace(open_anchor, open_replacement, 1)
+
+          photo_anchor = "      kind: 'profile-photo',\n    });"
+          photo_replacement = "      kind: 'profile-photo',\n      publicBaseUrl: getPublicBaseUrl(request),\n    });"
+          if photo_anchor not in routes:
+              raise SystemExit('photo upload anchor not found')
+          routes = routes.replace(photo_anchor, photo_replacement, 1)
+
+          kundali_anchor = "      kind: 'kundali',\n    });"
+          kundali_replacement = "      kind: 'kundali',\n      publicBaseUrl: getPublicBaseUrl(request),\n    });"
+          if kundali_anchor not in routes:
+              raise SystemExit('kundali upload anchor not found')
+          routes = routes.replace(kundali_anchor, kundali_replacement, 1)
+          routes_path.write_text(routes)
+          PY
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @damodar/api build
+      - run: pnpm --filter mobile exec tsc --noEmit
+      - name: Commit patch and remove one-shot workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/patch-datepicker-local-media.yml
+          git add apps/mobile/src/app/matrimony-form.tsx apps/api/src/config/env.ts apps/api/src/lib/media-storage.ts apps/api/src/modules/media/routes.ts
+          git commit -m "feat(matrimony): add date picker and local dev media uploads"
+          git push origin HEAD:main
