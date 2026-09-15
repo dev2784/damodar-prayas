@@ -1,0 +1,305 @@
+name: Add matrimony shortlist and interests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/add-matrimony-interactions.yml
+
+permissions:
+  contents: write
+
+jobs:
+  implement:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.0.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Add interaction API and screens
+        run: |
+          cat > apps/mobile/src/services/interaction-api.ts <<'EOF'
+          import { api } from '@/services/api';
+          import type { MatrimonyProfile } from '@/services/matrimony-api';
+
+          export type InterestStatus = 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'WITHDRAWN';
+
+          export type Interest = {
+            id: string;
+            senderProfileId: string;
+            receiverProfileId: string;
+            status: InterestStatus;
+            message: string | null;
+            respondedAt: string | null;
+            createdAt: string;
+            updatedAt: string;
+          };
+
+          export type IncomingInterest = Interest & { senderProfile: MatrimonyProfile };
+          export type OutgoingInterest = Interest & { receiverProfile: MatrimonyProfile };
+
+          export type ShortlistItem = {
+            id: string;
+            userId: string;
+            matrimonyProfileId: string;
+            createdAt: string;
+            matrimonyProfile: MatrimonyProfile;
+          };
+
+          export const interactionApi = api.injectEndpoints({
+            endpoints: (builder) => ({
+              getShortlists: builder.query<{ items: ShortlistItem[] }, void>({
+                query: () => '/shortlists',
+                providesTags: (result) => [
+                  { type: 'Shortlists', id: 'LIST' },
+                  ...(result?.items.map((item) => ({ type: 'Shortlists' as const, id: item.matrimonyProfileId })) ?? []),
+                ],
+              }),
+              addShortlist: builder.mutation<{ shortlist: { id: string } }, string>({
+                query: (profileId) => ({ url: `/shortlists/${profileId}`, method: 'POST' }),
+                invalidatesTags: (_result, _error, profileId) => [
+                  { type: 'Shortlists', id: 'LIST' },
+                  { type: 'Shortlists', id: profileId },
+                ],
+              }),
+              removeShortlist: builder.mutation<void, string>({
+                query: (profileId) => ({ url: `/shortlists/${profileId}`, method: 'DELETE' }),
+                invalidatesTags: (_result, _error, profileId) => [
+                  { type: 'Shortlists', id: 'LIST' },
+                  { type: 'Shortlists', id: profileId },
+                ],
+              }),
+              getIncomingInterests: builder.query<{ items: IncomingInterest[] }, void>({
+                query: () => '/interests/incoming',
+                providesTags: [{ type: 'Interests', id: 'INCOMING' }],
+              }),
+              getOutgoingInterests: builder.query<{ items: OutgoingInterest[] }, void>({
+                query: () => '/interests/outgoing',
+                providesTags: [{ type: 'Interests', id: 'OUTGOING' }],
+              }),
+              sendInterest: builder.mutation<
+                { interest: Interest },
+                { senderProfileId: string; receiverProfileId: string; message?: string | null }
+              >({
+                query: (body) => ({ url: '/interests', method: 'POST', body }),
+                invalidatesTags: [
+                  { type: 'Interests', id: 'OUTGOING' },
+                  { type: 'Notifications', id: 'LIST' },
+                ],
+              }),
+              respondInterest: builder.mutation<{ interest: Interest }, { id: string; action: 'ACCEPT' | 'REJECT' }>({
+                query: ({ id, action }) => ({
+                  url: `/interests/${id}/respond`,
+                  method: 'POST',
+                  body: { action },
+                }),
+                invalidatesTags: [
+                  { type: 'Interests', id: 'INCOMING' },
+                  { type: 'Interests', id: 'OUTGOING' },
+                  { type: 'Notifications', id: 'LIST' },
+                ],
+              }),
+            }),
+            overrideExisting: false,
+          });
+
+          export const {
+            useGetShortlistsQuery,
+            useAddShortlistMutation,
+            useRemoveShortlistMutation,
+            useGetIncomingInterestsQuery,
+            useGetOutgoingInterestsQuery,
+            useSendInterestMutation,
+            useRespondInterestMutation,
+          } = interactionApi;
+          EOF
+
+          cat > apps/mobile/src/app/matrimony-shortlist.tsx <<'EOF'
+          import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+          import { Image } from 'expo-image';
+          import { router } from 'expo-router';
+          import { SymbolView } from 'expo-symbols';
+          import { SafeAreaView } from 'react-native-safe-area-context';
+
+          import { useGetShortlistsQuery, useRemoveShortlistMutation } from '@/services/interaction-api';
+          import type { MatrimonyProfile } from '@/services/matrimony-api';
+          import { useAppSelector } from '@/store/hooks';
+
+          const C = { bg: '#FFF9F1', paper: '#FFFFFF', maroon: '#A30D1E', text: '#231C19', muted: '#756B66', line: '#E9DCCF', red: '#B42318' };
+
+          function calculateAge(dateOfBirth: string) {
+            const dob = new Date(dateOfBirth);
+            const today = new Date();
+            let age = today.getFullYear() - dob.getFullYear();
+            const month = today.getMonth() - dob.getMonth();
+            if (month < 0 || (month === 0 && today.getDate() < dob.getDate())) age -= 1;
+            return age;
+          }
+
+          function nameOf(profile: MatrimonyProfile) {
+            return [profile.firstName, profile.middleName, profile.lastName].filter(Boolean).join(' ');
+          }
+
+          export default function MatrimonyShortlistScreen() {
+            const accessToken = useAppSelector((state) => state.auth.accessToken);
+            const { data, isLoading, isError, refetch } = useGetShortlistsQuery(undefined, { skip: !accessToken });
+            const [removeShortlist, { isLoading: removing }] = useRemoveShortlistMutation();
+
+            async function remove(profileId: string) {
+              try {
+                await removeShortlist(profileId).unwrap();
+              } catch {
+                Alert.alert('Shortlist अपडेट नहीं हुई', 'कृपया दोबारा कोशिश करें।');
+              }
+            }
+
+            if (!accessToken) {
+              return <SafeAreaView style={styles.safeArea}><View style={styles.center}><Text style={styles.title}>Shortlist देखने के लिए लॉगिन करें</Text><Pressable style={styles.primary} onPress={() => router.push('/profile')}><Text style={styles.primaryText}>लॉगिन पर जाएँ</Text></Pressable></View></SafeAreaView>;
+            }
+
+            return (
+              <SafeAreaView style={styles.safeArea} edges={['top']}>
+                <View style={styles.header}>
+                  <Pressable style={styles.iconButton} onPress={() => router.back()}><SymbolView name={{ ios: 'chevron.left', android: 'arrow_back', web: 'arrow_back' }} tintColor={C.maroon} size={22} /></Pressable>
+                  <View style={{ flex: 1 }}><Text style={styles.eyebrow}>MY MATRIMONY</Text><Text style={styles.title}>मेरी Shortlist</Text></View>
+                </View>
+                {isLoading ? <View style={styles.center}><ActivityIndicator color={C.maroon} size="large" /><Text style={styles.muted}>Shortlist लोड हो रही है...</Text></View> : isError ? <View style={styles.center}><Text style={styles.title}>Shortlist लोड नहीं हुई</Text><Pressable style={styles.primary} onPress={refetch}><Text style={styles.primaryText}>फिर कोशिश करें</Text></Pressable></View> : (
+                  <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+                    {(data?.items.length ?? 0) === 0 ? <View style={styles.empty}><SymbolView name={{ ios: 'bookmark', android: 'bookmark_border', web: 'bookmark_border' }} tintColor="#B99D8C" size={44} /><Text style={styles.title}>अभी कोई profile shortlist नहीं है</Text><Text style={styles.muted}>पसंद आने वाली प्रोफाइल को Shortlist करें, वह यहाँ दिखाई देगी।</Text></View> : data?.items.map((item) => {
+                      const p = item.matrimonyProfile;
+                      const photo = p.photos[0]?.url;
+                      return <Pressable key={item.id} style={styles.card} onPress={() => router.push({ pathname: '/matrimony-profile', params: { id: p.id } })}>
+                        {photo ? <Image source={{ uri: photo }} style={styles.photo} contentFit="cover" /> : <View style={styles.photoPlaceholder}><SymbolView name={{ ios: 'person.crop.circle.fill', android: 'account_circle', web: 'account_circle' }} tintColor="#C9B0A2" size={54} /></View>}
+                        <View style={styles.cardBody}><Text style={styles.name}>{nameOf(p)}, {calculateAge(p.dateOfBirth)}</Text><Text style={styles.meta}>{[p.currentCity, p.state].filter(Boolean).join(', ') || 'भारत'}</Text><Text style={styles.meta}>{p.occupation || p.education || 'विवरण देखें'}</Text></View>
+                        <Pressable disabled={removing} style={styles.removeButton} onPress={(event) => { event.stopPropagation(); void remove(p.id); }}><SymbolView name={{ ios: 'bookmark.slash.fill', android: 'bookmark_remove', web: 'bookmark_remove' }} tintColor={C.red} size={20} /></Pressable>
+                      </Pressable>;
+                    })}
+                  </ScrollView>
+                )}
+              </SafeAreaView>
+            );
+          }
+
+          const styles = StyleSheet.create({
+            safeArea: { flex: 1, backgroundColor: C.bg }, header: { minHeight: 68, paddingHorizontal: 14, flexDirection: 'row', alignItems: 'center', gap: 11, borderBottomWidth: 1, borderBottomColor: C.line, backgroundColor: '#FFFDF9' }, iconButton: { width: 38, height: 38, borderRadius: 19, backgroundColor: '#FFF0EC', alignItems: 'center', justifyContent: 'center' }, eyebrow: { color: C.maroon, fontSize: 9, fontWeight: '900', letterSpacing: 1 }, title: { color: C.text, fontSize: 18, fontWeight: '900' }, content: { padding: 14, paddingBottom: 100, gap: 10 }, card: { flexDirection: 'row', alignItems: 'center', gap: 11, padding: 10, borderRadius: 15, borderWidth: 1, borderColor: C.line, backgroundColor: C.paper }, photo: { width: 72, height: 84, borderRadius: 11, backgroundColor: '#EEE1D7' }, photoPlaceholder: { width: 72, height: 84, borderRadius: 11, backgroundColor: '#F3E8DF', alignItems: 'center', justifyContent: 'center' }, cardBody: { flex: 1 }, name: { color: C.text, fontSize: 14, fontWeight: '900' }, meta: { color: C.muted, fontSize: 10, marginTop: 4 }, removeButton: { width: 38, height: 38, borderRadius: 19, backgroundColor: '#FFF1F0', alignItems: 'center', justifyContent: 'center' }, center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 28, gap: 10 }, empty: { alignItems: 'center', paddingVertical: 60, gap: 10 }, muted: { color: C.muted, fontSize: 11, lineHeight: 17, textAlign: 'center' }, primary: { marginTop: 8, backgroundColor: C.maroon, borderRadius: 11, paddingHorizontal: 16, paddingVertical: 11 }, primaryText: { color: '#FFFFFF', fontSize: 11, fontWeight: '900' },
+          });
+          EOF
+
+          cat > apps/mobile/src/app/matrimony-interests.tsx <<'EOF'
+          import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+          import { Image } from 'expo-image';
+          import { router } from 'expo-router';
+          import { SymbolView } from 'expo-symbols';
+          import { SafeAreaView } from 'react-native-safe-area-context';
+          import { useState } from 'react';
+
+          import { type InterestStatus, useGetIncomingInterestsQuery, useGetOutgoingInterestsQuery, useRespondInterestMutation } from '@/services/interaction-api';
+          import type { MatrimonyProfile } from '@/services/matrimony-api';
+          import { useAppSelector } from '@/store/hooks';
+
+          const C = { bg: '#FFF9F1', paper: '#FFFFFF', maroon: '#A30D1E', text: '#231C19', muted: '#756B66', line: '#E9DCCF', green: '#16865C', red: '#B42318', blue: '#2F62A3', amber: '#B76A12' };
+          const statusMeta: Record<InterestStatus, { label: string; color: string; bg: string }> = {
+            PENDING: { label: 'Pending', color: C.amber, bg: '#FFF4DE' }, ACCEPTED: { label: 'Accepted', color: C.green, bg: '#EAF8F0' }, REJECTED: { label: 'Rejected', color: C.red, bg: '#FFF0EE' }, WITHDRAWN: { label: 'Withdrawn', color: C.muted, bg: '#F2EFED' },
+          };
+          function nameOf(p: MatrimonyProfile) { return [p.firstName, p.middleName, p.lastName].filter(Boolean).join(' '); }
+
+          export default function MatrimonyInterestsScreen() {
+            const accessToken = useAppSelector((state) => state.auth.accessToken);
+            const [tab, setTab] = useState<'incoming' | 'outgoing'>('incoming');
+            const incoming = useGetIncomingInterestsQuery(undefined, { skip: !accessToken });
+            const outgoing = useGetOutgoingInterestsQuery(undefined, { skip: !accessToken });
+            const [respond, { isLoading: responding }] = useRespondInterestMutation();
+
+            async function respondTo(id: string, action: 'ACCEPT' | 'REJECT') {
+              try {
+                await respond({ id, action }).unwrap();
+                Alert.alert(action === 'ACCEPT' ? 'रुचि स्वीकार हुई' : 'रुचि अस्वीकार हुई');
+              } catch {
+                Alert.alert('अपडेट नहीं हुआ', 'कृपया दोबारा कोशिश करें।');
+              }
+            }
+
+            if (!accessToken) return <SafeAreaView style={styles.safeArea}><View style={styles.center}><Text style={styles.title}>Interests देखने के लिए लॉगिन करें</Text><Pressable style={styles.primary} onPress={() => router.push('/profile')}><Text style={styles.primaryText}>लॉगिन पर जाएँ</Text></Pressable></View></SafeAreaView>;
+
+            const loading = tab === 'incoming' ? incoming.isLoading : outgoing.isLoading;
+            const error = tab === 'incoming' ? incoming.isError : outgoing.isError;
+            const items = tab === 'incoming' ? incoming.data?.items ?? [] : outgoing.data?.items ?? [];
+            const refetch = tab === 'incoming' ? incoming.refetch : outgoing.refetch;
+
+            return <SafeAreaView style={styles.safeArea} edges={['top']}>
+              <View style={styles.header}><Pressable style={styles.iconButton} onPress={() => router.back()}><SymbolView name={{ ios: 'chevron.left', android: 'arrow_back', web: 'arrow_back' }} tintColor={C.maroon} size={22} /></Pressable><View><Text style={styles.eyebrow}>MY MATRIMONY</Text><Text style={styles.title}>रुचि अनुरोध</Text></View></View>
+              <View style={styles.tabs}><Pressable style={[styles.tab, tab === 'incoming' && styles.tabActive]} onPress={() => setTab('incoming')}><Text style={[styles.tabText, tab === 'incoming' && styles.tabTextActive]}>मिली हुई ({incoming.data?.items.length ?? 0})</Text></Pressable><Pressable style={[styles.tab, tab === 'outgoing' && styles.tabActive]} onPress={() => setTab('outgoing')}><Text style={[styles.tabText, tab === 'outgoing' && styles.tabTextActive]}>भेजी हुई ({outgoing.data?.items.length ?? 0})</Text></Pressable></View>
+              {loading ? <View style={styles.center}><ActivityIndicator color={C.maroon} size="large" /></View> : error ? <View style={styles.center}><Text style={styles.title}>Interests लोड नहीं हुए</Text><Pressable style={styles.primary} onPress={refetch}><Text style={styles.primaryText}>फिर कोशिश करें</Text></Pressable></View> : <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+                {items.length === 0 ? <View style={styles.empty}><SymbolView name={{ ios: 'heart', android: 'favorite_border', web: 'favorite_border' }} tintColor="#B99D8C" size={44} /><Text style={styles.title}>अभी कोई interest नहीं है</Text></View> : items.map((item) => {
+                  const p = tab === 'incoming' ? ('senderProfile' in item ? item.senderProfile : null) : ('receiverProfile' in item ? item.receiverProfile : null);
+                  if (!p) return null;
+                  const status = statusMeta[item.status];
+                  const photo = p.photos[0]?.url;
+                  return <View key={item.id} style={styles.card}>
+                    <Pressable style={styles.profileRow} onPress={() => router.push({ pathname: '/matrimony-profile', params: { id: p.id } })}>{photo ? <Image source={{ uri: photo }} style={styles.photo} contentFit="cover" /> : <View style={styles.photoPlaceholder}><SymbolView name={{ ios: 'person.crop.circle.fill', android: 'account_circle', web: 'account_circle' }} tintColor="#C9B0A2" size={48} /></View>}<View style={{ flex: 1 }}><Text style={styles.name}>{nameOf(p)}</Text><Text style={styles.meta}>{[p.currentCity, p.state].filter(Boolean).join(', ') || 'भारत'}</Text><Text style={styles.meta}>{p.occupation || p.education || 'प्रोफाइल देखें'}</Text></View><View style={[styles.status, { backgroundColor: status.bg }]}><Text style={[styles.statusText, { color: status.color }]}>{status.label}</Text></View></Pressable>
+                    {item.message ? <Text style={styles.message}>“{item.message}”</Text> : null}
+                    {tab === 'incoming' && item.status === 'PENDING' ? <View style={styles.actions}><Pressable disabled={responding} style={[styles.responseButton, styles.reject]} onPress={() => void respondTo(item.id, 'REJECT')}><Text style={styles.rejectText}>अस्वीकार</Text></Pressable><Pressable disabled={responding} style={[styles.responseButton, styles.accept]} onPress={() => void respondTo(item.id, 'ACCEPT')}><Text style={styles.acceptText}>स्वीकार करें</Text></Pressable></View> : null}
+                  </View>;
+                })}
+              </ScrollView>}
+            </SafeAreaView>;
+          }
+
+          const styles = StyleSheet.create({ safeArea: { flex: 1, backgroundColor: C.bg }, header: { minHeight: 68, paddingHorizontal: 14, flexDirection: 'row', alignItems: 'center', gap: 11, borderBottomWidth: 1, borderBottomColor: C.line, backgroundColor: '#FFFDF9' }, iconButton: { width: 38, height: 38, borderRadius: 19, backgroundColor: '#FFF0EC', alignItems: 'center', justifyContent: 'center' }, eyebrow: { color: C.maroon, fontSize: 9, fontWeight: '900', letterSpacing: 1 }, title: { color: C.text, fontSize: 18, fontWeight: '900' }, tabs: { flexDirection: 'row', padding: 10, gap: 8 }, tab: { flex: 1, alignItems: 'center', paddingVertical: 10, borderRadius: 11, backgroundColor: '#F4ECE6' }, tabActive: { backgroundColor: C.maroon }, tabText: { color: C.muted, fontSize: 10, fontWeight: '900' }, tabTextActive: { color: '#FFFFFF' }, content: { padding: 14, paddingTop: 4, gap: 10, paddingBottom: 100 }, card: { padding: 11, borderRadius: 15, borderWidth: 1, borderColor: C.line, backgroundColor: C.paper }, profileRow: { flexDirection: 'row', alignItems: 'center', gap: 10 }, photo: { width: 62, height: 72, borderRadius: 10, backgroundColor: '#EEE1D7' }, photoPlaceholder: { width: 62, height: 72, borderRadius: 10, backgroundColor: '#F3E8DF', alignItems: 'center', justifyContent: 'center' }, name: { color: C.text, fontSize: 13, fontWeight: '900' }, meta: { color: C.muted, fontSize: 9.5, marginTop: 3 }, status: { paddingHorizontal: 7, paddingVertical: 4, borderRadius: 7 }, statusText: { fontSize: 8, fontWeight: '900' }, message: { color: C.text, fontSize: 10, lineHeight: 16, marginTop: 9, backgroundColor: '#FFF7EF', borderRadius: 9, padding: 8 }, actions: { flexDirection: 'row', gap: 8, marginTop: 10 }, responseButton: { flex: 1, alignItems: 'center', paddingVertical: 10, borderRadius: 10 }, reject: { backgroundColor: '#FFF0EE', borderWidth: 1, borderColor: '#F4C9C5' }, accept: { backgroundColor: C.green }, rejectText: { color: C.red, fontSize: 10, fontWeight: '900' }, acceptText: { color: '#FFFFFF', fontSize: 10, fontWeight: '900' }, center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 28, gap: 10 }, empty: { alignItems: 'center', paddingVertical: 60, gap: 10 }, primary: { marginTop: 8, backgroundColor: C.maroon, borderRadius: 11, paddingHorizontal: 16, paddingVertical: 11 }, primaryText: { color: '#FFFFFF', fontSize: 11, fontWeight: '900' } });
+          EOF
+
+      - name: Patch profile detail and My Matrimony entry points
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          p = Path('apps/mobile/src/app/matrimony-profile.tsx')
+          s = p.read_text()
+          s = s.replace("import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';", "import { ActivityIndicator, Alert, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';\nimport { useState } from 'react';")
+          s = s.replace("import { type MatrimonyProfile, useGetMatrimonyProfileQuery } from '@/services/matrimony-api';", "import { type MatrimonyProfile, useGetMatrimonyProfileQuery, useGetMyMatrimonyProfilesQuery } from '@/services/matrimony-api';\nimport { useAddShortlistMutation, useGetOutgoingInterestsQuery, useGetShortlistsQuery, useRemoveShortlistMutation, useSendInterestMutation } from '@/services/interaction-api';\nimport { useAppSelector } from '@/store/hooks';")
+          s = s.replace("function ProfileDetails({ profile }: { profile: MatrimonyProfile }) {\n  const photo", "function ProfileDetails({ profile }: { profile: MatrimonyProfile }) {\n  const accessToken = useAppSelector((state) => state.auth.accessToken);\n  const [senderModalOpen, setSenderModalOpen] = useState(false);\n  const { data: mineData } = useGetMyMatrimonyProfilesQuery(undefined, { skip: !accessToken });\n  const { data: shortlistData } = useGetShortlistsQuery(undefined, { skip: !accessToken });\n  const { data: outgoingData } = useGetOutgoingInterestsQuery(undefined, { skip: !accessToken });\n  const [addShortlist, { isLoading: addingShortlist }] = useAddShortlistMutation();\n  const [removeShortlist, { isLoading: removingShortlist }] = useRemoveShortlistMutation();\n  const [sendInterest, { isLoading: sendingInterest }] = useSendInterestMutation();\n  const approvedOwnProfiles = mineData?.items.filter((item) => item.status === 'APPROVED') ?? [];\n  const isOwnProfile = mineData?.items.some((item) => item.id === profile.id) ?? false;\n  const shortlisted = shortlistData?.items.some((item) => item.matrimonyProfileId === profile.id) ?? false;\n  const outgoingInterest = outgoingData?.items.find((item) => item.receiverProfileId === profile.id);\n\n  async function toggleShortlist() {\n    if (!accessToken) { router.push('/profile'); return; }\n    try {\n      if (shortlisted) await removeShortlist(profile.id).unwrap();\n      else await addShortlist(profile.id).unwrap();\n    } catch { Alert.alert('Shortlist अपडेट नहीं हुई', 'कृपया दोबारा कोशिश करें।'); }\n  }\n\n  async function submitInterest(senderProfileId: string) {\n    try {\n      await sendInterest({ senderProfileId, receiverProfileId: profile.id }).unwrap();\n      setSenderModalOpen(false);\n      Alert.alert('रुचि भेज दी गई', 'सामने वाले सदस्य को आपका interest request मिल गया है।');\n    } catch (error) {\n      const code = typeof error === 'object' && error && 'data' in error ? String((error as { data?: { error?: string } }).data?.error ?? '') : '';\n      Alert.alert('रुचि नहीं भेजी गई', code === 'INTEREST_ALREADY_EXISTS' ? 'इस प्रोफाइल को interest पहले ही भेजा जा चुका है।' : 'कृपया दोबारा कोशिश करें।');\n    }\n  }\n\n  function startInterest() {\n    if (!accessToken) { router.push('/profile'); return; }\n    if (isOwnProfile) return;\n    if (outgoingInterest) { Alert.alert('Interest status', outgoingInterest.status === 'PENDING' ? 'आपका interest अभी pending है।' : outgoingInterest.status === 'ACCEPTED' ? 'आपका interest स्वीकार हो चुका है।' : 'यह interest पहले ही respond हो चुका है।'); return; }\n    if (approvedOwnProfiles.length === 0) { Alert.alert('Approved profile जरूरी है', 'रुचि भेजने के लिए आपकी कम से कम एक approved matrimony profile होनी चाहिए।'); return; }\n    if (approvedOwnProfiles.length === 1) { void submitInterest(approvedOwnProfiles[0].id); return; }\n    setSenderModalOpen(true);\n  }\n\n  const photo")
+          old = """      <View style={styles.actionsCard}>\n        <Pressable style={styles.primaryAction}>\n          <SymbolView name={{ ios: 'heart.fill', android: 'favorite', web: 'favorite' }} tintColor=\"#FFFFFF\" size={18} />\n          <Text style={styles.primaryActionText}>रुचि भेजें</Text>\n        </Pressable>\n        <Pressable style={styles.secondaryAction}>\n          <SymbolView name={{ ios: 'bookmark', android: 'bookmark_border', web: 'bookmark_border' }} tintColor={C.maroon} size={18} />\n          <Text style={styles.secondaryActionText}>Shortlist</Text>\n        </Pressable>\n      </View>\n"""
+          new = """      {isOwnProfile ? (\n        <View style={styles.ownProfileNote}><Text style={styles.ownProfileText}>यह आपकी अपनी प्रोफाइल है।</Text></View>\n      ) : (\n        <View style={styles.actionsCard}>\n          <Pressable disabled={sendingInterest} style={[styles.primaryAction, sendingInterest && styles.disabledAction]} onPress={startInterest}>\n            {sendingInterest ? <ActivityIndicator color=\"#FFFFFF\" size=\"small\" /> : <SymbolView name={{ ios: 'heart.fill', android: 'favorite', web: 'favorite' }} tintColor=\"#FFFFFF\" size={18} />}\n            <Text style={styles.primaryActionText}>{outgoingInterest ? (outgoingInterest.status === 'PENDING' ? 'रुचि Pending' : outgoingInterest.status === 'ACCEPTED' ? 'रुचि Accepted' : 'रुचि भेजी गई') : 'रुचि भेजें'}</Text>\n          </Pressable>\n          <Pressable disabled={addingShortlist || removingShortlist} style={styles.secondaryAction} onPress={() => void toggleShortlist()}>\n            <SymbolView name={{ ios: shortlisted ? 'bookmark.fill' : 'bookmark', android: shortlisted ? 'bookmark' : 'bookmark_border', web: shortlisted ? 'bookmark' : 'bookmark_border' }} tintColor={C.maroon} size={18} />\n            <Text style={styles.secondaryActionText}>{shortlisted ? 'Shortlisted' : 'Shortlist'}</Text>\n          </Pressable>\n        </View>\n      )}\n\n      <Modal visible={senderModalOpen} transparent animationType=\"fade\" onRequestClose={() => setSenderModalOpen(false)}>\n        <View style={styles.modalOverlay}><View style={styles.senderModal}><Text style={styles.senderModalTitle}>किस प्रोफाइल से रुचि भेजें?</Text><Text style={styles.senderModalText}>आपके account में एक से ज्यादा approved profiles हैं।</Text>{approvedOwnProfiles.map((item) => <Pressable key={item.id} style={styles.senderOption} onPress={() => void submitInterest(item.id)}><Text style={styles.senderOptionName}>{[item.firstName, item.middleName, item.lastName].filter(Boolean).join(' ')}</Text><Text style={styles.senderOptionMeta}>{item.profileFor}</Text></Pressable>)}<Pressable style={styles.modalCancel} onPress={() => setSenderModalOpen(false)}><Text style={styles.modalCancelText}>रद्द करें</Text></Pressable></View></View>\n      </Modal>\n"""
+          if old not in s: raise SystemExit('actions block not found')
+          s = s.replace(old, new)
+          s = s.replace("  actionsCard: { flexDirection: 'row', gap: 9, marginTop: 11 },", "  actionsCard: { flexDirection: 'row', gap: 9, marginTop: 11 },\n  disabledAction: { opacity: 0.65 },\n  ownProfileNote: { marginTop: 11, borderRadius: 12, backgroundColor: '#F4ECE6', padding: 12, alignItems: 'center' },\n  ownProfileText: { color: C.muted, fontSize: 10.5, fontWeight: '800' },\n  modalOverlay: { flex: 1, backgroundColor: 'rgba(35,28,25,0.45)', justifyContent: 'center', padding: 22 },\n  senderModal: { borderRadius: 18, backgroundColor: C.paper, padding: 16 },\n  senderModalTitle: { color: C.text, fontSize: 17, fontWeight: '900' },\n  senderModalText: { color: C.muted, fontSize: 10, marginTop: 4, marginBottom: 10 },\n  senderOption: { borderWidth: 1, borderColor: C.line, borderRadius: 11, padding: 11, marginTop: 7 },\n  senderOptionName: { color: C.text, fontSize: 12, fontWeight: '900' },\n  senderOptionMeta: { color: C.muted, fontSize: 9, marginTop: 2 },\n  modalCancel: { alignItems: 'center', paddingVertical: 11, marginTop: 8 },\n  modalCancelText: { color: C.maroon, fontSize: 11, fontWeight: '900' },")
+          p.write_text(s)
+
+          p = Path('apps/mobile/src/app/my-matrimony.tsx')
+          s = p.read_text()
+          anchor = "      <View style={styles.infoBanner}><SymbolView name={{ ios: 'shield.checkered', android: 'verified_user', web: 'verified_user' }} tintColor={C.green} size={22} /><View style={styles.infoCopy}><Text style={styles.infoTitle}>आप नियंत्रण में हैं</Text><Text style={styles.infoText}>ड्राफ्ट सीधे हट सकता है। Submitted/approved प्रोफाइल हटाने के लिए admin request जाएगी।</Text></View></View>\n"
+          insert = anchor + "      <View style={styles.interactionRow}><Pressable style={styles.interactionCard} onPress={() => router.push('/matrimony-shortlist')}><SymbolView name={{ ios: 'bookmark.fill', android: 'bookmark', web: 'bookmark' }} tintColor={C.maroon} size={19} /><View><Text style={styles.interactionTitle}>मेरी Shortlist</Text><Text style={styles.interactionText}>Saved profiles देखें</Text></View></Pressable><Pressable style={styles.interactionCard} onPress={() => router.push('/matrimony-interests')}><SymbolView name={{ ios: 'heart.text.square.fill', android: 'favorite', web: 'favorite' }} tintColor={C.maroon} size={19} /><View><Text style={styles.interactionTitle}>रुचि अनुरोध</Text><Text style={styles.interactionText}>Sent & received</Text></View></Pressable></View>\n"
+          if anchor not in s: raise SystemExit('my matrimony anchor not found')
+          s = s.replace(anchor, insert, 1)
+          marker = "  infoText:"
+          idx = s.find(marker)
+          if idx == -1: raise SystemExit('style marker not found')
+          # add styles before infoText line in object
+          line_start = s.rfind('\n', 0, idx) + 1
+          styles_insert = "  interactionRow: { flexDirection: 'row', gap: 9, marginBottom: 11 },\n  interactionCard: { flex: 1, minHeight: 64, borderRadius: 13, borderWidth: 1, borderColor: C.line, backgroundColor: C.paper, flexDirection: 'row', alignItems: 'center', gap: 8, padding: 10 },\n  interactionTitle: { color: C.text, fontSize: 10.5, fontWeight: '900' },\n  interactionText: { color: C.muted, fontSize: 8.5, marginTop: 2 },\n"
+          s = s[:line_start] + styles_insert + s[line_start:]
+          p.write_text(s)
+          PY
+
+      - name: Verify
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm --filter mobile exec tsc --noEmit
+          pnpm --filter @damodar/api build
+
+      - name: Commit implementation
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git rm .github/workflows/add-matrimony-interactions.yml
+          git add apps/mobile/src/services/interaction-api.ts apps/mobile/src/app/matrimony-shortlist.tsx apps/mobile/src/app/matrimony-interests.tsx apps/mobile/src/app/matrimony-profile.tsx apps/mobile/src/app/my-matrimony.tsx
+          git commit -m "feat(matrimony): add shortlist and interest flows"
+          git push origin main
