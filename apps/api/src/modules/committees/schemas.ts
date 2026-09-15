@@ -18,12 +18,12 @@ export const committeeMemberSchema = z.object({
 });
 
 const committeeBaseSchema = z.object({
-  bannerUrl: z.string().url().optional(),
+  bannerUrl: z.string().url(),
   bannerStorageKey: z.string().trim().max(500).optional(),
   logoUrl: z.string().url().optional(),
-  city: z.string().trim().max(120).optional(),
+  city: z.string().trim().min(1).max(120),
   district: z.string().trim().max(120).optional(),
-  state: z.string().trim().max(120).optional(),
+  state: z.string().trim().min(1).max(120),
   address: z.string().trim().max(1000).optional(),
   phone: z.string().trim().max(30).optional(),
   email: z.string().trim().email().max(254).optional(),
