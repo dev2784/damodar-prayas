@@ -1,0 +1,92 @@
+name: Fix matrimony owner CTA flow
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/fix-matrimony-owner-cta.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.0.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: Patch matrimony CTA routing
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('apps/mobile/src/app/matrimony.tsx')
+          text = p.read_text()
+          text = text.replace(
+"""  const { data: mineData } = useGetMyMatrimonyProfilesQuery(undefined, { skip: !accessToken });
+  const resumableProfile = mineData?.items.find((item) => item.status === 'DRAFT' || item.status === 'REJECTED');
+
+  function openOwnerFlow() {
+    if (!accessToken) {
+      router.push({ pathname: '/auth', params: { mode: 'register', next: '/matrimony-form' } });
+      return;
+    }
+    if (resumableProfile) {
+      router.push({ pathname: '/matrimony-form', params: { id: resumableProfile.id } });
+      return;
+    }
+    if ((mineData?.items.length ?? 0) > 0) {
+      router.push('/my-matrimony');
+      return;
+    }
+    router.push('/matrimony-form');
+  }
+""",
+"""  const { data: mineData, isLoading: isLoadingMine } = useGetMyMatrimonyProfilesQuery(undefined, { skip: !accessToken });
+  const hasAnyOwnProfile = (mineData?.items.length ?? 0) > 0;
+
+  function openOwnerFlow() {
+    if (!accessToken) {
+      router.push({ pathname: '/auth', params: { mode: 'register', next: '/matrimony-form' } });
+      return;
+    }
+    if (isLoadingMine) return;
+    if (hasAnyOwnProfile) {
+      router.push('/my-matrimony');
+      return;
+    }
+    router.push('/matrimony-form');
+  }
+""")
+          text = text.replace(
+"""                <Text style={styles.createProfileTitle}>{resumableProfile ? 'अपना ड्राफ्ट जारी रखें' : 'अपना मैट्रिमोनी प्रोफाइल बनाएँ'}</Text>
+                <Text style={styles.createProfileText}>{resumableProfile ? 'आपका अधूरा ड्राफ्ट मिल गया है। वहीं से आगे जारी रखें।' : 'अपनी जानकारी भरें, ड्राफ्ट सेव करें और तैयार होने पर समीक्षा के लिए भेजें।'}</Text>
+""",
+"""                <Text style={styles.createProfileTitle}>{hasAnyOwnProfile ? 'अपने मैट्रिमोनी प्रोफाइल देखें' : 'अपना मैट्रिमोनी प्रोफाइल बनाएँ'}</Text>
+                <Text style={styles.createProfileText}>{hasAnyOwnProfile ? 'आपके अकाउंट में पहले से प्रोफाइल मौजूद है। उसे देखने, एडिट करने या स्थिति जांचने के लिए आगे बढ़ें।' : 'अपनी जानकारी भरें, ड्राफ्ट सेव करें और तैयार होने पर समीक्षा के लिए भेजें।'}</Text>
+""")
+          text = text.replace(
+"""                <Text style={styles.createProfileButtonText}>{resumableProfile ? 'जारी रखें' : 'बनाएँ'}</Text>
+""",
+"""                <Text style={styles.createProfileButtonText}>{isLoadingMine ? 'जाँच रहे हैं' : hasAnyOwnProfile ? 'मेरे प्रोफाइल' : 'बनाएँ'}</Text>
+""")
+          p.write_text(text)
+          PY
+      - name: Verify mobile types
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm --filter mobile exec tsc --noEmit
+      - name: Commit
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add apps/mobile/src/app/matrimony.tsx
+          git commit -m "fix(mobile): route existing matrimony owners to profile list"
+          git push origin main
