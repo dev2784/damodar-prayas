@@ -1,0 +1,41 @@
+name: Simplify interest contact flow
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - scripts/simplify-interest-contact.mjs
+      - .github/workflows/simplify-interest-contact.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.0.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: Apply simplified contact flow
+        run: node scripts/simplify-interest-contact.mjs
+      - name: Verify
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm --filter @damodar/api build
+          pnpm --filter mobile exec tsc --noEmit
+      - name: Commit
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git rm scripts/simplify-interest-contact.mjs .github/workflows/simplify-interest-contact.yml
+          git add apps/api/src/modules/interactions/routes.ts apps/mobile/src/services/interaction-api.ts apps/mobile/src/services/notification-api.ts apps/mobile/src/app/index.tsx apps/mobile/src/app/matrimony-profile.tsx apps/mobile/src/app/matrimony-interests.tsx apps/mobile/src/app/notifications.tsx apps/mobile/src/components/app-tabs.tsx
+          git commit -m "feat(matrimony): unlock contacts on accepted interest"
+          git push origin main
