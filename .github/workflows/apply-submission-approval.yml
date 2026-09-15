@@ -1,0 +1,42 @@
+name: Apply submission approval flow
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - scripts/patch-submission-approval.py
+      - .github/workflows/apply-submission-approval.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.0.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: Apply patches
+        run: python scripts/patch-submission-approval.py
+      - name: Verify API and mobile
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm prisma generate --schema=prisma/schema.prisma
+          pnpm build:api
+          pnpm --filter mobile exec tsc --noEmit
+      - name: Commit
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git rm scripts/patch-submission-approval.py .github/workflows/apply-submission-approval.yml
+          git add prisma/schema.prisma apps/api/src/modules/media/routes.ts apps/mobile/src/app/community.tsx apps/mobile/src/app/samiti.tsx apps/mobile/src/components/app-tabs.tsx
+          git commit -m "feat(community): require approval for member submissions"
+          git push origin main
