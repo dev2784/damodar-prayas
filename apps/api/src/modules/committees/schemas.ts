@@ -33,18 +33,10 @@ const committeeBaseSchema = z.object({
   members: z.array(committeeMemberSchema).max(100).default([]),
 });
 
-export const createCommitteeSchema = committeeBaseSchema.superRefine((value, ctx) => {
-  const languages = value.translations.map((translation) => translation.language);
-  if (new Set(languages).size !== languages.length) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      path: ['translations'],
-      message: 'Duplicate translation language is not allowed',
-    });
-  }
-});
-
-export const updateCommitteeSchema = committeeBaseSchema.partial().superRefine((value, ctx) => {
+function validateUniqueTranslations(
+  value: { translations?: Array<{ language: 'HI' | 'EN' }> },
+  ctx: z.RefinementCtx,
+) {
   if (!value.translations) return;
   const languages = value.translations.map((translation) => translation.language);
   if (new Set(languages).size !== languages.length) {
@@ -54,7 +46,15 @@ export const updateCommitteeSchema = committeeBaseSchema.partial().superRefine((
       message: 'Duplicate translation language is not allowed',
     });
   }
-});
+}
+
+export const createCommitteeSchema = committeeBaseSchema.superRefine(validateUniqueTranslations);
+
+export const submitCommitteeSchema = committeeBaseSchema
+  .omit({ isActive: true, sortOrder: true })
+  .superRefine(validateUniqueTranslations);
+
+export const updateCommitteeSchema = committeeBaseSchema.partial().superRefine(validateUniqueTranslations);
 
 export const committeeListQuerySchema = z.object({
   state: z.string().trim().optional(),
