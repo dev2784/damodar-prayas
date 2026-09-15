@@ -3,6 +3,8 @@ import { api } from '@/services/api';
 export type MatrimonyCategory = 'JUNA_GUJARATI' | 'PIPA' | 'NAMDEV';
 export type MatrimonyGender = 'MALE' | 'FEMALE' | 'OTHER';
 export type MatrimonyMaritalStatus = 'NEVER_MARRIED' | 'DIVORCED' | 'WIDOWED' | 'SEPARATED';
+export type MatrimonyProfileFor = 'SELF' | 'SON' | 'DAUGHTER' | 'BROTHER' | 'SISTER' | 'RELATIVE';
+export type MatrimonyProfileStatus = 'DRAFT' | 'PENDING' | 'APPROVED' | 'REJECTED' | 'SUSPENDED' | 'MARRIED';
 
 export type MatrimonyPhoto = {
   id: string;
@@ -13,7 +15,7 @@ export type MatrimonyPhoto = {
 
 export type MatrimonyProfile = {
   id: string;
-  profileFor: 'SELF' | 'SON' | 'DAUGHTER' | 'BROTHER' | 'SISTER' | 'RELATIVE';
+  profileFor: MatrimonyProfileFor;
   category: MatrimonyCategory;
   gender: MatrimonyGender;
   firstName: string;
@@ -43,6 +45,58 @@ export type MatrimonyProfile = {
   photos: MatrimonyPhoto[];
 };
 
+export type MatrimonyOwnerProfile = MatrimonyProfile & {
+  createdById: string;
+  contactPhone: string | null;
+  contactEmail: string | null;
+  birthTime: string | null;
+  fullAddress: string | null;
+  fatherName: string | null;
+  fatherOccupation: string | null;
+  motherName: string | null;
+  motherOccupation: string | null;
+  familyDetails: string | null;
+  status: MatrimonyProfileStatus;
+  rejectionReason: string | null;
+  updatedAt: string;
+};
+
+export type MatrimonyProfileInput = {
+  profileFor: MatrimonyProfileFor;
+  category: MatrimonyCategory;
+  gender: MatrimonyGender;
+  firstName: string;
+  middleName?: string | null;
+  lastName: string;
+  dateOfBirth: string;
+  heightCm?: number | null;
+  maritalStatus: MatrimonyMaritalStatus;
+  contactPhone?: string | null;
+  contactEmail?: string | null;
+  education?: string | null;
+  occupation?: string | null;
+  companyOrBusiness?: string | null;
+  annualIncome?: number | null;
+  gotra?: string | null;
+  manglik?: boolean | null;
+  birthTime?: string | null;
+  birthPlace?: string | null;
+  currentCity?: string | null;
+  district?: string | null;
+  state?: string | null;
+  country?: string;
+  fullAddress?: string | null;
+  nativePlace?: string | null;
+  fatherName?: string | null;
+  fatherOccupation?: string | null;
+  motherName?: string | null;
+  motherOccupation?: string | null;
+  brothers?: number;
+  sisters?: number;
+  familyDetails?: string | null;
+  about?: string | null;
+};
+
 export type MatrimonyListArgs = {
   category?: MatrimonyCategory;
   gender?: MatrimonyGender;
@@ -70,6 +124,14 @@ type MatrimonyDetailResponse = {
   profile: MatrimonyProfile;
 };
 
+type MyMatrimonyProfilesResponse = {
+  items: MatrimonyOwnerProfile[];
+};
+
+type OwnerMatrimonyProfileResponse = {
+  profile: MatrimonyOwnerProfile;
+};
+
 export const matrimonyApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getMatrimonyProfiles: builder.query<MatrimonyListResponse, MatrimonyListArgs | void>({
@@ -86,6 +148,50 @@ export const matrimonyApi = api.injectEndpoints({
       query: (id) => `/matrimony/${id}`,
       providesTags: (_result, _error, id) => [{ type: 'Matrimony', id }],
     }),
+    getMyMatrimonyProfiles: builder.query<MyMatrimonyProfilesResponse, void>({
+      query: () => '/matrimony/mine',
+      providesTags: (result) => [
+        { type: 'Matrimony', id: 'MINE' },
+        ...(result?.items.map((item) => ({ type: 'Matrimony' as const, id: item.id })) ?? []),
+      ],
+    }),
+    createMatrimonyProfile: builder.mutation<OwnerMatrimonyProfileResponse, MatrimonyProfileInput>({
+      query: (body) => ({
+        url: '/matrimony',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: [
+        { type: 'Matrimony', id: 'MINE' },
+        { type: 'Matrimony', id: 'LIST' },
+      ],
+    }),
+    updateMatrimonyProfile: builder.mutation<
+      OwnerMatrimonyProfileResponse,
+      { id: string; body: Partial<Omit<MatrimonyProfileInput, 'profileFor'>> }
+    >({
+      query: ({ id, body }) => ({
+        url: `/matrimony/${id}`,
+        method: 'PATCH',
+        body,
+      }),
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: 'Matrimony', id },
+        { type: 'Matrimony', id: 'MINE' },
+        { type: 'Matrimony', id: 'LIST' },
+      ],
+    }),
+    submitMatrimonyProfile: builder.mutation<OwnerMatrimonyProfileResponse, string>({
+      query: (id) => ({
+        url: `/matrimony/${id}/submit`,
+        method: 'POST',
+      }),
+      invalidatesTags: (_result, _error, id) => [
+        { type: 'Matrimony', id },
+        { type: 'Matrimony', id: 'MINE' },
+        { type: 'Matrimony', id: 'LIST' },
+      ],
+    }),
   }),
   overrideExisting: false,
 });
@@ -93,4 +199,8 @@ export const matrimonyApi = api.injectEndpoints({
 export const {
   useGetMatrimonyProfilesQuery,
   useGetMatrimonyProfileQuery,
+  useGetMyMatrimonyProfilesQuery,
+  useCreateMatrimonyProfileMutation,
+  useUpdateMatrimonyProfileMutation,
+  useSubmitMatrimonyProfileMutation,
 } = matrimonyApi;
