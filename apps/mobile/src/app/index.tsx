@@ -4,7 +4,12 @@ import { Image as ExpoImage } from 'expo-image';
 import { SymbolView } from 'expo-symbols';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { useGetCommitteesQuery } from '@/services/committee-api';
 import { useGetCommunityPostsQuery } from '@/services/community-api';
+import {
+  type MatrimonyProfile,
+  useGetMatrimonyProfilesQuery,
+} from '@/services/matrimony-api';
 import { useGetUnreadNotificationCountQuery } from '@/services/notification-api';
 import { useAppSelector } from '@/store/hooks';
 
@@ -32,13 +37,6 @@ const quickActions = [
   { icon: { ios: 'phone.fill', android: 'support_agent', web: 'support_agent' } as const, title: 'सहायता', sub: '(Help & Support)', tint: '#154C8C', bg: '#EEF7FF' },
 ];
 
-const profiles = [
-  { name: 'Priya, 27', city: 'Jabalpur, MP', work: 'MBA • Banking', image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=500&q=85' },
-  { name: 'Rahul, 29', city: 'Indore, MP', work: 'B.Tech • IT', image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=500&q=85' },
-  { name: 'Neha, 26', city: 'Bhopal, MP', work: 'M.Sc • Teaching', image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=500&q=85' },
-  { name: 'Amit, 30', city: 'Jabalpur, MP', work: 'MBA • Business', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=500&q=85' },
-];
-
 function Icon({ name, color, size = 24 }: { name: { ios: any; android: any; web: any }; color: string; size?: number }) {
   return <SymbolView name={name} tintColor={color} size={size} />;
 }
@@ -55,6 +53,32 @@ function TrustStat({ icon, value, label, color = C.maroon }: { icon: { ios: any;
   );
 }
 
+function calculateAge(dateOfBirth: string) {
+  const dob = new Date(dateOfBirth);
+  const today = new Date();
+  let age = today.getFullYear() - dob.getFullYear();
+  const month = today.getMonth() - dob.getMonth();
+
+  if (month < 0 || (month === 0 && today.getDate() < dob.getDate())) {
+    age -= 1;
+  }
+
+  return age;
+}
+
+function profileName(profile: MatrimonyProfile) {
+  return [profile.firstName, profile.middleName, profile.lastName].filter(Boolean).join(' ');
+}
+
+function profileLocation(profile: MatrimonyProfile) {
+  return [profile.currentCity, profile.state].filter(Boolean).join(', ') || 'भारत';
+}
+
+function profileWork(profile: MatrimonyProfile) {
+  const educationAndWork = [profile.education, profile.occupation].filter(Boolean).join(' • ');
+  return educationAndWork || profile.companyOrBusiness || 'विवरण देखें';
+}
+
 export default function HomeScreen() {
   const accessToken = useAppSelector((state) => state.auth.accessToken);
   const { data: notificationCount } = useGetUnreadNotificationCountQuery(undefined, {
@@ -62,12 +86,38 @@ export default function HomeScreen() {
     pollingInterval: 10000,
     refetchOnMountOrArgChange: true,
   });
-  const { data: advertisementData, isLoading: isAdvertisementsLoading } = useGetCommunityPostsQuery({
-    category: 'ADVERTISEMENT',
-    language: 'HI',
-  });
+  const { data: matrimonyData, isLoading: isMatrimonyLoading } = useGetMatrimonyProfilesQuery(
+    { page: 1, limit: 4 },
+    { refetchOnMountOrArgChange: true },
+  );
+  const { data: committeeData, isLoading: isCommitteesLoading } = useGetCommitteesQuery(
+    { language: 'HI' },
+    { refetchOnMountOrArgChange: true },
+  );
+  const { data: advertisementData, isLoading: isAdvertisementsLoading } = useGetCommunityPostsQuery(
+    {
+      category: 'ADVERTISEMENT',
+      language: 'HI',
+    },
+    { refetchOnMountOrArgChange: true },
+  );
+
   const unreadNotificationCount = notificationCount?.unreadCount ?? 0;
+  const latestProfiles = matrimonyData?.items ?? [];
   const approvedAds = advertisementData?.items ?? [];
+  const profileTotal = matrimonyData?.pagination.total;
+  const committeeTotal = committeeData?.pagination.total;
+  const advertisementTotal = advertisementData?.pagination.total;
+
+  function openQuickAction(title: string) {
+    if (title === 'कार्यक्रम एवं') {
+      router.push('/community');
+      return;
+    }
+    if (title === 'समाज व्यापार') {
+      router.push({ pathname: '/community', params: { category: 'ADVERTISEMENT' } });
+    }
+  }
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
@@ -112,7 +162,7 @@ export default function HomeScreen() {
             <Pressable
               key={item.title}
               style={[styles.quickCard, { backgroundColor: item.bg }]}
-              onPress={item.title === 'कार्यक्रम एवं' ? () => router.push('/community') : undefined}>
+              onPress={() => openQuickAction(item.title)}>
               <View style={styles.quickIcon}><Icon name={item.icon} color={item.tint} size={26} /></View>
               <Text style={styles.quickTitle} numberOfLines={2}>{item.title}</Text>
               <Text style={styles.quickSub} numberOfLines={1}>{item.sub}</Text>
@@ -121,32 +171,74 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.statsStrip}>
-          <TrustStat icon={{ ios: 'person.3.fill', android: 'groups', web: 'groups' }} value="5,000+" label="समाज परिवार" />
+          <TrustStat
+            icon={{ ios: 'heart.fill', android: 'favorite', web: 'favorite' }}
+            value={isMatrimonyLoading ? '…' : String(profileTotal ?? 0)}
+            label="उपलब्ध प्रोफाइल"
+          />
           <View style={styles.statDivider} />
-          <TrustStat icon={{ ios: 'heart.fill', android: 'favorite', web: 'favorite' }} value="1,200+" label="प्रोफाइल्स" />
+          <TrustStat
+            icon={{ ios: 'person.3.fill', android: 'groups', web: 'groups' }}
+            value={isCommitteesLoading ? '…' : String(committeeTotal ?? 0)}
+            label="समितियाँ"
+          />
           <View style={styles.statDivider} />
-          <TrustStat icon={{ ios: 'handshake.fill', android: 'handshake', web: 'handshake' }} value="150+" label="व्यवसाय सूचीबद्ध" />
+          <TrustStat
+            icon={{ ios: 'megaphone.fill', android: 'campaign', web: 'campaign' }}
+            value={isAdvertisementsLoading ? '…' : String(advertisementTotal ?? 0)}
+            label="स्वीकृत विज्ञापन"
+          />
           <View style={styles.statDivider} />
           <TrustStat icon={{ ios: 'star.fill', android: 'star', web: 'star' }} label="एक मजबूत समाज के लिए साथ" color={C.gold} />
         </View>
 
         <View style={styles.sectionHeader}>
           <View style={styles.sectionTitleRow}><Icon name={{ ios: 'heart.fill', android: 'favorite', web: 'favorite' }} color={C.maroon} size={21} /><Text style={styles.sectionTitle}>नए Matrimony Profiles</Text></View>
-          <Text style={styles.viewAll}>View All  →</Text>
+          <Pressable onPress={() => router.push('/matrimony')}>
+            <Text style={styles.viewAll}>View All →</Text>
+          </Pressable>
         </View>
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.profileRow}>
-          {profiles.map((profile) => (
-            <View style={styles.profileCard} key={profile.name}>
-              <Image source={{ uri: profile.image }} style={styles.profilePhoto} />
-              <View style={styles.verified}><Icon name={{ ios: 'checkmark.circle.fill', android: 'verified', web: 'verified' }} color={C.green} size={12} /><Text style={styles.verifiedText}>Verified</Text></View>
-              <View style={styles.profileInfo}>
-                <View style={styles.profileNameRow}><Text style={styles.profileName}>{profile.name}</Text><Icon name={{ ios: 'heart', android: 'favorite_border', web: 'favorite_border' }} color="#F04455" size={20} /></View>
-                <Text style={styles.profileMeta}>{profile.city}</Text>
-                <Text style={styles.profileMeta}>{profile.work}</Text>
-              </View>
+          {latestProfiles.map((profile) => {
+            const photo = profile.photos[0]?.url;
+            const age = calculateAge(profile.dateOfBirth);
+            return (
+              <Pressable
+                style={styles.profileCard}
+                key={profile.id}
+                onPress={() => router.push({ pathname: '/matrimony-profile', params: { id: profile.id } })}>
+                {photo ? (
+                  <Image source={{ uri: photo }} style={styles.profilePhoto} />
+                ) : (
+                  <View style={[styles.profilePhoto, styles.profilePhotoPlaceholder]}>
+                    <Icon name={{ ios: 'person.crop.circle.fill', android: 'account_circle', web: 'account_circle' }} color="#C7AFA1" size={54} />
+                  </View>
+                )}
+                <View style={styles.verified}><Icon name={{ ios: 'checkmark.circle.fill', android: 'verified', web: 'verified' }} color={C.green} size={12} /><Text style={styles.verifiedText}>Verified</Text></View>
+                <View style={styles.profileInfo}>
+                  <View style={styles.profileNameRow}>
+                    <Text style={styles.profileName} numberOfLines={1}>{profileName(profile)}, {age}</Text>
+                    {profile.isFeatured ? <Icon name={{ ios: 'star.fill', android: 'star', web: 'star' }} color={C.gold} size={15} /> : null}
+                  </View>
+                  <Text style={styles.profileMeta} numberOfLines={1}>{profileLocation(profile)}</Text>
+                  <Text style={styles.profileMeta} numberOfLines={1}>{profileWork(profile)}</Text>
+                </View>
+              </Pressable>
+            );
+          })}
+          {isMatrimonyLoading ? (
+            <View style={styles.profileEmptyCard}>
+              <Icon name={{ ios: 'heart.circle.fill', android: 'favorite', web: 'favorite' }} color={C.maroon} size={25} />
+              <Text style={styles.profileEmptyTitle}>प्रोफाइल लोड हो रहे हैं...</Text>
             </View>
-          ))}
+          ) : latestProfiles.length === 0 ? (
+            <View style={styles.profileEmptyCard}>
+              <Icon name={{ ios: 'checkmark.shield.fill', android: 'verified_user', web: 'verified_user' }} color={C.gold} size={25} />
+              <Text style={styles.profileEmptyTitle}>अभी कोई स्वीकृत प्रोफाइल नहीं</Text>
+              <Text style={styles.profileEmptyText}>Admin approval के बाद नए प्रोफाइल यहाँ दिखाई देंगे।</Text>
+            </View>
+          ) : null}
         </ScrollView>
 
         <View style={styles.adsSectionHeader}>
@@ -156,7 +248,7 @@ export default function HomeScreen() {
               <Text style={styles.adsTitle}>समाज व्यापार</Text>
               <Text style={styles.adsEnglish}>Free Classifieds</Text>
             </View>
-            <Pressable onPress={() => router.push('/community')}>
+            <Pressable onPress={() => router.push({ pathname: '/community', params: { category: 'ADVERTISEMENT' } })}>
               <Text style={styles.viewAll}>View All →</Text>
             </Pressable>
           </View>
@@ -173,7 +265,7 @@ export default function HomeScreen() {
         </View>
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.adsRow}>
-          {approvedAds.map((ad) => {
+          {approvedAds.slice(0, 6).map((ad) => {
             const translation = ad.translations.find((item) => item.language === 'HI') ?? ad.translations[0];
             return (
               <Pressable
@@ -258,12 +350,16 @@ const styles = StyleSheet.create({
   profileRow: { paddingHorizontal: 12, gap: 8 },
   profileCard: { width: 132, backgroundColor: '#FFFFFF', borderRadius: 11, borderWidth: 1, borderColor: '#ECE4DA', overflow: 'hidden', elevation: 2 },
   profilePhoto: { width: '100%', height: 116, backgroundColor: '#E6D7C4' },
+  profilePhotoPlaceholder: { alignItems: 'center', justifyContent: 'center' },
   verified: { position: 'absolute', top: 104, left: 6, flexDirection: 'row', alignItems: 'center', gap: 3, backgroundColor: '#E9FAF1', borderRadius: 5, paddingHorizontal: 5, paddingVertical: 2 },
   verifiedText: { color: C.green, fontSize: 7.5, fontWeight: '900' },
   profileInfo: { padding: 7, paddingTop: 9 },
   profileNameRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 3 },
   profileName: { color: C.text, fontSize: 11.5, fontWeight: '900', flex: 1 },
   profileMeta: { color: C.muted, fontSize: 8.5, lineHeight: 12, marginTop: 1 },
+  profileEmptyCard: { width: 235, minHeight: 116, borderRadius: 11, borderWidth: 1, borderColor: '#ECE4DA', backgroundColor: '#FFFDF9', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 14 },
+  profileEmptyTitle: { color: C.maroon, fontSize: 10.5, fontWeight: '900', marginTop: 7, textAlign: 'center' },
+  profileEmptyText: { color: C.muted, fontSize: 8.5, lineHeight: 12, marginTop: 3, textAlign: 'center' },
 
   adsSectionHeader: { marginTop: 16, paddingHorizontal: 13 },
   adsHeaderTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
