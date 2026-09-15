@@ -25,7 +25,7 @@ function ProfileCard({ profile, submitting, deleting, requestingDelete, onSubmit
   const status = statusMeta[profile.status];
   const draftEditable = profile.status === 'DRAFT' || profile.status === 'REJECTED';
   const editable = draftEditable || profile.status === 'APPROVED';
-  const activeDeleteRequest = profile.deleteRequests[0];
+  const activeDeleteRequest = profile.deleteRequests?.[0];
   const canRequestDelete = profile.status === 'PENDING' || profile.status === 'APPROVED';
   return (
     <View style={styles.card}>
