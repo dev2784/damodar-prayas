@@ -63,6 +63,10 @@ export const updateMatrimonyProfileSchema = createMatrimonyProfileSchema.partial
   profileFor: true,
 });
 
+export const matrimonyDeleteRequestSchema = z.object({
+  reason: z.string().trim().min(10, 'Reason must be at least 10 characters').max(1000),
+});
+
 export const matrimonyListQuerySchema = z.object({
   category: darziCategorySchema.optional(),
   gender: genderSchema.optional(),

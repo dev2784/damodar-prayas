@@ -183,6 +183,18 @@ exports.Prisma.MatrimonyProfileScalarFieldEnum = {
   deletedAt: 'deletedAt'
 };
 
+exports.Prisma.MatrimonyDeleteRequestScalarFieldEnum = {
+  id: 'id',
+  matrimonyProfileId: 'matrimonyProfileId',
+  requestedById: 'requestedById',
+  reason: 'reason',
+  status: 'status',
+  adminNote: 'adminNote',
+  reviewedAt: 'reviewedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.PartnerPreferenceScalarFieldEnum = {
   id: 'id',
   matrimonyProfileId: 'matrimonyProfileId',
@@ -434,6 +446,12 @@ exports.MatrimonyProfileStatus = exports.$Enums.MatrimonyProfileStatus = {
   MARRIED: 'MARRIED'
 };
 
+exports.MatrimonyDeleteRequestStatus = exports.$Enums.MatrimonyDeleteRequestStatus = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+};
+
 exports.MediaStatus = exports.$Enums.MediaStatus = {
   PENDING: 'PENDING',
   APPROVED: 'APPROVED',
@@ -502,6 +520,7 @@ exports.NotificationType = exports.$Enums.NotificationType = {
 exports.Prisma.ModelName = {
   User: 'User',
   MatrimonyProfile: 'MatrimonyProfile',
+  MatrimonyDeleteRequest: 'MatrimonyDeleteRequest',
   PartnerPreference: 'PartnerPreference',
   ProfilePhoto: 'ProfilePhoto',
   Kundali: 'Kundali',

@@ -109,4 +109,15 @@ export const ownerMatrimonyProfileSelect = {
     },
   },
   partnerPreference: true,
+  deleteRequests: {
+    where: { status: 'PENDING' },
+    orderBy: { createdAt: 'desc' },
+    take: 1,
+    select: {
+      id: true,
+      reason: true,
+      status: true,
+      createdAt: true,
+    },
+  },
 } satisfies Prisma.MatrimonyProfileSelect;

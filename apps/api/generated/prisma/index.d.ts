@@ -24,6 +24,11 @@ export type User = $Result.DefaultSelection<Prisma.$UserPayload>
  */
 export type MatrimonyProfile = $Result.DefaultSelection<Prisma.$MatrimonyProfilePayload>
 /**
+ * Model MatrimonyDeleteRequest
+ * 
+ */
+export type MatrimonyDeleteRequest = $Result.DefaultSelection<Prisma.$MatrimonyDeleteRequestPayload>
+/**
  * Model PartnerPreference
  * 
  */
@@ -176,6 +181,15 @@ export const MediaStatus: {
 export type MediaStatus = (typeof MediaStatus)[keyof typeof MediaStatus]
 
 
+export const MatrimonyDeleteRequestStatus: {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+};
+
+export type MatrimonyDeleteRequestStatus = (typeof MatrimonyDeleteRequestStatus)[keyof typeof MatrimonyDeleteRequestStatus]
+
+
 export const InterestStatus: {
   PENDING: 'PENDING',
   ACCEPTED: 'ACCEPTED',
@@ -288,6 +302,10 @@ export const MatrimonyProfileStatus: typeof $Enums.MatrimonyProfileStatus
 export type MediaStatus = $Enums.MediaStatus
 
 export const MediaStatus: typeof $Enums.MediaStatus
+
+export type MatrimonyDeleteRequestStatus = $Enums.MatrimonyDeleteRequestStatus
+
+export const MatrimonyDeleteRequestStatus: typeof $Enums.MatrimonyDeleteRequestStatus
 
 export type InterestStatus = $Enums.InterestStatus
 
@@ -454,6 +472,16 @@ export class PrismaClient<
     * ```
     */
   get matrimonyProfile(): Prisma.MatrimonyProfileDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.matrimonyDeleteRequest`: Exposes CRUD operations for the **MatrimonyDeleteRequest** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more MatrimonyDeleteRequests
+    * const matrimonyDeleteRequests = await prisma.matrimonyDeleteRequest.findMany()
+    * ```
+    */
+  get matrimonyDeleteRequest(): Prisma.MatrimonyDeleteRequestDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.partnerPreference`: Exposes CRUD operations for the **PartnerPreference** model.
@@ -1037,6 +1065,7 @@ export namespace Prisma {
   export const ModelName: {
     User: 'User',
     MatrimonyProfile: 'MatrimonyProfile',
+    MatrimonyDeleteRequest: 'MatrimonyDeleteRequest',
     PartnerPreference: 'PartnerPreference',
     ProfilePhoto: 'ProfilePhoto',
     Kundali: 'Kundali',
@@ -1069,7 +1098,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "matrimonyProfile" | "partnerPreference" | "profilePhoto" | "kundali" | "interest" | "contactRequest" | "shortlist" | "profileReport" | "communityPost" | "communityPostTranslation" | "committee" | "committeeTranslation" | "committeeMember" | "notification" | "auditLog"
+      modelProps: "user" | "matrimonyProfile" | "matrimonyDeleteRequest" | "partnerPreference" | "profilePhoto" | "kundali" | "interest" | "contactRequest" | "shortlist" | "profileReport" | "communityPost" | "communityPostTranslation" | "committee" | "committeeTranslation" | "committeeMember" | "notification" | "auditLog"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1218,6 +1247,80 @@ export namespace Prisma {
           count: {
             args: Prisma.MatrimonyProfileCountArgs<ExtArgs>
             result: $Utils.Optional<MatrimonyProfileCountAggregateOutputType> | number
+          }
+        }
+      }
+      MatrimonyDeleteRequest: {
+        payload: Prisma.$MatrimonyDeleteRequestPayload<ExtArgs>
+        fields: Prisma.MatrimonyDeleteRequestFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.MatrimonyDeleteRequestFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MatrimonyDeleteRequestPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.MatrimonyDeleteRequestFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MatrimonyDeleteRequestPayload>
+          }
+          findFirst: {
+            args: Prisma.MatrimonyDeleteRequestFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MatrimonyDeleteRequestPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.MatrimonyDeleteRequestFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MatrimonyDeleteRequestPayload>
+          }
+          findMany: {
+            args: Prisma.MatrimonyDeleteRequestFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MatrimonyDeleteRequestPayload>[]
+          }
+          create: {
+            args: Prisma.MatrimonyDeleteRequestCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MatrimonyDeleteRequestPayload>
+          }
+          createMany: {
+            args: Prisma.MatrimonyDeleteRequestCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.MatrimonyDeleteRequestCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MatrimonyDeleteRequestPayload>[]
+          }
+          delete: {
+            args: Prisma.MatrimonyDeleteRequestDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MatrimonyDeleteRequestPayload>
+          }
+          update: {
+            args: Prisma.MatrimonyDeleteRequestUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MatrimonyDeleteRequestPayload>
+          }
+          deleteMany: {
+            args: Prisma.MatrimonyDeleteRequestDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.MatrimonyDeleteRequestUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.MatrimonyDeleteRequestUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MatrimonyDeleteRequestPayload>[]
+          }
+          upsert: {
+            args: Prisma.MatrimonyDeleteRequestUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MatrimonyDeleteRequestPayload>
+          }
+          aggregate: {
+            args: Prisma.MatrimonyDeleteRequestAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateMatrimonyDeleteRequest>
+          }
+          groupBy: {
+            args: Prisma.MatrimonyDeleteRequestGroupByArgs<ExtArgs>
+            result: $Utils.Optional<MatrimonyDeleteRequestGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.MatrimonyDeleteRequestCountArgs<ExtArgs>
+            result: $Utils.Optional<MatrimonyDeleteRequestCountAggregateOutputType> | number
           }
         }
       }
@@ -2355,6 +2458,7 @@ export namespace Prisma {
   export type GlobalOmitConfig = {
     user?: UserOmit
     matrimonyProfile?: MatrimonyProfileOmit
+    matrimonyDeleteRequest?: MatrimonyDeleteRequestOmit
     partnerPreference?: PartnerPreferenceOmit
     profilePhoto?: ProfilePhotoOmit
     kundali?: KundaliOmit
@@ -2456,6 +2560,7 @@ export namespace Prisma {
     communityPosts: number
     committees: number
     auditLogs: number
+    matrimonyDeleteRequests: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2466,6 +2571,7 @@ export namespace Prisma {
     communityPosts?: boolean | UserCountOutputTypeCountCommunityPostsArgs
     committees?: boolean | UserCountOutputTypeCountCommitteesArgs
     auditLogs?: boolean | UserCountOutputTypeCountAuditLogsArgs
+    matrimonyDeleteRequests?: boolean | UserCountOutputTypeCountMatrimonyDeleteRequestsArgs
   }
 
   // Custom InputTypes
@@ -2528,6 +2634,13 @@ export namespace Prisma {
     where?: AuditLogWhereInput
   }
 
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountMatrimonyDeleteRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MatrimonyDeleteRequestWhereInput
+  }
+
 
   /**
    * Count Type MatrimonyProfileCountOutputType
@@ -2542,6 +2655,7 @@ export namespace Prisma {
     receivedContact: number
     shortlistedBy: number
     reports: number
+    deleteRequests: number
   }
 
   export type MatrimonyProfileCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2553,6 +2667,7 @@ export namespace Prisma {
     receivedContact?: boolean | MatrimonyProfileCountOutputTypeCountReceivedContactArgs
     shortlistedBy?: boolean | MatrimonyProfileCountOutputTypeCountShortlistedByArgs
     reports?: boolean | MatrimonyProfileCountOutputTypeCountReportsArgs
+    deleteRequests?: boolean | MatrimonyProfileCountOutputTypeCountDeleteRequestsArgs
   }
 
   // Custom InputTypes
@@ -2620,6 +2735,13 @@ export namespace Prisma {
    */
   export type MatrimonyProfileCountOutputTypeCountReportsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ProfileReportWhereInput
+  }
+
+  /**
+   * MatrimonyProfileCountOutputType without action
+   */
+  export type MatrimonyProfileCountOutputTypeCountDeleteRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MatrimonyDeleteRequestWhereInput
   }
 
 
@@ -2933,6 +3055,7 @@ export namespace Prisma {
     communityPosts?: boolean | User$communityPostsArgs<ExtArgs>
     committees?: boolean | User$committeesArgs<ExtArgs>
     auditLogs?: boolean | User$auditLogsArgs<ExtArgs>
+    matrimonyDeleteRequests?: boolean | User$matrimonyDeleteRequestsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -2993,6 +3116,7 @@ export namespace Prisma {
     communityPosts?: boolean | User$communityPostsArgs<ExtArgs>
     committees?: boolean | User$committeesArgs<ExtArgs>
     auditLogs?: boolean | User$auditLogsArgs<ExtArgs>
+    matrimonyDeleteRequests?: boolean | User$matrimonyDeleteRequestsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -3008,6 +3132,7 @@ export namespace Prisma {
       communityPosts: Prisma.$CommunityPostPayload<ExtArgs>[]
       committees: Prisma.$CommitteePayload<ExtArgs>[]
       auditLogs: Prisma.$AuditLogPayload<ExtArgs>[]
+      matrimonyDeleteRequests: Prisma.$MatrimonyDeleteRequestPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -3424,6 +3549,7 @@ export namespace Prisma {
     communityPosts<T extends User$communityPostsArgs<ExtArgs> = {}>(args?: Subset<T, User$communityPostsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommunityPostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     committees<T extends User$committeesArgs<ExtArgs> = {}>(args?: Subset<T, User$committeesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommitteePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     auditLogs<T extends User$auditLogsArgs<ExtArgs> = {}>(args?: Subset<T, User$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    matrimonyDeleteRequests<T extends User$matrimonyDeleteRequestsArgs<ExtArgs> = {}>(args?: Subset<T, User$matrimonyDeleteRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MatrimonyDeleteRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4022,6 +4148,30 @@ export namespace Prisma {
   }
 
   /**
+   * User.matrimonyDeleteRequests
+   */
+  export type User$matrimonyDeleteRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MatrimonyDeleteRequest
+     */
+    select?: MatrimonyDeleteRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MatrimonyDeleteRequest
+     */
+    omit?: MatrimonyDeleteRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatrimonyDeleteRequestInclude<ExtArgs> | null
+    where?: MatrimonyDeleteRequestWhereInput
+    orderBy?: MatrimonyDeleteRequestOrderByWithRelationInput | MatrimonyDeleteRequestOrderByWithRelationInput[]
+    cursor?: MatrimonyDeleteRequestWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: MatrimonyDeleteRequestScalarFieldEnum | MatrimonyDeleteRequestScalarFieldEnum[]
+  }
+
+  /**
    * User without action
    */
   export type UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4564,6 +4714,7 @@ export namespace Prisma {
     receivedContact?: boolean | MatrimonyProfile$receivedContactArgs<ExtArgs>
     shortlistedBy?: boolean | MatrimonyProfile$shortlistedByArgs<ExtArgs>
     reports?: boolean | MatrimonyProfile$reportsArgs<ExtArgs>
+    deleteRequests?: boolean | MatrimonyProfile$deleteRequestsArgs<ExtArgs>
     _count?: boolean | MatrimonyProfileCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["matrimonyProfile"]>
 
@@ -4719,6 +4870,7 @@ export namespace Prisma {
     receivedContact?: boolean | MatrimonyProfile$receivedContactArgs<ExtArgs>
     shortlistedBy?: boolean | MatrimonyProfile$shortlistedByArgs<ExtArgs>
     reports?: boolean | MatrimonyProfile$reportsArgs<ExtArgs>
+    deleteRequests?: boolean | MatrimonyProfile$deleteRequestsArgs<ExtArgs>
     _count?: boolean | MatrimonyProfileCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type MatrimonyProfileIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4741,6 +4893,7 @@ export namespace Prisma {
       receivedContact: Prisma.$ContactRequestPayload<ExtArgs>[]
       shortlistedBy: Prisma.$ShortlistPayload<ExtArgs>[]
       reports: Prisma.$ProfileReportPayload<ExtArgs>[]
+      deleteRequests: Prisma.$MatrimonyDeleteRequestPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -5190,6 +5343,7 @@ export namespace Prisma {
     receivedContact<T extends MatrimonyProfile$receivedContactArgs<ExtArgs> = {}>(args?: Subset<T, MatrimonyProfile$receivedContactArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContactRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     shortlistedBy<T extends MatrimonyProfile$shortlistedByArgs<ExtArgs> = {}>(args?: Subset<T, MatrimonyProfile$shortlistedByArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ShortlistPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     reports<T extends MatrimonyProfile$reportsArgs<ExtArgs> = {}>(args?: Subset<T, MatrimonyProfile$reportsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProfileReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    deleteRequests<T extends MatrimonyProfile$deleteRequestsArgs<ExtArgs> = {}>(args?: Subset<T, MatrimonyProfile$deleteRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MatrimonyDeleteRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5869,6 +6023,30 @@ export namespace Prisma {
   }
 
   /**
+   * MatrimonyProfile.deleteRequests
+   */
+  export type MatrimonyProfile$deleteRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MatrimonyDeleteRequest
+     */
+    select?: MatrimonyDeleteRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MatrimonyDeleteRequest
+     */
+    omit?: MatrimonyDeleteRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatrimonyDeleteRequestInclude<ExtArgs> | null
+    where?: MatrimonyDeleteRequestWhereInput
+    orderBy?: MatrimonyDeleteRequestOrderByWithRelationInput | MatrimonyDeleteRequestOrderByWithRelationInput[]
+    cursor?: MatrimonyDeleteRequestWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: MatrimonyDeleteRequestScalarFieldEnum | MatrimonyDeleteRequestScalarFieldEnum[]
+  }
+
+  /**
    * MatrimonyProfile without action
    */
   export type MatrimonyProfileDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5884,6 +6062,1124 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: MatrimonyProfileInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model MatrimonyDeleteRequest
+   */
+
+  export type AggregateMatrimonyDeleteRequest = {
+    _count: MatrimonyDeleteRequestCountAggregateOutputType | null
+    _min: MatrimonyDeleteRequestMinAggregateOutputType | null
+    _max: MatrimonyDeleteRequestMaxAggregateOutputType | null
+  }
+
+  export type MatrimonyDeleteRequestMinAggregateOutputType = {
+    id: string | null
+    matrimonyProfileId: string | null
+    requestedById: string | null
+    reason: string | null
+    status: $Enums.MatrimonyDeleteRequestStatus | null
+    adminNote: string | null
+    reviewedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type MatrimonyDeleteRequestMaxAggregateOutputType = {
+    id: string | null
+    matrimonyProfileId: string | null
+    requestedById: string | null
+    reason: string | null
+    status: $Enums.MatrimonyDeleteRequestStatus | null
+    adminNote: string | null
+    reviewedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type MatrimonyDeleteRequestCountAggregateOutputType = {
+    id: number
+    matrimonyProfileId: number
+    requestedById: number
+    reason: number
+    status: number
+    adminNote: number
+    reviewedAt: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type MatrimonyDeleteRequestMinAggregateInputType = {
+    id?: true
+    matrimonyProfileId?: true
+    requestedById?: true
+    reason?: true
+    status?: true
+    adminNote?: true
+    reviewedAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type MatrimonyDeleteRequestMaxAggregateInputType = {
+    id?: true
+    matrimonyProfileId?: true
+    requestedById?: true
+    reason?: true
+    status?: true
+    adminNote?: true
+    reviewedAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type MatrimonyDeleteRequestCountAggregateInputType = {
+    id?: true
+    matrimonyProfileId?: true
+    requestedById?: true
+    reason?: true
+    status?: true
+    adminNote?: true
+    reviewedAt?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type MatrimonyDeleteRequestAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MatrimonyDeleteRequest to aggregate.
+     */
+    where?: MatrimonyDeleteRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MatrimonyDeleteRequests to fetch.
+     */
+    orderBy?: MatrimonyDeleteRequestOrderByWithRelationInput | MatrimonyDeleteRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: MatrimonyDeleteRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MatrimonyDeleteRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MatrimonyDeleteRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned MatrimonyDeleteRequests
+    **/
+    _count?: true | MatrimonyDeleteRequestCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: MatrimonyDeleteRequestMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: MatrimonyDeleteRequestMaxAggregateInputType
+  }
+
+  export type GetMatrimonyDeleteRequestAggregateType<T extends MatrimonyDeleteRequestAggregateArgs> = {
+        [P in keyof T & keyof AggregateMatrimonyDeleteRequest]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateMatrimonyDeleteRequest[P]>
+      : GetScalarType<T[P], AggregateMatrimonyDeleteRequest[P]>
+  }
+
+
+
+
+  export type MatrimonyDeleteRequestGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MatrimonyDeleteRequestWhereInput
+    orderBy?: MatrimonyDeleteRequestOrderByWithAggregationInput | MatrimonyDeleteRequestOrderByWithAggregationInput[]
+    by: MatrimonyDeleteRequestScalarFieldEnum[] | MatrimonyDeleteRequestScalarFieldEnum
+    having?: MatrimonyDeleteRequestScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: MatrimonyDeleteRequestCountAggregateInputType | true
+    _min?: MatrimonyDeleteRequestMinAggregateInputType
+    _max?: MatrimonyDeleteRequestMaxAggregateInputType
+  }
+
+  export type MatrimonyDeleteRequestGroupByOutputType = {
+    id: string
+    matrimonyProfileId: string
+    requestedById: string
+    reason: string
+    status: $Enums.MatrimonyDeleteRequestStatus
+    adminNote: string | null
+    reviewedAt: Date | null
+    createdAt: Date
+    updatedAt: Date
+    _count: MatrimonyDeleteRequestCountAggregateOutputType | null
+    _min: MatrimonyDeleteRequestMinAggregateOutputType | null
+    _max: MatrimonyDeleteRequestMaxAggregateOutputType | null
+  }
+
+  type GetMatrimonyDeleteRequestGroupByPayload<T extends MatrimonyDeleteRequestGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<MatrimonyDeleteRequestGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof MatrimonyDeleteRequestGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], MatrimonyDeleteRequestGroupByOutputType[P]>
+            : GetScalarType<T[P], MatrimonyDeleteRequestGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type MatrimonyDeleteRequestSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    matrimonyProfileId?: boolean
+    requestedById?: boolean
+    reason?: boolean
+    status?: boolean
+    adminNote?: boolean
+    reviewedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    matrimonyProfile?: boolean | MatrimonyProfileDefaultArgs<ExtArgs>
+    requestedBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["matrimonyDeleteRequest"]>
+
+  export type MatrimonyDeleteRequestSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    matrimonyProfileId?: boolean
+    requestedById?: boolean
+    reason?: boolean
+    status?: boolean
+    adminNote?: boolean
+    reviewedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    matrimonyProfile?: boolean | MatrimonyProfileDefaultArgs<ExtArgs>
+    requestedBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["matrimonyDeleteRequest"]>
+
+  export type MatrimonyDeleteRequestSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    matrimonyProfileId?: boolean
+    requestedById?: boolean
+    reason?: boolean
+    status?: boolean
+    adminNote?: boolean
+    reviewedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    matrimonyProfile?: boolean | MatrimonyProfileDefaultArgs<ExtArgs>
+    requestedBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["matrimonyDeleteRequest"]>
+
+  export type MatrimonyDeleteRequestSelectScalar = {
+    id?: boolean
+    matrimonyProfileId?: boolean
+    requestedById?: boolean
+    reason?: boolean
+    status?: boolean
+    adminNote?: boolean
+    reviewedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type MatrimonyDeleteRequestOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "matrimonyProfileId" | "requestedById" | "reason" | "status" | "adminNote" | "reviewedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["matrimonyDeleteRequest"]>
+  export type MatrimonyDeleteRequestInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    matrimonyProfile?: boolean | MatrimonyProfileDefaultArgs<ExtArgs>
+    requestedBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type MatrimonyDeleteRequestIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    matrimonyProfile?: boolean | MatrimonyProfileDefaultArgs<ExtArgs>
+    requestedBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type MatrimonyDeleteRequestIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    matrimonyProfile?: boolean | MatrimonyProfileDefaultArgs<ExtArgs>
+    requestedBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $MatrimonyDeleteRequestPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "MatrimonyDeleteRequest"
+    objects: {
+      matrimonyProfile: Prisma.$MatrimonyProfilePayload<ExtArgs>
+      requestedBy: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      matrimonyProfileId: string
+      requestedById: string
+      reason: string
+      status: $Enums.MatrimonyDeleteRequestStatus
+      adminNote: string | null
+      reviewedAt: Date | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["matrimonyDeleteRequest"]>
+    composites: {}
+  }
+
+  type MatrimonyDeleteRequestGetPayload<S extends boolean | null | undefined | MatrimonyDeleteRequestDefaultArgs> = $Result.GetResult<Prisma.$MatrimonyDeleteRequestPayload, S>
+
+  type MatrimonyDeleteRequestCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<MatrimonyDeleteRequestFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: MatrimonyDeleteRequestCountAggregateInputType | true
+    }
+
+  export interface MatrimonyDeleteRequestDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['MatrimonyDeleteRequest'], meta: { name: 'MatrimonyDeleteRequest' } }
+    /**
+     * Find zero or one MatrimonyDeleteRequest that matches the filter.
+     * @param {MatrimonyDeleteRequestFindUniqueArgs} args - Arguments to find a MatrimonyDeleteRequest
+     * @example
+     * // Get one MatrimonyDeleteRequest
+     * const matrimonyDeleteRequest = await prisma.matrimonyDeleteRequest.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends MatrimonyDeleteRequestFindUniqueArgs>(args: SelectSubset<T, MatrimonyDeleteRequestFindUniqueArgs<ExtArgs>>): Prisma__MatrimonyDeleteRequestClient<$Result.GetResult<Prisma.$MatrimonyDeleteRequestPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one MatrimonyDeleteRequest that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {MatrimonyDeleteRequestFindUniqueOrThrowArgs} args - Arguments to find a MatrimonyDeleteRequest
+     * @example
+     * // Get one MatrimonyDeleteRequest
+     * const matrimonyDeleteRequest = await prisma.matrimonyDeleteRequest.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends MatrimonyDeleteRequestFindUniqueOrThrowArgs>(args: SelectSubset<T, MatrimonyDeleteRequestFindUniqueOrThrowArgs<ExtArgs>>): Prisma__MatrimonyDeleteRequestClient<$Result.GetResult<Prisma.$MatrimonyDeleteRequestPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first MatrimonyDeleteRequest that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MatrimonyDeleteRequestFindFirstArgs} args - Arguments to find a MatrimonyDeleteRequest
+     * @example
+     * // Get one MatrimonyDeleteRequest
+     * const matrimonyDeleteRequest = await prisma.matrimonyDeleteRequest.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends MatrimonyDeleteRequestFindFirstArgs>(args?: SelectSubset<T, MatrimonyDeleteRequestFindFirstArgs<ExtArgs>>): Prisma__MatrimonyDeleteRequestClient<$Result.GetResult<Prisma.$MatrimonyDeleteRequestPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first MatrimonyDeleteRequest that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MatrimonyDeleteRequestFindFirstOrThrowArgs} args - Arguments to find a MatrimonyDeleteRequest
+     * @example
+     * // Get one MatrimonyDeleteRequest
+     * const matrimonyDeleteRequest = await prisma.matrimonyDeleteRequest.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends MatrimonyDeleteRequestFindFirstOrThrowArgs>(args?: SelectSubset<T, MatrimonyDeleteRequestFindFirstOrThrowArgs<ExtArgs>>): Prisma__MatrimonyDeleteRequestClient<$Result.GetResult<Prisma.$MatrimonyDeleteRequestPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more MatrimonyDeleteRequests that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MatrimonyDeleteRequestFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all MatrimonyDeleteRequests
+     * const matrimonyDeleteRequests = await prisma.matrimonyDeleteRequest.findMany()
+     * 
+     * // Get first 10 MatrimonyDeleteRequests
+     * const matrimonyDeleteRequests = await prisma.matrimonyDeleteRequest.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const matrimonyDeleteRequestWithIdOnly = await prisma.matrimonyDeleteRequest.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends MatrimonyDeleteRequestFindManyArgs>(args?: SelectSubset<T, MatrimonyDeleteRequestFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MatrimonyDeleteRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a MatrimonyDeleteRequest.
+     * @param {MatrimonyDeleteRequestCreateArgs} args - Arguments to create a MatrimonyDeleteRequest.
+     * @example
+     * // Create one MatrimonyDeleteRequest
+     * const MatrimonyDeleteRequest = await prisma.matrimonyDeleteRequest.create({
+     *   data: {
+     *     // ... data to create a MatrimonyDeleteRequest
+     *   }
+     * })
+     * 
+     */
+    create<T extends MatrimonyDeleteRequestCreateArgs>(args: SelectSubset<T, MatrimonyDeleteRequestCreateArgs<ExtArgs>>): Prisma__MatrimonyDeleteRequestClient<$Result.GetResult<Prisma.$MatrimonyDeleteRequestPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many MatrimonyDeleteRequests.
+     * @param {MatrimonyDeleteRequestCreateManyArgs} args - Arguments to create many MatrimonyDeleteRequests.
+     * @example
+     * // Create many MatrimonyDeleteRequests
+     * const matrimonyDeleteRequest = await prisma.matrimonyDeleteRequest.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends MatrimonyDeleteRequestCreateManyArgs>(args?: SelectSubset<T, MatrimonyDeleteRequestCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many MatrimonyDeleteRequests and returns the data saved in the database.
+     * @param {MatrimonyDeleteRequestCreateManyAndReturnArgs} args - Arguments to create many MatrimonyDeleteRequests.
+     * @example
+     * // Create many MatrimonyDeleteRequests
+     * const matrimonyDeleteRequest = await prisma.matrimonyDeleteRequest.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many MatrimonyDeleteRequests and only return the `id`
+     * const matrimonyDeleteRequestWithIdOnly = await prisma.matrimonyDeleteRequest.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends MatrimonyDeleteRequestCreateManyAndReturnArgs>(args?: SelectSubset<T, MatrimonyDeleteRequestCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MatrimonyDeleteRequestPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a MatrimonyDeleteRequest.
+     * @param {MatrimonyDeleteRequestDeleteArgs} args - Arguments to delete one MatrimonyDeleteRequest.
+     * @example
+     * // Delete one MatrimonyDeleteRequest
+     * const MatrimonyDeleteRequest = await prisma.matrimonyDeleteRequest.delete({
+     *   where: {
+     *     // ... filter to delete one MatrimonyDeleteRequest
+     *   }
+     * })
+     * 
+     */
+    delete<T extends MatrimonyDeleteRequestDeleteArgs>(args: SelectSubset<T, MatrimonyDeleteRequestDeleteArgs<ExtArgs>>): Prisma__MatrimonyDeleteRequestClient<$Result.GetResult<Prisma.$MatrimonyDeleteRequestPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one MatrimonyDeleteRequest.
+     * @param {MatrimonyDeleteRequestUpdateArgs} args - Arguments to update one MatrimonyDeleteRequest.
+     * @example
+     * // Update one MatrimonyDeleteRequest
+     * const matrimonyDeleteRequest = await prisma.matrimonyDeleteRequest.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends MatrimonyDeleteRequestUpdateArgs>(args: SelectSubset<T, MatrimonyDeleteRequestUpdateArgs<ExtArgs>>): Prisma__MatrimonyDeleteRequestClient<$Result.GetResult<Prisma.$MatrimonyDeleteRequestPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more MatrimonyDeleteRequests.
+     * @param {MatrimonyDeleteRequestDeleteManyArgs} args - Arguments to filter MatrimonyDeleteRequests to delete.
+     * @example
+     * // Delete a few MatrimonyDeleteRequests
+     * const { count } = await prisma.matrimonyDeleteRequest.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends MatrimonyDeleteRequestDeleteManyArgs>(args?: SelectSubset<T, MatrimonyDeleteRequestDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more MatrimonyDeleteRequests.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MatrimonyDeleteRequestUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many MatrimonyDeleteRequests
+     * const matrimonyDeleteRequest = await prisma.matrimonyDeleteRequest.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends MatrimonyDeleteRequestUpdateManyArgs>(args: SelectSubset<T, MatrimonyDeleteRequestUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more MatrimonyDeleteRequests and returns the data updated in the database.
+     * @param {MatrimonyDeleteRequestUpdateManyAndReturnArgs} args - Arguments to update many MatrimonyDeleteRequests.
+     * @example
+     * // Update many MatrimonyDeleteRequests
+     * const matrimonyDeleteRequest = await prisma.matrimonyDeleteRequest.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more MatrimonyDeleteRequests and only return the `id`
+     * const matrimonyDeleteRequestWithIdOnly = await prisma.matrimonyDeleteRequest.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends MatrimonyDeleteRequestUpdateManyAndReturnArgs>(args: SelectSubset<T, MatrimonyDeleteRequestUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MatrimonyDeleteRequestPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one MatrimonyDeleteRequest.
+     * @param {MatrimonyDeleteRequestUpsertArgs} args - Arguments to update or create a MatrimonyDeleteRequest.
+     * @example
+     * // Update or create a MatrimonyDeleteRequest
+     * const matrimonyDeleteRequest = await prisma.matrimonyDeleteRequest.upsert({
+     *   create: {
+     *     // ... data to create a MatrimonyDeleteRequest
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the MatrimonyDeleteRequest we want to update
+     *   }
+     * })
+     */
+    upsert<T extends MatrimonyDeleteRequestUpsertArgs>(args: SelectSubset<T, MatrimonyDeleteRequestUpsertArgs<ExtArgs>>): Prisma__MatrimonyDeleteRequestClient<$Result.GetResult<Prisma.$MatrimonyDeleteRequestPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of MatrimonyDeleteRequests.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MatrimonyDeleteRequestCountArgs} args - Arguments to filter MatrimonyDeleteRequests to count.
+     * @example
+     * // Count the number of MatrimonyDeleteRequests
+     * const count = await prisma.matrimonyDeleteRequest.count({
+     *   where: {
+     *     // ... the filter for the MatrimonyDeleteRequests we want to count
+     *   }
+     * })
+    **/
+    count<T extends MatrimonyDeleteRequestCountArgs>(
+      args?: Subset<T, MatrimonyDeleteRequestCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], MatrimonyDeleteRequestCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a MatrimonyDeleteRequest.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MatrimonyDeleteRequestAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends MatrimonyDeleteRequestAggregateArgs>(args: Subset<T, MatrimonyDeleteRequestAggregateArgs>): Prisma.PrismaPromise<GetMatrimonyDeleteRequestAggregateType<T>>
+
+    /**
+     * Group by MatrimonyDeleteRequest.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MatrimonyDeleteRequestGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends MatrimonyDeleteRequestGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: MatrimonyDeleteRequestGroupByArgs['orderBy'] }
+        : { orderBy?: MatrimonyDeleteRequestGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, MatrimonyDeleteRequestGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetMatrimonyDeleteRequestGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the MatrimonyDeleteRequest model
+   */
+  readonly fields: MatrimonyDeleteRequestFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for MatrimonyDeleteRequest.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__MatrimonyDeleteRequestClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    matrimonyProfile<T extends MatrimonyProfileDefaultArgs<ExtArgs> = {}>(args?: Subset<T, MatrimonyProfileDefaultArgs<ExtArgs>>): Prisma__MatrimonyProfileClient<$Result.GetResult<Prisma.$MatrimonyProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    requestedBy<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the MatrimonyDeleteRequest model
+   */
+  interface MatrimonyDeleteRequestFieldRefs {
+    readonly id: FieldRef<"MatrimonyDeleteRequest", 'String'>
+    readonly matrimonyProfileId: FieldRef<"MatrimonyDeleteRequest", 'String'>
+    readonly requestedById: FieldRef<"MatrimonyDeleteRequest", 'String'>
+    readonly reason: FieldRef<"MatrimonyDeleteRequest", 'String'>
+    readonly status: FieldRef<"MatrimonyDeleteRequest", 'MatrimonyDeleteRequestStatus'>
+    readonly adminNote: FieldRef<"MatrimonyDeleteRequest", 'String'>
+    readonly reviewedAt: FieldRef<"MatrimonyDeleteRequest", 'DateTime'>
+    readonly createdAt: FieldRef<"MatrimonyDeleteRequest", 'DateTime'>
+    readonly updatedAt: FieldRef<"MatrimonyDeleteRequest", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * MatrimonyDeleteRequest findUnique
+   */
+  export type MatrimonyDeleteRequestFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MatrimonyDeleteRequest
+     */
+    select?: MatrimonyDeleteRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MatrimonyDeleteRequest
+     */
+    omit?: MatrimonyDeleteRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatrimonyDeleteRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which MatrimonyDeleteRequest to fetch.
+     */
+    where: MatrimonyDeleteRequestWhereUniqueInput
+  }
+
+  /**
+   * MatrimonyDeleteRequest findUniqueOrThrow
+   */
+  export type MatrimonyDeleteRequestFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MatrimonyDeleteRequest
+     */
+    select?: MatrimonyDeleteRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MatrimonyDeleteRequest
+     */
+    omit?: MatrimonyDeleteRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatrimonyDeleteRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which MatrimonyDeleteRequest to fetch.
+     */
+    where: MatrimonyDeleteRequestWhereUniqueInput
+  }
+
+  /**
+   * MatrimonyDeleteRequest findFirst
+   */
+  export type MatrimonyDeleteRequestFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MatrimonyDeleteRequest
+     */
+    select?: MatrimonyDeleteRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MatrimonyDeleteRequest
+     */
+    omit?: MatrimonyDeleteRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatrimonyDeleteRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which MatrimonyDeleteRequest to fetch.
+     */
+    where?: MatrimonyDeleteRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MatrimonyDeleteRequests to fetch.
+     */
+    orderBy?: MatrimonyDeleteRequestOrderByWithRelationInput | MatrimonyDeleteRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MatrimonyDeleteRequests.
+     */
+    cursor?: MatrimonyDeleteRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MatrimonyDeleteRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MatrimonyDeleteRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MatrimonyDeleteRequests.
+     */
+    distinct?: MatrimonyDeleteRequestScalarFieldEnum | MatrimonyDeleteRequestScalarFieldEnum[]
+  }
+
+  /**
+   * MatrimonyDeleteRequest findFirstOrThrow
+   */
+  export type MatrimonyDeleteRequestFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MatrimonyDeleteRequest
+     */
+    select?: MatrimonyDeleteRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MatrimonyDeleteRequest
+     */
+    omit?: MatrimonyDeleteRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatrimonyDeleteRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which MatrimonyDeleteRequest to fetch.
+     */
+    where?: MatrimonyDeleteRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MatrimonyDeleteRequests to fetch.
+     */
+    orderBy?: MatrimonyDeleteRequestOrderByWithRelationInput | MatrimonyDeleteRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MatrimonyDeleteRequests.
+     */
+    cursor?: MatrimonyDeleteRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MatrimonyDeleteRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MatrimonyDeleteRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MatrimonyDeleteRequests.
+     */
+    distinct?: MatrimonyDeleteRequestScalarFieldEnum | MatrimonyDeleteRequestScalarFieldEnum[]
+  }
+
+  /**
+   * MatrimonyDeleteRequest findMany
+   */
+  export type MatrimonyDeleteRequestFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MatrimonyDeleteRequest
+     */
+    select?: MatrimonyDeleteRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MatrimonyDeleteRequest
+     */
+    omit?: MatrimonyDeleteRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatrimonyDeleteRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which MatrimonyDeleteRequests to fetch.
+     */
+    where?: MatrimonyDeleteRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MatrimonyDeleteRequests to fetch.
+     */
+    orderBy?: MatrimonyDeleteRequestOrderByWithRelationInput | MatrimonyDeleteRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing MatrimonyDeleteRequests.
+     */
+    cursor?: MatrimonyDeleteRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MatrimonyDeleteRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MatrimonyDeleteRequests.
+     */
+    skip?: number
+    distinct?: MatrimonyDeleteRequestScalarFieldEnum | MatrimonyDeleteRequestScalarFieldEnum[]
+  }
+
+  /**
+   * MatrimonyDeleteRequest create
+   */
+  export type MatrimonyDeleteRequestCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MatrimonyDeleteRequest
+     */
+    select?: MatrimonyDeleteRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MatrimonyDeleteRequest
+     */
+    omit?: MatrimonyDeleteRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatrimonyDeleteRequestInclude<ExtArgs> | null
+    /**
+     * The data needed to create a MatrimonyDeleteRequest.
+     */
+    data: XOR<MatrimonyDeleteRequestCreateInput, MatrimonyDeleteRequestUncheckedCreateInput>
+  }
+
+  /**
+   * MatrimonyDeleteRequest createMany
+   */
+  export type MatrimonyDeleteRequestCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many MatrimonyDeleteRequests.
+     */
+    data: MatrimonyDeleteRequestCreateManyInput | MatrimonyDeleteRequestCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * MatrimonyDeleteRequest createManyAndReturn
+   */
+  export type MatrimonyDeleteRequestCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MatrimonyDeleteRequest
+     */
+    select?: MatrimonyDeleteRequestSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the MatrimonyDeleteRequest
+     */
+    omit?: MatrimonyDeleteRequestOmit<ExtArgs> | null
+    /**
+     * The data used to create many MatrimonyDeleteRequests.
+     */
+    data: MatrimonyDeleteRequestCreateManyInput | MatrimonyDeleteRequestCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatrimonyDeleteRequestIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * MatrimonyDeleteRequest update
+   */
+  export type MatrimonyDeleteRequestUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MatrimonyDeleteRequest
+     */
+    select?: MatrimonyDeleteRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MatrimonyDeleteRequest
+     */
+    omit?: MatrimonyDeleteRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatrimonyDeleteRequestInclude<ExtArgs> | null
+    /**
+     * The data needed to update a MatrimonyDeleteRequest.
+     */
+    data: XOR<MatrimonyDeleteRequestUpdateInput, MatrimonyDeleteRequestUncheckedUpdateInput>
+    /**
+     * Choose, which MatrimonyDeleteRequest to update.
+     */
+    where: MatrimonyDeleteRequestWhereUniqueInput
+  }
+
+  /**
+   * MatrimonyDeleteRequest updateMany
+   */
+  export type MatrimonyDeleteRequestUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update MatrimonyDeleteRequests.
+     */
+    data: XOR<MatrimonyDeleteRequestUpdateManyMutationInput, MatrimonyDeleteRequestUncheckedUpdateManyInput>
+    /**
+     * Filter which MatrimonyDeleteRequests to update
+     */
+    where?: MatrimonyDeleteRequestWhereInput
+    /**
+     * Limit how many MatrimonyDeleteRequests to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * MatrimonyDeleteRequest updateManyAndReturn
+   */
+  export type MatrimonyDeleteRequestUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MatrimonyDeleteRequest
+     */
+    select?: MatrimonyDeleteRequestSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the MatrimonyDeleteRequest
+     */
+    omit?: MatrimonyDeleteRequestOmit<ExtArgs> | null
+    /**
+     * The data used to update MatrimonyDeleteRequests.
+     */
+    data: XOR<MatrimonyDeleteRequestUpdateManyMutationInput, MatrimonyDeleteRequestUncheckedUpdateManyInput>
+    /**
+     * Filter which MatrimonyDeleteRequests to update
+     */
+    where?: MatrimonyDeleteRequestWhereInput
+    /**
+     * Limit how many MatrimonyDeleteRequests to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatrimonyDeleteRequestIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * MatrimonyDeleteRequest upsert
+   */
+  export type MatrimonyDeleteRequestUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MatrimonyDeleteRequest
+     */
+    select?: MatrimonyDeleteRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MatrimonyDeleteRequest
+     */
+    omit?: MatrimonyDeleteRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatrimonyDeleteRequestInclude<ExtArgs> | null
+    /**
+     * The filter to search for the MatrimonyDeleteRequest to update in case it exists.
+     */
+    where: MatrimonyDeleteRequestWhereUniqueInput
+    /**
+     * In case the MatrimonyDeleteRequest found by the `where` argument doesn't exist, create a new MatrimonyDeleteRequest with this data.
+     */
+    create: XOR<MatrimonyDeleteRequestCreateInput, MatrimonyDeleteRequestUncheckedCreateInput>
+    /**
+     * In case the MatrimonyDeleteRequest was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<MatrimonyDeleteRequestUpdateInput, MatrimonyDeleteRequestUncheckedUpdateInput>
+  }
+
+  /**
+   * MatrimonyDeleteRequest delete
+   */
+  export type MatrimonyDeleteRequestDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MatrimonyDeleteRequest
+     */
+    select?: MatrimonyDeleteRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MatrimonyDeleteRequest
+     */
+    omit?: MatrimonyDeleteRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatrimonyDeleteRequestInclude<ExtArgs> | null
+    /**
+     * Filter which MatrimonyDeleteRequest to delete.
+     */
+    where: MatrimonyDeleteRequestWhereUniqueInput
+  }
+
+  /**
+   * MatrimonyDeleteRequest deleteMany
+   */
+  export type MatrimonyDeleteRequestDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MatrimonyDeleteRequests to delete
+     */
+    where?: MatrimonyDeleteRequestWhereInput
+    /**
+     * Limit how many MatrimonyDeleteRequests to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * MatrimonyDeleteRequest without action
+   */
+  export type MatrimonyDeleteRequestDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MatrimonyDeleteRequest
+     */
+    select?: MatrimonyDeleteRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MatrimonyDeleteRequest
+     */
+    omit?: MatrimonyDeleteRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatrimonyDeleteRequestInclude<ExtArgs> | null
   }
 
 
@@ -21952,6 +23248,21 @@ export namespace Prisma {
   export type MatrimonyProfileScalarFieldEnum = (typeof MatrimonyProfileScalarFieldEnum)[keyof typeof MatrimonyProfileScalarFieldEnum]
 
 
+  export const MatrimonyDeleteRequestScalarFieldEnum: {
+    id: 'id',
+    matrimonyProfileId: 'matrimonyProfileId',
+    requestedById: 'requestedById',
+    reason: 'reason',
+    status: 'status',
+    adminNote: 'adminNote',
+    reviewedAt: 'reviewedAt',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type MatrimonyDeleteRequestScalarFieldEnum = (typeof MatrimonyDeleteRequestScalarFieldEnum)[keyof typeof MatrimonyDeleteRequestScalarFieldEnum]
+
+
   export const PartnerPreferenceScalarFieldEnum: {
     id: 'id',
     matrimonyProfileId: 'matrimonyProfileId',
@@ -22366,6 +23677,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'MatrimonyDeleteRequestStatus'
+   */
+  export type EnumMatrimonyDeleteRequestStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MatrimonyDeleteRequestStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'MatrimonyDeleteRequestStatus[]'
+   */
+  export type ListEnumMatrimonyDeleteRequestStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MatrimonyDeleteRequestStatus[]'>
+    
+
+
+  /**
    * Reference to a field of type 'MediaStatus'
    */
   export type EnumMediaStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MediaStatus'>
@@ -22532,6 +23857,7 @@ export namespace Prisma {
     communityPosts?: CommunityPostListRelationFilter
     committees?: CommitteeListRelationFilter
     auditLogs?: AuditLogListRelationFilter
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -22555,6 +23881,7 @@ export namespace Prisma {
     communityPosts?: CommunityPostOrderByRelationAggregateInput
     committees?: CommitteeOrderByRelationAggregateInput
     auditLogs?: AuditLogOrderByRelationAggregateInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -22581,6 +23908,7 @@ export namespace Prisma {
     communityPosts?: CommunityPostListRelationFilter
     committees?: CommitteeListRelationFilter
     auditLogs?: AuditLogListRelationFilter
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestListRelationFilter
   }, "id" | "phone" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -22678,6 +24006,7 @@ export namespace Prisma {
     receivedContact?: ContactRequestListRelationFilter
     shortlistedBy?: ShortlistListRelationFilter
     reports?: ProfileReportListRelationFilter
+    deleteRequests?: MatrimonyDeleteRequestListRelationFilter
   }
 
   export type MatrimonyProfileOrderByWithRelationInput = {
@@ -22734,6 +24063,7 @@ export namespace Prisma {
     receivedContact?: ContactRequestOrderByRelationAggregateInput
     shortlistedBy?: ShortlistOrderByRelationAggregateInput
     reports?: ProfileReportOrderByRelationAggregateInput
+    deleteRequests?: MatrimonyDeleteRequestOrderByRelationAggregateInput
   }
 
   export type MatrimonyProfileWhereUniqueInput = Prisma.AtLeast<{
@@ -22793,6 +24123,7 @@ export namespace Prisma {
     receivedContact?: ContactRequestListRelationFilter
     shortlistedBy?: ShortlistListRelationFilter
     reports?: ProfileReportListRelationFilter
+    deleteRequests?: MatrimonyDeleteRequestListRelationFilter
   }, "id">
 
   export type MatrimonyProfileOrderByWithAggregationInput = {
@@ -22893,6 +24224,84 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"MatrimonyProfile"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"MatrimonyProfile"> | Date | string
     deletedAt?: DateTimeNullableWithAggregatesFilter<"MatrimonyProfile"> | Date | string | null
+  }
+
+  export type MatrimonyDeleteRequestWhereInput = {
+    AND?: MatrimonyDeleteRequestWhereInput | MatrimonyDeleteRequestWhereInput[]
+    OR?: MatrimonyDeleteRequestWhereInput[]
+    NOT?: MatrimonyDeleteRequestWhereInput | MatrimonyDeleteRequestWhereInput[]
+    id?: StringFilter<"MatrimonyDeleteRequest"> | string
+    matrimonyProfileId?: StringFilter<"MatrimonyDeleteRequest"> | string
+    requestedById?: StringFilter<"MatrimonyDeleteRequest"> | string
+    reason?: StringFilter<"MatrimonyDeleteRequest"> | string
+    status?: EnumMatrimonyDeleteRequestStatusFilter<"MatrimonyDeleteRequest"> | $Enums.MatrimonyDeleteRequestStatus
+    adminNote?: StringNullableFilter<"MatrimonyDeleteRequest"> | string | null
+    reviewedAt?: DateTimeNullableFilter<"MatrimonyDeleteRequest"> | Date | string | null
+    createdAt?: DateTimeFilter<"MatrimonyDeleteRequest"> | Date | string
+    updatedAt?: DateTimeFilter<"MatrimonyDeleteRequest"> | Date | string
+    matrimonyProfile?: XOR<MatrimonyProfileScalarRelationFilter, MatrimonyProfileWhereInput>
+    requestedBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type MatrimonyDeleteRequestOrderByWithRelationInput = {
+    id?: SortOrder
+    matrimonyProfileId?: SortOrder
+    requestedById?: SortOrder
+    reason?: SortOrder
+    status?: SortOrder
+    adminNote?: SortOrderInput | SortOrder
+    reviewedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    matrimonyProfile?: MatrimonyProfileOrderByWithRelationInput
+    requestedBy?: UserOrderByWithRelationInput
+  }
+
+  export type MatrimonyDeleteRequestWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: MatrimonyDeleteRequestWhereInput | MatrimonyDeleteRequestWhereInput[]
+    OR?: MatrimonyDeleteRequestWhereInput[]
+    NOT?: MatrimonyDeleteRequestWhereInput | MatrimonyDeleteRequestWhereInput[]
+    matrimonyProfileId?: StringFilter<"MatrimonyDeleteRequest"> | string
+    requestedById?: StringFilter<"MatrimonyDeleteRequest"> | string
+    reason?: StringFilter<"MatrimonyDeleteRequest"> | string
+    status?: EnumMatrimonyDeleteRequestStatusFilter<"MatrimonyDeleteRequest"> | $Enums.MatrimonyDeleteRequestStatus
+    adminNote?: StringNullableFilter<"MatrimonyDeleteRequest"> | string | null
+    reviewedAt?: DateTimeNullableFilter<"MatrimonyDeleteRequest"> | Date | string | null
+    createdAt?: DateTimeFilter<"MatrimonyDeleteRequest"> | Date | string
+    updatedAt?: DateTimeFilter<"MatrimonyDeleteRequest"> | Date | string
+    matrimonyProfile?: XOR<MatrimonyProfileScalarRelationFilter, MatrimonyProfileWhereInput>
+    requestedBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type MatrimonyDeleteRequestOrderByWithAggregationInput = {
+    id?: SortOrder
+    matrimonyProfileId?: SortOrder
+    requestedById?: SortOrder
+    reason?: SortOrder
+    status?: SortOrder
+    adminNote?: SortOrderInput | SortOrder
+    reviewedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: MatrimonyDeleteRequestCountOrderByAggregateInput
+    _max?: MatrimonyDeleteRequestMaxOrderByAggregateInput
+    _min?: MatrimonyDeleteRequestMinOrderByAggregateInput
+  }
+
+  export type MatrimonyDeleteRequestScalarWhereWithAggregatesInput = {
+    AND?: MatrimonyDeleteRequestScalarWhereWithAggregatesInput | MatrimonyDeleteRequestScalarWhereWithAggregatesInput[]
+    OR?: MatrimonyDeleteRequestScalarWhereWithAggregatesInput[]
+    NOT?: MatrimonyDeleteRequestScalarWhereWithAggregatesInput | MatrimonyDeleteRequestScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"MatrimonyDeleteRequest"> | string
+    matrimonyProfileId?: StringWithAggregatesFilter<"MatrimonyDeleteRequest"> | string
+    requestedById?: StringWithAggregatesFilter<"MatrimonyDeleteRequest"> | string
+    reason?: StringWithAggregatesFilter<"MatrimonyDeleteRequest"> | string
+    status?: EnumMatrimonyDeleteRequestStatusWithAggregatesFilter<"MatrimonyDeleteRequest"> | $Enums.MatrimonyDeleteRequestStatus
+    adminNote?: StringNullableWithAggregatesFilter<"MatrimonyDeleteRequest"> | string | null
+    reviewedAt?: DateTimeNullableWithAggregatesFilter<"MatrimonyDeleteRequest"> | Date | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"MatrimonyDeleteRequest"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"MatrimonyDeleteRequest"> | Date | string
   }
 
   export type PartnerPreferenceWhereInput = {
@@ -24050,6 +25459,7 @@ export namespace Prisma {
     communityPosts?: CommunityPostCreateNestedManyWithoutCreatedByInput
     committees?: CommitteeCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestCreateNestedManyWithoutRequestedByInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -24073,6 +25483,7 @@ export namespace Prisma {
     communityPosts?: CommunityPostUncheckedCreateNestedManyWithoutCreatedByInput
     committees?: CommitteeUncheckedCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedCreateNestedManyWithoutRequestedByInput
   }
 
   export type UserUpdateInput = {
@@ -24096,6 +25507,7 @@ export namespace Prisma {
     communityPosts?: CommunityPostUpdateManyWithoutCreatedByNestedInput
     committees?: CommitteeUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestUpdateManyWithoutRequestedByNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -24119,6 +25531,7 @@ export namespace Prisma {
     communityPosts?: CommunityPostUncheckedUpdateManyWithoutCreatedByNestedInput
     committees?: CommitteeUncheckedUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedUpdateManyWithoutRequestedByNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -24222,6 +25635,7 @@ export namespace Prisma {
     receivedContact?: ContactRequestCreateNestedManyWithoutReceiverProfileInput
     shortlistedBy?: ShortlistCreateNestedManyWithoutMatrimonyProfileInput
     reports?: ProfileReportCreateNestedManyWithoutMatrimonyProfileInput
+    deleteRequests?: MatrimonyDeleteRequestCreateNestedManyWithoutMatrimonyProfileInput
   }
 
   export type MatrimonyProfileUncheckedCreateInput = {
@@ -24277,6 +25691,7 @@ export namespace Prisma {
     receivedContact?: ContactRequestUncheckedCreateNestedManyWithoutReceiverProfileInput
     shortlistedBy?: ShortlistUncheckedCreateNestedManyWithoutMatrimonyProfileInput
     reports?: ProfileReportUncheckedCreateNestedManyWithoutMatrimonyProfileInput
+    deleteRequests?: MatrimonyDeleteRequestUncheckedCreateNestedManyWithoutMatrimonyProfileInput
   }
 
   export type MatrimonyProfileUpdateInput = {
@@ -24332,6 +25747,7 @@ export namespace Prisma {
     receivedContact?: ContactRequestUpdateManyWithoutReceiverProfileNestedInput
     shortlistedBy?: ShortlistUpdateManyWithoutMatrimonyProfileNestedInput
     reports?: ProfileReportUpdateManyWithoutMatrimonyProfileNestedInput
+    deleteRequests?: MatrimonyDeleteRequestUpdateManyWithoutMatrimonyProfileNestedInput
   }
 
   export type MatrimonyProfileUncheckedUpdateInput = {
@@ -24387,6 +25803,7 @@ export namespace Prisma {
     receivedContact?: ContactRequestUncheckedUpdateManyWithoutReceiverProfileNestedInput
     shortlistedBy?: ShortlistUncheckedUpdateManyWithoutMatrimonyProfileNestedInput
     reports?: ProfileReportUncheckedUpdateManyWithoutMatrimonyProfileNestedInput
+    deleteRequests?: MatrimonyDeleteRequestUncheckedUpdateManyWithoutMatrimonyProfileNestedInput
   }
 
   export type MatrimonyProfileCreateManyInput = {
@@ -24524,6 +25941,88 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type MatrimonyDeleteRequestCreateInput = {
+    id?: string
+    reason: string
+    status?: $Enums.MatrimonyDeleteRequestStatus
+    adminNote?: string | null
+    reviewedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    matrimonyProfile: MatrimonyProfileCreateNestedOneWithoutDeleteRequestsInput
+    requestedBy: UserCreateNestedOneWithoutMatrimonyDeleteRequestsInput
+  }
+
+  export type MatrimonyDeleteRequestUncheckedCreateInput = {
+    id?: string
+    matrimonyProfileId: string
+    requestedById: string
+    reason: string
+    status?: $Enums.MatrimonyDeleteRequestStatus
+    adminNote?: string | null
+    reviewedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MatrimonyDeleteRequestUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: EnumMatrimonyDeleteRequestStatusFieldUpdateOperationsInput | $Enums.MatrimonyDeleteRequestStatus
+    adminNote?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    matrimonyProfile?: MatrimonyProfileUpdateOneRequiredWithoutDeleteRequestsNestedInput
+    requestedBy?: UserUpdateOneRequiredWithoutMatrimonyDeleteRequestsNestedInput
+  }
+
+  export type MatrimonyDeleteRequestUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    matrimonyProfileId?: StringFieldUpdateOperationsInput | string
+    requestedById?: StringFieldUpdateOperationsInput | string
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: EnumMatrimonyDeleteRequestStatusFieldUpdateOperationsInput | $Enums.MatrimonyDeleteRequestStatus
+    adminNote?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MatrimonyDeleteRequestCreateManyInput = {
+    id?: string
+    matrimonyProfileId: string
+    requestedById: string
+    reason: string
+    status?: $Enums.MatrimonyDeleteRequestStatus
+    adminNote?: string | null
+    reviewedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MatrimonyDeleteRequestUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: EnumMatrimonyDeleteRequestStatusFieldUpdateOperationsInput | $Enums.MatrimonyDeleteRequestStatus
+    adminNote?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MatrimonyDeleteRequestUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    matrimonyProfileId?: StringFieldUpdateOperationsInput | string
+    requestedById?: StringFieldUpdateOperationsInput | string
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: EnumMatrimonyDeleteRequestStatusFieldUpdateOperationsInput | $Enums.MatrimonyDeleteRequestStatus
+    adminNote?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type PartnerPreferenceCreateInput = {
@@ -25879,6 +27378,12 @@ export namespace Prisma {
     none?: AuditLogWhereInput
   }
 
+  export type MatrimonyDeleteRequestListRelationFilter = {
+    every?: MatrimonyDeleteRequestWhereInput
+    some?: MatrimonyDeleteRequestWhereInput
+    none?: MatrimonyDeleteRequestWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -25909,6 +27414,10 @@ export namespace Prisma {
   }
 
   export type AuditLogOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type MatrimonyDeleteRequestOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -26406,17 +27915,70 @@ export namespace Prisma {
     _max?: NestedEnumMatrimonyProfileStatusFilter<$PrismaModel>
   }
 
+  export type EnumMatrimonyDeleteRequestStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.MatrimonyDeleteRequestStatus | EnumMatrimonyDeleteRequestStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.MatrimonyDeleteRequestStatus[] | ListEnumMatrimonyDeleteRequestStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MatrimonyDeleteRequestStatus[] | ListEnumMatrimonyDeleteRequestStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumMatrimonyDeleteRequestStatusFilter<$PrismaModel> | $Enums.MatrimonyDeleteRequestStatus
+  }
+
+  export type MatrimonyProfileScalarRelationFilter = {
+    is?: MatrimonyProfileWhereInput
+    isNot?: MatrimonyProfileWhereInput
+  }
+
+  export type MatrimonyDeleteRequestCountOrderByAggregateInput = {
+    id?: SortOrder
+    matrimonyProfileId?: SortOrder
+    requestedById?: SortOrder
+    reason?: SortOrder
+    status?: SortOrder
+    adminNote?: SortOrder
+    reviewedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type MatrimonyDeleteRequestMaxOrderByAggregateInput = {
+    id?: SortOrder
+    matrimonyProfileId?: SortOrder
+    requestedById?: SortOrder
+    reason?: SortOrder
+    status?: SortOrder
+    adminNote?: SortOrder
+    reviewedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type MatrimonyDeleteRequestMinOrderByAggregateInput = {
+    id?: SortOrder
+    matrimonyProfileId?: SortOrder
+    requestedById?: SortOrder
+    reason?: SortOrder
+    status?: SortOrder
+    adminNote?: SortOrder
+    reviewedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EnumMatrimonyDeleteRequestStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.MatrimonyDeleteRequestStatus | EnumMatrimonyDeleteRequestStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.MatrimonyDeleteRequestStatus[] | ListEnumMatrimonyDeleteRequestStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MatrimonyDeleteRequestStatus[] | ListEnumMatrimonyDeleteRequestStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumMatrimonyDeleteRequestStatusWithAggregatesFilter<$PrismaModel> | $Enums.MatrimonyDeleteRequestStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumMatrimonyDeleteRequestStatusFilter<$PrismaModel>
+    _max?: NestedEnumMatrimonyDeleteRequestStatusFilter<$PrismaModel>
+  }
+
   export type EnumMaritalStatusNullableListFilter<$PrismaModel = never> = {
     equals?: $Enums.MaritalStatus[] | ListEnumMaritalStatusFieldRefInput<$PrismaModel> | null
     has?: $Enums.MaritalStatus | EnumMaritalStatusFieldRefInput<$PrismaModel> | null
     hasEvery?: $Enums.MaritalStatus[] | ListEnumMaritalStatusFieldRefInput<$PrismaModel>
     hasSome?: $Enums.MaritalStatus[] | ListEnumMaritalStatusFieldRefInput<$PrismaModel>
     isEmpty?: boolean
-  }
-
-  export type MatrimonyProfileScalarRelationFilter = {
-    is?: MatrimonyProfileWhereInput
-    isNot?: MatrimonyProfileWhereInput
   }
 
   export type PartnerPreferenceCountOrderByAggregateInput = {
@@ -27289,6 +28851,13 @@ export namespace Prisma {
     connect?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
   }
 
+  export type MatrimonyDeleteRequestCreateNestedManyWithoutRequestedByInput = {
+    create?: XOR<MatrimonyDeleteRequestCreateWithoutRequestedByInput, MatrimonyDeleteRequestUncheckedCreateWithoutRequestedByInput> | MatrimonyDeleteRequestCreateWithoutRequestedByInput[] | MatrimonyDeleteRequestUncheckedCreateWithoutRequestedByInput[]
+    connectOrCreate?: MatrimonyDeleteRequestCreateOrConnectWithoutRequestedByInput | MatrimonyDeleteRequestCreateOrConnectWithoutRequestedByInput[]
+    createMany?: MatrimonyDeleteRequestCreateManyRequestedByInputEnvelope
+    connect?: MatrimonyDeleteRequestWhereUniqueInput | MatrimonyDeleteRequestWhereUniqueInput[]
+  }
+
   export type MatrimonyProfileUncheckedCreateNestedManyWithoutCreatedByInput = {
     create?: XOR<MatrimonyProfileCreateWithoutCreatedByInput, MatrimonyProfileUncheckedCreateWithoutCreatedByInput> | MatrimonyProfileCreateWithoutCreatedByInput[] | MatrimonyProfileUncheckedCreateWithoutCreatedByInput[]
     connectOrCreate?: MatrimonyProfileCreateOrConnectWithoutCreatedByInput | MatrimonyProfileCreateOrConnectWithoutCreatedByInput[]
@@ -27336,6 +28905,13 @@ export namespace Prisma {
     connectOrCreate?: AuditLogCreateOrConnectWithoutActorInput | AuditLogCreateOrConnectWithoutActorInput[]
     createMany?: AuditLogCreateManyActorInputEnvelope
     connect?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
+  }
+
+  export type MatrimonyDeleteRequestUncheckedCreateNestedManyWithoutRequestedByInput = {
+    create?: XOR<MatrimonyDeleteRequestCreateWithoutRequestedByInput, MatrimonyDeleteRequestUncheckedCreateWithoutRequestedByInput> | MatrimonyDeleteRequestCreateWithoutRequestedByInput[] | MatrimonyDeleteRequestUncheckedCreateWithoutRequestedByInput[]
+    connectOrCreate?: MatrimonyDeleteRequestCreateOrConnectWithoutRequestedByInput | MatrimonyDeleteRequestCreateOrConnectWithoutRequestedByInput[]
+    createMany?: MatrimonyDeleteRequestCreateManyRequestedByInputEnvelope
+    connect?: MatrimonyDeleteRequestWhereUniqueInput | MatrimonyDeleteRequestWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -27464,6 +29040,20 @@ export namespace Prisma {
     deleteMany?: AuditLogScalarWhereInput | AuditLogScalarWhereInput[]
   }
 
+  export type MatrimonyDeleteRequestUpdateManyWithoutRequestedByNestedInput = {
+    create?: XOR<MatrimonyDeleteRequestCreateWithoutRequestedByInput, MatrimonyDeleteRequestUncheckedCreateWithoutRequestedByInput> | MatrimonyDeleteRequestCreateWithoutRequestedByInput[] | MatrimonyDeleteRequestUncheckedCreateWithoutRequestedByInput[]
+    connectOrCreate?: MatrimonyDeleteRequestCreateOrConnectWithoutRequestedByInput | MatrimonyDeleteRequestCreateOrConnectWithoutRequestedByInput[]
+    upsert?: MatrimonyDeleteRequestUpsertWithWhereUniqueWithoutRequestedByInput | MatrimonyDeleteRequestUpsertWithWhereUniqueWithoutRequestedByInput[]
+    createMany?: MatrimonyDeleteRequestCreateManyRequestedByInputEnvelope
+    set?: MatrimonyDeleteRequestWhereUniqueInput | MatrimonyDeleteRequestWhereUniqueInput[]
+    disconnect?: MatrimonyDeleteRequestWhereUniqueInput | MatrimonyDeleteRequestWhereUniqueInput[]
+    delete?: MatrimonyDeleteRequestWhereUniqueInput | MatrimonyDeleteRequestWhereUniqueInput[]
+    connect?: MatrimonyDeleteRequestWhereUniqueInput | MatrimonyDeleteRequestWhereUniqueInput[]
+    update?: MatrimonyDeleteRequestUpdateWithWhereUniqueWithoutRequestedByInput | MatrimonyDeleteRequestUpdateWithWhereUniqueWithoutRequestedByInput[]
+    updateMany?: MatrimonyDeleteRequestUpdateManyWithWhereWithoutRequestedByInput | MatrimonyDeleteRequestUpdateManyWithWhereWithoutRequestedByInput[]
+    deleteMany?: MatrimonyDeleteRequestScalarWhereInput | MatrimonyDeleteRequestScalarWhereInput[]
+  }
+
   export type MatrimonyProfileUncheckedUpdateManyWithoutCreatedByNestedInput = {
     create?: XOR<MatrimonyProfileCreateWithoutCreatedByInput, MatrimonyProfileUncheckedCreateWithoutCreatedByInput> | MatrimonyProfileCreateWithoutCreatedByInput[] | MatrimonyProfileUncheckedCreateWithoutCreatedByInput[]
     connectOrCreate?: MatrimonyProfileCreateOrConnectWithoutCreatedByInput | MatrimonyProfileCreateOrConnectWithoutCreatedByInput[]
@@ -27562,6 +29152,20 @@ export namespace Prisma {
     deleteMany?: AuditLogScalarWhereInput | AuditLogScalarWhereInput[]
   }
 
+  export type MatrimonyDeleteRequestUncheckedUpdateManyWithoutRequestedByNestedInput = {
+    create?: XOR<MatrimonyDeleteRequestCreateWithoutRequestedByInput, MatrimonyDeleteRequestUncheckedCreateWithoutRequestedByInput> | MatrimonyDeleteRequestCreateWithoutRequestedByInput[] | MatrimonyDeleteRequestUncheckedCreateWithoutRequestedByInput[]
+    connectOrCreate?: MatrimonyDeleteRequestCreateOrConnectWithoutRequestedByInput | MatrimonyDeleteRequestCreateOrConnectWithoutRequestedByInput[]
+    upsert?: MatrimonyDeleteRequestUpsertWithWhereUniqueWithoutRequestedByInput | MatrimonyDeleteRequestUpsertWithWhereUniqueWithoutRequestedByInput[]
+    createMany?: MatrimonyDeleteRequestCreateManyRequestedByInputEnvelope
+    set?: MatrimonyDeleteRequestWhereUniqueInput | MatrimonyDeleteRequestWhereUniqueInput[]
+    disconnect?: MatrimonyDeleteRequestWhereUniqueInput | MatrimonyDeleteRequestWhereUniqueInput[]
+    delete?: MatrimonyDeleteRequestWhereUniqueInput | MatrimonyDeleteRequestWhereUniqueInput[]
+    connect?: MatrimonyDeleteRequestWhereUniqueInput | MatrimonyDeleteRequestWhereUniqueInput[]
+    update?: MatrimonyDeleteRequestUpdateWithWhereUniqueWithoutRequestedByInput | MatrimonyDeleteRequestUpdateWithWhereUniqueWithoutRequestedByInput[]
+    updateMany?: MatrimonyDeleteRequestUpdateManyWithWhereWithoutRequestedByInput | MatrimonyDeleteRequestUpdateManyWithWhereWithoutRequestedByInput[]
+    deleteMany?: MatrimonyDeleteRequestScalarWhereInput | MatrimonyDeleteRequestScalarWhereInput[]
+  }
+
   export type UserCreateNestedOneWithoutMatrimonyProfilesInput = {
     create?: XOR<UserCreateWithoutMatrimonyProfilesInput, UserUncheckedCreateWithoutMatrimonyProfilesInput>
     connectOrCreate?: UserCreateOrConnectWithoutMatrimonyProfilesInput
@@ -27630,6 +29234,13 @@ export namespace Prisma {
     connect?: ProfileReportWhereUniqueInput | ProfileReportWhereUniqueInput[]
   }
 
+  export type MatrimonyDeleteRequestCreateNestedManyWithoutMatrimonyProfileInput = {
+    create?: XOR<MatrimonyDeleteRequestCreateWithoutMatrimonyProfileInput, MatrimonyDeleteRequestUncheckedCreateWithoutMatrimonyProfileInput> | MatrimonyDeleteRequestCreateWithoutMatrimonyProfileInput[] | MatrimonyDeleteRequestUncheckedCreateWithoutMatrimonyProfileInput[]
+    connectOrCreate?: MatrimonyDeleteRequestCreateOrConnectWithoutMatrimonyProfileInput | MatrimonyDeleteRequestCreateOrConnectWithoutMatrimonyProfileInput[]
+    createMany?: MatrimonyDeleteRequestCreateManyMatrimonyProfileInputEnvelope
+    connect?: MatrimonyDeleteRequestWhereUniqueInput | MatrimonyDeleteRequestWhereUniqueInput[]
+  }
+
   export type ProfilePhotoUncheckedCreateNestedManyWithoutMatrimonyProfileInput = {
     create?: XOR<ProfilePhotoCreateWithoutMatrimonyProfileInput, ProfilePhotoUncheckedCreateWithoutMatrimonyProfileInput> | ProfilePhotoCreateWithoutMatrimonyProfileInput[] | ProfilePhotoUncheckedCreateWithoutMatrimonyProfileInput[]
     connectOrCreate?: ProfilePhotoCreateOrConnectWithoutMatrimonyProfileInput | ProfilePhotoCreateOrConnectWithoutMatrimonyProfileInput[]
@@ -27690,6 +29301,13 @@ export namespace Prisma {
     connectOrCreate?: ProfileReportCreateOrConnectWithoutMatrimonyProfileInput | ProfileReportCreateOrConnectWithoutMatrimonyProfileInput[]
     createMany?: ProfileReportCreateManyMatrimonyProfileInputEnvelope
     connect?: ProfileReportWhereUniqueInput | ProfileReportWhereUniqueInput[]
+  }
+
+  export type MatrimonyDeleteRequestUncheckedCreateNestedManyWithoutMatrimonyProfileInput = {
+    create?: XOR<MatrimonyDeleteRequestCreateWithoutMatrimonyProfileInput, MatrimonyDeleteRequestUncheckedCreateWithoutMatrimonyProfileInput> | MatrimonyDeleteRequestCreateWithoutMatrimonyProfileInput[] | MatrimonyDeleteRequestUncheckedCreateWithoutMatrimonyProfileInput[]
+    connectOrCreate?: MatrimonyDeleteRequestCreateOrConnectWithoutMatrimonyProfileInput | MatrimonyDeleteRequestCreateOrConnectWithoutMatrimonyProfileInput[]
+    createMany?: MatrimonyDeleteRequestCreateManyMatrimonyProfileInputEnvelope
+    connect?: MatrimonyDeleteRequestWhereUniqueInput | MatrimonyDeleteRequestWhereUniqueInput[]
   }
 
   export type EnumProfileForFieldUpdateOperationsInput = {
@@ -27862,6 +29480,20 @@ export namespace Prisma {
     deleteMany?: ProfileReportScalarWhereInput | ProfileReportScalarWhereInput[]
   }
 
+  export type MatrimonyDeleteRequestUpdateManyWithoutMatrimonyProfileNestedInput = {
+    create?: XOR<MatrimonyDeleteRequestCreateWithoutMatrimonyProfileInput, MatrimonyDeleteRequestUncheckedCreateWithoutMatrimonyProfileInput> | MatrimonyDeleteRequestCreateWithoutMatrimonyProfileInput[] | MatrimonyDeleteRequestUncheckedCreateWithoutMatrimonyProfileInput[]
+    connectOrCreate?: MatrimonyDeleteRequestCreateOrConnectWithoutMatrimonyProfileInput | MatrimonyDeleteRequestCreateOrConnectWithoutMatrimonyProfileInput[]
+    upsert?: MatrimonyDeleteRequestUpsertWithWhereUniqueWithoutMatrimonyProfileInput | MatrimonyDeleteRequestUpsertWithWhereUniqueWithoutMatrimonyProfileInput[]
+    createMany?: MatrimonyDeleteRequestCreateManyMatrimonyProfileInputEnvelope
+    set?: MatrimonyDeleteRequestWhereUniqueInput | MatrimonyDeleteRequestWhereUniqueInput[]
+    disconnect?: MatrimonyDeleteRequestWhereUniqueInput | MatrimonyDeleteRequestWhereUniqueInput[]
+    delete?: MatrimonyDeleteRequestWhereUniqueInput | MatrimonyDeleteRequestWhereUniqueInput[]
+    connect?: MatrimonyDeleteRequestWhereUniqueInput | MatrimonyDeleteRequestWhereUniqueInput[]
+    update?: MatrimonyDeleteRequestUpdateWithWhereUniqueWithoutMatrimonyProfileInput | MatrimonyDeleteRequestUpdateWithWhereUniqueWithoutMatrimonyProfileInput[]
+    updateMany?: MatrimonyDeleteRequestUpdateManyWithWhereWithoutMatrimonyProfileInput | MatrimonyDeleteRequestUpdateManyWithWhereWithoutMatrimonyProfileInput[]
+    deleteMany?: MatrimonyDeleteRequestScalarWhereInput | MatrimonyDeleteRequestScalarWhereInput[]
+  }
+
   export type ProfilePhotoUncheckedUpdateManyWithoutMatrimonyProfileNestedInput = {
     create?: XOR<ProfilePhotoCreateWithoutMatrimonyProfileInput, ProfilePhotoUncheckedCreateWithoutMatrimonyProfileInput> | ProfilePhotoCreateWithoutMatrimonyProfileInput[] | ProfilePhotoUncheckedCreateWithoutMatrimonyProfileInput[]
     connectOrCreate?: ProfilePhotoCreateOrConnectWithoutMatrimonyProfileInput | ProfilePhotoCreateOrConnectWithoutMatrimonyProfileInput[]
@@ -27982,6 +29614,52 @@ export namespace Prisma {
     update?: ProfileReportUpdateWithWhereUniqueWithoutMatrimonyProfileInput | ProfileReportUpdateWithWhereUniqueWithoutMatrimonyProfileInput[]
     updateMany?: ProfileReportUpdateManyWithWhereWithoutMatrimonyProfileInput | ProfileReportUpdateManyWithWhereWithoutMatrimonyProfileInput[]
     deleteMany?: ProfileReportScalarWhereInput | ProfileReportScalarWhereInput[]
+  }
+
+  export type MatrimonyDeleteRequestUncheckedUpdateManyWithoutMatrimonyProfileNestedInput = {
+    create?: XOR<MatrimonyDeleteRequestCreateWithoutMatrimonyProfileInput, MatrimonyDeleteRequestUncheckedCreateWithoutMatrimonyProfileInput> | MatrimonyDeleteRequestCreateWithoutMatrimonyProfileInput[] | MatrimonyDeleteRequestUncheckedCreateWithoutMatrimonyProfileInput[]
+    connectOrCreate?: MatrimonyDeleteRequestCreateOrConnectWithoutMatrimonyProfileInput | MatrimonyDeleteRequestCreateOrConnectWithoutMatrimonyProfileInput[]
+    upsert?: MatrimonyDeleteRequestUpsertWithWhereUniqueWithoutMatrimonyProfileInput | MatrimonyDeleteRequestUpsertWithWhereUniqueWithoutMatrimonyProfileInput[]
+    createMany?: MatrimonyDeleteRequestCreateManyMatrimonyProfileInputEnvelope
+    set?: MatrimonyDeleteRequestWhereUniqueInput | MatrimonyDeleteRequestWhereUniqueInput[]
+    disconnect?: MatrimonyDeleteRequestWhereUniqueInput | MatrimonyDeleteRequestWhereUniqueInput[]
+    delete?: MatrimonyDeleteRequestWhereUniqueInput | MatrimonyDeleteRequestWhereUniqueInput[]
+    connect?: MatrimonyDeleteRequestWhereUniqueInput | MatrimonyDeleteRequestWhereUniqueInput[]
+    update?: MatrimonyDeleteRequestUpdateWithWhereUniqueWithoutMatrimonyProfileInput | MatrimonyDeleteRequestUpdateWithWhereUniqueWithoutMatrimonyProfileInput[]
+    updateMany?: MatrimonyDeleteRequestUpdateManyWithWhereWithoutMatrimonyProfileInput | MatrimonyDeleteRequestUpdateManyWithWhereWithoutMatrimonyProfileInput[]
+    deleteMany?: MatrimonyDeleteRequestScalarWhereInput | MatrimonyDeleteRequestScalarWhereInput[]
+  }
+
+  export type MatrimonyProfileCreateNestedOneWithoutDeleteRequestsInput = {
+    create?: XOR<MatrimonyProfileCreateWithoutDeleteRequestsInput, MatrimonyProfileUncheckedCreateWithoutDeleteRequestsInput>
+    connectOrCreate?: MatrimonyProfileCreateOrConnectWithoutDeleteRequestsInput
+    connect?: MatrimonyProfileWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutMatrimonyDeleteRequestsInput = {
+    create?: XOR<UserCreateWithoutMatrimonyDeleteRequestsInput, UserUncheckedCreateWithoutMatrimonyDeleteRequestsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutMatrimonyDeleteRequestsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type EnumMatrimonyDeleteRequestStatusFieldUpdateOperationsInput = {
+    set?: $Enums.MatrimonyDeleteRequestStatus
+  }
+
+  export type MatrimonyProfileUpdateOneRequiredWithoutDeleteRequestsNestedInput = {
+    create?: XOR<MatrimonyProfileCreateWithoutDeleteRequestsInput, MatrimonyProfileUncheckedCreateWithoutDeleteRequestsInput>
+    connectOrCreate?: MatrimonyProfileCreateOrConnectWithoutDeleteRequestsInput
+    upsert?: MatrimonyProfileUpsertWithoutDeleteRequestsInput
+    connect?: MatrimonyProfileWhereUniqueInput
+    update?: XOR<XOR<MatrimonyProfileUpdateToOneWithWhereWithoutDeleteRequestsInput, MatrimonyProfileUpdateWithoutDeleteRequestsInput>, MatrimonyProfileUncheckedUpdateWithoutDeleteRequestsInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutMatrimonyDeleteRequestsNestedInput = {
+    create?: XOR<UserCreateWithoutMatrimonyDeleteRequestsInput, UserUncheckedCreateWithoutMatrimonyDeleteRequestsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutMatrimonyDeleteRequestsInput
+    upsert?: UserUpsertWithoutMatrimonyDeleteRequestsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutMatrimonyDeleteRequestsInput, UserUpdateWithoutMatrimonyDeleteRequestsInput>, UserUncheckedUpdateWithoutMatrimonyDeleteRequestsInput>
   }
 
   export type PartnerPreferenceCreatemaritalStatusesInput = {
@@ -28742,6 +30420,23 @@ export namespace Prisma {
     _max?: NestedEnumMatrimonyProfileStatusFilter<$PrismaModel>
   }
 
+  export type NestedEnumMatrimonyDeleteRequestStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.MatrimonyDeleteRequestStatus | EnumMatrimonyDeleteRequestStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.MatrimonyDeleteRequestStatus[] | ListEnumMatrimonyDeleteRequestStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MatrimonyDeleteRequestStatus[] | ListEnumMatrimonyDeleteRequestStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumMatrimonyDeleteRequestStatusFilter<$PrismaModel> | $Enums.MatrimonyDeleteRequestStatus
+  }
+
+  export type NestedEnumMatrimonyDeleteRequestStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.MatrimonyDeleteRequestStatus | EnumMatrimonyDeleteRequestStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.MatrimonyDeleteRequestStatus[] | ListEnumMatrimonyDeleteRequestStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MatrimonyDeleteRequestStatus[] | ListEnumMatrimonyDeleteRequestStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumMatrimonyDeleteRequestStatusWithAggregatesFilter<$PrismaModel> | $Enums.MatrimonyDeleteRequestStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumMatrimonyDeleteRequestStatusFilter<$PrismaModel>
+    _max?: NestedEnumMatrimonyDeleteRequestStatusFilter<$PrismaModel>
+  }
+
   export type NestedEnumMediaStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.MediaStatus | EnumMediaStatusFieldRefInput<$PrismaModel>
     in?: $Enums.MediaStatus[] | ListEnumMediaStatusFieldRefInput<$PrismaModel>
@@ -28953,6 +30648,7 @@ export namespace Prisma {
     receivedContact?: ContactRequestCreateNestedManyWithoutReceiverProfileInput
     shortlistedBy?: ShortlistCreateNestedManyWithoutMatrimonyProfileInput
     reports?: ProfileReportCreateNestedManyWithoutMatrimonyProfileInput
+    deleteRequests?: MatrimonyDeleteRequestCreateNestedManyWithoutMatrimonyProfileInput
   }
 
   export type MatrimonyProfileUncheckedCreateWithoutCreatedByInput = {
@@ -29007,6 +30703,7 @@ export namespace Prisma {
     receivedContact?: ContactRequestUncheckedCreateNestedManyWithoutReceiverProfileInput
     shortlistedBy?: ShortlistUncheckedCreateNestedManyWithoutMatrimonyProfileInput
     reports?: ProfileReportUncheckedCreateNestedManyWithoutMatrimonyProfileInput
+    deleteRequests?: MatrimonyDeleteRequestUncheckedCreateNestedManyWithoutMatrimonyProfileInput
   }
 
   export type MatrimonyProfileCreateOrConnectWithoutCreatedByInput = {
@@ -29234,6 +30931,38 @@ export namespace Prisma {
 
   export type AuditLogCreateManyActorInputEnvelope = {
     data: AuditLogCreateManyActorInput | AuditLogCreateManyActorInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type MatrimonyDeleteRequestCreateWithoutRequestedByInput = {
+    id?: string
+    reason: string
+    status?: $Enums.MatrimonyDeleteRequestStatus
+    adminNote?: string | null
+    reviewedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    matrimonyProfile: MatrimonyProfileCreateNestedOneWithoutDeleteRequestsInput
+  }
+
+  export type MatrimonyDeleteRequestUncheckedCreateWithoutRequestedByInput = {
+    id?: string
+    matrimonyProfileId: string
+    reason: string
+    status?: $Enums.MatrimonyDeleteRequestStatus
+    adminNote?: string | null
+    reviewedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MatrimonyDeleteRequestCreateOrConnectWithoutRequestedByInput = {
+    where: MatrimonyDeleteRequestWhereUniqueInput
+    create: XOR<MatrimonyDeleteRequestCreateWithoutRequestedByInput, MatrimonyDeleteRequestUncheckedCreateWithoutRequestedByInput>
+  }
+
+  export type MatrimonyDeleteRequestCreateManyRequestedByInputEnvelope = {
+    data: MatrimonyDeleteRequestCreateManyRequestedByInput | MatrimonyDeleteRequestCreateManyRequestedByInput[]
     skipDuplicates?: boolean
   }
 
@@ -29498,6 +31227,37 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"AuditLog"> | Date | string
   }
 
+  export type MatrimonyDeleteRequestUpsertWithWhereUniqueWithoutRequestedByInput = {
+    where: MatrimonyDeleteRequestWhereUniqueInput
+    update: XOR<MatrimonyDeleteRequestUpdateWithoutRequestedByInput, MatrimonyDeleteRequestUncheckedUpdateWithoutRequestedByInput>
+    create: XOR<MatrimonyDeleteRequestCreateWithoutRequestedByInput, MatrimonyDeleteRequestUncheckedCreateWithoutRequestedByInput>
+  }
+
+  export type MatrimonyDeleteRequestUpdateWithWhereUniqueWithoutRequestedByInput = {
+    where: MatrimonyDeleteRequestWhereUniqueInput
+    data: XOR<MatrimonyDeleteRequestUpdateWithoutRequestedByInput, MatrimonyDeleteRequestUncheckedUpdateWithoutRequestedByInput>
+  }
+
+  export type MatrimonyDeleteRequestUpdateManyWithWhereWithoutRequestedByInput = {
+    where: MatrimonyDeleteRequestScalarWhereInput
+    data: XOR<MatrimonyDeleteRequestUpdateManyMutationInput, MatrimonyDeleteRequestUncheckedUpdateManyWithoutRequestedByInput>
+  }
+
+  export type MatrimonyDeleteRequestScalarWhereInput = {
+    AND?: MatrimonyDeleteRequestScalarWhereInput | MatrimonyDeleteRequestScalarWhereInput[]
+    OR?: MatrimonyDeleteRequestScalarWhereInput[]
+    NOT?: MatrimonyDeleteRequestScalarWhereInput | MatrimonyDeleteRequestScalarWhereInput[]
+    id?: StringFilter<"MatrimonyDeleteRequest"> | string
+    matrimonyProfileId?: StringFilter<"MatrimonyDeleteRequest"> | string
+    requestedById?: StringFilter<"MatrimonyDeleteRequest"> | string
+    reason?: StringFilter<"MatrimonyDeleteRequest"> | string
+    status?: EnumMatrimonyDeleteRequestStatusFilter<"MatrimonyDeleteRequest"> | $Enums.MatrimonyDeleteRequestStatus
+    adminNote?: StringNullableFilter<"MatrimonyDeleteRequest"> | string | null
+    reviewedAt?: DateTimeNullableFilter<"MatrimonyDeleteRequest"> | Date | string | null
+    createdAt?: DateTimeFilter<"MatrimonyDeleteRequest"> | Date | string
+    updatedAt?: DateTimeFilter<"MatrimonyDeleteRequest"> | Date | string
+  }
+
   export type UserCreateWithoutMatrimonyProfilesInput = {
     id?: string
     phone: string
@@ -29518,6 +31278,7 @@ export namespace Prisma {
     communityPosts?: CommunityPostCreateNestedManyWithoutCreatedByInput
     committees?: CommitteeCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestCreateNestedManyWithoutRequestedByInput
   }
 
   export type UserUncheckedCreateWithoutMatrimonyProfilesInput = {
@@ -29540,6 +31301,7 @@ export namespace Prisma {
     communityPosts?: CommunityPostUncheckedCreateNestedManyWithoutCreatedByInput
     committees?: CommitteeUncheckedCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedCreateNestedManyWithoutRequestedByInput
   }
 
   export type UserCreateOrConnectWithoutMatrimonyProfilesInput = {
@@ -29818,6 +31580,38 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type MatrimonyDeleteRequestCreateWithoutMatrimonyProfileInput = {
+    id?: string
+    reason: string
+    status?: $Enums.MatrimonyDeleteRequestStatus
+    adminNote?: string | null
+    reviewedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    requestedBy: UserCreateNestedOneWithoutMatrimonyDeleteRequestsInput
+  }
+
+  export type MatrimonyDeleteRequestUncheckedCreateWithoutMatrimonyProfileInput = {
+    id?: string
+    requestedById: string
+    reason: string
+    status?: $Enums.MatrimonyDeleteRequestStatus
+    adminNote?: string | null
+    reviewedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MatrimonyDeleteRequestCreateOrConnectWithoutMatrimonyProfileInput = {
+    where: MatrimonyDeleteRequestWhereUniqueInput
+    create: XOR<MatrimonyDeleteRequestCreateWithoutMatrimonyProfileInput, MatrimonyDeleteRequestUncheckedCreateWithoutMatrimonyProfileInput>
+  }
+
+  export type MatrimonyDeleteRequestCreateManyMatrimonyProfileInputEnvelope = {
+    data: MatrimonyDeleteRequestCreateManyMatrimonyProfileInput | MatrimonyDeleteRequestCreateManyMatrimonyProfileInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithoutMatrimonyProfilesInput = {
     update: XOR<UserUpdateWithoutMatrimonyProfilesInput, UserUncheckedUpdateWithoutMatrimonyProfilesInput>
     create: XOR<UserCreateWithoutMatrimonyProfilesInput, UserUncheckedCreateWithoutMatrimonyProfilesInput>
@@ -29849,6 +31643,7 @@ export namespace Prisma {
     communityPosts?: CommunityPostUpdateManyWithoutCreatedByNestedInput
     committees?: CommitteeUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestUpdateManyWithoutRequestedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutMatrimonyProfilesInput = {
@@ -29871,6 +31666,7 @@ export namespace Prisma {
     communityPosts?: CommunityPostUncheckedUpdateManyWithoutCreatedByNestedInput
     committees?: CommitteeUncheckedUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedUpdateManyWithoutRequestedByNestedInput
   }
 
   export type ProfilePhotoUpsertWithWhereUniqueWithoutMatrimonyProfileInput = {
@@ -30099,6 +31895,366 @@ export namespace Prisma {
     data: XOR<ProfileReportUpdateManyMutationInput, ProfileReportUncheckedUpdateManyWithoutMatrimonyProfileInput>
   }
 
+  export type MatrimonyDeleteRequestUpsertWithWhereUniqueWithoutMatrimonyProfileInput = {
+    where: MatrimonyDeleteRequestWhereUniqueInput
+    update: XOR<MatrimonyDeleteRequestUpdateWithoutMatrimonyProfileInput, MatrimonyDeleteRequestUncheckedUpdateWithoutMatrimonyProfileInput>
+    create: XOR<MatrimonyDeleteRequestCreateWithoutMatrimonyProfileInput, MatrimonyDeleteRequestUncheckedCreateWithoutMatrimonyProfileInput>
+  }
+
+  export type MatrimonyDeleteRequestUpdateWithWhereUniqueWithoutMatrimonyProfileInput = {
+    where: MatrimonyDeleteRequestWhereUniqueInput
+    data: XOR<MatrimonyDeleteRequestUpdateWithoutMatrimonyProfileInput, MatrimonyDeleteRequestUncheckedUpdateWithoutMatrimonyProfileInput>
+  }
+
+  export type MatrimonyDeleteRequestUpdateManyWithWhereWithoutMatrimonyProfileInput = {
+    where: MatrimonyDeleteRequestScalarWhereInput
+    data: XOR<MatrimonyDeleteRequestUpdateManyMutationInput, MatrimonyDeleteRequestUncheckedUpdateManyWithoutMatrimonyProfileInput>
+  }
+
+  export type MatrimonyProfileCreateWithoutDeleteRequestsInput = {
+    id?: string
+    profileFor: $Enums.ProfileFor
+    category: $Enums.DarziCategory
+    gender: $Enums.Gender
+    firstName: string
+    middleName?: string | null
+    lastName: string
+    dateOfBirth: Date | string
+    heightCm?: number | null
+    maritalStatus?: $Enums.MaritalStatus
+    contactPhone?: string | null
+    contactEmail?: string | null
+    education?: string | null
+    occupation?: string | null
+    companyOrBusiness?: string | null
+    annualIncome?: number | null
+    gotra?: string | null
+    manglik?: boolean | null
+    birthTime?: string | null
+    birthPlace?: string | null
+    currentCity?: string | null
+    district?: string | null
+    state?: string | null
+    country?: string
+    fullAddress?: string | null
+    postalCode?: string | null
+    nativePlace?: string | null
+    fatherName?: string | null
+    fatherOccupation?: string | null
+    motherName?: string | null
+    motherOccupation?: string | null
+    brothers?: number
+    sisters?: number
+    familyDetails?: string | null
+    about?: string | null
+    status?: $Enums.MatrimonyProfileStatus
+    rejectionReason?: string | null
+    isFeatured?: boolean
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    createdBy: UserCreateNestedOneWithoutMatrimonyProfilesInput
+    photos?: ProfilePhotoCreateNestedManyWithoutMatrimonyProfileInput
+    kundalis?: KundaliCreateNestedManyWithoutMatrimonyProfileInput
+    partnerPreference?: PartnerPreferenceCreateNestedOneWithoutMatrimonyProfileInput
+    sentInterests?: InterestCreateNestedManyWithoutSenderProfileInput
+    receivedInterests?: InterestCreateNestedManyWithoutReceiverProfileInput
+    sentContact?: ContactRequestCreateNestedManyWithoutSenderProfileInput
+    receivedContact?: ContactRequestCreateNestedManyWithoutReceiverProfileInput
+    shortlistedBy?: ShortlistCreateNestedManyWithoutMatrimonyProfileInput
+    reports?: ProfileReportCreateNestedManyWithoutMatrimonyProfileInput
+  }
+
+  export type MatrimonyProfileUncheckedCreateWithoutDeleteRequestsInput = {
+    id?: string
+    createdById: string
+    profileFor: $Enums.ProfileFor
+    category: $Enums.DarziCategory
+    gender: $Enums.Gender
+    firstName: string
+    middleName?: string | null
+    lastName: string
+    dateOfBirth: Date | string
+    heightCm?: number | null
+    maritalStatus?: $Enums.MaritalStatus
+    contactPhone?: string | null
+    contactEmail?: string | null
+    education?: string | null
+    occupation?: string | null
+    companyOrBusiness?: string | null
+    annualIncome?: number | null
+    gotra?: string | null
+    manglik?: boolean | null
+    birthTime?: string | null
+    birthPlace?: string | null
+    currentCity?: string | null
+    district?: string | null
+    state?: string | null
+    country?: string
+    fullAddress?: string | null
+    postalCode?: string | null
+    nativePlace?: string | null
+    fatherName?: string | null
+    fatherOccupation?: string | null
+    motherName?: string | null
+    motherOccupation?: string | null
+    brothers?: number
+    sisters?: number
+    familyDetails?: string | null
+    about?: string | null
+    status?: $Enums.MatrimonyProfileStatus
+    rejectionReason?: string | null
+    isFeatured?: boolean
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    photos?: ProfilePhotoUncheckedCreateNestedManyWithoutMatrimonyProfileInput
+    kundalis?: KundaliUncheckedCreateNestedManyWithoutMatrimonyProfileInput
+    partnerPreference?: PartnerPreferenceUncheckedCreateNestedOneWithoutMatrimonyProfileInput
+    sentInterests?: InterestUncheckedCreateNestedManyWithoutSenderProfileInput
+    receivedInterests?: InterestUncheckedCreateNestedManyWithoutReceiverProfileInput
+    sentContact?: ContactRequestUncheckedCreateNestedManyWithoutSenderProfileInput
+    receivedContact?: ContactRequestUncheckedCreateNestedManyWithoutReceiverProfileInput
+    shortlistedBy?: ShortlistUncheckedCreateNestedManyWithoutMatrimonyProfileInput
+    reports?: ProfileReportUncheckedCreateNestedManyWithoutMatrimonyProfileInput
+  }
+
+  export type MatrimonyProfileCreateOrConnectWithoutDeleteRequestsInput = {
+    where: MatrimonyProfileWhereUniqueInput
+    create: XOR<MatrimonyProfileCreateWithoutDeleteRequestsInput, MatrimonyProfileUncheckedCreateWithoutDeleteRequestsInput>
+  }
+
+  export type UserCreateWithoutMatrimonyDeleteRequestsInput = {
+    id?: string
+    phone: string
+    email?: string | null
+    firstName?: string | null
+    lastName?: string | null
+    preferredLanguage?: $Enums.Language
+    role?: $Enums.UserRole
+    isPhoneVerified?: boolean
+    isActive?: boolean
+    lastLoginAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    matrimonyProfiles?: MatrimonyProfileCreateNestedManyWithoutCreatedByInput
+    shortlists?: ShortlistCreateNestedManyWithoutUserInput
+    reports?: ProfileReportCreateNestedManyWithoutReporterInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    communityPosts?: CommunityPostCreateNestedManyWithoutCreatedByInput
+    committees?: CommitteeCreateNestedManyWithoutCreatedByInput
+    auditLogs?: AuditLogCreateNestedManyWithoutActorInput
+  }
+
+  export type UserUncheckedCreateWithoutMatrimonyDeleteRequestsInput = {
+    id?: string
+    phone: string
+    email?: string | null
+    firstName?: string | null
+    lastName?: string | null
+    preferredLanguage?: $Enums.Language
+    role?: $Enums.UserRole
+    isPhoneVerified?: boolean
+    isActive?: boolean
+    lastLoginAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    matrimonyProfiles?: MatrimonyProfileUncheckedCreateNestedManyWithoutCreatedByInput
+    shortlists?: ShortlistUncheckedCreateNestedManyWithoutUserInput
+    reports?: ProfileReportUncheckedCreateNestedManyWithoutReporterInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    communityPosts?: CommunityPostUncheckedCreateNestedManyWithoutCreatedByInput
+    committees?: CommitteeUncheckedCreateNestedManyWithoutCreatedByInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
+  }
+
+  export type UserCreateOrConnectWithoutMatrimonyDeleteRequestsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutMatrimonyDeleteRequestsInput, UserUncheckedCreateWithoutMatrimonyDeleteRequestsInput>
+  }
+
+  export type MatrimonyProfileUpsertWithoutDeleteRequestsInput = {
+    update: XOR<MatrimonyProfileUpdateWithoutDeleteRequestsInput, MatrimonyProfileUncheckedUpdateWithoutDeleteRequestsInput>
+    create: XOR<MatrimonyProfileCreateWithoutDeleteRequestsInput, MatrimonyProfileUncheckedCreateWithoutDeleteRequestsInput>
+    where?: MatrimonyProfileWhereInput
+  }
+
+  export type MatrimonyProfileUpdateToOneWithWhereWithoutDeleteRequestsInput = {
+    where?: MatrimonyProfileWhereInput
+    data: XOR<MatrimonyProfileUpdateWithoutDeleteRequestsInput, MatrimonyProfileUncheckedUpdateWithoutDeleteRequestsInput>
+  }
+
+  export type MatrimonyProfileUpdateWithoutDeleteRequestsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    profileFor?: EnumProfileForFieldUpdateOperationsInput | $Enums.ProfileFor
+    category?: EnumDarziCategoryFieldUpdateOperationsInput | $Enums.DarziCategory
+    gender?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender
+    firstName?: StringFieldUpdateOperationsInput | string
+    middleName?: NullableStringFieldUpdateOperationsInput | string | null
+    lastName?: StringFieldUpdateOperationsInput | string
+    dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
+    heightCm?: NullableIntFieldUpdateOperationsInput | number | null
+    maritalStatus?: EnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus
+    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    education?: NullableStringFieldUpdateOperationsInput | string | null
+    occupation?: NullableStringFieldUpdateOperationsInput | string | null
+    companyOrBusiness?: NullableStringFieldUpdateOperationsInput | string | null
+    annualIncome?: NullableIntFieldUpdateOperationsInput | number | null
+    gotra?: NullableStringFieldUpdateOperationsInput | string | null
+    manglik?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    birthTime?: NullableStringFieldUpdateOperationsInput | string | null
+    birthPlace?: NullableStringFieldUpdateOperationsInput | string | null
+    currentCity?: NullableStringFieldUpdateOperationsInput | string | null
+    district?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: StringFieldUpdateOperationsInput | string
+    fullAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    postalCode?: NullableStringFieldUpdateOperationsInput | string | null
+    nativePlace?: NullableStringFieldUpdateOperationsInput | string | null
+    fatherName?: NullableStringFieldUpdateOperationsInput | string | null
+    fatherOccupation?: NullableStringFieldUpdateOperationsInput | string | null
+    motherName?: NullableStringFieldUpdateOperationsInput | string | null
+    motherOccupation?: NullableStringFieldUpdateOperationsInput | string | null
+    brothers?: IntFieldUpdateOperationsInput | number
+    sisters?: IntFieldUpdateOperationsInput | number
+    familyDetails?: NullableStringFieldUpdateOperationsInput | string | null
+    about?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumMatrimonyProfileStatusFieldUpdateOperationsInput | $Enums.MatrimonyProfileStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isFeatured?: BoolFieldUpdateOperationsInput | boolean
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdBy?: UserUpdateOneRequiredWithoutMatrimonyProfilesNestedInput
+    photos?: ProfilePhotoUpdateManyWithoutMatrimonyProfileNestedInput
+    kundalis?: KundaliUpdateManyWithoutMatrimonyProfileNestedInput
+    partnerPreference?: PartnerPreferenceUpdateOneWithoutMatrimonyProfileNestedInput
+    sentInterests?: InterestUpdateManyWithoutSenderProfileNestedInput
+    receivedInterests?: InterestUpdateManyWithoutReceiverProfileNestedInput
+    sentContact?: ContactRequestUpdateManyWithoutSenderProfileNestedInput
+    receivedContact?: ContactRequestUpdateManyWithoutReceiverProfileNestedInput
+    shortlistedBy?: ShortlistUpdateManyWithoutMatrimonyProfileNestedInput
+    reports?: ProfileReportUpdateManyWithoutMatrimonyProfileNestedInput
+  }
+
+  export type MatrimonyProfileUncheckedUpdateWithoutDeleteRequestsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdById?: StringFieldUpdateOperationsInput | string
+    profileFor?: EnumProfileForFieldUpdateOperationsInput | $Enums.ProfileFor
+    category?: EnumDarziCategoryFieldUpdateOperationsInput | $Enums.DarziCategory
+    gender?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender
+    firstName?: StringFieldUpdateOperationsInput | string
+    middleName?: NullableStringFieldUpdateOperationsInput | string | null
+    lastName?: StringFieldUpdateOperationsInput | string
+    dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
+    heightCm?: NullableIntFieldUpdateOperationsInput | number | null
+    maritalStatus?: EnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus
+    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    education?: NullableStringFieldUpdateOperationsInput | string | null
+    occupation?: NullableStringFieldUpdateOperationsInput | string | null
+    companyOrBusiness?: NullableStringFieldUpdateOperationsInput | string | null
+    annualIncome?: NullableIntFieldUpdateOperationsInput | number | null
+    gotra?: NullableStringFieldUpdateOperationsInput | string | null
+    manglik?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    birthTime?: NullableStringFieldUpdateOperationsInput | string | null
+    birthPlace?: NullableStringFieldUpdateOperationsInput | string | null
+    currentCity?: NullableStringFieldUpdateOperationsInput | string | null
+    district?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: StringFieldUpdateOperationsInput | string
+    fullAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    postalCode?: NullableStringFieldUpdateOperationsInput | string | null
+    nativePlace?: NullableStringFieldUpdateOperationsInput | string | null
+    fatherName?: NullableStringFieldUpdateOperationsInput | string | null
+    fatherOccupation?: NullableStringFieldUpdateOperationsInput | string | null
+    motherName?: NullableStringFieldUpdateOperationsInput | string | null
+    motherOccupation?: NullableStringFieldUpdateOperationsInput | string | null
+    brothers?: IntFieldUpdateOperationsInput | number
+    sisters?: IntFieldUpdateOperationsInput | number
+    familyDetails?: NullableStringFieldUpdateOperationsInput | string | null
+    about?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumMatrimonyProfileStatusFieldUpdateOperationsInput | $Enums.MatrimonyProfileStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    isFeatured?: BoolFieldUpdateOperationsInput | boolean
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    photos?: ProfilePhotoUncheckedUpdateManyWithoutMatrimonyProfileNestedInput
+    kundalis?: KundaliUncheckedUpdateManyWithoutMatrimonyProfileNestedInput
+    partnerPreference?: PartnerPreferenceUncheckedUpdateOneWithoutMatrimonyProfileNestedInput
+    sentInterests?: InterestUncheckedUpdateManyWithoutSenderProfileNestedInput
+    receivedInterests?: InterestUncheckedUpdateManyWithoutReceiverProfileNestedInput
+    sentContact?: ContactRequestUncheckedUpdateManyWithoutSenderProfileNestedInput
+    receivedContact?: ContactRequestUncheckedUpdateManyWithoutReceiverProfileNestedInput
+    shortlistedBy?: ShortlistUncheckedUpdateManyWithoutMatrimonyProfileNestedInput
+    reports?: ProfileReportUncheckedUpdateManyWithoutMatrimonyProfileNestedInput
+  }
+
+  export type UserUpsertWithoutMatrimonyDeleteRequestsInput = {
+    update: XOR<UserUpdateWithoutMatrimonyDeleteRequestsInput, UserUncheckedUpdateWithoutMatrimonyDeleteRequestsInput>
+    create: XOR<UserCreateWithoutMatrimonyDeleteRequestsInput, UserUncheckedCreateWithoutMatrimonyDeleteRequestsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutMatrimonyDeleteRequestsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutMatrimonyDeleteRequestsInput, UserUncheckedUpdateWithoutMatrimonyDeleteRequestsInput>
+  }
+
+  export type UserUpdateWithoutMatrimonyDeleteRequestsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    firstName?: NullableStringFieldUpdateOperationsInput | string | null
+    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    preferredLanguage?: EnumLanguageFieldUpdateOperationsInput | $Enums.Language
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isPhoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    matrimonyProfiles?: MatrimonyProfileUpdateManyWithoutCreatedByNestedInput
+    shortlists?: ShortlistUpdateManyWithoutUserNestedInput
+    reports?: ProfileReportUpdateManyWithoutReporterNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    communityPosts?: CommunityPostUpdateManyWithoutCreatedByNestedInput
+    committees?: CommitteeUpdateManyWithoutCreatedByNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutMatrimonyDeleteRequestsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    firstName?: NullableStringFieldUpdateOperationsInput | string | null
+    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    preferredLanguage?: EnumLanguageFieldUpdateOperationsInput | $Enums.Language
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isPhoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    matrimonyProfiles?: MatrimonyProfileUncheckedUpdateManyWithoutCreatedByNestedInput
+    shortlists?: ShortlistUncheckedUpdateManyWithoutUserNestedInput
+    reports?: ProfileReportUncheckedUpdateManyWithoutReporterNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    communityPosts?: CommunityPostUncheckedUpdateManyWithoutCreatedByNestedInput
+    committees?: CommitteeUncheckedUpdateManyWithoutCreatedByNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  }
+
   export type MatrimonyProfileCreateWithoutPartnerPreferenceInput = {
     id?: string
     profileFor: $Enums.ProfileFor
@@ -30151,6 +32307,7 @@ export namespace Prisma {
     receivedContact?: ContactRequestCreateNestedManyWithoutReceiverProfileInput
     shortlistedBy?: ShortlistCreateNestedManyWithoutMatrimonyProfileInput
     reports?: ProfileReportCreateNestedManyWithoutMatrimonyProfileInput
+    deleteRequests?: MatrimonyDeleteRequestCreateNestedManyWithoutMatrimonyProfileInput
   }
 
   export type MatrimonyProfileUncheckedCreateWithoutPartnerPreferenceInput = {
@@ -30205,6 +32362,7 @@ export namespace Prisma {
     receivedContact?: ContactRequestUncheckedCreateNestedManyWithoutReceiverProfileInput
     shortlistedBy?: ShortlistUncheckedCreateNestedManyWithoutMatrimonyProfileInput
     reports?: ProfileReportUncheckedCreateNestedManyWithoutMatrimonyProfileInput
+    deleteRequests?: MatrimonyDeleteRequestUncheckedCreateNestedManyWithoutMatrimonyProfileInput
   }
 
   export type MatrimonyProfileCreateOrConnectWithoutPartnerPreferenceInput = {
@@ -30275,6 +32433,7 @@ export namespace Prisma {
     receivedContact?: ContactRequestUpdateManyWithoutReceiverProfileNestedInput
     shortlistedBy?: ShortlistUpdateManyWithoutMatrimonyProfileNestedInput
     reports?: ProfileReportUpdateManyWithoutMatrimonyProfileNestedInput
+    deleteRequests?: MatrimonyDeleteRequestUpdateManyWithoutMatrimonyProfileNestedInput
   }
 
   export type MatrimonyProfileUncheckedUpdateWithoutPartnerPreferenceInput = {
@@ -30329,6 +32488,7 @@ export namespace Prisma {
     receivedContact?: ContactRequestUncheckedUpdateManyWithoutReceiverProfileNestedInput
     shortlistedBy?: ShortlistUncheckedUpdateManyWithoutMatrimonyProfileNestedInput
     reports?: ProfileReportUncheckedUpdateManyWithoutMatrimonyProfileNestedInput
+    deleteRequests?: MatrimonyDeleteRequestUncheckedUpdateManyWithoutMatrimonyProfileNestedInput
   }
 
   export type MatrimonyProfileCreateWithoutPhotosInput = {
@@ -30383,6 +32543,7 @@ export namespace Prisma {
     receivedContact?: ContactRequestCreateNestedManyWithoutReceiverProfileInput
     shortlistedBy?: ShortlistCreateNestedManyWithoutMatrimonyProfileInput
     reports?: ProfileReportCreateNestedManyWithoutMatrimonyProfileInput
+    deleteRequests?: MatrimonyDeleteRequestCreateNestedManyWithoutMatrimonyProfileInput
   }
 
   export type MatrimonyProfileUncheckedCreateWithoutPhotosInput = {
@@ -30437,6 +32598,7 @@ export namespace Prisma {
     receivedContact?: ContactRequestUncheckedCreateNestedManyWithoutReceiverProfileInput
     shortlistedBy?: ShortlistUncheckedCreateNestedManyWithoutMatrimonyProfileInput
     reports?: ProfileReportUncheckedCreateNestedManyWithoutMatrimonyProfileInput
+    deleteRequests?: MatrimonyDeleteRequestUncheckedCreateNestedManyWithoutMatrimonyProfileInput
   }
 
   export type MatrimonyProfileCreateOrConnectWithoutPhotosInput = {
@@ -30507,6 +32669,7 @@ export namespace Prisma {
     receivedContact?: ContactRequestUpdateManyWithoutReceiverProfileNestedInput
     shortlistedBy?: ShortlistUpdateManyWithoutMatrimonyProfileNestedInput
     reports?: ProfileReportUpdateManyWithoutMatrimonyProfileNestedInput
+    deleteRequests?: MatrimonyDeleteRequestUpdateManyWithoutMatrimonyProfileNestedInput
   }
 
   export type MatrimonyProfileUncheckedUpdateWithoutPhotosInput = {
@@ -30561,6 +32724,7 @@ export namespace Prisma {
     receivedContact?: ContactRequestUncheckedUpdateManyWithoutReceiverProfileNestedInput
     shortlistedBy?: ShortlistUncheckedUpdateManyWithoutMatrimonyProfileNestedInput
     reports?: ProfileReportUncheckedUpdateManyWithoutMatrimonyProfileNestedInput
+    deleteRequests?: MatrimonyDeleteRequestUncheckedUpdateManyWithoutMatrimonyProfileNestedInput
   }
 
   export type MatrimonyProfileCreateWithoutKundalisInput = {
@@ -30615,6 +32779,7 @@ export namespace Prisma {
     receivedContact?: ContactRequestCreateNestedManyWithoutReceiverProfileInput
     shortlistedBy?: ShortlistCreateNestedManyWithoutMatrimonyProfileInput
     reports?: ProfileReportCreateNestedManyWithoutMatrimonyProfileInput
+    deleteRequests?: MatrimonyDeleteRequestCreateNestedManyWithoutMatrimonyProfileInput
   }
 
   export type MatrimonyProfileUncheckedCreateWithoutKundalisInput = {
@@ -30669,6 +32834,7 @@ export namespace Prisma {
     receivedContact?: ContactRequestUncheckedCreateNestedManyWithoutReceiverProfileInput
     shortlistedBy?: ShortlistUncheckedCreateNestedManyWithoutMatrimonyProfileInput
     reports?: ProfileReportUncheckedCreateNestedManyWithoutMatrimonyProfileInput
+    deleteRequests?: MatrimonyDeleteRequestUncheckedCreateNestedManyWithoutMatrimonyProfileInput
   }
 
   export type MatrimonyProfileCreateOrConnectWithoutKundalisInput = {
@@ -30739,6 +32905,7 @@ export namespace Prisma {
     receivedContact?: ContactRequestUpdateManyWithoutReceiverProfileNestedInput
     shortlistedBy?: ShortlistUpdateManyWithoutMatrimonyProfileNestedInput
     reports?: ProfileReportUpdateManyWithoutMatrimonyProfileNestedInput
+    deleteRequests?: MatrimonyDeleteRequestUpdateManyWithoutMatrimonyProfileNestedInput
   }
 
   export type MatrimonyProfileUncheckedUpdateWithoutKundalisInput = {
@@ -30793,6 +32960,7 @@ export namespace Prisma {
     receivedContact?: ContactRequestUncheckedUpdateManyWithoutReceiverProfileNestedInput
     shortlistedBy?: ShortlistUncheckedUpdateManyWithoutMatrimonyProfileNestedInput
     reports?: ProfileReportUncheckedUpdateManyWithoutMatrimonyProfileNestedInput
+    deleteRequests?: MatrimonyDeleteRequestUncheckedUpdateManyWithoutMatrimonyProfileNestedInput
   }
 
   export type MatrimonyProfileCreateWithoutSentInterestsInput = {
@@ -30847,6 +33015,7 @@ export namespace Prisma {
     receivedContact?: ContactRequestCreateNestedManyWithoutReceiverProfileInput
     shortlistedBy?: ShortlistCreateNestedManyWithoutMatrimonyProfileInput
     reports?: ProfileReportCreateNestedManyWithoutMatrimonyProfileInput
+    deleteRequests?: MatrimonyDeleteRequestCreateNestedManyWithoutMatrimonyProfileInput
   }
 
   export type MatrimonyProfileUncheckedCreateWithoutSentInterestsInput = {
@@ -30901,6 +33070,7 @@ export namespace Prisma {
     receivedContact?: ContactRequestUncheckedCreateNestedManyWithoutReceiverProfileInput
     shortlistedBy?: ShortlistUncheckedCreateNestedManyWithoutMatrimonyProfileInput
     reports?: ProfileReportUncheckedCreateNestedManyWithoutMatrimonyProfileInput
+    deleteRequests?: MatrimonyDeleteRequestUncheckedCreateNestedManyWithoutMatrimonyProfileInput
   }
 
   export type MatrimonyProfileCreateOrConnectWithoutSentInterestsInput = {
@@ -30960,6 +33130,7 @@ export namespace Prisma {
     receivedContact?: ContactRequestCreateNestedManyWithoutReceiverProfileInput
     shortlistedBy?: ShortlistCreateNestedManyWithoutMatrimonyProfileInput
     reports?: ProfileReportCreateNestedManyWithoutMatrimonyProfileInput
+    deleteRequests?: MatrimonyDeleteRequestCreateNestedManyWithoutMatrimonyProfileInput
   }
 
   export type MatrimonyProfileUncheckedCreateWithoutReceivedInterestsInput = {
@@ -31014,6 +33185,7 @@ export namespace Prisma {
     receivedContact?: ContactRequestUncheckedCreateNestedManyWithoutReceiverProfileInput
     shortlistedBy?: ShortlistUncheckedCreateNestedManyWithoutMatrimonyProfileInput
     reports?: ProfileReportUncheckedCreateNestedManyWithoutMatrimonyProfileInput
+    deleteRequests?: MatrimonyDeleteRequestUncheckedCreateNestedManyWithoutMatrimonyProfileInput
   }
 
   export type MatrimonyProfileCreateOrConnectWithoutReceivedInterestsInput = {
@@ -31084,6 +33256,7 @@ export namespace Prisma {
     receivedContact?: ContactRequestUpdateManyWithoutReceiverProfileNestedInput
     shortlistedBy?: ShortlistUpdateManyWithoutMatrimonyProfileNestedInput
     reports?: ProfileReportUpdateManyWithoutMatrimonyProfileNestedInput
+    deleteRequests?: MatrimonyDeleteRequestUpdateManyWithoutMatrimonyProfileNestedInput
   }
 
   export type MatrimonyProfileUncheckedUpdateWithoutSentInterestsInput = {
@@ -31138,6 +33311,7 @@ export namespace Prisma {
     receivedContact?: ContactRequestUncheckedUpdateManyWithoutReceiverProfileNestedInput
     shortlistedBy?: ShortlistUncheckedUpdateManyWithoutMatrimonyProfileNestedInput
     reports?: ProfileReportUncheckedUpdateManyWithoutMatrimonyProfileNestedInput
+    deleteRequests?: MatrimonyDeleteRequestUncheckedUpdateManyWithoutMatrimonyProfileNestedInput
   }
 
   export type MatrimonyProfileUpsertWithoutReceivedInterestsInput = {
@@ -31203,6 +33377,7 @@ export namespace Prisma {
     receivedContact?: ContactRequestUpdateManyWithoutReceiverProfileNestedInput
     shortlistedBy?: ShortlistUpdateManyWithoutMatrimonyProfileNestedInput
     reports?: ProfileReportUpdateManyWithoutMatrimonyProfileNestedInput
+    deleteRequests?: MatrimonyDeleteRequestUpdateManyWithoutMatrimonyProfileNestedInput
   }
 
   export type MatrimonyProfileUncheckedUpdateWithoutReceivedInterestsInput = {
@@ -31257,6 +33432,7 @@ export namespace Prisma {
     receivedContact?: ContactRequestUncheckedUpdateManyWithoutReceiverProfileNestedInput
     shortlistedBy?: ShortlistUncheckedUpdateManyWithoutMatrimonyProfileNestedInput
     reports?: ProfileReportUncheckedUpdateManyWithoutMatrimonyProfileNestedInput
+    deleteRequests?: MatrimonyDeleteRequestUncheckedUpdateManyWithoutMatrimonyProfileNestedInput
   }
 
   export type MatrimonyProfileCreateWithoutSentContactInput = {
@@ -31311,6 +33487,7 @@ export namespace Prisma {
     receivedContact?: ContactRequestCreateNestedManyWithoutReceiverProfileInput
     shortlistedBy?: ShortlistCreateNestedManyWithoutMatrimonyProfileInput
     reports?: ProfileReportCreateNestedManyWithoutMatrimonyProfileInput
+    deleteRequests?: MatrimonyDeleteRequestCreateNestedManyWithoutMatrimonyProfileInput
   }
 
   export type MatrimonyProfileUncheckedCreateWithoutSentContactInput = {
@@ -31365,6 +33542,7 @@ export namespace Prisma {
     receivedContact?: ContactRequestUncheckedCreateNestedManyWithoutReceiverProfileInput
     shortlistedBy?: ShortlistUncheckedCreateNestedManyWithoutMatrimonyProfileInput
     reports?: ProfileReportUncheckedCreateNestedManyWithoutMatrimonyProfileInput
+    deleteRequests?: MatrimonyDeleteRequestUncheckedCreateNestedManyWithoutMatrimonyProfileInput
   }
 
   export type MatrimonyProfileCreateOrConnectWithoutSentContactInput = {
@@ -31424,6 +33602,7 @@ export namespace Prisma {
     sentContact?: ContactRequestCreateNestedManyWithoutSenderProfileInput
     shortlistedBy?: ShortlistCreateNestedManyWithoutMatrimonyProfileInput
     reports?: ProfileReportCreateNestedManyWithoutMatrimonyProfileInput
+    deleteRequests?: MatrimonyDeleteRequestCreateNestedManyWithoutMatrimonyProfileInput
   }
 
   export type MatrimonyProfileUncheckedCreateWithoutReceivedContactInput = {
@@ -31478,6 +33657,7 @@ export namespace Prisma {
     sentContact?: ContactRequestUncheckedCreateNestedManyWithoutSenderProfileInput
     shortlistedBy?: ShortlistUncheckedCreateNestedManyWithoutMatrimonyProfileInput
     reports?: ProfileReportUncheckedCreateNestedManyWithoutMatrimonyProfileInput
+    deleteRequests?: MatrimonyDeleteRequestUncheckedCreateNestedManyWithoutMatrimonyProfileInput
   }
 
   export type MatrimonyProfileCreateOrConnectWithoutReceivedContactInput = {
@@ -31548,6 +33728,7 @@ export namespace Prisma {
     receivedContact?: ContactRequestUpdateManyWithoutReceiverProfileNestedInput
     shortlistedBy?: ShortlistUpdateManyWithoutMatrimonyProfileNestedInput
     reports?: ProfileReportUpdateManyWithoutMatrimonyProfileNestedInput
+    deleteRequests?: MatrimonyDeleteRequestUpdateManyWithoutMatrimonyProfileNestedInput
   }
 
   export type MatrimonyProfileUncheckedUpdateWithoutSentContactInput = {
@@ -31602,6 +33783,7 @@ export namespace Prisma {
     receivedContact?: ContactRequestUncheckedUpdateManyWithoutReceiverProfileNestedInput
     shortlistedBy?: ShortlistUncheckedUpdateManyWithoutMatrimonyProfileNestedInput
     reports?: ProfileReportUncheckedUpdateManyWithoutMatrimonyProfileNestedInput
+    deleteRequests?: MatrimonyDeleteRequestUncheckedUpdateManyWithoutMatrimonyProfileNestedInput
   }
 
   export type MatrimonyProfileUpsertWithoutReceivedContactInput = {
@@ -31667,6 +33849,7 @@ export namespace Prisma {
     sentContact?: ContactRequestUpdateManyWithoutSenderProfileNestedInput
     shortlistedBy?: ShortlistUpdateManyWithoutMatrimonyProfileNestedInput
     reports?: ProfileReportUpdateManyWithoutMatrimonyProfileNestedInput
+    deleteRequests?: MatrimonyDeleteRequestUpdateManyWithoutMatrimonyProfileNestedInput
   }
 
   export type MatrimonyProfileUncheckedUpdateWithoutReceivedContactInput = {
@@ -31721,6 +33904,7 @@ export namespace Prisma {
     sentContact?: ContactRequestUncheckedUpdateManyWithoutSenderProfileNestedInput
     shortlistedBy?: ShortlistUncheckedUpdateManyWithoutMatrimonyProfileNestedInput
     reports?: ProfileReportUncheckedUpdateManyWithoutMatrimonyProfileNestedInput
+    deleteRequests?: MatrimonyDeleteRequestUncheckedUpdateManyWithoutMatrimonyProfileNestedInput
   }
 
   export type UserCreateWithoutShortlistsInput = {
@@ -31743,6 +33927,7 @@ export namespace Prisma {
     communityPosts?: CommunityPostCreateNestedManyWithoutCreatedByInput
     committees?: CommitteeCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestCreateNestedManyWithoutRequestedByInput
   }
 
   export type UserUncheckedCreateWithoutShortlistsInput = {
@@ -31765,6 +33950,7 @@ export namespace Prisma {
     communityPosts?: CommunityPostUncheckedCreateNestedManyWithoutCreatedByInput
     committees?: CommitteeUncheckedCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedCreateNestedManyWithoutRequestedByInput
   }
 
   export type UserCreateOrConnectWithoutShortlistsInput = {
@@ -31824,6 +34010,7 @@ export namespace Prisma {
     sentContact?: ContactRequestCreateNestedManyWithoutSenderProfileInput
     receivedContact?: ContactRequestCreateNestedManyWithoutReceiverProfileInput
     reports?: ProfileReportCreateNestedManyWithoutMatrimonyProfileInput
+    deleteRequests?: MatrimonyDeleteRequestCreateNestedManyWithoutMatrimonyProfileInput
   }
 
   export type MatrimonyProfileUncheckedCreateWithoutShortlistedByInput = {
@@ -31878,6 +34065,7 @@ export namespace Prisma {
     sentContact?: ContactRequestUncheckedCreateNestedManyWithoutSenderProfileInput
     receivedContact?: ContactRequestUncheckedCreateNestedManyWithoutReceiverProfileInput
     reports?: ProfileReportUncheckedCreateNestedManyWithoutMatrimonyProfileInput
+    deleteRequests?: MatrimonyDeleteRequestUncheckedCreateNestedManyWithoutMatrimonyProfileInput
   }
 
   export type MatrimonyProfileCreateOrConnectWithoutShortlistedByInput = {
@@ -31916,6 +34104,7 @@ export namespace Prisma {
     communityPosts?: CommunityPostUpdateManyWithoutCreatedByNestedInput
     committees?: CommitteeUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestUpdateManyWithoutRequestedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutShortlistsInput = {
@@ -31938,6 +34127,7 @@ export namespace Prisma {
     communityPosts?: CommunityPostUncheckedUpdateManyWithoutCreatedByNestedInput
     committees?: CommitteeUncheckedUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedUpdateManyWithoutRequestedByNestedInput
   }
 
   export type MatrimonyProfileUpsertWithoutShortlistedByInput = {
@@ -32003,6 +34193,7 @@ export namespace Prisma {
     sentContact?: ContactRequestUpdateManyWithoutSenderProfileNestedInput
     receivedContact?: ContactRequestUpdateManyWithoutReceiverProfileNestedInput
     reports?: ProfileReportUpdateManyWithoutMatrimonyProfileNestedInput
+    deleteRequests?: MatrimonyDeleteRequestUpdateManyWithoutMatrimonyProfileNestedInput
   }
 
   export type MatrimonyProfileUncheckedUpdateWithoutShortlistedByInput = {
@@ -32057,6 +34248,7 @@ export namespace Prisma {
     sentContact?: ContactRequestUncheckedUpdateManyWithoutSenderProfileNestedInput
     receivedContact?: ContactRequestUncheckedUpdateManyWithoutReceiverProfileNestedInput
     reports?: ProfileReportUncheckedUpdateManyWithoutMatrimonyProfileNestedInput
+    deleteRequests?: MatrimonyDeleteRequestUncheckedUpdateManyWithoutMatrimonyProfileNestedInput
   }
 
   export type UserCreateWithoutReportsInput = {
@@ -32079,6 +34271,7 @@ export namespace Prisma {
     communityPosts?: CommunityPostCreateNestedManyWithoutCreatedByInput
     committees?: CommitteeCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestCreateNestedManyWithoutRequestedByInput
   }
 
   export type UserUncheckedCreateWithoutReportsInput = {
@@ -32101,6 +34294,7 @@ export namespace Prisma {
     communityPosts?: CommunityPostUncheckedCreateNestedManyWithoutCreatedByInput
     committees?: CommitteeUncheckedCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedCreateNestedManyWithoutRequestedByInput
   }
 
   export type UserCreateOrConnectWithoutReportsInput = {
@@ -32160,6 +34354,7 @@ export namespace Prisma {
     sentContact?: ContactRequestCreateNestedManyWithoutSenderProfileInput
     receivedContact?: ContactRequestCreateNestedManyWithoutReceiverProfileInput
     shortlistedBy?: ShortlistCreateNestedManyWithoutMatrimonyProfileInput
+    deleteRequests?: MatrimonyDeleteRequestCreateNestedManyWithoutMatrimonyProfileInput
   }
 
   export type MatrimonyProfileUncheckedCreateWithoutReportsInput = {
@@ -32214,6 +34409,7 @@ export namespace Prisma {
     sentContact?: ContactRequestUncheckedCreateNestedManyWithoutSenderProfileInput
     receivedContact?: ContactRequestUncheckedCreateNestedManyWithoutReceiverProfileInput
     shortlistedBy?: ShortlistUncheckedCreateNestedManyWithoutMatrimonyProfileInput
+    deleteRequests?: MatrimonyDeleteRequestUncheckedCreateNestedManyWithoutMatrimonyProfileInput
   }
 
   export type MatrimonyProfileCreateOrConnectWithoutReportsInput = {
@@ -32252,6 +34448,7 @@ export namespace Prisma {
     communityPosts?: CommunityPostUpdateManyWithoutCreatedByNestedInput
     committees?: CommitteeUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestUpdateManyWithoutRequestedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReportsInput = {
@@ -32274,6 +34471,7 @@ export namespace Prisma {
     communityPosts?: CommunityPostUncheckedUpdateManyWithoutCreatedByNestedInput
     committees?: CommitteeUncheckedUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedUpdateManyWithoutRequestedByNestedInput
   }
 
   export type MatrimonyProfileUpsertWithoutReportsInput = {
@@ -32339,6 +34537,7 @@ export namespace Prisma {
     sentContact?: ContactRequestUpdateManyWithoutSenderProfileNestedInput
     receivedContact?: ContactRequestUpdateManyWithoutReceiverProfileNestedInput
     shortlistedBy?: ShortlistUpdateManyWithoutMatrimonyProfileNestedInput
+    deleteRequests?: MatrimonyDeleteRequestUpdateManyWithoutMatrimonyProfileNestedInput
   }
 
   export type MatrimonyProfileUncheckedUpdateWithoutReportsInput = {
@@ -32393,6 +34592,7 @@ export namespace Prisma {
     sentContact?: ContactRequestUncheckedUpdateManyWithoutSenderProfileNestedInput
     receivedContact?: ContactRequestUncheckedUpdateManyWithoutReceiverProfileNestedInput
     shortlistedBy?: ShortlistUncheckedUpdateManyWithoutMatrimonyProfileNestedInput
+    deleteRequests?: MatrimonyDeleteRequestUncheckedUpdateManyWithoutMatrimonyProfileNestedInput
   }
 
   export type UserCreateWithoutCommunityPostsInput = {
@@ -32415,6 +34615,7 @@ export namespace Prisma {
     notifications?: NotificationCreateNestedManyWithoutUserInput
     committees?: CommitteeCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestCreateNestedManyWithoutRequestedByInput
   }
 
   export type UserUncheckedCreateWithoutCommunityPostsInput = {
@@ -32437,6 +34638,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     committees?: CommitteeUncheckedCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedCreateNestedManyWithoutRequestedByInput
   }
 
   export type UserCreateOrConnectWithoutCommunityPostsInput = {
@@ -32503,6 +34705,7 @@ export namespace Prisma {
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     committees?: CommitteeUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestUpdateManyWithoutRequestedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCommunityPostsInput = {
@@ -32525,6 +34728,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     committees?: CommitteeUncheckedUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedUpdateManyWithoutRequestedByNestedInput
   }
 
   export type CommunityPostTranslationUpsertWithWhereUniqueWithoutPostInput = {
@@ -32672,6 +34876,7 @@ export namespace Prisma {
     notifications?: NotificationCreateNestedManyWithoutUserInput
     communityPosts?: CommunityPostCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestCreateNestedManyWithoutRequestedByInput
   }
 
   export type UserUncheckedCreateWithoutCommitteesInput = {
@@ -32694,6 +34899,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     communityPosts?: CommunityPostUncheckedCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedCreateNestedManyWithoutRequestedByInput
   }
 
   export type UserCreateOrConnectWithoutCommitteesInput = {
@@ -32798,6 +35004,7 @@ export namespace Prisma {
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     communityPosts?: CommunityPostUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestUpdateManyWithoutRequestedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCommitteesInput = {
@@ -32820,6 +35027,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     communityPosts?: CommunityPostUncheckedUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedUpdateManyWithoutRequestedByNestedInput
   }
 
   export type CommitteeTranslationUpsertWithWhereUniqueWithoutCommitteeInput = {
@@ -33097,6 +35305,7 @@ export namespace Prisma {
     communityPosts?: CommunityPostCreateNestedManyWithoutCreatedByInput
     committees?: CommitteeCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestCreateNestedManyWithoutRequestedByInput
   }
 
   export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -33119,6 +35328,7 @@ export namespace Prisma {
     communityPosts?: CommunityPostUncheckedCreateNestedManyWithoutCreatedByInput
     committees?: CommitteeUncheckedCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedCreateNestedManyWithoutRequestedByInput
   }
 
   export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -33157,6 +35367,7 @@ export namespace Prisma {
     communityPosts?: CommunityPostUpdateManyWithoutCreatedByNestedInput
     committees?: CommitteeUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestUpdateManyWithoutRequestedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -33179,6 +35390,7 @@ export namespace Prisma {
     communityPosts?: CommunityPostUncheckedUpdateManyWithoutCreatedByNestedInput
     committees?: CommitteeUncheckedUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedUpdateManyWithoutRequestedByNestedInput
   }
 
   export type UserCreateWithoutAuditLogsInput = {
@@ -33201,6 +35413,7 @@ export namespace Prisma {
     notifications?: NotificationCreateNestedManyWithoutUserInput
     communityPosts?: CommunityPostCreateNestedManyWithoutCreatedByInput
     committees?: CommitteeCreateNestedManyWithoutCreatedByInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestCreateNestedManyWithoutRequestedByInput
   }
 
   export type UserUncheckedCreateWithoutAuditLogsInput = {
@@ -33223,6 +35436,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     communityPosts?: CommunityPostUncheckedCreateNestedManyWithoutCreatedByInput
     committees?: CommitteeUncheckedCreateNestedManyWithoutCreatedByInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedCreateNestedManyWithoutRequestedByInput
   }
 
   export type UserCreateOrConnectWithoutAuditLogsInput = {
@@ -33261,6 +35475,7 @@ export namespace Prisma {
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     communityPosts?: CommunityPostUpdateManyWithoutCreatedByNestedInput
     committees?: CommitteeUpdateManyWithoutCreatedByNestedInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestUpdateManyWithoutRequestedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAuditLogsInput = {
@@ -33283,6 +35498,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     communityPosts?: CommunityPostUncheckedUpdateManyWithoutCreatedByNestedInput
     committees?: CommitteeUncheckedUpdateManyWithoutCreatedByNestedInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedUpdateManyWithoutRequestedByNestedInput
   }
 
   export type MatrimonyProfileCreateManyCreatedByInput = {
@@ -33406,6 +35622,17 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
+  export type MatrimonyDeleteRequestCreateManyRequestedByInput = {
+    id?: string
+    matrimonyProfileId: string
+    reason: string
+    status?: $Enums.MatrimonyDeleteRequestStatus
+    adminNote?: string | null
+    reviewedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type MatrimonyProfileUpdateWithoutCreatedByInput = {
     id?: StringFieldUpdateOperationsInput | string
     profileFor?: EnumProfileForFieldUpdateOperationsInput | $Enums.ProfileFor
@@ -33458,6 +35685,7 @@ export namespace Prisma {
     receivedContact?: ContactRequestUpdateManyWithoutReceiverProfileNestedInput
     shortlistedBy?: ShortlistUpdateManyWithoutMatrimonyProfileNestedInput
     reports?: ProfileReportUpdateManyWithoutMatrimonyProfileNestedInput
+    deleteRequests?: MatrimonyDeleteRequestUpdateManyWithoutMatrimonyProfileNestedInput
   }
 
   export type MatrimonyProfileUncheckedUpdateWithoutCreatedByInput = {
@@ -33512,6 +35740,7 @@ export namespace Prisma {
     receivedContact?: ContactRequestUncheckedUpdateManyWithoutReceiverProfileNestedInput
     shortlistedBy?: ShortlistUncheckedUpdateManyWithoutMatrimonyProfileNestedInput
     reports?: ProfileReportUncheckedUpdateManyWithoutMatrimonyProfileNestedInput
+    deleteRequests?: MatrimonyDeleteRequestUncheckedUpdateManyWithoutMatrimonyProfileNestedInput
   }
 
   export type MatrimonyProfileUncheckedUpdateManyWithoutCreatedByInput = {
@@ -33793,6 +36022,39 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type MatrimonyDeleteRequestUpdateWithoutRequestedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: EnumMatrimonyDeleteRequestStatusFieldUpdateOperationsInput | $Enums.MatrimonyDeleteRequestStatus
+    adminNote?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    matrimonyProfile?: MatrimonyProfileUpdateOneRequiredWithoutDeleteRequestsNestedInput
+  }
+
+  export type MatrimonyDeleteRequestUncheckedUpdateWithoutRequestedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    matrimonyProfileId?: StringFieldUpdateOperationsInput | string
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: EnumMatrimonyDeleteRequestStatusFieldUpdateOperationsInput | $Enums.MatrimonyDeleteRequestStatus
+    adminNote?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MatrimonyDeleteRequestUncheckedUpdateManyWithoutRequestedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    matrimonyProfileId?: StringFieldUpdateOperationsInput | string
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: EnumMatrimonyDeleteRequestStatusFieldUpdateOperationsInput | $Enums.MatrimonyDeleteRequestStatus
+    adminNote?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type ProfilePhotoCreateManyMatrimonyProfileInput = {
     id?: string
     url: string
@@ -33867,6 +36129,17 @@ export namespace Prisma {
     status?: $Enums.ReportStatus
     adminNote?: string | null
     resolvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MatrimonyDeleteRequestCreateManyMatrimonyProfileInput = {
+    id?: string
+    requestedById: string
+    reason: string
+    status?: $Enums.MatrimonyDeleteRequestStatus
+    adminNote?: string | null
+    reviewedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -34101,6 +36374,39 @@ export namespace Prisma {
     status?: EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
     adminNote?: NullableStringFieldUpdateOperationsInput | string | null
     resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MatrimonyDeleteRequestUpdateWithoutMatrimonyProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: EnumMatrimonyDeleteRequestStatusFieldUpdateOperationsInput | $Enums.MatrimonyDeleteRequestStatus
+    adminNote?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    requestedBy?: UserUpdateOneRequiredWithoutMatrimonyDeleteRequestsNestedInput
+  }
+
+  export type MatrimonyDeleteRequestUncheckedUpdateWithoutMatrimonyProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    requestedById?: StringFieldUpdateOperationsInput | string
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: EnumMatrimonyDeleteRequestStatusFieldUpdateOperationsInput | $Enums.MatrimonyDeleteRequestStatus
+    adminNote?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MatrimonyDeleteRequestUncheckedUpdateManyWithoutMatrimonyProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    requestedById?: StringFieldUpdateOperationsInput | string
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: EnumMatrimonyDeleteRequestStatusFieldUpdateOperationsInput | $Enums.MatrimonyDeleteRequestStatus
+    adminNote?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

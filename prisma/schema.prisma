@@ -61,6 +61,12 @@ enum MediaStatus {
   REJECTED
 }
 
+enum MatrimonyDeleteRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 enum InterestStatus {
   PENDING
   ACCEPTED
@@ -142,6 +148,7 @@ model User {
   communityPosts    CommunityPost[]
   committees        Committee[]
   auditLogs         AuditLog[]           @relation("AuditActor")
+  matrimonyDeleteRequests MatrimonyDeleteRequest[]
 
   @@index([isActive, createdAt])
 }
@@ -208,12 +215,30 @@ model MatrimonyProfile {
   receivedContact   ContactRequest[]        @relation("ContactReceiver")
   shortlistedBy     Shortlist[]
   reports           ProfileReport[]
+  deleteRequests    MatrimonyDeleteRequest[]
 
   @@index([status, gender, createdAt])
   @@index([category, status])
   @@index([state, district, currentCity])
   @@index([dateOfBirth])
   @@index([isFeatured, status])
+}
+
+model MatrimonyDeleteRequest {
+  id                 String                       @id @default(cuid())
+  matrimonyProfileId String
+  requestedById      String
+  matrimonyProfile   MatrimonyProfile             @relation(fields: [matrimonyProfileId], references: [id], onDelete: Cascade)
+  requestedBy        User                         @relation(fields: [requestedById], references: [id], onDelete: Restrict)
+  reason             String
+  status             MatrimonyDeleteRequestStatus @default(PENDING)
+  adminNote          String?
+  reviewedAt         DateTime?
+  createdAt          DateTime                     @default(now())
+  updatedAt          DateTime                     @updatedAt
+
+  @@index([matrimonyProfileId, status, createdAt])
+  @@index([requestedById, status, createdAt])
 }
 
 model PartnerPreference {

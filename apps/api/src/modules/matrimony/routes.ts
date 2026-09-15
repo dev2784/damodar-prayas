@@ -3,6 +3,7 @@ import type { Prisma } from '../../../generated/prisma/index.js';
 import { prisma } from '../../lib/prisma.js';
 import {
   createMatrimonyProfileSchema,
+  matrimonyDeleteRequestSchema,
   matrimonyListQuerySchema,
   updateMatrimonyProfileSchema,
 } from './schemas.js';
@@ -209,7 +210,7 @@ export async function matrimonyRoutes(app: FastifyInstance) {
       return reply.code(404).send({ error: 'MATRIMONY_PROFILE_NOT_FOUND' });
     }
 
-    if (!['DRAFT', 'REJECTED'].includes(existing.status)) {
+    if (!['DRAFT', 'REJECTED', 'APPROVED'].includes(existing.status)) {
       return reply.code(409).send({
         error: 'MATRIMONY_PROFILE_NOT_EDITABLE',
         status: existing.status,
@@ -222,6 +223,9 @@ export async function matrimonyRoutes(app: FastifyInstance) {
         ...parsed.data,
         ...(existing.status === 'REJECTED'
           ? { status: 'DRAFT' as const, rejectionReason: null }
+          : {}),
+        ...(existing.status === 'APPROVED'
+          ? { status: 'PENDING' as const, rejectionReason: null, approvedAt: null }
           : {}),
       },
       select: ownerMatrimonyProfileSelect,
@@ -251,6 +255,44 @@ export async function matrimonyRoutes(app: FastifyInstance) {
     });
 
     return reply.code(204).send();
+  });
+
+  app.post('/:id/delete-request', async (request, reply) => {
+    const userId = await getActiveUserId(request, reply);
+    if (!userId) return;
+
+    const { id } = request.params as { id: string };
+    const parsed = matrimonyDeleteRequestSchema.safeParse(request.body);
+    if (!parsed.success) {
+      return reply.code(400).send({
+        error: 'VALIDATION_ERROR',
+        fields: parsed.error.flatten().fieldErrors,
+      });
+    }
+
+    const profile = await prisma.matrimonyProfile.findFirst({
+      where: { id, createdById: userId, deletedAt: null },
+      select: { id: true, status: true },
+    });
+    if (!profile) return reply.code(404).send({ error: 'MATRIMONY_PROFILE_NOT_FOUND' });
+    if (!['PENDING', 'APPROVED'].includes(profile.status)) {
+      return reply.code(409).send({ error: 'DELETE_REQUEST_NOT_ALLOWED', status: profile.status });
+    }
+
+    const existingRequest = await prisma.matrimonyDeleteRequest.findFirst({
+      where: { matrimonyProfileId: id, requestedById: userId, status: 'PENDING' },
+      orderBy: { createdAt: 'desc' },
+    });
+    if (existingRequest) {
+      return reply.code(409).send({ error: 'DELETE_REQUEST_ALREADY_PENDING', request: existingRequest });
+    }
+
+    const deleteRequest = await prisma.matrimonyDeleteRequest.create({
+      data: { matrimonyProfileId: id, requestedById: userId, reason: parsed.data.reason },
+      select: { id: true, reason: true, status: true, createdAt: true },
+    });
+
+    return reply.code(201).send({ request: deleteRequest });
   });
 
   app.post('/:id/submit', async (request, reply) => {

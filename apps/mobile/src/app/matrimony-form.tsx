@@ -416,8 +416,9 @@ export default function MatrimonyFormScreen() {
 
   const busy = isCreating || isUpdating || isSubmitting;
   const mediaBusy = uploadingMedia !== null || isDeletingPhoto || isSettingPrimary || isDeletingKundali;
+  const editingApproved = editingProfile?.status === 'APPROVED';
   const editingLocked = Boolean(
-    editingProfile && editingProfile.status !== 'DRAFT' && editingProfile.status !== 'REJECTED',
+    editingProfile && !['DRAFT', 'REJECTED', 'APPROVED'].includes(editingProfile.status),
   );
 
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
@@ -542,6 +543,13 @@ export default function MatrimonyFormScreen() {
             text: 'आगे बढ़ें',
             onPress: () => router.replace({ pathname: '/matrimony-form', params: { id: savedId } }),
           },
+        ]);
+        return;
+      }
+
+      if (editingApproved) {
+        Alert.alert('बदलाव समीक्षा में भेज दिए', 'स्वीकृत प्रोफाइल में बदलाव अब दोबारा समीक्षा के बाद सार्वजनिक होंगे।', [
+          { text: 'ठीक है', onPress: () => router.replace('/my-matrimony') },
         ]);
         return;
       }
@@ -917,31 +925,46 @@ export default function MatrimonyFormScreen() {
         </Section>
 
         <View style={styles.actionsCard}>
-          <Pressable
-            disabled={busy || editingLocked}
-            style={[styles.draftButton, (busy || editingLocked) && styles.disabledButton]}
-            onPress={() => save(false)}>
-            {busy ? <ActivityIndicator color={C.maroon} size="small" /> : (
-              <>
-                <SymbolView name={{ ios: 'square.and.arrow.down', android: 'save', web: 'save' }} tintColor={C.maroon} size={17} />
-                <Text style={styles.draftButtonText}>{profileId ? 'ड्राफ्ट अपडेट करें' : 'ड्राफ्ट सेव करके फोटो जोड़ें'}</Text>
-              </>
-            )}
-          </Pressable>
-
-          {profileId ? (
+          {editingApproved ? (
             <Pressable
               disabled={busy || editingLocked || mediaBusy}
               style={[styles.submitButton, (busy || editingLocked || mediaBusy) && styles.disabledButton]}
-              onPress={() => save(true)}>
+              onPress={() => save(false)}>
               {busy ? <ActivityIndicator color="#FFFFFF" size="small" /> : (
                 <>
                   <SymbolView name={{ ios: 'paperplane.fill', android: 'send', web: 'send' }} tintColor="#FFFFFF" size={16} />
-                  <Text style={styles.submitButtonText}>सेव करके समीक्षा में भेजें</Text>
+                  <Text style={styles.submitButtonText}>बदलाव सेव करके समीक्षा में भेजें</Text>
                 </>
               )}
             </Pressable>
-          ) : null}
+          ) : (
+            <>
+              <Pressable
+                disabled={busy || editingLocked}
+                style={[styles.draftButton, (busy || editingLocked) && styles.disabledButton]}
+                onPress={() => save(false)}>
+                {busy ? <ActivityIndicator color={C.maroon} size="small" /> : (
+                  <>
+                    <SymbolView name={{ ios: 'square.and.arrow.down', android: 'save', web: 'save' }} tintColor={C.maroon} size={17} />
+                    <Text style={styles.draftButtonText}>{profileId ? 'ड्राफ्ट अपडेट करें' : 'ड्राफ्ट सेव करके फोटो जोड़ें'}</Text>
+                  </>
+                )}
+              </Pressable>
+              {profileId ? (
+                <Pressable
+                  disabled={busy || editingLocked || mediaBusy}
+                  style={[styles.submitButton, (busy || editingLocked || mediaBusy) && styles.disabledButton]}
+                  onPress={() => save(true)}>
+                  {busy ? <ActivityIndicator color="#FFFFFF" size="small" /> : (
+                    <>
+                      <SymbolView name={{ ios: 'paperplane.fill', android: 'send', web: 'send' }} tintColor="#FFFFFF" size={16} />
+                      <Text style={styles.submitButtonText}>सेव करके समीक्षा में भेजें</Text>
+                    </>
+                  )}
+                </Pressable>
+              ) : null}
+            </>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>

@@ -6,6 +6,14 @@ export type MatrimonyMaritalStatus = 'NEVER_MARRIED' | 'DIVORCED' | 'WIDOWED' | 
 export type MatrimonyProfileFor = 'SELF' | 'SON' | 'DAUGHTER' | 'BROTHER' | 'SISTER' | 'RELATIVE';
 export type MatrimonyProfileStatus = 'DRAFT' | 'PENDING' | 'APPROVED' | 'REJECTED' | 'SUSPENDED' | 'MARRIED';
 export type MatrimonyMediaStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
+export type MatrimonyDeleteRequestStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
+
+export type MatrimonyDeleteRequest = {
+  id: string;
+  reason: string;
+  status: MatrimonyDeleteRequestStatus;
+  createdAt: string;
+};
 
 export type MatrimonyPhoto = {
   id: string;
@@ -79,6 +87,7 @@ export type MatrimonyOwnerProfile = Omit<MatrimonyProfile, 'photos'> & {
   updatedAt: string;
   photos: MatrimonyOwnerPhoto[];
   kundalis: MatrimonyKundali[];
+  deleteRequests: MatrimonyDeleteRequest[];
 };
 
 export type MatrimonyProfileInput = {
@@ -213,6 +222,17 @@ export const matrimonyApi = api.injectEndpoints({
         { type: 'Matrimony', id: 'LIST' },
       ],
     }),
+    requestMatrimonyProfileDeletion: builder.mutation<{ request: MatrimonyDeleteRequest }, { id: string; reason: string }>({
+      query: ({ id, reason }) => ({
+        url: `/matrimony/${id}/delete-request`,
+        method: 'POST',
+        body: { reason },
+      }),
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: 'Matrimony', id },
+        { type: 'Matrimony', id: 'MINE' },
+      ],
+    }),
     submitMatrimonyProfile: builder.mutation<OwnerMatrimonyProfileResponse, string>({
       query: (id) => ({
         url: `/matrimony/${id}/submit`,
@@ -235,5 +255,6 @@ export const {
   useCreateMatrimonyProfileMutation,
   useUpdateMatrimonyProfileMutation,
   useDeleteMatrimonyProfileMutation,
+  useRequestMatrimonyProfileDeletionMutation,
   useSubmitMatrimonyProfileMutation,
 } = matrimonyApi;
