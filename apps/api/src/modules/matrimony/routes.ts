@@ -36,6 +36,22 @@ async function getActiveUserId(request: FastifyRequest, reply: FastifyReply) {
   }
 }
 
+async function getOptionalActiveUserId(request: FastifyRequest) {
+  const authorization = request.headers.authorization;
+  if (!authorization?.startsWith('Bearer ')) return null;
+
+  try {
+    const payload = await request.jwtVerify<{ sub: string }>();
+    const user = await prisma.user.findFirst({
+      where: { id: payload.sub, isActive: true, deletedAt: null },
+      select: { id: true },
+    });
+    return user?.id ?? null;
+  } catch {
+    return null;
+  }
+}
+
 function yearsAgo(years: number) {
   const date = new Date();
   date.setHours(23, 59, 59, 999);
@@ -83,6 +99,7 @@ async function findDuplicatePersonProfile({
 
 export async function matrimonyRoutes(app: FastifyInstance) {
   app.get('/', async (request, reply) => {
+    const activeUserId = await getOptionalActiveUserId(request);
     const parsed = matrimonyListQuerySchema.safeParse(request.query);
     if (!parsed.success) {
       return reply.code(400).send({
@@ -107,6 +124,7 @@ export async function matrimonyRoutes(app: FastifyInstance) {
     const where: Prisma.MatrimonyProfileWhereInput = {
       status: 'APPROVED',
       deletedAt: null,
+      ...(activeUserId ? { createdById: { not: activeUserId } } : {}),
       ...(category ? { category } : {}),
       ...(gender ? { gender } : {}),
       ...(maritalStatus ? { maritalStatus } : {}),
