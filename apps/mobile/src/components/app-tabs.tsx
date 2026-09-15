@@ -77,6 +77,7 @@ export default function AppTabs() {
       />
       <Tabs.Screen name="explore" options={{ href: null }} />
       <Tabs.Screen name="community-post" options={{ href: null }} />
+      <Tabs.Screen name="samiti-detail" options={{ href: null }} />
       <Tabs.Screen name="matrimony-profile" options={{ href: null }} />
       <Tabs.Screen name="my-matrimony" options={{ href: null }} />
       <Tabs.Screen name="matrimony-form" options={{ href: null }} />
