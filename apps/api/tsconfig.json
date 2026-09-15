@@ -5,6 +5,10 @@
     "moduleResolution": "NodeNext",
     "outDir": "dist",
     "rootDir": "src",
+    "baseUrl": ".",
+    "paths": {
+      "@prisma/client": ["generated/prisma"]
+    },
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
