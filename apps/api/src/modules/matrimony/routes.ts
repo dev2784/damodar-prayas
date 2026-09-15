@@ -237,6 +237,17 @@ export async function matrimonyRoutes(app: FastifyInstance) {
       });
     }
 
+    const photoCount = await prisma.profilePhoto.count({
+      where: { matrimonyProfileId: id },
+    });
+
+    if (photoCount < 1) {
+      return reply.code(409).send({
+        error: 'PROFILE_PHOTO_REQUIRED',
+        message: 'Add at least one profile photo before submitting for review.',
+      });
+    }
+
     const profile = await prisma.matrimonyProfile.update({
       where: { id },
       data: {

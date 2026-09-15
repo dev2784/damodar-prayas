@@ -9,10 +9,20 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import * as DocumentPicker from 'expo-document-picker';
+import { Image } from 'expo-image';
+import * as ImagePicker from 'expo-image-picker';
 import { router, useLocalSearchParams } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import {
+  useDeleteMatrimonyKundaliMutation,
+  useDeleteMatrimonyPhotoMutation,
+  useSetPrimaryMatrimonyPhotoMutation,
+  useUploadMatrimonyKundaliMutation,
+  useUploadMatrimonyPhotoMutation,
+} from '@/services/matrimony-media-api';
 import {
   type MatrimonyCategory,
   type MatrimonyGender,
@@ -38,6 +48,7 @@ const C = {
   line: '#E8DCCF',
   green: '#16865C',
   red: '#B42318',
+  amber: '#A76512',
 };
 
 type ManglikChoice = 'YES' | 'NO' | 'UNKNOWN';
@@ -66,6 +77,8 @@ type FormState = {
   district: string;
   state: string;
   country: string;
+  fullAddress: string;
+  postalCode: string;
   nativePlace: string;
   fatherName: string;
   fatherOccupation: string;
@@ -101,6 +114,8 @@ const initialForm: FormState = {
   district: '',
   state: '',
   country: 'India',
+  fullAddress: '',
+  postalCode: '',
   nativePlace: '',
   fatherName: '',
   fatherOccupation: '',
@@ -140,6 +155,12 @@ const maritalChoices: Array<{ label: string; value: MatrimonyMaritalStatus }> = 
   { label: 'अलग रह रहे', value: 'SEPARATED' },
 ];
 
+const mediaStatusLabel = {
+  PENDING: 'समीक्षा में',
+  APPROVED: 'स्वीकृत',
+  REJECTED: 'अस्वीकृत',
+} as const;
+
 function textOrNull(value: string) {
   const trimmed = value.trim();
   return trimmed ? trimmed : null;
@@ -150,6 +171,29 @@ function numberOrNull(value: string) {
   if (!trimmed) return null;
   const parsed = Number(trimmed);
   return Number.isFinite(parsed) ? parsed : null;
+}
+
+function fileNameFromUri(uri: string, fallback: string) {
+  const last = uri.split('/').pop()?.split('?')[0];
+  return last || fallback;
+}
+
+function requestErrorCode(error: unknown) {
+  if (typeof error !== 'object' || !error || !('data' in error)) return '';
+  const data = (error as { data?: { error?: string; message?: string } }).data;
+  return data?.error || data?.message || '';
+}
+
+function mediaErrorMessage(error: unknown) {
+  const code = requestErrorCode(error);
+  if (code === 'MEDIA_PROVIDER_NOT_CONFIGURED') {
+    return 'फोटो/कुंडली upload storage अभी server पर configure नहीं है। Cloudinary configure होते ही यही upload buttons काम करेंगे।';
+  }
+  if (code === 'PROFILE_PHOTO_LIMIT_REACHED') return 'अधिकतम 6 फोटो जोड़े जा सकते हैं।';
+  if (code === 'KUNDALI_ALREADY_UPLOADED') return 'एक कुंडली पहले से जुड़ी है। नई जोड़ने से पहले पुरानी हटाएँ।';
+  if (code === 'UNSUPPORTED_PHOTO_TYPE') return 'केवल JPG, PNG या WEBP फोटो चुनें।';
+  if (code === 'UNSUPPORTED_KUNDALI_TYPE') return 'कुंडली PDF, JPG, PNG या WEBP में होनी चाहिए।';
+  return 'Upload पूरा नहीं हुआ। कृपया दोबारा कोशिश करें।';
 }
 
 function profileToForm(profile: MatrimonyOwnerProfile): FormState {
@@ -177,6 +221,8 @@ function profileToForm(profile: MatrimonyOwnerProfile): FormState {
     district: profile.district ?? '',
     state: profile.state ?? '',
     country: profile.country || 'India',
+    fullAddress: profile.fullAddress ?? '',
+    postalCode: profile.postalCode ?? '',
     nativePlace: profile.nativePlace ?? '',
     fatherName: profile.fatherName ?? '',
     fatherOccupation: profile.fatherOccupation ?? '',
@@ -273,12 +319,17 @@ export default function MatrimonyFormScreen() {
   const [form, setForm] = useState<FormState>(initialForm);
   const [hydratedId, setHydratedId] = useState<string | null>(null);
 
-  const { data: mineData, isLoading: isLoadingMine } = useGetMyMatrimonyProfilesQuery(undefined, {
+  const { data: mineData, isLoading: isLoadingMine, refetch: refetchMine } = useGetMyMatrimonyProfilesQuery(undefined, {
     skip: !accessToken || !profileId,
   });
   const [createProfile, { isLoading: isCreating }] = useCreateMatrimonyProfileMutation();
   const [updateProfile, { isLoading: isUpdating }] = useUpdateMatrimonyProfileMutation();
   const [submitProfile, { isLoading: isSubmitting }] = useSubmitMatrimonyProfileMutation();
+  const [uploadPhoto, { isLoading: isUploadingPhoto }] = useUploadMatrimonyPhotoMutation();
+  const [deletePhoto, { isLoading: isDeletingPhoto }] = useDeleteMatrimonyPhotoMutation();
+  const [setPrimaryPhoto, { isLoading: isSettingPrimary }] = useSetPrimaryMatrimonyPhotoMutation();
+  const [uploadKundali, { isLoading: isUploadingKundali }] = useUploadMatrimonyKundaliMutation();
+  const [deleteKundali, { isLoading: isDeletingKundali }] = useDeleteMatrimonyKundaliMutation();
 
   const editingProfile = useMemo(
     () => mineData?.items.find((item) => item.id === profileId),
@@ -293,6 +344,7 @@ export default function MatrimonyFormScreen() {
   }, [editingProfile, hydratedId]);
 
   const busy = isCreating || isUpdating || isSubmitting;
+  const mediaBusy = isUploadingPhoto || isDeletingPhoto || isSettingPrimary || isUploadingKundali || isDeletingKundali;
   const editingLocked = Boolean(
     editingProfile && editingProfile.status !== 'DRAFT' && editingProfile.status !== 'REJECTED',
   );
@@ -326,6 +378,11 @@ export default function MatrimonyFormScreen() {
       return false;
     }
 
+    if (form.country.trim().toLowerCase() === 'india' && form.postalCode.trim() && !/^\d{6}$/.test(form.postalCode.trim())) {
+      Alert.alert('पिन कोड जाँचें', 'भारत के लिए 6 अंकों का पिन कोड भरें।');
+      return false;
+    }
+
     return true;
   }
 
@@ -354,6 +411,8 @@ export default function MatrimonyFormScreen() {
       district: textOrNull(form.district),
       state: textOrNull(form.state),
       country: form.country.trim() || 'India',
+      fullAddress: textOrNull(form.fullAddress),
+      postalCode: textOrNull(form.postalCode),
       nativePlace: textOrNull(form.nativePlace),
       fatherName: textOrNull(form.fatherName),
       fatherOccupation: textOrNull(form.fatherOccupation),
@@ -380,6 +439,11 @@ export default function MatrimonyFormScreen() {
 
     if (!validate()) return;
 
+    if (submitAfterSave && editingProfile && editingProfile.photos.length === 0) {
+      Alert.alert('फोटो जरूरी है', 'समीक्षा के लिए भेजने से पहले कम से कम एक प्रोफाइल फोटो जोड़ें।');
+      return;
+    }
+
     try {
       const payload = buildPayload();
       let savedId = profileId;
@@ -401,9 +465,17 @@ export default function MatrimonyFormScreen() {
         return;
       }
 
-      Alert.alert('ड्राफ्ट सेव हो गया', 'आप बाद में वापस आकर इसे पूरा कर सकते हैं।', [
-        { text: 'ठीक है', onPress: () => router.replace('/my-matrimony') },
-      ]);
+      if (!profileId && savedId) {
+        Alert.alert('ड्राफ्ट सेव हो गया', 'अब फोटो और कुंडली जोड़ सकते हैं।', [
+          {
+            text: 'आगे बढ़ें',
+            onPress: () => router.replace({ pathname: '/matrimony-form', params: { id: savedId } }),
+          },
+        ]);
+        return;
+      }
+
+      Alert.alert('ड्राफ्ट अपडेट हो गया', 'आपकी जानकारी सेव हो गई है।');
     } catch (error) {
       const message = typeof error === 'object' && error && 'data' in error
         ? String((error as { data?: { message?: string } }).data?.message ?? '')
@@ -412,13 +484,120 @@ export default function MatrimonyFormScreen() {
     }
   }
 
+  async function pickAndUploadPhoto() {
+    if (!profileId || editingLocked) return;
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      allowsMultipleSelection: false,
+      quality: 0.9,
+    });
+
+    if (result.canceled || !result.assets[0]) return;
+    const asset = result.assets[0];
+    const type = asset.mimeType || 'image/jpeg';
+
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(type)) {
+      Alert.alert('फोटो फॉर्मेट', 'कृपया JPG, PNG या WEBP फोटो चुनें।');
+      return;
+    }
+
+    try {
+      await uploadPhoto({
+        profileId,
+        file: {
+          uri: asset.uri,
+          name: asset.fileName || fileNameFromUri(asset.uri, `profile-${Date.now()}.jpg`),
+          type,
+        },
+      }).unwrap();
+      await refetchMine();
+    } catch (error) {
+      Alert.alert('फोटो अपलोड नहीं हुआ', mediaErrorMessage(error));
+    }
+  }
+
+  async function pickAndUploadKundali() {
+    if (!profileId || editingLocked) return;
+
+    const result = await DocumentPicker.getDocumentAsync({
+      type: ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'],
+      copyToCacheDirectory: true,
+      multiple: false,
+    });
+
+    if (result.canceled || !result.assets[0]) return;
+    const asset = result.assets[0];
+
+    try {
+      await uploadKundali({
+        profileId,
+        file: {
+          uri: asset.uri,
+          name: asset.name || fileNameFromUri(asset.uri, `kundali-${Date.now()}.pdf`),
+          type: asset.mimeType || 'application/pdf',
+        },
+      }).unwrap();
+      await refetchMine();
+    } catch (error) {
+      Alert.alert('कुंडली अपलोड नहीं हुई', mediaErrorMessage(error));
+    }
+  }
+
+  function confirmDeletePhoto(photoId: string) {
+    if (!profileId || editingLocked) return;
+    Alert.alert('फोटो हटाएँ?', 'यह फोटो प्रोफाइल से हट जाएगी।', [
+      { text: 'रहने दें', style: 'cancel' },
+      {
+        text: 'हटाएँ',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await deletePhoto({ profileId, photoId }).unwrap();
+            await refetchMine();
+          } catch (error) {
+            Alert.alert('फोटो नहीं हटी', mediaErrorMessage(error));
+          }
+        },
+      },
+    ]);
+  }
+
+  async function makePrimary(photoId: string) {
+    if (!profileId || editingLocked) return;
+    try {
+      await setPrimaryPhoto({ profileId, photoId }).unwrap();
+      await refetchMine();
+    } catch (error) {
+      Alert.alert('मुख्य फोटो नहीं बदली', mediaErrorMessage(error));
+    }
+  }
+
+  function confirmDeleteKundali(kundaliId: string) {
+    if (!profileId || editingLocked) return;
+    Alert.alert('कुंडली हटाएँ?', 'अपलोड की गई कुंडली प्रोफाइल से हट जाएगी।', [
+      { text: 'रहने दें', style: 'cancel' },
+      {
+        text: 'हटाएँ',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await deleteKundali({ profileId, kundaliId }).unwrap();
+            await refetchMine();
+          } catch (error) {
+            Alert.alert('कुंडली नहीं हटी', mediaErrorMessage(error));
+          }
+        },
+      },
+    ]);
+  }
+
   if (!accessToken) {
     return (
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.centerState}>
           <SymbolView name={{ ios: 'person.badge.key.fill', android: 'login', web: 'login' }} tintColor={C.maroon} size={46} />
           <Text style={styles.centerTitle}>पहले लॉगिन करें</Text>
-          <Text style={styles.centerText}>मैट्रिमोनी ड्राफ्ट निजी डेटा है, इसलिए इसे बनाने या एडिट करने के लिए सत्यापित अकाउंट जरूरी है।</Text>
+          <Text style={styles.centerText}>मैट्रिमोनी ड्राफ्ट निजी डेटा है, इसलिए इसे बनाने या एडिट करने के लिए लॉगिन जरूरी है।</Text>
           <Pressable style={styles.centerButton} onPress={() => router.replace('/profile')}>
             <Text style={styles.centerButtonText}>प्रोफाइल / लॉगिन</Text>
           </Pressable>
@@ -477,8 +656,8 @@ export default function MatrimonyFormScreen() {
             <SymbolView name={{ ios: 'checklist', android: 'checklist', web: 'checklist' }} tintColor={C.green} size={22} />
           </View>
           <View style={styles.progressCopy}>
-            <Text style={styles.progressTitle}>पहले जरूरी जानकारी भरें</Text>
-            <Text style={styles.progressText}>आप ड्राफ्ट सेव कर सकते हैं। फोटो और बाकी दस्तावेज अगला चरण होंगे।</Text>
+            <Text style={styles.progressTitle}>{profileId ? 'जानकारी, फोटो और कुंडली पूरी करें' : 'पहले जरूरी जानकारी भरें'}</Text>
+            <Text style={styles.progressText}>{profileId ? 'फोटो जोड़कर तैयार होने पर समीक्षा के लिए भेजें।' : 'पहले ड्राफ्ट सेव होगा, फिर इसी फॉर्म में फोटो और कुंडली जोड़ सकेंगे।'}</Text>
           </View>
         </View>
 
@@ -518,7 +697,7 @@ export default function MatrimonyFormScreen() {
           <Field label="वार्षिक आय (₹)" value={form.annualIncome} onChangeText={(value) => update('annualIncome', value)} keyboardType="numeric" />
         </Section>
 
-        <Section title="3. समाज, जन्म और स्थान">
+        <Section title="3. समाज, जन्म और स्थान" subtitle="शहर के साथ गाँव और कस्बा भी लिख सकते हैं। पूरा पता private रहेगा।">
           <Field label="गोत्र" value={form.gotra} onChangeText={(value) => update('gotra', value)} />
           <Text style={styles.inlineLabel}>मांगलिक</Text>
           <ChoiceRow
@@ -534,12 +713,17 @@ export default function MatrimonyFormScreen() {
             <View style={styles.col}><Field label="जन्म समय" value={form.birthTime} onChangeText={(value) => update('birthTime', value)} placeholder="जैसे 07:30 AM" /></View>
             <View style={styles.col}><Field label="जन्म स्थान" value={form.birthPlace} onChangeText={(value) => update('birthPlace', value)} /></View>
           </View>
-          <Field label="वर्तमान शहर" value={form.currentCity} onChangeText={(value) => update('currentCity', value)} />
+          <Field label="वर्तमान शहर / गाँव / कस्बा" value={form.currentCity} onChangeText={(value) => update('currentCity', value)} placeholder="जैसे इंदौर / राऊ / ग्राम ..." />
           <View style={styles.twoCol}>
             <View style={styles.col}><Field label="जिला" value={form.district} onChangeText={(value) => update('district', value)} /></View>
             <View style={styles.col}><Field label="राज्य" value={form.state} onChangeText={(value) => update('state', value)} /></View>
           </View>
-          <Field label="मूल स्थान" value={form.nativePlace} onChangeText={(value) => update('nativePlace', value)} />
+          <View style={styles.twoCol}>
+            <View style={styles.col}><Field label="पिन कोड" value={form.postalCode} onChangeText={(value) => update('postalCode', value)} placeholder="6 अंक" keyboardType="numeric" /></View>
+            <View style={styles.col}><Field label="देश" value={form.country} onChangeText={(value) => update('country', value)} /></View>
+          </View>
+          <Field label="पूरा पता" value={form.fullAddress} onChangeText={(value) => update('fullAddress', value)} placeholder="मोहल्ला / वार्ड / ग्राम, पोस्ट, तहसील आदि" multiline />
+          <Field label="मूल गाँव / शहर" value={form.nativePlace} onChangeText={(value) => update('nativePlace', value)} />
         </Section>
 
         <Section title="4. परिवार और परिचय">
@@ -559,6 +743,96 @@ export default function MatrimonyFormScreen() {
           <Field label="अपने बारे में" value={form.about} onChangeText={(value) => update('about', value)} multiline />
         </Section>
 
+        <Section
+          title="5. फोटो और कुंडली"
+          subtitle={profileId ? 'अधिकतम 6 फोटो जोड़ें। पहली फोटो अपने आप मुख्य फोटो बनती है। कुंडली optional है।' : 'इस सेक्शन को खोलने के लिए पहले ड्राफ्ट सेव करें।'}>
+          {!profileId ? (
+            <View style={styles.mediaLockedCard}>
+              <SymbolView name={{ ios: 'lock.fill', android: 'lock', web: 'lock' }} tintColor={C.amber} size={20} />
+              <Text style={styles.mediaLockedText}>ड्राफ्ट सेव होते ही profile ID बनेगी, फिर फोटो और कुंडली upload कर पाएँगे।</Text>
+            </View>
+          ) : (
+            <>
+              <View style={styles.mediaHeaderRow}>
+                <Text style={styles.mediaTitle}>प्रोफाइल फोटो ({editingProfile?.photos.length ?? 0}/6)</Text>
+                {(editingProfile?.photos.length ?? 0) < 6 ? (
+                  <Pressable disabled={mediaBusy || editingLocked} style={[styles.mediaAddButton, (mediaBusy || editingLocked) && styles.disabledButton]} onPress={pickAndUploadPhoto}>
+                    <SymbolView name={{ ios: 'photo.badge.plus', android: 'add_photo_alternate', web: 'add_photo_alternate' }} tintColor="#FFFFFF" size={16} />
+                    <Text style={styles.mediaAddText}>फोटो जोड़ें</Text>
+                  </Pressable>
+                ) : null}
+              </View>
+
+              {(editingProfile?.photos.length ?? 0) === 0 ? (
+                <View style={styles.emptyMedia}>
+                  <SymbolView name={{ ios: 'photo.on.rectangle.angled', android: 'photo_library', web: 'photo_library' }} tintColor="#B69B8B" size={30} />
+                  <Text style={styles.emptyMediaText}>अभी कोई फोटो नहीं है। समीक्षा के लिए कम से कम 1 फोटो जरूरी होगी।</Text>
+                </View>
+              ) : (
+                <View style={styles.photoGrid}>
+                  {editingProfile?.photos.map((photo) => (
+                    <View key={photo.id} style={styles.photoCard}>
+                      <Image source={{ uri: photo.url }} style={styles.photoImage} contentFit="cover" />
+                      <View style={styles.photoInfo}>
+                        <View style={styles.photoStatusRow}>
+                          <Text style={styles.photoStatus}>{mediaStatusLabel[photo.status]}</Text>
+                          {photo.isPrimary ? <Text style={styles.primaryPill}>मुख्य</Text> : null}
+                        </View>
+                        <View style={styles.photoActions}>
+                          {!photo.isPrimary ? (
+                            <Pressable disabled={mediaBusy || editingLocked} onPress={() => makePrimary(photo.id)}>
+                              <Text style={styles.photoActionText}>मुख्य बनाएँ</Text>
+                            </Pressable>
+                          ) : <View />}
+                          <Pressable disabled={mediaBusy || editingLocked} onPress={() => confirmDeletePhoto(photo.id)}>
+                            <Text style={styles.deleteActionText}>हटाएँ</Text>
+                          </Pressable>
+                        </View>
+                      </View>
+                    </View>
+                  ))}
+                </View>
+              )}
+
+              <View style={styles.divider} />
+              <View style={styles.mediaHeaderRow}>
+                <View style={styles.mediaCopy}>
+                  <Text style={styles.mediaTitle}>कुंडली</Text>
+                  <Text style={styles.mediaHint}>PDF या image, अधिकतम 10MB</Text>
+                </View>
+                {(editingProfile?.kundalis.length ?? 0) === 0 ? (
+                  <Pressable disabled={mediaBusy || editingLocked} style={[styles.kundaliButton, (mediaBusy || editingLocked) && styles.disabledButton]} onPress={pickAndUploadKundali}>
+                    <SymbolView name={{ ios: 'doc.badge.plus', android: 'upload_file', web: 'upload_file' }} tintColor={C.maroon} size={16} />
+                    <Text style={styles.kundaliButtonText}>कुंडली जोड़ें</Text>
+                  </Pressable>
+                ) : null}
+              </View>
+
+              {editingProfile?.kundalis[0] ? (
+                <View style={styles.kundaliCard}>
+                  <View style={styles.kundaliIcon}>
+                    <SymbolView name={{ ios: 'doc.text.fill', android: 'description', web: 'description' }} tintColor={C.maroon} size={24} />
+                  </View>
+                  <View style={styles.kundaliCopy}>
+                    <Text style={styles.kundaliName} numberOfLines={1}>{editingProfile.kundalis[0].fileName || 'कुंडली दस्तावेज'}</Text>
+                    <Text style={styles.kundaliStatus}>{mediaStatusLabel[editingProfile.kundalis[0].status]}</Text>
+                  </View>
+                  <Pressable disabled={mediaBusy || editingLocked} onPress={() => confirmDeleteKundali(editingProfile.kundalis[0].id)}>
+                    <Text style={styles.deleteActionText}>हटाएँ</Text>
+                  </Pressable>
+                </View>
+              ) : null}
+
+              {mediaBusy ? (
+                <View style={styles.mediaProgress}>
+                  <ActivityIndicator color={C.maroon} size="small" />
+                  <Text style={styles.mediaProgressText}>फाइल प्रोसेस हो रही है...</Text>
+                </View>
+              ) : null}
+            </>
+          )}
+        </Section>
+
         <View style={styles.actionsCard}>
           <Pressable
             disabled={busy || editingLocked}
@@ -567,22 +841,24 @@ export default function MatrimonyFormScreen() {
             {busy ? <ActivityIndicator color={C.maroon} size="small" /> : (
               <>
                 <SymbolView name={{ ios: 'square.and.arrow.down', android: 'save', web: 'save' }} tintColor={C.maroon} size={17} />
-                <Text style={styles.draftButtonText}>ड्राफ्ट सेव करें</Text>
+                <Text style={styles.draftButtonText}>{profileId ? 'ड्राफ्ट अपडेट करें' : 'ड्राफ्ट सेव करके फोटो जोड़ें'}</Text>
               </>
             )}
           </Pressable>
 
-          <Pressable
-            disabled={busy || editingLocked}
-            style={[styles.submitButton, (busy || editingLocked) && styles.disabledButton]}
-            onPress={() => save(true)}>
-            {busy ? <ActivityIndicator color="#FFFFFF" size="small" /> : (
-              <>
-                <SymbolView name={{ ios: 'paperplane.fill', android: 'send', web: 'send' }} tintColor="#FFFFFF" size={16} />
-                <Text style={styles.submitButtonText}>सेव करके समीक्षा में भेजें</Text>
-              </>
-            )}
-          </Pressable>
+          {profileId ? (
+            <Pressable
+              disabled={busy || editingLocked || mediaBusy}
+              style={[styles.submitButton, (busy || editingLocked || mediaBusy) && styles.disabledButton]}
+              onPress={() => save(true)}>
+              {busy ? <ActivityIndicator color="#FFFFFF" size="small" /> : (
+                <>
+                  <SymbolView name={{ ios: 'paperplane.fill', android: 'send', web: 'send' }} tintColor="#FFFFFF" size={16} />
+                  <Text style={styles.submitButtonText}>सेव करके समीक्षा में भेजें</Text>
+                </>
+              )}
+            </Pressable>
+          ) : null}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -624,6 +900,37 @@ const styles = StyleSheet.create({
   choiceDisabled: { opacity: 0.62 },
   choiceText: { color: '#6E615B', fontSize: 10, fontWeight: '800' },
   choiceTextActive: { color: '#FFFFFF' },
+
+  mediaLockedCard: { flexDirection: 'row', alignItems: 'center', gap: 9, padding: 12, borderRadius: 13, backgroundColor: '#FFF6E8', borderWidth: 1, borderColor: '#F1D6A9' },
+  mediaLockedText: { flex: 1, color: '#7A5C2B', fontSize: 10.5, lineHeight: 16, fontWeight: '700' },
+  mediaHeaderRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 10 },
+  mediaCopy: { flex: 1 },
+  mediaTitle: { color: C.text, fontSize: 12, fontWeight: '900' },
+  mediaHint: { color: C.muted, fontSize: 9.5, marginTop: 2 },
+  mediaAddButton: { minHeight: 36, paddingHorizontal: 11, borderRadius: 11, backgroundColor: C.maroon, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5 },
+  mediaAddText: { color: '#FFFFFF', fontSize: 9.5, fontWeight: '900' },
+  emptyMedia: { minHeight: 92, borderRadius: 13, backgroundColor: '#FBF7F2', borderWidth: 1, borderStyle: 'dashed', borderColor: '#DFD1C4', alignItems: 'center', justifyContent: 'center', padding: 14 },
+  emptyMediaText: { color: C.muted, fontSize: 10, lineHeight: 15, textAlign: 'center', marginTop: 5 },
+  photoGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 9 },
+  photoCard: { width: '48%', borderRadius: 12, overflow: 'hidden', borderWidth: 1, borderColor: '#E6D8CC', backgroundColor: '#FFFDF9' },
+  photoImage: { width: '100%', aspectRatio: 0.86, backgroundColor: '#F2E7DE' },
+  photoInfo: { padding: 8, gap: 7 },
+  photoStatusRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 5 },
+  photoStatus: { color: C.muted, fontSize: 8.5, fontWeight: '800' },
+  primaryPill: { color: C.green, fontSize: 8, fontWeight: '900', backgroundColor: '#E8F7EF', borderRadius: 7, paddingHorizontal: 6, paddingVertical: 3 },
+  photoActions: { minHeight: 20, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 6 },
+  photoActionText: { color: C.maroon, fontSize: 8.5, fontWeight: '900' },
+  deleteActionText: { color: C.red, fontSize: 8.5, fontWeight: '900' },
+  divider: { height: 1, backgroundColor: '#EEE2D8', marginVertical: 3 },
+  kundaliButton: { minHeight: 36, paddingHorizontal: 10, borderRadius: 11, borderWidth: 1, borderColor: '#DDBDB6', backgroundColor: '#FFF8F5', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5 },
+  kundaliButtonText: { color: C.maroon, fontSize: 9.5, fontWeight: '900' },
+  kundaliCard: { flexDirection: 'row', alignItems: 'center', gap: 9, padding: 11, borderRadius: 13, backgroundColor: '#FBF7F2', borderWidth: 1, borderColor: '#E6D9CE' },
+  kundaliIcon: { width: 40, height: 40, borderRadius: 11, alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFF0EC' },
+  kundaliCopy: { flex: 1 },
+  kundaliName: { color: C.text, fontSize: 10.5, fontWeight: '900' },
+  kundaliStatus: { color: C.muted, fontSize: 9, marginTop: 2 },
+  mediaProgress: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingTop: 3 },
+  mediaProgressText: { color: C.muted, fontSize: 9.5, fontWeight: '700' },
 
   actionsCard: { gap: 9, paddingTop: 4 },
   draftButton: { minHeight: 48, borderRadius: 14, borderWidth: 1, borderColor: '#DDBDB6', backgroundColor: '#FFF8F5', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 7 },

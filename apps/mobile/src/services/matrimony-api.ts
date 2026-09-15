@@ -5,12 +5,29 @@ export type MatrimonyGender = 'MALE' | 'FEMALE' | 'OTHER';
 export type MatrimonyMaritalStatus = 'NEVER_MARRIED' | 'DIVORCED' | 'WIDOWED' | 'SEPARATED';
 export type MatrimonyProfileFor = 'SELF' | 'SON' | 'DAUGHTER' | 'BROTHER' | 'SISTER' | 'RELATIVE';
 export type MatrimonyProfileStatus = 'DRAFT' | 'PENDING' | 'APPROVED' | 'REJECTED' | 'SUSPENDED' | 'MARRIED';
+export type MatrimonyMediaStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 
 export type MatrimonyPhoto = {
   id: string;
   url: string;
   isPrimary: boolean;
   sortOrder: number;
+};
+
+export type MatrimonyOwnerPhoto = MatrimonyPhoto & {
+  storageKey: string | null;
+  status: MatrimonyMediaStatus;
+  createdAt: string;
+};
+
+export type MatrimonyKundali = {
+  id: string;
+  fileUrl: string;
+  storageKey: string | null;
+  fileName: string | null;
+  mimeType: string | null;
+  status: MatrimonyMediaStatus;
+  createdAt: string;
 };
 
 export type MatrimonyProfile = {
@@ -45,12 +62,13 @@ export type MatrimonyProfile = {
   photos: MatrimonyPhoto[];
 };
 
-export type MatrimonyOwnerProfile = MatrimonyProfile & {
+export type MatrimonyOwnerProfile = Omit<MatrimonyProfile, 'photos'> & {
   createdById: string;
   contactPhone: string | null;
   contactEmail: string | null;
   birthTime: string | null;
   fullAddress: string | null;
+  postalCode: string | null;
   fatherName: string | null;
   fatherOccupation: string | null;
   motherName: string | null;
@@ -59,6 +77,8 @@ export type MatrimonyOwnerProfile = MatrimonyProfile & {
   status: MatrimonyProfileStatus;
   rejectionReason: string | null;
   updatedAt: string;
+  photos: MatrimonyOwnerPhoto[];
+  kundalis: MatrimonyKundali[];
 };
 
 export type MatrimonyProfileInput = {
@@ -86,6 +106,7 @@ export type MatrimonyProfileInput = {
   state?: string | null;
   country?: string;
   fullAddress?: string | null;
+  postalCode?: string | null;
   nativePlace?: string | null;
   fatherName?: string | null;
   fatherOccupation?: string | null;
