@@ -1,9 +1,13 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { useAppSelector } from '@/store/hooks';
+import { setAccessToken } from '@/features/auth/auth-slice';
+import { clearAccessToken } from '@/lib/auth-storage';
+import { api } from '@/services/api';
+import { useGetMeQuery } from '@/services/auth-api';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 
 const C = {
   bg: '#FFF8ED',
@@ -18,42 +22,81 @@ const C = {
 };
 
 export default function ProfileScreen() {
+  const dispatch = useAppDispatch();
   const accessToken = useAppSelector((state) => state.auth.accessToken);
+  const hydrated = useAppSelector((state) => state.auth.hydrated);
+  const { data, isLoading } = useGetMeQuery(undefined, { skip: !accessToken });
+  const user = data?.user;
+
+  async function logout() {
+    await clearAccessToken();
+    dispatch(setAccessToken(null));
+    dispatch(api.util.resetApiState());
+  }
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.content}>
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <Text style={styles.eyebrow}>DAMODAR PRAYAS ACCOUNT</Text>
         <Text style={styles.title}>मेरा प्रोफाइल</Text>
         <Text style={styles.subtitle}>समाज, मैट्रिमोनी और अकाउंट सेटिंग्स एक जगह।</Text>
 
-        <View style={styles.accountCard}>
-          <View style={styles.accountIcon}>
-            <SymbolView
-              name={{ ios: accessToken ? 'checkmark.shield.fill' : 'person.badge.key.fill', android: accessToken ? 'verified_user' : 'login', web: accessToken ? 'verified_user' : 'login' }}
-              tintColor={accessToken ? C.green : C.maroon}
-              size={32}
-            />
+        {!hydrated || (accessToken && isLoading) ? (
+          <View style={styles.loadingCard}>
+            <ActivityIndicator color={C.maroon} />
+            <Text style={styles.loadingText}>अकाउंट लोड हो रहा है...</Text>
           </View>
-          <View style={styles.accountCopy}>
-            <Text style={styles.accountTitle}>{accessToken ? 'अकाउंट सत्यापित है' : 'लॉगिन अभी बाकी है'}</Text>
-            <Text style={styles.accountText}>
-              {accessToken
-                ? 'आप निजी मैट्रिमोनी ड्राफ्ट और सुरक्षित सुविधाएँ इस्तेमाल कर सकते हैं।'
-                : 'OTP लॉगिन कनेक्ट होने के बाद निजी प्रोफाइल सेव और सबमिट किए जा सकेंगे।'}
-            </Text>
+        ) : accessToken ? (
+          <View style={styles.accountCard}>
+            <View style={styles.accountTop}>
+              <View style={styles.accountIconVerified}>
+                <SymbolView name={{ ios: 'person.crop.circle.fill', android: 'account_circle', web: 'account_circle' }} tintColor={C.maroon} size={42} />
+              </View>
+              <View style={styles.accountCopy}>
+                <Text style={styles.accountTitle}>{[user?.firstName, user?.lastName].filter(Boolean).join(' ') || 'समाज सदस्य'}</Text>
+                <Text style={styles.accountPhone}>{user?.phone || 'लॉगिन सक्रिय है'}</Text>
+              </View>
+              <View style={styles.statusPill}>
+                <SymbolView name={{ ios: 'checkmark.shield.fill', android: 'verified_user', web: 'verified_user' }} tintColor={C.green} size={14} />
+                <Text style={styles.statusText}>Active</Text>
+              </View>
+            </View>
+
+            <View style={styles.accountDivider} />
+            <Text style={styles.accountHint}>अब आप मैट्रिमोनी प्रोफाइल बना, सेव और approval के लिए भेज सकते हैं।</Text>
           </View>
-        </View>
+        ) : (
+          <View style={styles.guestCard}>
+            <View style={styles.guestIcon}>
+              <SymbolView name={{ ios: 'person.badge.key.fill', android: 'login', web: 'login' }} tintColor={C.maroon} size={34} />
+            </View>
+            <Text style={styles.guestTitle}>अपना Damodar Prayas अकाउंट शुरू करें</Text>
+            <Text style={styles.guestText}>लॉगिन के बाद private matrimony draft, shortlist और आगे की community सुविधाएँ आपके अकाउंट से जुड़ेंगी।</Text>
+
+            <View style={styles.authActions}>
+              <Pressable style={styles.loginButton} onPress={() => router.push({ pathname: '/auth', params: { mode: 'login' } })}>
+                <Text style={styles.loginText}>लॉगिन</Text>
+              </Pressable>
+              <Pressable style={styles.registerButton} onPress={() => router.push({ pathname: '/auth', params: { mode: 'register' } })}>
+                <Text style={styles.registerText}>नया अकाउंट बनाएँ</Text>
+              </Pressable>
+            </View>
+          </View>
+        )}
 
         <Text style={styles.sectionTitle}>मेरी सुविधाएँ</Text>
 
-        <Pressable style={styles.menuCard} onPress={() => router.push('/my-matrimony')}>
+        <Pressable
+          style={styles.menuCard}
+          onPress={() => accessToken
+            ? router.push('/my-matrimony')
+            : router.push({ pathname: '/auth', params: { mode: 'register', next: '/my-matrimony' } })}>
           <View style={styles.menuIcon}>
             <SymbolView name={{ ios: 'person.crop.circle.badge.heart', android: 'person_search', web: 'person_search' }} tintColor={C.maroon} size={27} />
           </View>
           <View style={styles.menuCopy}>
             <Text style={styles.menuTitle}>मेरे मैट्रिमोनी प्रोफाइल</Text>
-            <Text style={styles.menuText}>ड्राफ्ट बनाएँ, एडिट करें और स्वीकृति के लिए भेजें</Text>
+            <Text style={styles.menuText}>{accessToken ? 'ड्राफ्ट बनाएँ, एडिट करें और स्वीकृति के लिए भेजें' : 'पहले अकाउंट बनाएँ, फिर matrimony profile शुरू करें'}</Text>
           </View>
           <SymbolView name={{ ios: 'chevron.right', android: 'chevron_right', web: 'chevron_right' }} tintColor="#A88E81" size={20} />
         </Pressable>
@@ -68,29 +111,47 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        {!accessToken ? (
-          <View style={styles.nextStepBox}>
-            <Text style={styles.nextStepTitle}>अगला तकनीकी चरण</Text>
-            <Text style={styles.nextStepText}>फोन OTP authentication जोड़ना है। उसके बाद यही मैट्रिमोनी create/edit/submit flow पूरी तरह live हो जाएगा।</Text>
-          </View>
+        {accessToken ? (
+          <Pressable style={styles.logoutButton} onPress={logout}>
+            <SymbolView name={{ ios: 'rectangle.portrait.and.arrow.right', android: 'logout', web: 'logout' }} tintColor={C.maroon} size={18} />
+            <Text style={styles.logoutText}>लॉगआउट</Text>
+          </Pressable>
         ) : null}
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: C.bg },
-  content: { flex: 1, padding: 18 },
+  content: { padding: 18, paddingBottom: 110 },
   eyebrow: { color: C.gold, fontSize: 10, fontWeight: '900', letterSpacing: 1.2 },
   title: { color: C.maroonDark, fontSize: 29, lineHeight: 35, fontWeight: '900', marginTop: 5 },
   subtitle: { color: C.muted, fontSize: 12.5, lineHeight: 19, marginTop: 5 },
 
-  accountCard: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 18, padding: 14, borderRadius: 17, backgroundColor: C.paper, borderWidth: 1, borderColor: C.line },
-  accountIcon: { width: 54, height: 54, borderRadius: 17, alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFF1EA' },
+  loadingCard: { minHeight: 100, marginTop: 18, borderRadius: 17, backgroundColor: C.paper, borderWidth: 1, borderColor: C.line, alignItems: 'center', justifyContent: 'center', gap: 8 },
+  loadingText: { color: C.muted, fontSize: 10.5, fontWeight: '700' },
+
+  accountCard: { marginTop: 18, padding: 14, borderRadius: 17, backgroundColor: C.paper, borderWidth: 1, borderColor: C.line },
+  accountTop: { flexDirection: 'row', alignItems: 'center', gap: 11 },
+  accountIconVerified: { width: 54, height: 54, borderRadius: 17, alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFF0EC' },
   accountCopy: { flex: 1 },
-  accountTitle: { color: C.text, fontSize: 14, fontWeight: '900' },
-  accountText: { color: C.muted, fontSize: 10.5, lineHeight: 16, marginTop: 3 },
+  accountTitle: { color: C.text, fontSize: 15, fontWeight: '900' },
+  accountPhone: { color: C.muted, fontSize: 10.5, marginTop: 3 },
+  statusPill: { flexDirection: 'row', alignItems: 'center', gap: 4, borderRadius: 11, backgroundColor: '#EAF8F0', paddingHorizontal: 8, paddingVertical: 5 },
+  statusText: { color: C.green, fontSize: 8.5, fontWeight: '900' },
+  accountDivider: { height: 1, backgroundColor: '#EEE3D9', marginVertical: 11 },
+  accountHint: { color: C.muted, fontSize: 10.5, lineHeight: 16 },
+
+  guestCard: { marginTop: 18, padding: 16, borderRadius: 18, backgroundColor: C.paper, borderWidth: 1, borderColor: C.line, alignItems: 'center' },
+  guestIcon: { width: 58, height: 58, borderRadius: 18, alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFF0EC' },
+  guestTitle: { color: C.maroonDark, fontSize: 16, fontWeight: '900', textAlign: 'center', marginTop: 11 },
+  guestText: { color: C.muted, fontSize: 10.5, lineHeight: 16, textAlign: 'center', marginTop: 5 },
+  authActions: { width: '100%', gap: 8, marginTop: 14 },
+  loginButton: { minHeight: 46, borderRadius: 13, backgroundColor: C.maroon, alignItems: 'center', justifyContent: 'center' },
+  loginText: { color: '#FFFFFF', fontSize: 12, fontWeight: '900' },
+  registerButton: { minHeight: 45, borderRadius: 13, borderWidth: 1, borderColor: '#DDBDB6', backgroundColor: '#FFF8F5', alignItems: 'center', justifyContent: 'center' },
+  registerText: { color: C.maroon, fontSize: 12, fontWeight: '900' },
 
   sectionTitle: { color: C.text, fontSize: 15, fontWeight: '900', marginTop: 22, marginBottom: 9 },
   menuCard: { flexDirection: 'row', alignItems: 'center', gap: 11, padding: 14, borderRadius: 16, backgroundColor: C.paper, borderWidth: 1, borderColor: C.line, marginBottom: 9 },
@@ -102,7 +163,6 @@ const styles = StyleSheet.create({
   menuTitleMuted: { color: '#605650', fontSize: 13, fontWeight: '900' },
   menuText: { color: C.muted, fontSize: 10, lineHeight: 15, marginTop: 3 },
 
-  nextStepBox: { marginTop: 18, padding: 13, borderRadius: 14, backgroundColor: '#FFF5E8', borderWidth: 1, borderColor: '#F0D8B1' },
-  nextStepTitle: { color: '#8A5A12', fontSize: 11, fontWeight: '900' },
-  nextStepText: { color: '#7D6848', fontSize: 10.5, lineHeight: 16, marginTop: 3 },
+  logoutButton: { minHeight: 46, marginTop: 18, borderRadius: 13, borderWidth: 1, borderColor: '#E6C6C0', backgroundColor: '#FFF8F5', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 7 },
+  logoutText: { color: C.maroon, fontSize: 11.5, fontWeight: '900' },
 });
