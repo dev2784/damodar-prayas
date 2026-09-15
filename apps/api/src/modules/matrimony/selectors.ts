@@ -68,6 +68,7 @@ export const ownerMatrimonyProfileSelect = {
   state: true,
   country: true,
   fullAddress: true,
+  postalCode: true,
   nativePlace: true,
   fatherName: true,
   fatherOccupation: true,
