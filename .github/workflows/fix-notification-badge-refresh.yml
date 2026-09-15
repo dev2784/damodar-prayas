@@ -1,0 +1,49 @@
+name: Fix notification badge refresh
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/fix-notification-badge-refresh.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.0.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: Patch notification badge refresh
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('apps/mobile/src/app/index.tsx')
+          s = p.read_text()
+          old = "  const { data: notificationCount } = useGetUnreadNotificationCountQuery(undefined, { skip: !accessToken });"
+          new = "  const { data: notificationCount } = useGetUnreadNotificationCountQuery(undefined, {\n    skip: !accessToken,\n    pollingInterval: 10000,\n    refetchOnMountOrArgChange: true,\n  });"
+          if old not in s:
+              raise SystemExit('notification query marker not found')
+          p.write_text(s.replace(old, new))
+          PY
+      - name: Verify mobile types
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm --filter mobile exec tsc --noEmit
+      - name: Commit
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git rm .github/workflows/fix-notification-badge-refresh.yml
+          git add apps/mobile/src/app/index.tsx
+          git commit -m "fix(mobile): refresh notification badge count"
+          git push origin main
