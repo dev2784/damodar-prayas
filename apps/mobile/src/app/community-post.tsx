@@ -50,6 +50,15 @@ export default function CommunityPostScreen() {
 
   const translation = post?.translations.find((item) => item.language === 'HI') ?? post?.translations[0];
   const isEvent = post?.category === 'EVENT';
+  const isAdvertisement = post?.category === 'ADVERTISEMENT';
+  const categoryLabel = isEvent ? 'कार्यक्रम' : isAdvertisement ? 'विज्ञापन' : 'समाचार';
+  const topTitle = isEvent ? 'कार्यक्रम विवरण' : isAdvertisement ? 'विज्ञापन विवरण' : 'समाचार विवरण';
+  const categoryIcon = isEvent
+    ? { ios: 'calendar.badge.clock', android: 'event', web: 'event' } as const
+    : isAdvertisement
+      ? { ios: 'megaphone.fill', android: 'campaign', web: 'campaign' } as const
+      : { ios: 'newspaper.fill', android: 'newspaper', web: 'newspaper' } as const;
+  const categoryTint = isEvent ? C.gold : isAdvertisement ? C.green : C.maroon;
   const eventDate = formatDate(post?.eventDate ?? null);
   const publishedDate = formatDate(post?.publishedAt ?? post?.createdAt ?? null);
 
@@ -59,7 +68,7 @@ export default function CommunityPostScreen() {
         <Pressable style={styles.backButton} onPress={() => router.back()}>
           <SymbolView name={{ ios: 'chevron.left', android: 'arrow_back', web: 'arrow_back' }} tintColor={C.maroon} size={22} />
         </Pressable>
-        <Text style={styles.topTitle}>{isEvent ? 'कार्यक्रम विवरण' : 'समाचार विवरण'}</Text>
+        <Text style={styles.topTitle}>{topTitle}</Text>
         <View style={styles.topSpacer} />
       </View>
 
@@ -82,24 +91,28 @@ export default function CommunityPostScreen() {
           {post.bannerUrl ? (
             <Image source={{ uri: post.bannerUrl }} style={styles.banner} contentFit="cover" transition={180} />
           ) : (
-            <View style={[styles.bannerPlaceholder, isEvent ? styles.eventPlaceholder : styles.newsPlaceholder]}>
-              <SymbolView
-                name={
-                  isEvent
-                    ? { ios: 'calendar.badge.clock', android: 'event', web: 'event' }
-                    : { ios: 'newspaper.fill', android: 'newspaper', web: 'newspaper' }
-                }
-                tintColor={isEvent ? C.gold : C.maroon}
-                size={54}
-              />
+            <View
+              style={[
+                styles.bannerPlaceholder,
+                isEvent ? styles.eventPlaceholder : isAdvertisement ? styles.adPlaceholder : styles.newsPlaceholder,
+              ]}>
+              <SymbolView name={categoryIcon} tintColor={categoryTint} size={54} />
             </View>
           )}
 
           <View style={styles.articleCard}>
             <View style={styles.metaRow}>
-              <View style={[styles.categoryPill, isEvent ? styles.eventPill : styles.newsPill]}>
-                <Text style={[styles.categoryText, isEvent ? styles.eventText : styles.newsText]}>
-                  {isEvent ? 'कार्यक्रम' : 'समाचार'}
+              <View
+                style={[
+                  styles.categoryPill,
+                  isEvent ? styles.eventPill : isAdvertisement ? styles.adPill : styles.newsPill,
+                ]}>
+                <Text
+                  style={[
+                    styles.categoryText,
+                    isEvent ? styles.eventText : isAdvertisement ? styles.adText : styles.newsText,
+                  ]}>
+                  {categoryLabel}
                 </Text>
               </View>
               {post.isFeatured ? (
@@ -194,14 +207,17 @@ const styles = StyleSheet.create({
   bannerPlaceholder: { width: '100%', aspectRatio: 1.65, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
   newsPlaceholder: { backgroundColor: '#FAECEC' },
   eventPlaceholder: { backgroundColor: '#FFF4DC' },
+  adPlaceholder: { backgroundColor: '#EAF7EF' },
   articleCard: { marginTop: 13, borderRadius: 18, backgroundColor: C.paper, borderWidth: 1, borderColor: C.line, padding: 15 },
   metaRow: { flexDirection: 'row', alignItems: 'center' },
   categoryPill: { borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4 },
   newsPill: { backgroundColor: '#FCE9EC' },
   eventPill: { backgroundColor: '#FFF1D5' },
+  adPill: { backgroundColor: '#EAF7EF' },
   categoryText: { fontSize: 8.5, fontWeight: '900' },
   newsText: { color: C.maroon },
   eventText: { color: '#A86600' },
+  adText: { color: C.green },
   featuredPill: { flexDirection: 'row', alignItems: 'center', gap: 3, marginLeft: 6, borderRadius: 8, backgroundColor: C.gold, paddingHorizontal: 7, paddingVertical: 4 },
   featuredText: { color: '#FFFFFF', fontSize: 8, fontWeight: '900' },
   title: { color: C.text, fontSize: 23, lineHeight: 31, fontWeight: '900', marginTop: 11 },

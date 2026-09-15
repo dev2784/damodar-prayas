@@ -31,7 +31,7 @@ const C = {
   blue: '#356AA0',
 };
 
-type FeedCategory = 'NEWS' | 'EVENT';
+type FeedCategory = 'NEWS' | 'EVENT' | 'ADVERTISEMENT';
 
 function formatDate(value: string | null) {
   if (!value) return null;
@@ -52,7 +52,15 @@ function excerpt(value: string) {
 function PostCard({ post }: { post: CommunityPost }) {
   const translation = post.translations[0];
   const isEvent = post.category === 'EVENT';
+  const isAdvertisement = post.category === 'ADVERTISEMENT';
   const date = formatDate(isEvent ? post.eventDate : post.publishedAt ?? post.createdAt);
+  const categoryLabel = isEvent ? 'कार्यक्रम' : isAdvertisement ? 'विज्ञापन' : 'समाचार';
+  const categoryIcon = isEvent
+    ? { ios: 'calendar.badge.clock', android: 'event', web: 'event' } as const
+    : isAdvertisement
+      ? { ios: 'megaphone.fill', android: 'campaign', web: 'campaign' } as const
+      : { ios: 'newspaper.fill', android: 'newspaper', web: 'newspaper' } as const;
+  const categoryTint = isEvent ? C.gold : isAdvertisement ? C.green : C.maroon;
 
   return (
     <Pressable
@@ -61,24 +69,28 @@ function PostCard({ post }: { post: CommunityPost }) {
       {post.bannerUrl ? (
         <Image source={{ uri: post.bannerUrl }} style={styles.banner} contentFit="cover" transition={180} />
       ) : (
-        <View style={[styles.bannerPlaceholder, isEvent ? styles.eventPlaceholder : styles.newsPlaceholder]}>
-          <SymbolView
-            name={
-              isEvent
-                ? { ios: 'calendar.badge.clock', android: 'event', web: 'event' }
-                : { ios: 'newspaper.fill', android: 'newspaper', web: 'newspaper' }
-            }
-            tintColor={isEvent ? C.gold : C.maroon}
-            size={42}
-          />
+        <View
+          style={[
+            styles.bannerPlaceholder,
+            isEvent ? styles.eventPlaceholder : isAdvertisement ? styles.adPlaceholder : styles.newsPlaceholder,
+          ]}>
+          <SymbolView name={categoryIcon} tintColor={categoryTint} size={42} />
         </View>
       )}
 
       <View style={styles.cardBody}>
         <View style={styles.metaRow}>
-          <View style={[styles.categoryPill, isEvent ? styles.eventPill : styles.newsPill]}>
-            <Text style={[styles.categoryText, isEvent ? styles.eventText : styles.newsText]}>
-              {isEvent ? 'कार्यक्रम' : 'समाचार'}
+          <View
+            style={[
+              styles.categoryPill,
+              isEvent ? styles.eventPill : isAdvertisement ? styles.adPill : styles.newsPill,
+            ]}>
+            <Text
+              style={[
+                styles.categoryText,
+                isEvent ? styles.eventText : isAdvertisement ? styles.adText : styles.newsText,
+              ]}>
+              {categoryLabel}
             </Text>
           </View>
           {post.isFeatured ? (
@@ -127,6 +139,21 @@ export default function CommunityScreen() {
   });
 
   const items = data?.items ?? [];
+  const sectionLabel = activeCategory === 'NEWS'
+    ? 'ताज़ा समाचार'
+    : activeCategory === 'EVENT'
+      ? 'आने वाले कार्यक्रम'
+      : 'समाज व्यापार विज्ञापन';
+  const emptyLabel = activeCategory === 'NEWS'
+    ? 'अभी कोई समाचार प्रकाशित नहीं है'
+    : activeCategory === 'EVENT'
+      ? 'अभी कोई कार्यक्रम प्रकाशित नहीं है'
+      : 'अभी कोई विज्ञापन प्रकाशित नहीं है';
+  const emptyIcon = activeCategory === 'NEWS'
+    ? { ios: 'newspaper', android: 'newspaper', web: 'newspaper' } as const
+    : activeCategory === 'EVENT'
+      ? { ios: 'calendar', android: 'event', web: 'event' } as const
+      : { ios: 'megaphone', android: 'campaign', web: 'campaign' } as const;
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
@@ -149,7 +176,7 @@ export default function CommunityScreen() {
               <View style={styles.headerTop}>
                 <View style={styles.headerCopy}>
                   <Text style={styles.eyebrow}>समाज अपडेट्स</Text>
-                  <Text style={styles.title}>समाचार एवं कार्यक्रम</Text>
+                  <Text style={styles.title}>समाचार, कार्यक्रम एवं विज्ञापन</Text>
                 </View>
                 <Pressable
                   style={styles.addButton}
@@ -159,7 +186,7 @@ export default function CommunityScreen() {
                 </Pressable>
               </View>
               <Text style={styles.subtitle}>
-                समाज की नई खबरें, घोषणाएँ और आने वाले कार्यक्रम एक ही जगह।
+                समाज की खबरें, समारोह और स्वीकृत व्यापार विज्ञापन एक ही जगह।
               </Text>
             </View>
 
@@ -170,7 +197,7 @@ export default function CommunityScreen() {
                 <SymbolView
                   name={{ ios: 'newspaper.fill', android: 'newspaper', web: 'newspaper' }}
                   tintColor={activeCategory === 'NEWS' ? '#FFFFFF' : C.maroon}
-                  size={17}
+                  size={16}
                 />
                 <Text style={[styles.tabText, activeCategory === 'NEWS' && styles.activeTabText]}>समाचार</Text>
               </Pressable>
@@ -180,17 +207,25 @@ export default function CommunityScreen() {
                 <SymbolView
                   name={{ ios: 'calendar', android: 'calendar_month', web: 'calendar_month' }}
                   tintColor={activeCategory === 'EVENT' ? '#FFFFFF' : C.maroon}
-                  size={17}
+                  size={16}
                 />
-                <Text style={[styles.tabText, activeCategory === 'EVENT' && styles.activeTabText]}>कार्यक्रम</Text>
+                <Text style={[styles.tabText, activeCategory === 'EVENT' && styles.activeTabText]}>समारोह</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.tab, activeCategory === 'ADVERTISEMENT' && styles.activeTab]}
+                onPress={() => setActiveCategory('ADVERTISEMENT')}>
+                <SymbolView
+                  name={{ ios: 'megaphone.fill', android: 'campaign', web: 'campaign' }}
+                  tintColor={activeCategory === 'ADVERTISEMENT' ? '#FFFFFF' : C.maroon}
+                  size={16}
+                />
+                <Text style={[styles.tabText, activeCategory === 'ADVERTISEMENT' && styles.activeTabText]}>विज्ञापन</Text>
               </Pressable>
             </View>
 
             {!isLoading && !isError && items.length > 0 ? (
               <View style={styles.countRow}>
-                <Text style={styles.countText}>
-                  {activeCategory === 'NEWS' ? 'ताज़ा समाचार' : 'आने वाले कार्यक्रम'}
-                </Text>
+                <Text style={styles.countText}>{sectionLabel}</Text>
                 <Text style={styles.countValue}>{data?.pagination.total ?? items.length}</Text>
               </View>
             ) : null}
@@ -213,19 +248,9 @@ export default function CommunityScreen() {
             </View>
           ) : (
             <View style={styles.stateCard}>
-              <SymbolView
-                name={
-                  activeCategory === 'NEWS'
-                    ? { ios: 'newspaper', android: 'newspaper', web: 'newspaper' }
-                    : { ios: 'calendar', android: 'event', web: 'event' }
-                }
-                tintColor={C.gold}
-                size={42}
-              />
-              <Text style={styles.stateTitle}>
-                {activeCategory === 'NEWS' ? 'अभी कोई समाचार प्रकाशित नहीं है' : 'अभी कोई कार्यक्रम प्रकाशित नहीं है'}
-              </Text>
-              <Text style={styles.stateText}>नई जानकारी प्रकाशित होते ही यहाँ दिखाई देगी।</Text>
+              <SymbolView name={emptyIcon} tintColor={C.gold} size={42} />
+              <Text style={styles.stateTitle}>{emptyLabel}</Text>
+              <Text style={styles.stateText}>Admin approval के बाद नई जानकारी यहाँ दिखाई देगी।</Text>
             </View>
           )
         }
@@ -243,11 +268,11 @@ const styles = StyleSheet.create({
   addButton: { minHeight: 36, borderRadius: 11, paddingHorizontal: 11, backgroundColor: C.maroon, flexDirection: 'row', alignItems: 'center', gap: 4 },
   addButtonText: { color: '#FFFFFF', fontSize: 9.5, fontWeight: '900' },
   eyebrow: { color: C.gold, fontSize: 10, fontWeight: '900', letterSpacing: 1.1 },
-  title: { color: C.maroonDark, fontSize: 27, lineHeight: 34, fontWeight: '900', marginTop: 3 },
+  title: { color: C.maroonDark, fontSize: 25, lineHeight: 32, fontWeight: '900', marginTop: 3 },
   subtitle: { color: C.muted, fontSize: 11, lineHeight: 17, marginTop: 4, maxWidth: 360 },
   tabs: {
     flexDirection: 'row',
-    gap: 8,
+    gap: 6,
     padding: 5,
     borderRadius: 16,
     backgroundColor: '#F5EBDD',
@@ -262,10 +287,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 7,
+    gap: 5,
   },
   activeTab: { backgroundColor: C.maroon },
-  tabText: { color: C.maroon, fontSize: 12, fontWeight: '900' },
+  tabText: { color: C.maroon, fontSize: 10.5, fontWeight: '900' },
   activeTabText: { color: '#FFFFFF' },
   countRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 9, paddingHorizontal: 2 },
   countText: { color: C.text, fontSize: 12, fontWeight: '900' },
@@ -300,14 +325,17 @@ const styles = StyleSheet.create({
   bannerPlaceholder: { width: '100%', aspectRatio: 1.85, alignItems: 'center', justifyContent: 'center' },
   newsPlaceholder: { backgroundColor: '#FAECEC' },
   eventPlaceholder: { backgroundColor: '#FFF4DC' },
+  adPlaceholder: { backgroundColor: '#EAF7EF' },
   cardBody: { padding: 13 },
   metaRow: { flexDirection: 'row', alignItems: 'center', minHeight: 24 },
   categoryPill: { borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4 },
   newsPill: { backgroundColor: '#FCE9EC' },
   eventPill: { backgroundColor: '#FFF1D5' },
+  adPill: { backgroundColor: '#EAF7EF' },
   categoryText: { fontSize: 8.5, fontWeight: '900' },
   newsText: { color: C.maroon },
   eventText: { color: '#A86600' },
+  adText: { color: C.green },
   featuredPill: { flexDirection: 'row', alignItems: 'center', gap: 3, marginLeft: 6, borderRadius: 8, backgroundColor: C.gold, paddingHorizontal: 7, paddingVertical: 4 },
   featuredText: { color: '#FFFFFF', fontSize: 8, fontWeight: '900' },
   metaSpacer: { flex: 1 },
