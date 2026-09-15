@@ -1,0 +1,640 @@
+import { useEffect, useMemo, useState } from 'react';
+import {
+  ActivityIndicator,
+  Alert,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
+import { router, useLocalSearchParams } from 'expo-router';
+import { SymbolView } from 'expo-symbols';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+import {
+  type MatrimonyCategory,
+  type MatrimonyGender,
+  type MatrimonyMaritalStatus,
+  type MatrimonyOwnerProfile,
+  type MatrimonyProfileFor,
+  type MatrimonyProfileInput,
+  useCreateMatrimonyProfileMutation,
+  useGetMyMatrimonyProfilesQuery,
+  useSubmitMatrimonyProfileMutation,
+  useUpdateMatrimonyProfileMutation,
+} from '@/services/matrimony-api';
+import { useAppSelector } from '@/store/hooks';
+
+const C = {
+  bg: '#FFF8ED',
+  paper: '#FFFFFF',
+  maroon: '#A30D1E',
+  maroonDark: '#77101B',
+  gold: '#D99A2B',
+  text: '#2A211D',
+  muted: '#736660',
+  line: '#E8DCCF',
+  green: '#16865C',
+  red: '#B42318',
+};
+
+type ManglikChoice = 'YES' | 'NO' | 'UNKNOWN';
+
+type FormState = {
+  profileFor: MatrimonyProfileFor;
+  category: MatrimonyCategory;
+  gender: MatrimonyGender;
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  dateOfBirth: string;
+  heightCm: string;
+  maritalStatus: MatrimonyMaritalStatus;
+  contactPhone: string;
+  contactEmail: string;
+  education: string;
+  occupation: string;
+  companyOrBusiness: string;
+  annualIncome: string;
+  gotra: string;
+  manglik: ManglikChoice;
+  birthTime: string;
+  birthPlace: string;
+  currentCity: string;
+  district: string;
+  state: string;
+  country: string;
+  nativePlace: string;
+  fatherName: string;
+  fatherOccupation: string;
+  motherName: string;
+  motherOccupation: string;
+  brothers: string;
+  sisters: string;
+  familyDetails: string;
+  about: string;
+};
+
+const initialForm: FormState = {
+  profileFor: 'SELF',
+  category: 'JUNA_GUJARATI',
+  gender: 'MALE',
+  firstName: '',
+  middleName: '',
+  lastName: '',
+  dateOfBirth: '',
+  heightCm: '',
+  maritalStatus: 'NEVER_MARRIED',
+  contactPhone: '',
+  contactEmail: '',
+  education: '',
+  occupation: '',
+  companyOrBusiness: '',
+  annualIncome: '',
+  gotra: '',
+  manglik: 'UNKNOWN',
+  birthTime: '',
+  birthPlace: '',
+  currentCity: '',
+  district: '',
+  state: '',
+  country: 'India',
+  nativePlace: '',
+  fatherName: '',
+  fatherOccupation: '',
+  motherName: '',
+  motherOccupation: '',
+  brothers: '0',
+  sisters: '0',
+  familyDetails: '',
+  about: '',
+};
+
+const profileForChoices: Array<{ label: string; value: MatrimonyProfileFor }> = [
+  { label: 'स्वयं', value: 'SELF' },
+  { label: 'पुत्र', value: 'SON' },
+  { label: 'पुत्री', value: 'DAUGHTER' },
+  { label: 'भाई', value: 'BROTHER' },
+  { label: 'बहन', value: 'SISTER' },
+  { label: 'रिश्तेदार', value: 'RELATIVE' },
+];
+
+const categoryChoices: Array<{ label: string; value: MatrimonyCategory }> = [
+  { label: 'जूना गुजराती', value: 'JUNA_GUJARATI' },
+  { label: 'पीपा', value: 'PIPA' },
+  { label: 'नामदेव', value: 'NAMDEV' },
+];
+
+const genderChoices: Array<{ label: string; value: MatrimonyGender }> = [
+  { label: 'पुरुष', value: 'MALE' },
+  { label: 'महिला', value: 'FEMALE' },
+  { label: 'अन्य', value: 'OTHER' },
+];
+
+const maritalChoices: Array<{ label: string; value: MatrimonyMaritalStatus }> = [
+  { label: 'अविवाहित', value: 'NEVER_MARRIED' },
+  { label: 'तलाकशुदा', value: 'DIVORCED' },
+  { label: 'विधुर/विधवा', value: 'WIDOWED' },
+  { label: 'अलग रह रहे', value: 'SEPARATED' },
+];
+
+function textOrNull(value: string) {
+  const trimmed = value.trim();
+  return trimmed ? trimmed : null;
+}
+
+function numberOrNull(value: string) {
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  const parsed = Number(trimmed);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function profileToForm(profile: MatrimonyOwnerProfile): FormState {
+  return {
+    profileFor: profile.profileFor,
+    category: profile.category,
+    gender: profile.gender,
+    firstName: profile.firstName ?? '',
+    middleName: profile.middleName ?? '',
+    lastName: profile.lastName ?? '',
+    dateOfBirth: profile.dateOfBirth ? profile.dateOfBirth.slice(0, 10) : '',
+    heightCm: profile.heightCm?.toString() ?? '',
+    maritalStatus: profile.maritalStatus,
+    contactPhone: profile.contactPhone ?? '',
+    contactEmail: profile.contactEmail ?? '',
+    education: profile.education ?? '',
+    occupation: profile.occupation ?? '',
+    companyOrBusiness: profile.companyOrBusiness ?? '',
+    annualIncome: profile.annualIncome?.toString() ?? '',
+    gotra: profile.gotra ?? '',
+    manglik: profile.manglik === true ? 'YES' : profile.manglik === false ? 'NO' : 'UNKNOWN',
+    birthTime: profile.birthTime ?? '',
+    birthPlace: profile.birthPlace ?? '',
+    currentCity: profile.currentCity ?? '',
+    district: profile.district ?? '',
+    state: profile.state ?? '',
+    country: profile.country || 'India',
+    nativePlace: profile.nativePlace ?? '',
+    fatherName: profile.fatherName ?? '',
+    fatherOccupation: profile.fatherOccupation ?? '',
+    motherName: profile.motherName ?? '',
+    motherOccupation: profile.motherOccupation ?? '',
+    brothers: profile.brothers?.toString() ?? '0',
+    sisters: profile.sisters?.toString() ?? '0',
+    familyDetails: profile.familyDetails ?? '',
+    about: profile.about ?? '',
+  };
+}
+
+function ChoiceRow<T extends string>({
+  items,
+  value,
+  onChange,
+  disabled,
+}: {
+  items: Array<{ label: string; value: T }>;
+  value: T;
+  onChange: (value: T) => void;
+  disabled?: boolean;
+}) {
+  return (
+    <View style={styles.choiceRow}>
+      {items.map((item) => {
+        const active = item.value === value;
+        return (
+          <Pressable
+            key={item.value}
+            disabled={disabled}
+            onPress={() => onChange(item.value)}
+            style={[styles.choice, active && styles.choiceActive, disabled && styles.choiceDisabled]}>
+            <Text style={[styles.choiceText, active && styles.choiceTextActive]}>{item.label}</Text>
+          </Pressable>
+        );
+      })}
+    </View>
+  );
+}
+
+function Field({
+  label,
+  value,
+  onChangeText,
+  placeholder,
+  keyboardType,
+  multiline,
+  required,
+  autoCapitalize,
+}: {
+  label: string;
+  value: string;
+  onChangeText: (value: string) => void;
+  placeholder?: string;
+  keyboardType?: 'default' | 'email-address' | 'phone-pad' | 'numeric';
+  multiline?: boolean;
+  required?: boolean;
+  autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
+}) {
+  return (
+    <View style={styles.fieldBlock}>
+      <Text style={styles.fieldLabel}>
+        {label}{required ? <Text style={styles.required}> *</Text> : null}
+      </Text>
+      <TextInput
+        value={value}
+        onChangeText={onChangeText}
+        placeholder={placeholder}
+        placeholderTextColor="#A69A94"
+        keyboardType={keyboardType}
+        multiline={multiline}
+        autoCapitalize={autoCapitalize}
+        style={[styles.input, multiline && styles.multilineInput]}
+      />
+    </View>
+  );
+}
+
+function Section({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
+  return (
+    <View style={styles.section}>
+      <Text style={styles.sectionTitle}>{title}</Text>
+      {subtitle ? <Text style={styles.sectionSubtitle}>{subtitle}</Text> : null}
+      <View style={styles.sectionBody}>{children}</View>
+    </View>
+  );
+}
+
+export default function MatrimonyFormScreen() {
+  const params = useLocalSearchParams<{ id?: string | string[] }>();
+  const profileId = Array.isArray(params.id) ? params.id[0] : params.id;
+  const accessToken = useAppSelector((state) => state.auth.accessToken);
+  const [form, setForm] = useState<FormState>(initialForm);
+  const [hydratedId, setHydratedId] = useState<string | null>(null);
+
+  const { data: mineData, isLoading: isLoadingMine } = useGetMyMatrimonyProfilesQuery(undefined, {
+    skip: !accessToken || !profileId,
+  });
+  const [createProfile, { isLoading: isCreating }] = useCreateMatrimonyProfileMutation();
+  const [updateProfile, { isLoading: isUpdating }] = useUpdateMatrimonyProfileMutation();
+  const [submitProfile, { isLoading: isSubmitting }] = useSubmitMatrimonyProfileMutation();
+
+  const editingProfile = useMemo(
+    () => mineData?.items.find((item) => item.id === profileId),
+    [mineData?.items, profileId],
+  );
+
+  useEffect(() => {
+    if (editingProfile && hydratedId !== editingProfile.id) {
+      setForm(profileToForm(editingProfile));
+      setHydratedId(editingProfile.id);
+    }
+  }, [editingProfile, hydratedId]);
+
+  const busy = isCreating || isUpdating || isSubmitting;
+  const editingLocked = Boolean(
+    editingProfile && editingProfile.status !== 'DRAFT' && editingProfile.status !== 'REJECTED',
+  );
+
+  function update<K extends keyof FormState>(key: K, value: FormState[K]) {
+    setForm((current) => ({ ...current, [key]: value }));
+  }
+
+  function validate() {
+    if (!form.firstName.trim() || !form.lastName.trim() || !form.dateOfBirth.trim()) {
+      Alert.alert('जरूरी जानकारी बाकी है', 'नाम, उपनाम और जन्मतिथि भरना जरूरी है।');
+      return false;
+    }
+
+    const dob = new Date(`${form.dateOfBirth}T00:00:00Z`);
+    if (Number.isNaN(dob.getTime())) {
+      Alert.alert('जन्मतिथि सही नहीं है', 'जन्मतिथि YYYY-MM-DD फॉर्मेट में भरें, जैसे 1998-05-21।');
+      return false;
+    }
+
+    const today = new Date();
+    const adultCutoff = new Date(Date.UTC(today.getUTCFullYear() - 18, today.getUTCMonth(), today.getUTCDate()));
+    if (dob > adultCutoff) {
+      Alert.alert('आयु सीमा', 'मैट्रिमोनी प्रोफाइल के लिए आयु कम से कम 18 वर्ष होनी चाहिए।');
+      return false;
+    }
+
+    const height = numberOrNull(form.heightCm);
+    if (height !== null && (height < 100 || height > 250)) {
+      Alert.alert('ऊंचाई जाँचें', 'ऊंचाई सेंटीमीटर में 100 से 250 के बीच होनी चाहिए।');
+      return false;
+    }
+
+    return true;
+  }
+
+  function buildPayload(): MatrimonyProfileInput {
+    return {
+      profileFor: form.profileFor,
+      category: form.category,
+      gender: form.gender,
+      firstName: form.firstName.trim(),
+      middleName: textOrNull(form.middleName),
+      lastName: form.lastName.trim(),
+      dateOfBirth: form.dateOfBirth.trim(),
+      heightCm: numberOrNull(form.heightCm),
+      maritalStatus: form.maritalStatus,
+      contactPhone: textOrNull(form.contactPhone),
+      contactEmail: textOrNull(form.contactEmail),
+      education: textOrNull(form.education),
+      occupation: textOrNull(form.occupation),
+      companyOrBusiness: textOrNull(form.companyOrBusiness),
+      annualIncome: numberOrNull(form.annualIncome),
+      gotra: textOrNull(form.gotra),
+      manglik: form.manglik === 'YES' ? true : form.manglik === 'NO' ? false : null,
+      birthTime: textOrNull(form.birthTime),
+      birthPlace: textOrNull(form.birthPlace),
+      currentCity: textOrNull(form.currentCity),
+      district: textOrNull(form.district),
+      state: textOrNull(form.state),
+      country: form.country.trim() || 'India',
+      nativePlace: textOrNull(form.nativePlace),
+      fatherName: textOrNull(form.fatherName),
+      fatherOccupation: textOrNull(form.fatherOccupation),
+      motherName: textOrNull(form.motherName),
+      motherOccupation: textOrNull(form.motherOccupation),
+      brothers: Math.max(0, Math.round(numberOrNull(form.brothers) ?? 0)),
+      sisters: Math.max(0, Math.round(numberOrNull(form.sisters) ?? 0)),
+      familyDetails: textOrNull(form.familyDetails),
+      about: textOrNull(form.about),
+    };
+  }
+
+  async function save(submitAfterSave: boolean) {
+    if (!accessToken) {
+      Alert.alert('लॉगिन जरूरी है', 'प्रोफाइल सेव करने से पहले अकाउंट में लॉगिन करें।');
+      router.push('/profile');
+      return;
+    }
+
+    if (editingLocked) {
+      Alert.alert('प्रोफाइल लॉक है', 'यह प्रोफाइल अभी समीक्षा/स्वीकृति स्थिति में है और एडिट नहीं किया जा सकता।');
+      return;
+    }
+
+    if (!validate()) return;
+
+    try {
+      const payload = buildPayload();
+      let savedId = profileId;
+
+      if (profileId) {
+        const { profileFor: _profileFor, ...body } = payload;
+        const result = await updateProfile({ id: profileId, body }).unwrap();
+        savedId = result.profile.id;
+      } else {
+        const result = await createProfile(payload).unwrap();
+        savedId = result.profile.id;
+      }
+
+      if (submitAfterSave && savedId) {
+        await submitProfile(savedId).unwrap();
+        Alert.alert('प्रोफाइल भेज दिया', 'आपका प्रोफाइल अब समीक्षा के लिए भेज दिया गया है।', [
+          { text: 'ठीक है', onPress: () => router.replace('/my-matrimony') },
+        ]);
+        return;
+      }
+
+      Alert.alert('ड्राफ्ट सेव हो गया', 'आप बाद में वापस आकर इसे पूरा कर सकते हैं।', [
+        { text: 'ठीक है', onPress: () => router.replace('/my-matrimony') },
+      ]);
+    } catch (error) {
+      const message = typeof error === 'object' && error && 'data' in error
+        ? String((error as { data?: { message?: string } }).data?.message ?? '')
+        : '';
+      Alert.alert('सेव नहीं हुआ', message || 'कृपया जानकारी जाँचकर दोबारा कोशिश करें।');
+    }
+  }
+
+  if (!accessToken) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.centerState}>
+          <SymbolView name={{ ios: 'person.badge.key.fill', android: 'login', web: 'login' }} tintColor={C.maroon} size={46} />
+          <Text style={styles.centerTitle}>पहले लॉगिन करें</Text>
+          <Text style={styles.centerText}>मैट्रिमोनी ड्राफ्ट निजी डेटा है, इसलिए इसे बनाने या एडिट करने के लिए सत्यापित अकाउंट जरूरी है।</Text>
+          <Pressable style={styles.centerButton} onPress={() => router.replace('/profile')}>
+            <Text style={styles.centerButtonText}>प्रोफाइल / लॉगिन</Text>
+          </Pressable>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (profileId && isLoadingMine && !editingProfile) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.centerState}>
+          <ActivityIndicator color={C.maroon} size="large" />
+          <Text style={styles.centerTitle}>प्रोफाइल लोड हो रहा है...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (profileId && !isLoadingMine && !editingProfile) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.centerState}>
+          <Text style={styles.centerTitle}>प्रोफाइल नहीं मिला</Text>
+          <Text style={styles.centerText}>यह प्रोफाइल आपके अकाउंट से जुड़ा नहीं है या उपलब्ध नहीं है।</Text>
+          <Pressable style={styles.centerButton} onPress={() => router.replace('/my-matrimony')}>
+            <Text style={styles.centerButtonText}>मेरे प्रोफाइल पर जाएँ</Text>
+          </Pressable>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  return (
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
+      <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+        <View style={styles.headerRow}>
+          <Pressable style={styles.backButton} onPress={() => router.back()}>
+            <SymbolView name={{ ios: 'chevron.left', android: 'arrow_back', web: 'arrow_back' }} tintColor={C.maroon} size={22} />
+          </Pressable>
+          <View style={styles.headerCopy}>
+            <Text style={styles.eyebrow}>MATRIMONY PROFILE</Text>
+            <Text style={styles.title}>{profileId ? 'प्रोफाइल एडिट करें' : 'नया प्रोफाइल बनाएँ'}</Text>
+          </View>
+        </View>
+
+        {editingLocked ? (
+          <View style={styles.lockBanner}>
+            <SymbolView name={{ ios: 'lock.fill', android: 'lock', web: 'lock' }} tintColor={C.maroon} size={20} />
+            <Text style={styles.lockText}>यह प्रोफाइल अभी एडिट नहीं किया जा सकता क्योंकि इसकी स्थिति {editingProfile?.status} है।</Text>
+          </View>
+        ) : null}
+
+        <View style={styles.progressBanner}>
+          <View style={styles.progressIcon}>
+            <SymbolView name={{ ios: 'checklist', android: 'checklist', web: 'checklist' }} tintColor={C.green} size={22} />
+          </View>
+          <View style={styles.progressCopy}>
+            <Text style={styles.progressTitle}>पहले जरूरी जानकारी भरें</Text>
+            <Text style={styles.progressText}>आप ड्राफ्ट सेव कर सकते हैं। फोटो और बाकी दस्तावेज अगला चरण होंगे।</Text>
+          </View>
+        </View>
+
+        <Section title="1. प्रोफाइल की बेसिक जानकारी">
+          <Text style={styles.inlineLabel}>प्रोफाइल किसके लिए है?</Text>
+          <ChoiceRow
+            items={profileForChoices}
+            value={form.profileFor}
+            onChange={(value) => update('profileFor', value)}
+            disabled={Boolean(profileId)}
+          />
+
+          <Text style={styles.inlineLabel}>समाज / वर्ग</Text>
+          <ChoiceRow items={categoryChoices} value={form.category} onChange={(value) => update('category', value)} />
+
+          <Text style={styles.inlineLabel}>लिंग</Text>
+          <ChoiceRow items={genderChoices} value={form.gender} onChange={(value) => update('gender', value)} />
+
+          <View style={styles.twoCol}>
+            <View style={styles.col}><Field label="पहला नाम" value={form.firstName} onChangeText={(value) => update('firstName', value)} required /></View>
+            <View style={styles.col}><Field label="उपनाम" value={form.lastName} onChangeText={(value) => update('lastName', value)} required /></View>
+          </View>
+          <Field label="मध्य नाम" value={form.middleName} onChangeText={(value) => update('middleName', value)} />
+          <Field label="जन्मतिथि" value={form.dateOfBirth} onChangeText={(value) => update('dateOfBirth', value)} placeholder="YYYY-MM-DD" keyboardType="numeric" required />
+          <Field label="ऊंचाई (सेमी)" value={form.heightCm} onChangeText={(value) => update('heightCm', value)} placeholder="जैसे 170" keyboardType="numeric" />
+
+          <Text style={styles.inlineLabel}>वैवाहिक स्थिति</Text>
+          <ChoiceRow items={maritalChoices} value={form.maritalStatus} onChange={(value) => update('maritalStatus', value)} />
+        </Section>
+
+        <Section title="2. संपर्क, शिक्षा और काम" subtitle="संपर्क जानकारी सार्वजनिक लिस्ट में नहीं दिखाई जाएगी।">
+          <Field label="मोबाइल नंबर" value={form.contactPhone} onChangeText={(value) => update('contactPhone', value)} placeholder="+91..." keyboardType="phone-pad" />
+          <Field label="ईमेल" value={form.contactEmail} onChangeText={(value) => update('contactEmail', value)} keyboardType="email-address" autoCapitalize="none" />
+          <Field label="शिक्षा" value={form.education} onChangeText={(value) => update('education', value)} placeholder="जैसे B.Tech, MBA" />
+          <Field label="पेशा" value={form.occupation} onChangeText={(value) => update('occupation', value)} placeholder="जैसे Software Engineer" />
+          <Field label="कंपनी / व्यवसाय" value={form.companyOrBusiness} onChangeText={(value) => update('companyOrBusiness', value)} />
+          <Field label="वार्षिक आय (₹)" value={form.annualIncome} onChangeText={(value) => update('annualIncome', value)} keyboardType="numeric" />
+        </Section>
+
+        <Section title="3. समाज, जन्म और स्थान">
+          <Field label="गोत्र" value={form.gotra} onChangeText={(value) => update('gotra', value)} />
+          <Text style={styles.inlineLabel}>मांगलिक</Text>
+          <ChoiceRow
+            items={[
+              { label: 'हाँ', value: 'YES' as const },
+              { label: 'नहीं', value: 'NO' as const },
+              { label: 'पता नहीं', value: 'UNKNOWN' as const },
+            ]}
+            value={form.manglik}
+            onChange={(value) => update('manglik', value)}
+          />
+          <View style={styles.twoCol}>
+            <View style={styles.col}><Field label="जन्म समय" value={form.birthTime} onChangeText={(value) => update('birthTime', value)} placeholder="जैसे 07:30 AM" /></View>
+            <View style={styles.col}><Field label="जन्म स्थान" value={form.birthPlace} onChangeText={(value) => update('birthPlace', value)} /></View>
+          </View>
+          <Field label="वर्तमान शहर" value={form.currentCity} onChangeText={(value) => update('currentCity', value)} />
+          <View style={styles.twoCol}>
+            <View style={styles.col}><Field label="जिला" value={form.district} onChangeText={(value) => update('district', value)} /></View>
+            <View style={styles.col}><Field label="राज्य" value={form.state} onChangeText={(value) => update('state', value)} /></View>
+          </View>
+          <Field label="मूल स्थान" value={form.nativePlace} onChangeText={(value) => update('nativePlace', value)} />
+        </Section>
+
+        <Section title="4. परिवार और परिचय">
+          <View style={styles.twoCol}>
+            <View style={styles.col}><Field label="पिता का नाम" value={form.fatherName} onChangeText={(value) => update('fatherName', value)} /></View>
+            <View style={styles.col}><Field label="पिता का व्यवसाय" value={form.fatherOccupation} onChangeText={(value) => update('fatherOccupation', value)} /></View>
+          </View>
+          <View style={styles.twoCol}>
+            <View style={styles.col}><Field label="माता का नाम" value={form.motherName} onChangeText={(value) => update('motherName', value)} /></View>
+            <View style={styles.col}><Field label="माता का व्यवसाय" value={form.motherOccupation} onChangeText={(value) => update('motherOccupation', value)} /></View>
+          </View>
+          <View style={styles.twoCol}>
+            <View style={styles.col}><Field label="भाई" value={form.brothers} onChangeText={(value) => update('brothers', value)} keyboardType="numeric" /></View>
+            <View style={styles.col}><Field label="बहनें" value={form.sisters} onChangeText={(value) => update('sisters', value)} keyboardType="numeric" /></View>
+          </View>
+          <Field label="परिवार के बारे में" value={form.familyDetails} onChangeText={(value) => update('familyDetails', value)} multiline />
+          <Field label="अपने बारे में" value={form.about} onChangeText={(value) => update('about', value)} multiline />
+        </Section>
+
+        <View style={styles.actionsCard}>
+          <Pressable
+            disabled={busy || editingLocked}
+            style={[styles.draftButton, (busy || editingLocked) && styles.disabledButton]}
+            onPress={() => save(false)}>
+            {busy ? <ActivityIndicator color={C.maroon} size="small" /> : (
+              <>
+                <SymbolView name={{ ios: 'square.and.arrow.down', android: 'save', web: 'save' }} tintColor={C.maroon} size={17} />
+                <Text style={styles.draftButtonText}>ड्राफ्ट सेव करें</Text>
+              </>
+            )}
+          </Pressable>
+
+          <Pressable
+            disabled={busy || editingLocked}
+            style={[styles.submitButton, (busy || editingLocked) && styles.disabledButton]}
+            onPress={() => save(true)}>
+            {busy ? <ActivityIndicator color="#FFFFFF" size="small" /> : (
+              <>
+                <SymbolView name={{ ios: 'paperplane.fill', android: 'send', web: 'send' }} tintColor="#FFFFFF" size={16} />
+                <Text style={styles.submitButtonText}>सेव करके समीक्षा में भेजें</Text>
+              </>
+            )}
+          </Pressable>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  safeArea: { flex: 1, backgroundColor: C.bg },
+  content: { padding: 16, paddingBottom: 120 },
+  headerRow: { flexDirection: 'row', alignItems: 'center', gap: 11, marginBottom: 14 },
+  backButton: { width: 40, height: 40, borderRadius: 12, alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: C.line },
+  headerCopy: { flex: 1 },
+  eyebrow: { color: C.gold, fontSize: 10, fontWeight: '900', letterSpacing: 1.1 },
+  title: { color: C.maroonDark, fontSize: 24, lineHeight: 30, fontWeight: '900', marginTop: 2 },
+
+  progressBanner: { flexDirection: 'row', gap: 10, padding: 13, borderRadius: 15, backgroundColor: '#F2FBF6', borderWidth: 1, borderColor: '#CFEBDD', marginBottom: 14 },
+  progressIcon: { width: 36, height: 36, borderRadius: 12, backgroundColor: '#E1F6EA', alignItems: 'center', justifyContent: 'center' },
+  progressCopy: { flex: 1 },
+  progressTitle: { color: '#135C43', fontSize: 12, fontWeight: '900' },
+  progressText: { color: '#497063', fontSize: 10.5, lineHeight: 16, marginTop: 2 },
+  lockBanner: { flexDirection: 'row', gap: 9, alignItems: 'center', padding: 12, borderRadius: 14, backgroundColor: '#FFF0EE', borderWidth: 1, borderColor: '#F1CFC8', marginBottom: 12 },
+  lockText: { flex: 1, color: '#7B3D36', fontSize: 11, lineHeight: 17, fontWeight: '700' },
+
+  section: { borderRadius: 18, backgroundColor: C.paper, borderWidth: 1, borderColor: C.line, padding: 14, marginBottom: 12 },
+  sectionTitle: { color: C.maroonDark, fontSize: 16, fontWeight: '900' },
+  sectionSubtitle: { color: C.muted, fontSize: 10.5, lineHeight: 16, marginTop: 3 },
+  sectionBody: { marginTop: 12, gap: 10 },
+  inlineLabel: { color: C.text, fontSize: 10.5, fontWeight: '900', marginTop: 1 },
+  fieldBlock: { gap: 5 },
+  fieldLabel: { color: C.text, fontSize: 10.5, fontWeight: '900' },
+  required: { color: C.red },
+  input: { minHeight: 43, borderWidth: 1, borderColor: '#DFD2C6', borderRadius: 12, backgroundColor: '#FFFCF8', paddingHorizontal: 12, color: C.text, fontSize: 12 },
+  multilineInput: { minHeight: 88, paddingTop: 11, textAlignVertical: 'top' },
+  twoCol: { flexDirection: 'row', gap: 9 },
+  col: { flex: 1, minWidth: 0 },
+  choiceRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 7 },
+  choice: { paddingHorizontal: 11, paddingVertical: 8, borderRadius: 18, borderWidth: 1, borderColor: '#E0D2C7', backgroundColor: '#FFFCF8' },
+  choiceActive: { backgroundColor: C.maroon, borderColor: C.maroon },
+  choiceDisabled: { opacity: 0.62 },
+  choiceText: { color: '#6E615B', fontSize: 10, fontWeight: '800' },
+  choiceTextActive: { color: '#FFFFFF' },
+
+  actionsCard: { gap: 9, paddingTop: 4 },
+  draftButton: { minHeight: 48, borderRadius: 14, borderWidth: 1, borderColor: '#DDBDB6', backgroundColor: '#FFF8F5', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 7 },
+  draftButtonText: { color: C.maroon, fontSize: 12, fontWeight: '900' },
+  submitButton: { minHeight: 50, borderRadius: 14, backgroundColor: C.maroon, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 7 },
+  submitButtonText: { color: '#FFFFFF', fontSize: 12, fontWeight: '900' },
+  disabledButton: { opacity: 0.52 },
+
+  centerState: { flex: 1, paddingHorizontal: 28, alignItems: 'center', justifyContent: 'center' },
+  centerTitle: { color: C.maroonDark, fontSize: 20, fontWeight: '900', textAlign: 'center', marginTop: 14 },
+  centerText: { color: C.muted, fontSize: 12.5, lineHeight: 20, textAlign: 'center', marginTop: 8 },
+  centerButton: { width: '100%', minHeight: 48, marginTop: 20, borderRadius: 14, backgroundColor: C.maroon, alignItems: 'center', justifyContent: 'center' },
+  centerButtonText: { color: '#FFFFFF', fontSize: 12.5, fontWeight: '900' },
+});
