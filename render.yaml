@@ -3,7 +3,7 @@ services:
     name: damodar-prayas-api
     runtime: node
     plan: free
-    buildCommand: pnpm install --frozen-lockfile && pnpm prisma migrate deploy --schema=prisma/schema.prisma && pnpm build:api
+    buildCommand: pnpm install --frozen-lockfile && pnpm prisma generate --schema=prisma/schema.prisma && pnpm prisma migrate deploy --schema=prisma/schema.prisma && pnpm build:api
     startCommand: pnpm --filter @damodar/api start
     healthCheckPath: /api/v1/health
     autoDeployTrigger: commit
