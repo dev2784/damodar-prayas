@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
     paths:
+      - scripts/patch-matrimony-notification-ux.py
       - .github/workflows/notification-badge-and-clean-matrimony-menu.yml
 
 permissions:
@@ -23,95 +24,17 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
-
-      - name: Patch home notification badge and remove matrimony shortcuts
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          import re
-
-          # Home: show incoming pending-interest count on existing bell.
-          p = Path('apps/mobile/src/app/index.tsx')
-          s = p.read_text()
-
-          import_anchor = "import { SafeAreaView } from 'react-native-safe-area-context';\n"
-          imports = "import { SafeAreaView } from 'react-native-safe-area-context';\n\nimport { useGetIncomingInterestsQuery } from '@/services/interaction-api';\nimport { useAppSelector } from '@/store/hooks';\n"
-          if "useGetIncomingInterestsQuery" not in s:
-              if import_anchor not in s:
-                  raise SystemExit('home import anchor not found')
-              s = s.replace(import_anchor, imports, 1)
-
-          home_marker = "export default function HomeScreen() {\n  return ("
-          home_replacement = """export default function HomeScreen() {
-  const accessToken = useAppSelector((state) => state.auth.accessToken);
-  const { data: incomingInterests } = useGetIncomingInterestsQuery(undefined, { skip: !accessToken });
-  const pendingInterestCount = incomingInterests?.items.filter((item) => item.status === 'PENDING').length ?? 0;
-
-  return ("""
-          if home_replacement not in s:
-              if home_marker not in s:
-                  raise SystemExit('HomeScreen marker not found')
-              s = s.replace(home_marker, home_replacement, 1)
-
-          bell_old = "          <View style={styles.headerIcon}><Icon name={{ ios: 'bell.fill', android: 'notifications', web: 'notifications' }} color={C.maroon} size={21} /></View>"
-          bell_new = """          <Pressable
-            style={styles.headerIcon}
-            onPress={() => router.push('/matrimony-interests')}
-            accessibilityRole="button"
-            accessibilityLabel={pendingInterestCount > 0 ? `${pendingInterestCount} matrimony interest requests` : 'Notifications'}>
-            <Icon name={{ ios: 'bell.fill', android: 'notifications', web: 'notifications' }} color={C.maroon} size={21} />
-            {pendingInterestCount > 0 ? (
-              <View style={styles.notificationBadge}>
-                <Text style={styles.notificationBadgeText}>{pendingInterestCount > 99 ? '99+' : pendingInterestCount}</Text>
-              </View>
-            ) : null}
-          </Pressable>"""
-          if bell_new not in s:
-              if bell_old not in s:
-                  raise SystemExit('bell marker not found')
-              s = s.replace(bell_old, bell_new, 1)
-
-          style_old = "  headerIcon: { width: 37, height: 37, borderRadius: 18.5, backgroundColor: '#FFF7E8', alignItems: 'center', justifyContent: 'center', marginLeft: 5 },"
-          style_new = """  headerIcon: { width: 37, height: 37, borderRadius: 18.5, backgroundColor: '#FFF7E8', alignItems: 'center', justifyContent: 'center', marginLeft: 5, position: 'relative' },
-  notificationBadge: { position: 'absolute', top: -4, right: -4, minWidth: 18, height: 18, paddingHorizontal: 4, borderRadius: 9, backgroundColor: C.maroon, borderWidth: 2, borderColor: C.paper, alignItems: 'center', justifyContent: 'center' },
-  notificationBadgeText: { color: '#FFFFFF', fontSize: 8.5, fontWeight: '900', lineHeight: 11 },"""
-          if "notificationBadge:" not in s:
-              if style_old not in s:
-                  raise SystemExit('headerIcon style marker not found')
-              s = s.replace(style_old, style_new, 1)
-
-          p.write_text(s)
-
-          # My Matrimony: remove the two shortcut cards, keep the profile list clean.
-          p = Path('apps/mobile/src/app/my-matrimony.tsx')
-          s = p.read_text()
-          s, count = re.subn(
-              r"\n\s*<View style=\{styles\.interactionRow\}>.*?</View>\n\s*\{isLoading \?",
-              "\n      {isLoading ?",
-              s,
-              count=1,
-              flags=re.S,
-          )
-          if count != 1 and 'styles.interactionRow' in s:
-              raise SystemExit('interaction shortcut row was not removed')
-
-          s = re.sub(r"\n\s*interactionRow: \{[^\n]*\},", "", s)
-          s = re.sub(r"\n\s*interactionCard: \{[^\n]*\},", "", s)
-          s = re.sub(r"\n\s*interactionTitle: \{[^\n]*\},", "", s)
-          s = re.sub(r"\n\s*interactionText: \{[^\n]*\},", "", s)
-          p.write_text(s)
-          PY
-
+      - name: Patch notification UX
+        run: python scripts/patch-matrimony-notification-ux.py
       - name: Verify mobile types
         run: |
           pnpm install --frozen-lockfile
           pnpm --filter mobile exec tsc --noEmit
-
       - name: Commit
         run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git rm .github/workflows/notification-badge-and-clean-matrimony-menu.yml
+          git rm .github/workflows/notification-badge-and-clean-matrimony-menu.yml scripts/patch-matrimony-notification-ux.py
           git add apps/mobile/src/app/index.tsx apps/mobile/src/app/my-matrimony.tsx
           git commit -m "fix(matrimony): move interest requests to home notifications"
           git push origin main
