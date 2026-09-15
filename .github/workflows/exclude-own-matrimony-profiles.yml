@@ -1,0 +1,94 @@
+name: Exclude own matrimony profiles
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/exclude-own-matrimony-profiles.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.0.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Patch matrimony list
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('apps/api/src/modules/matrimony/routes.ts')
+          s = p.read_text()
+
+          marker = "function yearsAgo(years: number) {"
+          helper = """async function getOptionalActiveUserId(request: FastifyRequest) {
+  const authorization = request.headers.authorization;
+  if (!authorization?.startsWith('Bearer ')) return null;
+
+  try {
+    const payload = await request.jwtVerify<{ sub: string }>();
+    const user = await prisma.user.findFirst({
+      where: { id: payload.sub, isActive: true, deletedAt: null },
+      select: { id: true },
+    });
+    return user?.id ?? null;
+  } catch {
+    return null;
+  }
+}
+
+"""
+          if helper not in s:
+              if marker not in s:
+                  raise SystemExit('yearsAgo marker not found')
+              s = s.replace(marker, helper + marker, 1)
+
+          route_marker = """  app.get('/', async (request, reply) => {
+    const parsed = matrimonyListQuerySchema.safeParse(request.query);"""
+          route_replacement = """  app.get('/', async (request, reply) => {
+    const activeUserId = await getOptionalActiveUserId(request);
+    const parsed = matrimonyListQuerySchema.safeParse(request.query);"""
+          if route_replacement not in s:
+              if route_marker not in s:
+                  raise SystemExit('public list route marker not found')
+              s = s.replace(route_marker, route_replacement, 1)
+
+          where_marker = """    const where: Prisma.MatrimonyProfileWhereInput = {
+      status: 'APPROVED',
+      deletedAt: null,"""
+          where_replacement = """    const where: Prisma.MatrimonyProfileWhereInput = {
+      status: 'APPROVED',
+      deletedAt: null,
+      ...(activeUserId ? { createdById: { not: activeUserId } } : {}),"""
+          if where_replacement not in s:
+              if where_marker not in s:
+                  raise SystemExit('where marker not found')
+              s = s.replace(where_marker, where_replacement, 1)
+
+          p.write_text(s)
+          PY
+
+      - name: Verify
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm --filter @damodar/api build
+
+      - name: Commit
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git rm .github/workflows/exclude-own-matrimony-profiles.yml
+          git add apps/api/src/modules/matrimony/routes.ts
+          git commit -m "fix(matrimony): hide own profiles from public list"
+          git push origin main
