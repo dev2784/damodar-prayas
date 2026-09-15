@@ -62,7 +62,11 @@ function TrustStat({ icon, value, label, color = C.maroon }: { icon: { ios: any;
 
 export default function HomeScreen() {
   const accessToken = useAppSelector((state) => state.auth.accessToken);
-  const { data: notificationCount } = useGetUnreadNotificationCountQuery(undefined, { skip: !accessToken });
+  const { data: notificationCount } = useGetUnreadNotificationCountQuery(undefined, {
+    skip: !accessToken,
+    pollingInterval: 10000,
+    refetchOnMountOrArgChange: true,
+  });
   const unreadNotificationCount = notificationCount?.unreadCount ?? 0;
 
   return (
