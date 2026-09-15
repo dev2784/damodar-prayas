@@ -1,0 +1,39 @@
+name: Update feature lockfile
+
+on:
+  push:
+    branches:
+      - feat/matrimony-address-media
+    paths:
+      - apps/mobile/package.json
+      - .github/workflows/update-feature-lockfile.yml
+
+permissions:
+  contents: write
+
+jobs:
+  lockfile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/matrimony-address-media
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.0.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --lockfile-only
+      - name: Commit lockfile if changed
+        run: |
+          if git diff --quiet pnpm-lock.yaml; then
+            echo "Lockfile unchanged"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add pnpm-lock.yaml
+          git commit -m "chore: update pnpm lockfile for media pickers"
+          git push origin HEAD:feat/matrimony-address-media
