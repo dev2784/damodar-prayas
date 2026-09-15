@@ -45,7 +45,7 @@ jobs:
         run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git rm scripts/simplify-interest-contact.mjs .github/workflows/simplify-interest-contact.yml
+          git rm -f scripts/simplify-interest-contact.mjs .github/workflows/simplify-interest-contact.yml
           git add apps/api/src/modules/interactions/routes.ts apps/mobile/src/services/interaction-api.ts apps/mobile/src/services/notification-api.ts apps/mobile/src/app/index.tsx apps/mobile/src/app/matrimony-profile.tsx apps/mobile/src/app/matrimony-interests.tsx apps/mobile/src/app/notifications.tsx apps/mobile/src/components/app-tabs.tsx
           git commit -m "feat(matrimony): unlock contacts on accepted interest"
           git push origin main
