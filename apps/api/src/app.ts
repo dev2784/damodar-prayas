@@ -7,6 +7,7 @@ import { adminCommitteeRoutes } from './modules/admin/committees/routes.js';
 import { adminMediaRoutes } from './modules/admin/media/routes.js';
 import { adminMatrimonyRoutes } from './modules/admin/matrimony/routes.js';
 import { adminReportRoutes } from './modules/admin/reports/routes.js';
+import { adminUserRoutes } from './modules/admin/users/routes.js';
 import { authRoutes } from './modules/auth/routes.js';
 import { committeeRoutes } from './modules/committees/routes.js';
 import { communityRoutes } from './modules/community/routes.js';
@@ -19,22 +20,8 @@ import { reportRoutes } from './modules/reports/routes.js';
 import { authPlugin } from './plugins/auth.js';
 
 export async function buildApp() {
-  const app = Fastify({
-    logger: true,
-  });
-
-  await app.register(cors, {
-    origin(origin, callback) {
-      if (!origin || corsOrigins.includes(origin)) {
-        callback(null, true);
-        return;
-      }
-
-      callback(new Error('Origin not allowed by CORS'), false);
-    },
-    credentials: true,
-  });
-
+  const app = Fastify({ logger: true });
+  await app.register(cors, { origin(origin, callback) { if (!origin || corsOrigins.includes(origin)) { callback(null, true); return; } callback(new Error('Origin not allowed by CORS'), false); }, credentials: true });
   await app.register(multipart);
   await app.register(authPlugin);
   await app.register(healthRoutes, { prefix: '/api/v1' });
@@ -51,24 +38,8 @@ export async function buildApp() {
   await app.register(adminCommitteeRoutes, { prefix: '/api/v1/admin/committees' });
   await app.register(adminReportRoutes, { prefix: '/api/v1/admin/reports' });
   await app.register(adminMediaRoutes, { prefix: '/api/v1/admin/media' });
-
-  app.get('/', async () => ({
-    name: 'Damodar Prayas API',
-    version: 'v1',
-    primaryLanguage: 'hi',
-    supportedLanguages: ['hi', 'en'],
-  }));
-
-  app.setErrorHandler((error: FastifyError, request, reply) => {
-    request.log.error(error);
-
-    const statusCode = error.statusCode && error.statusCode >= 400 ? error.statusCode : 500;
-
-    return reply.code(statusCode).send({
-      error: statusCode === 500 ? 'INTERNAL_SERVER_ERROR' : error.name,
-      message: statusCode === 500 ? 'Something went wrong.' : error.message,
-    });
-  });
-
+  await app.register(adminUserRoutes, { prefix: '/api/v1/admin/users' });
+  app.get('/', async () => ({ name: 'Damodar Prayas API', version: 'v1', primaryLanguage: 'hi', supportedLanguages: ['hi', 'en'] }));
+  app.setErrorHandler((error: FastifyError, request, reply) => { request.log.error(error); const statusCode = error.statusCode && error.statusCode >= 400 ? error.statusCode : 500; return reply.code(statusCode).send({ error: statusCode === 500 ? 'INTERNAL_SERVER_ERROR' : error.name, message: statusCode === 500 ? 'Something went wrong.' : error.message }); });
   return app;
 }
