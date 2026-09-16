@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 
 const nav=[
   ['⌂','Dashboard','/'],
@@ -15,10 +15,12 @@ const nav=[
 
 export default function AdminSidebar(){
   const pathname=usePathname();
+  const searchParams=useSearchParams();
+  const adMode=pathname==='/community'&&searchParams.get('filter')==='ADVERTISEMENT';
   return <aside className="sidebar">
     <div className="brand"><div className="brand-seal">DP</div><div><strong>दामोदर प्रयास</strong><span>ADMIN PORTAL</span></div></div>
     <nav className="nav-list">{nav.map(([icon,label,href])=>{
-      const active=href==='/'?pathname==='/':href.startsWith('/community?')?false:pathname===href||pathname.startsWith(`${href}/`);
+      const active=label==='Advertisements'?adMode:label==='Community'?pathname==='/community'&&!adMode:href==='/'?pathname==='/':href!=='#'&&(pathname===href||pathname.startsWith(`${href}/`));
       return href==='#'
         ? <span className="nav-item" key={label} style={{opacity:.55,cursor:'not-allowed'}}><span>{icon}</span>{label}</span>
         : <Link className={active?'nav-item active':'nav-item'} href={href} key={label}><span>{icon}</span>{label}</Link>;
