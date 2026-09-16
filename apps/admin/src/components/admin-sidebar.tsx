@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 
 const nav=[
   ['⌂','Dashboard','/'],
+  ['＋','Add Entry','/assisted-entry'],
   ['♡','Matrimony','/matrimony'],
   ['▤','Community','/community'],
   ['◈','Samiti','/samiti'],
