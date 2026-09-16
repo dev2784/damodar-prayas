@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { FormEvent, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getAdminToken, loginAdmin, verifyAdminSession } from '@/lib/auth';
@@ -82,6 +83,12 @@ export default function AdminLoginPage() {
               <span>Password</span>
               <div className="field-wrap"><span className="field-icon">◆</span><input autoComplete="current-password" type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" required /><button className="show-password" type="button" onClick={() => setShowPassword((value) => !value)}>{showPassword ? 'Hide' : 'Show'}</button></div>
             </label>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '-4px' }}>
+              <Link href="/setup-password" style={{ color: '#7b1f2d', fontWeight: 700, fontSize: '0.88rem', textDecoration: 'none' }}>
+                Forgot password?
+              </Link>
+            </div>
 
             {error ? <div className="login-error">{error}</div> : null}
 
