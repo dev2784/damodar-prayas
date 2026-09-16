@@ -20,6 +20,18 @@ const adminSetupSchema = phoneSchema.extend({ setupSecret: z.string().min(1), pa
 
 type CredentialRow = { passwordHash: string };
 function normalizePhone(phone: string) { return phone.trim(); }
+function phoneCandidates(phone: string) {
+  const value = normalizePhone(phone);
+  const digits = value.replace(/\D/g, '');
+  const local = digits.length === 12 && digits.startsWith('91') ? digits.slice(2) : digits;
+  return Array.from(new Set([value, digits, local, local.length === 10 ? `+91${local}` : '', local.length === 10 ? `91${local}` : ''].filter(Boolean)));
+}
+function secretMatches(received: string, expected: string | undefined) {
+  if (!expected) return false;
+  const a = Buffer.from(received);
+  const b = Buffer.from(expected);
+  return a.length === b.length && timingSafeEqual(a, b);
+}
 async function hashPassword(password: string) { const salt = randomBytes(16).toString('hex'); const derivedKey = (await scryptAsync(password, salt, 64)) as Buffer; return `scrypt$${salt}$${derivedKey.toString('hex')}`; }
 async function verifyPassword(password: string, stored: string) { const [algorithm, salt, hashHex] = stored.split('$'); if (algorithm !== 'scrypt' || !salt || !hashHex) return false; const storedBuffer = Buffer.from(hashHex, 'hex'); if (!storedBuffer.length) return false; const derivedKey = (await scryptAsync(password, salt, storedBuffer.length)) as Buffer; if (derivedKey.length !== storedBuffer.length) return false; return timingSafeEqual(derivedKey, storedBuffer); }
 async function getCredential(userId: string) { const rows = await prisma.$queryRaw<CredentialRow[]>`SELECT "passwordHash" FROM "UserCredential" WHERE "userId" = ${userId} LIMIT 1`; return rows[0] ?? null; }
@@ -41,7 +53,7 @@ export async function authRoutes(app: FastifyInstance) {
 
   app.post('/login', async (request, reply) => {
     const parsed = loginSchema.safeParse(request.body); if (!parsed.success) return reply.code(400).send({ error: 'INVALID_LOGIN', message: parsed.error.issues[0]?.message ?? 'Invalid login request' });
-    const phone = normalizePhone(parsed.data.phone); const user = await prisma.user.findFirst({ where: { phone, isActive: true, deletedAt: null }, select: userSelect() });
+    const user = await prisma.user.findFirst({ where: { phone: { in: phoneCandidates(parsed.data.phone) }, isActive: true, deletedAt: null }, select: userSelect() });
     if (!user) return reply.code(401).send({ error: 'INVALID_CREDENTIALS', message: 'Mobile number or password is incorrect.' });
     const credential = await getCredential(user.id); const valid = credential ? await verifyPassword(parsed.data.password, credential.passwordHash) : false;
     if (!valid) return reply.code(401).send({ error: 'INVALID_CREDENTIALS', message: 'Mobile number or password is incorrect.' });
@@ -51,13 +63,17 @@ export async function authRoutes(app: FastifyInstance) {
   app.post('/admin/setup-password', async (request, reply) => {
     const parsed = adminSetupSchema.safeParse(request.body);
     if (!parsed.success) return reply.code(400).send({ error: 'INVALID_ADMIN_SETUP', message: parsed.error.issues[0]?.message ?? 'Invalid setup request' });
-    if (!env.ADMIN_SETUP_SECRET || parsed.data.setupSecret !== env.ADMIN_SETUP_SECRET) return reply.code(403).send({ error: 'ADMIN_SETUP_FORBIDDEN', message: 'The setup code is invalid or admin setup is disabled.' });
-    const user = await prisma.user.findFirst({ where: { phone: normalizePhone(parsed.data.phone), role: 'ADMIN', isActive: true, deletedAt: null }, select: userSelect() });
+    if (!secretMatches(parsed.data.setupSecret, env.ADMIN_SETUP_SECRET)) return reply.code(403).send({ error: 'ADMIN_SETUP_FORBIDDEN', message: 'The setup code is invalid or admin setup is disabled.' });
+    const user = await prisma.user.findFirst({ where: { phone: { in: phoneCandidates(parsed.data.phone) }, role: { in: ['ADMIN', 'SUPER_ADMIN'] }, isActive: true, deletedAt: null }, select: userSelect() });
     if (!user) return reply.code(404).send({ error: 'ADMIN_NOT_FOUND', message: 'No active admin account was found for this mobile number.' });
-    if (await getCredential(user.id)) return reply.code(409).send({ error: 'PASSWORD_ALREADY_SET', message: 'This admin already has a password. Sign in normally.' });
     const passwordHash = await hashPassword(parsed.data.password);
-    await prisma.$executeRaw`INSERT INTO "UserCredential" ("userId", "passwordHash", "updatedAt") VALUES (${user.id}, ${passwordHash}, CURRENT_TIMESTAMP)`;
-    return { success: true, message: 'Admin password created. Remove ADMIN_SETUP_SECRET from the server environment now.' };
+    const existingCredential = await getCredential(user.id);
+    if (existingCredential) {
+      await prisma.$executeRaw`UPDATE "UserCredential" SET "passwordHash" = ${passwordHash}, "updatedAt" = CURRENT_TIMESTAMP WHERE "userId" = ${user.id}`;
+    } else {
+      await prisma.$executeRaw`INSERT INTO "UserCredential" ("userId", "passwordHash", "updatedAt") VALUES (${user.id}, ${passwordHash}, CURRENT_TIMESTAMP)`;
+    }
+    return { success: true, message: 'Admin password updated. Remove ADMIN_SETUP_SECRET from the server environment now.' };
   });
 
   app.post('/request-otp', async (request, reply) => { const parsed = phoneSchema.safeParse(request.body); if (!parsed.success) return reply.code(400).send({ error: 'INVALID_PHONE', message: parsed.error.issues[0]?.message ?? 'Invalid phone number' }); return reply.code(501).send({ error: 'OTP_PROVIDER_NOT_CONFIGURED', message: 'OTP provider will be connected later as an additional sign-in method.' }); });
