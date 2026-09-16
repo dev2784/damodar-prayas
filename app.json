@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "6a483efd-52c1-4f60-af3f-87010982b4ea"
+      }
+    },
+    "android": {
+      "package": "com.dev2784.damodarprayas"
+    }
+  }
+}
