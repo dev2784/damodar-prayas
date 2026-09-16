@@ -10,7 +10,7 @@ const nav=[
   ['◈','Samiti','/samiti'],
   ['⌁','Advertisements','/advertisements'],
   ['⚑','Reports','#'],
-  ['◎','Users','#'],
+  ['◎','Users','/users'],
 ] as const;
 
 export default function AdminSidebar(){
