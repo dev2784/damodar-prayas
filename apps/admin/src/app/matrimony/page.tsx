@@ -7,7 +7,7 @@ import { API_BASE_URL, clearAdminSession, getAdminToken, verifyAdminSession } fr
 
 type Profile = { id:string; firstName:string; lastName:string; gender:string; dateOfBirth:string; currentCity?:string|null; state?:string|null; education?:string|null; occupation?:string|null; contactPhone?:string|null; status:string; photos?:Array<{url:string;isPrimary:boolean;status:string}> };
 type DeleteRequest = { id:string; reason:string; status:string; createdAt:string; requestedBy:{firstName?:string|null;lastName?:string|null;phone:string}; matrimonyProfile:{id:string;firstName:string;lastName:string;status:string;currentCity?:string|null;state?:string|null} };
-const nav=[['⌂','Dashboard','/'],['♡','Matrimony','/matrimony'],['▤','Community','#'],['◈','Samiti','#'],['⌁','Advertisements','#'],['⚑','Reports','#'],['◎','Users','#']];
+const nav=[['⌂','Dashboard','/'],['♡','Matrimony','/matrimony'],['▤','Community','/community'],['◈','Samiti','#'],['⌁','Advertisements','/community'],['⚑','Reports','#'],['◎','Users','#']];
 
 async function api(path:string, options:RequestInit={}) {
   const token=getAdminToken(); if(!token) throw new Error('SESSION_EXPIRED');
