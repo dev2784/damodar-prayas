@@ -11,7 +11,9 @@ const nav=[['⌂','Dashboard','/'],['♡','Matrimony','/matrimony'],['▤','Comm
 
 async function api(path:string, options:RequestInit={}) {
   const token=getAdminToken(); if(!token) throw new Error('SESSION_EXPIRED');
-  const response=await fetch(`${API_BASE_URL}${path}`,{...options,headers:{authorization:`Bearer ${token}`,'content-type':'application/json',accept:'application/json',...(options.headers||{})}});
+  const headers:Record<string,string>={authorization:`Bearer ${token}`,accept:'application/json'};
+  if(options.body) headers['content-type']='application/json';
+  const response=await fetch(`${API_BASE_URL}${path}`,{...options,headers:{...headers,...(options.headers||{})}});
   const data=await response.json().catch(()=>({}));
   if(response.status===401||response.status===403) throw new Error('SESSION_EXPIRED');
   if(!response.ok) throw new Error(data?.message||data?.error||`Request failed (${response.status})`);
@@ -29,9 +31,6 @@ export default function MatrimonyModerationPage(){
     setLoading(true);setError(null);setDeletionError(null);
     try {
       const admin=await verifyAdminSession();if(!admin){router.replace('/login');return;}
-
-      // Load both queues independently. A failure in the deletion endpoint must not
-      // prevent valid matrimony profiles from rendering.
       const [profileResult, deletionResult]=await Promise.allSettled([
         api('/admin/matrimony?status=PENDING&page=1&limit=50'),
         api('/admin/matrimony/delete-requests?status=PENDING'),
