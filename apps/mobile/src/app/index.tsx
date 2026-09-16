@@ -25,9 +25,9 @@ const C = {
   green: '#0BAA67',
 };
 
-const GURU_BANNER = require('../../assets/images/home-guru-banner.jpg');
-const MATRIMONY_BANNER = require('../../assets/images/home-matrimony-banner.jpg');
-const HEADER_LOGO = require('../../assets/images/home-guru-banner.jpg');
+const GURU_BANNER = require('../../assets/images/home-guru-banner.png');
+const MATRIMONY_BANNER = require('../../assets/images/home-matrimony-banner.png');
+const HEADER_LOGO = require('../../assets/images/home-logo.png');
 
 const quickActions = [
   { icon: { ios: 'person.3.fill', android: 'groups', web: 'groups' } as const, title: 'समाज सदस्य', sub: '(Directory)', tint: '#B70F22', bg: '#FFF2F3' },
