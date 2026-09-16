@@ -9,7 +9,7 @@ const nav=[
   ['▤','Community','/community'],
   ['◈','Samiti','/samiti'],
   ['⌁','Advertisements','/advertisements'],
-  ['⚑','Reports','#'],
+  ['⚑','Reports','/reports'],
   ['◎','Users','/users'],
 ] as const;
 
