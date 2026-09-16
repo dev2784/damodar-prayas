@@ -86,6 +86,7 @@ export default function AppTabs() {
       <Tabs.Screen name="matrimony-shortlist" options={{ href: null }} />
       <Tabs.Screen name="matrimony-interests" options={{ href: null }} />
       <Tabs.Screen name="notifications" options={{ href: null }} />
+      <Tabs.Screen name="change-password" options={{ href: null }} />
       <Tabs.Screen name="auth" options={{ href: null }} />
     </Tabs>
   );
