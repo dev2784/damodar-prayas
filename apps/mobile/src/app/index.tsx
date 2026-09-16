@@ -39,7 +39,7 @@ return <SafeAreaView style={styles.safeArea} edges={['top']}><ScrollView showsVe
 <View style={styles.brandBadge}><ExpoImage source={HOME_HEADER_ICON} style={styles.brandIconImage} contentFit="cover" transition={0}/></View>
 <View style={styles.brandCopy}><Text style={styles.brandTitle}>दामोदर प्रयास</Text><Text style={styles.brandSubtitle}>Darzi Samaj Community & Matrimony</Text></View>
 <Pressable style={styles.headerIcon} onPress={()=>router.push('/notifications')} accessibilityRole="button" accessibilityLabel={unreadNotificationCount>0?`${unreadNotificationCount} matrimony interest requests`:'Notifications'}><Icon name={{ios:'bell.fill',android:'notifications',web:'notifications'}} color={C.maroon} size={21}/>{unreadNotificationCount>0?<View style={styles.notificationBadge}><Text style={styles.notificationBadgeText}>{unreadNotificationCount>99?'99+':unreadNotificationCount}</Text></View>:null}</Pressable>
-<View style={styles.headerIcon}><Icon name={{ios:'gearshape.fill',android:'settings',web:'settings'}} color={C.maroon} size={21}/></View>
+<Pressable style={styles.headerIcon} onPress={()=>router.push('/change-password')} accessibilityRole="button" accessibilityLabel="Change password"><Icon name={{ios:'gearshape.fill',android:'settings',web:'settings'}} color={C.maroon} size={21}/></Pressable>
 </View>
 <View style={styles.heroBannerWrap}><ExpoImage source={GURU_BANNER} style={styles.heroBannerImage} contentFit="cover" transition={0}/></View>
 <Pressable style={styles.matrimonyBannerWrap} onPress={()=>router.push('/matrimony')} accessibilityRole="button" accessibilityLabel="मैट्रिमोनी देखें"><ExpoImage source={MATRIMONY_BANNER} style={styles.matrimonyBannerImage} contentFit="cover" transition={0}/></Pressable>
