@@ -23,12 +23,33 @@ export default function MatrimonyModerationPage(){
   const [tab,setTab]=useState<'profiles'|'deletions'>('profiles');
   const [profiles,setProfiles]=useState<Profile[]>([]); const [deletions,setDeletions]=useState<DeleteRequest[]>([]);
   const [loading,setLoading]=useState(true); const [busy,setBusy]=useState<string|null>(null); const [error,setError]=useState<string|null>(null);
+  const [deletionError,setDeletionError]=useState<string|null>(null);
 
-  const load=useCallback(async()=>{setLoading(true);setError(null);try{
-    const admin=await verifyAdminSession();if(!admin){router.replace('/login');return;}
-    const [profileData,deleteData]=await Promise.all([api('/admin/matrimony?status=PENDING&page=1&limit=50'),api('/admin/matrimony/delete-requests?status=PENDING')]);
-    setProfiles(profileData.items||[]);setDeletions(deleteData.items||[]);
-  }catch(e){if(e instanceof Error&&e.message==='SESSION_EXPIRED'){clearAdminSession();router.replace('/login');return;}setError(e instanceof Error?e.message:'Data load failed');}finally{setLoading(false);}},[router]);
+  const load=useCallback(async()=>{
+    setLoading(true);setError(null);setDeletionError(null);
+    try {
+      const admin=await verifyAdminSession();if(!admin){router.replace('/login');return;}
+
+      // Load both queues independently. A failure in the deletion endpoint must not
+      // prevent valid matrimony profiles from rendering.
+      const [profileResult, deletionResult]=await Promise.allSettled([
+        api('/admin/matrimony?status=PENDING&page=1&limit=50'),
+        api('/admin/matrimony/delete-requests?status=PENDING'),
+      ]);
+
+      if(profileResult.status==='fulfilled') setProfiles(profileResult.value.items||[]);
+      else {
+        if(profileResult.reason instanceof Error&&profileResult.reason.message==='SESSION_EXPIRED'){clearAdminSession();router.replace('/login');return;}
+        setProfiles([]);setError(profileResult.reason instanceof Error?profileResult.reason.message:'Matrimony profiles load failed');
+      }
+
+      if(deletionResult.status==='fulfilled') setDeletions(deletionResult.value.items||[]);
+      else {
+        if(deletionResult.reason instanceof Error&&deletionResult.reason.message==='SESSION_EXPIRED'){clearAdminSession();router.replace('/login');return;}
+        setDeletions([]);setDeletionError(deletionResult.reason instanceof Error?deletionResult.reason.message:'Deletion requests load failed');
+      }
+    } finally { setLoading(false); }
+  },[router]);
   useEffect(()=>{void load();},[load]);
 
   async function action(path:string,body?:unknown){setBusy(path);setError(null);try{await api(path,{method:'POST',body:body?JSON.stringify(body):undefined});await load();}catch(e){setError(e instanceof Error?e.message:'Action failed');}finally{setBusy(null);}}
@@ -39,6 +60,7 @@ export default function MatrimonyModerationPage(){
     <div className="moderation-top"><div><Link href="/" className="back-link">← Dashboard</Link><p className="eyebrow">MATRIMONY MODERATION</p><h1>वैवाहिक Approval Center</h1><p className="subtitle">Pending profiles और profile deletion requests review करें।</p></div><button className="small-btn" onClick={()=>void load()}>Refresh</button></div>
     <div className="moderation-tabs"><button className={tab==='profiles'?'active':''} onClick={()=>setTab('profiles')}>Pending Profiles <b>{profiles.length}</b></button><button className={tab==='deletions'?'active':''} onClick={()=>setTab('deletions')}>Deletion Requests <b>{deletions.length}</b></button></div>
     {error?<div className="moderation-error">{error}</div>:null}
+    {tab==='deletions'&&deletionError?<div className="moderation-error">Deletion queue: {deletionError}</div>:null}
     {loading?<div className="empty-state">Live queue load हो रही है…</div>:tab==='profiles'?
       <section className="moderation-list">{profiles.length===0?<div className="empty-state">कोई pending matrimony profile नहीं है।</div>:profiles.map(p=><article className="moderation-card" key={p.id}><div className="profile-summary"><div className="profile-photo">{(p.photos?.find(x=>x.isPrimary)?.url||p.photos?.[0]?.url)?<img src={p.photos?.find(x=>x.isPrimary)?.url||p.photos?.[0]?.url} alt=""/>:<span>{p.firstName?.[0]||'P'}</span>}</div><div><h2>{p.firstName} {p.lastName}</h2><p>{p.gender} • {p.currentCity||'City not provided'}{p.state?`, ${p.state}`:''}</p><p>{p.education||'Education not provided'} • {p.occupation||'Occupation not provided'}</p><small>{p.contactPhone||'Contact hidden/not provided'}</small></div></div><div className="moderation-actions"><button disabled={!!busy} className="reject-action" onClick={()=>rejectProfile(p.id)}>Reject</button><button disabled={!!busy} className="approve-action" onClick={()=>window.confirm(`${p.firstName} ${p.lastName} की profile approve करें?`)&&void action(`/admin/matrimony/${p.id}/approve`)}>Approve</button></div></article>)}</section>
       :<section className="moderation-list">{deletions.length===0?<div className="empty-state">कोई pending deletion request नहीं है।</div>:deletions.map(d=><article className="moderation-card deletion-card" key={d.id}><div><span className="danger-label">DELETE REQUEST</span><h2>{d.matrimonyProfile.firstName} {d.matrimonyProfile.lastName}</h2><p className="request-meta">Requested by: {[d.requestedBy.firstName,d.requestedBy.lastName].filter(Boolean).join(' ')||d.requestedBy.phone} • {new Date(d.createdAt).toLocaleDateString('en-IN')}</p><div className="reason-box"><b>User reason</b><p>{d.reason}</p></div><small>Profile status: {d.matrimonyProfile.status} • {d.matrimonyProfile.currentCity||'Location unavailable'}{d.matrimonyProfile.state?`, ${d.matrimonyProfile.state}`:''}</small></div><div className="moderation-actions"><button disabled={!!busy} className="reject-action" onClick={()=>rejectDeletion(d.id)}>Reject request</button><button disabled={!!busy} className="danger-action" onClick={()=>window.confirm('Approve करने पर यह matrimony profile app से remove हो जाएगी. Continue?')&&void action(`/admin/matrimony/delete-requests/${d.id}/approve`)}>Approve deletion</button></div></article>)}</section>}
