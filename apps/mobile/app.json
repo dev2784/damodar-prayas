@@ -16,7 +16,8 @@
         "foregroundImage": "./assets/images/android-icon-foreground.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.dev2784.damodarprayas"
+      "package": "com.dev2784.damodarprayas",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "output": "static",
