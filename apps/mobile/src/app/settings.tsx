@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 
 import type { AppLanguage } from '@/config/app';
@@ -54,14 +55,6 @@ export default function SettingsScreen() {
           })}
         </View>
       </View>
-
-      <Pressable style={styles.passwordCard} onPress={() => router.push('/change-password')}>
-        <View>
-          <Text style={styles.passwordTitle}>{translate(language, 'changePassword')}</Text>
-          <Text style={styles.hint}>{language === 'hi' ? 'अपना अकाउंट पासवर्ड अपडेट करें' : 'Update your account password'}</Text>
-        </View>
-        <Text style={styles.chevron}>›</Text>
-      </Pressable>
     </SafeAreaView>
   );
 }
@@ -82,7 +75,4 @@ const styles = StyleSheet.create({
   optionTextSelected: { color: C.maroon },
   check: { fontSize: 18, color: 'transparent' },
   checkSelected: { color: C.maroon },
-  passwordCard: { marginTop: 14, padding: 18, borderRadius: 20, backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: '#EEDFCF', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  passwordTitle: { fontSize: 16, fontWeight: '800', color: C.ink },
-  chevron: { fontSize: 28, color: C.maroon },
 });
