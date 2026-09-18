@@ -221,7 +221,7 @@ export default function CommunityScreen() {
                   size={16}
                 />
                 <Text style={[styles.tabText, activeCategory === 'NEWS' && styles.activeTabText]}>
-                  समाचार
+                  {text('समाचार', 'News')}
                 </Text>
               </Pressable>
               <Pressable
@@ -234,7 +234,7 @@ export default function CommunityScreen() {
                   size={16}
                 />
                 <Text style={[styles.tabText, activeCategory === 'EVENT' && styles.activeTabText]}>
-                  समारोह
+                  {text('समारोह', 'Events')}
                 </Text>
               </Pressable>
               <Pressable
@@ -252,7 +252,7 @@ export default function CommunityScreen() {
                     activeCategory === 'ADVERTISEMENT' && styles.activeTabText,
                   ]}
                 >
-                  विज्ञापन
+                  {text('विज्ञापन', 'Ads')}
                 </Text>
               </Pressable>
             </View>
