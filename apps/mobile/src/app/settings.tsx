@@ -2,6 +2,10 @@ import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
+import Constants from 'expo-constants';
+import * as Device from 'expo-device';
+import { Platform } from 'react-native';
+import { useRegisterPushTokenMutation } from '@/services/push-api';
 
 import type { AppLanguage } from '@/config/app';
 import { persistLanguage, setLanguage } from '@/features/preferences/preferences-slice';
@@ -14,6 +18,34 @@ export default function SettingsScreen() {
   const dispatch = useAppDispatch();
   const language = useAppSelector((state) => state.preferences.language);
   const [saving, setSaving] = useState(false);
+  const [pushStatus, setPushStatus] = useState('Not tested');
+  const [testingPush, setTestingPush] = useState(false);
+  const [registerPushToken] = useRegisterPushTokenMutation();
+
+  async function testPushSetup() {
+    setTestingPush(true);
+    const lines: string[] = [];
+    try {
+      lines.push(`Physical device: ${Device.isDevice ? 'YES' : 'NO'}`);
+      const Notifications = await import('expo-notifications');
+      let permission = (await Notifications.getPermissionsAsync()).status;
+      if (permission !== 'granted') permission = (await Notifications.requestPermissionsAsync()).status;
+      lines.push(`Permission: ${permission}`);
+      const projectId = Constants.easConfig?.projectId ?? Constants.expoConfig?.extra?.eas?.projectId;
+      lines.push(`EAS project ID: ${projectId ? 'FOUND' : 'MISSING'}`);
+      if (!projectId) throw new Error('EAS projectId missing');
+      const token = (await Notifications.getExpoPushTokenAsync({ projectId })).data;
+      lines.push(`Expo token: ${token ? 'GENERATED' : 'FAILED'}`);
+      await registerPushToken({ token, platform: Platform.OS }).unwrap();
+      lines.push('Backend registration: SUCCESS');
+    } catch (error) {
+      const message = error instanceof Error ? error.message : JSON.stringify(error);
+      lines.push(`ERROR: ${message}`);
+    } finally {
+      setPushStatus(lines.join('\n'));
+      setTestingPush(false);
+    }
+  }
 
   async function chooseLanguage(next: AppLanguage) {
     if (next === language || saving) return;
@@ -55,6 +87,15 @@ export default function SettingsScreen() {
           })}
         </View>
       </View>
+
+      <View style={styles.card}>
+        <Text style={styles.label}>Push Notification Diagnostics</Text>
+        <Text style={styles.hint}>Checks permission, Expo token and backend registration.</Text>
+        <Pressable disabled={testingPush} onPress={() => void testPushSetup()} style={styles.testButton}>
+          <Text style={styles.testButtonText}>{testingPush ? 'Testing...' : 'Test Push Setup'}</Text>
+        </Pressable>
+        <Text selectable style={styles.diagnostic}>{pushStatus}</Text>
+      </View>
     </SafeAreaView>
   );
 }
@@ -75,4 +116,7 @@ const styles = StyleSheet.create({
   optionTextSelected: { color: C.maroon },
   check: { fontSize: 18, color: 'transparent' },
   checkSelected: { color: C.maroon },
+  testButton: { marginTop: 16, minHeight: 48, borderRadius: 14, alignItems: 'center', justifyContent: 'center', backgroundColor: C.maroon },
+  testButtonText: { color: '#FFFFFF', fontSize: 15, fontWeight: '800' },
+  diagnostic: { marginTop: 14, padding: 12, borderRadius: 12, backgroundColor: '#F8F2EA', color: C.ink, fontSize: 13, lineHeight: 20 },
 });
