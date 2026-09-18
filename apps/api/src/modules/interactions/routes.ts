@@ -2,6 +2,7 @@ import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { z } from 'zod';
 import { prisma } from '../../lib/prisma.js';
 import { publicMatrimonyProfileSelect } from '../matrimony/selectors.js';
+import { sendPushToUsers } from '../../lib/push-notifications.js';
 
 const sendInterestSchema = z.object({
   senderProfileId: z.string().min(1),
@@ -124,6 +125,7 @@ export async function interactionRoutes(app: FastifyInstance) {
       return created;
     });
 
+    void sendPushToUsers([receiverProfile.createdById], 'नया रिश्ता अनुरोध', 'आपकी वैवाहिक प्रोफ़ाइल पर नया इंटरेस्ट आया है।', { type: 'INTEREST_RECEIVED', interestId: interest.id, profileId: senderProfileId });
     return reply.code(201).send({ interest });
   });
 
@@ -210,6 +212,7 @@ export async function interactionRoutes(app: FastifyInstance) {
       return result;
     });
 
+    if (status === 'ACCEPTED') void sendPushToUsers([interest.senderProfile.createdById], 'रुचि स्वीकार हुई', 'आपकी भेजी गई रुचि स्वीकार कर ली गई है।', { type: 'INTEREST_ACCEPTED', interestId: interest.id, profileId: interest.receiverProfileId });
     return { interest: updated };
   });
 
