@@ -9,7 +9,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLanguageText } from '@/hooks/use-language-text';
 import { type CommunityPost, useGetCommunityPostsQuery } from '@/services/community-api';
 
-type FeedCategory = 'NEWS' | 'EVENT' | 'ADVERTISEMENT';
+type FeedCategory = 'NEWS' | 'EVENT' | 'OBITUARY' | 'ADVERTISEMENT';
 
 function formatDate(value: string | null) {
   if (!value) return null;
@@ -32,14 +32,17 @@ function PostCard({ post }: { post: CommunityPost }) {
   const translation = post.translations[0];
   const isEvent = post.category === 'EVENT';
   const isAdvertisement = post.category === 'ADVERTISEMENT';
+  const isObituary = post.category === 'OBITUARY';
   const date = formatDate(isEvent ? post.eventDate : (post.publishedAt ?? post.createdAt));
-  const categoryLabel = isEvent ? text('कार्यक्रम', 'Event') : isAdvertisement ? text('विज्ञापन', 'Advertisement') : text('समाचार', 'News');
+  const categoryLabel = isEvent ? text('कार्यक्रम', 'Event') : isAdvertisement ? text('विज्ञापन', 'Advertisement') : isObituary ? text('शोक सूचना', 'Obituary') : text('समाचार', 'News');
   const categoryIcon = isEvent
     ? ({ ios: 'calendar.badge.clock', android: 'event', web: 'event' } as const)
     : isAdvertisement
       ? ({ ios: 'megaphone.fill', android: 'campaign', web: 'campaign' } as const)
-      : ({ ios: 'newspaper.fill', android: 'newspaper', web: 'newspaper' } as const);
-  const categoryTint = isEvent ? C.gold : isAdvertisement ? C.green : C.maroon;
+      : isObituary
+        ? ({ ios: 'flame.fill', android: 'local_florist', web: 'local_florist' } as const)
+        : ({ ios: 'newspaper.fill', android: 'newspaper', web: 'newspaper' } as const);
+  const categoryTint = isEvent ? C.gold : isAdvertisement ? C.green : isObituary ? C.muted : C.maroon;
 
   return (
     <Pressable
@@ -61,7 +64,7 @@ function PostCard({ post }: { post: CommunityPost }) {
               ? styles.eventPlaceholder
               : isAdvertisement
                 ? styles.adPlaceholder
-                : styles.newsPlaceholder,
+                : isObituary ? styles.obituaryPlaceholder : styles.newsPlaceholder,
           ]}
         >
           <SymbolView name={categoryIcon} tintColor={categoryTint} size={42} />
@@ -73,13 +76,13 @@ function PostCard({ post }: { post: CommunityPost }) {
           <View
             style={[
               styles.categoryPill,
-              isEvent ? styles.eventPill : isAdvertisement ? styles.adPill : styles.newsPill,
+              isEvent ? styles.eventPill : isAdvertisement ? styles.adPill : isObituary ? styles.obituaryPill : styles.newsPill,
             ]}
           >
             <Text
               style={[
                 styles.categoryText,
-                isEvent ? styles.eventText : isAdvertisement ? styles.adText : styles.newsText,
+                isEvent ? styles.eventText : isAdvertisement ? styles.adText : isObituary ? styles.obituaryText : styles.newsText,
               ]}
             >
               {categoryLabel}
@@ -151,19 +154,25 @@ export default function CommunityScreen() {
       ? text('ताज़ा समाचार', 'Latest news')
       : activeCategory === 'EVENT'
         ? text('आने वाले कार्यक्रम', 'Upcoming events')
-        : text('समाज व्यापार विज्ञापन', 'Community business ads');
+        : activeCategory === 'OBITUARY'
+          ? text('शोक सूचनाएँ', 'Obituary notices')
+          : text('समाज व्यापार विज्ञापन', 'Community business ads');
   const emptyLabel =
     activeCategory === 'NEWS'
       ? text('अभी कोई समाचार प्रकाशित नहीं है', 'No news published yet')
       : activeCategory === 'EVENT'
         ? text('अभी कोई कार्यक्रम प्रकाशित नहीं है', 'No events published yet')
-        : text('अभी कोई विज्ञापन प्रकाशित नहीं है', 'No advertisements published yet');
+        : activeCategory === 'OBITUARY'
+          ? text('अभी कोई शोक सूचना प्रकाशित नहीं है', 'No obituary notices published yet')
+          : text('अभी कोई विज्ञापन प्रकाशित नहीं है', 'No advertisements published yet');
   const emptyIcon =
     activeCategory === 'NEWS'
       ? ({ ios: 'newspaper', android: 'newspaper', web: 'newspaper' } as const)
       : activeCategory === 'EVENT'
         ? ({ ios: 'calendar', android: 'event', web: 'event' } as const)
-        : ({ ios: 'megaphone', android: 'campaign', web: 'campaign' } as const);
+        : activeCategory === 'OBITUARY'
+          ? ({ ios: 'flame', android: 'local_florist', web: 'local_florist' } as const)
+          : ({ ios: 'megaphone', android: 'campaign', web: 'campaign' } as const);
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
@@ -186,7 +195,7 @@ export default function CommunityScreen() {
               <View style={styles.headerTop}>
                 <View style={styles.headerCopy}>
                   <Text style={styles.eyebrow}>{text('समाज अपडेट्स', 'Community updates')}</Text>
-                  <Text style={styles.title}>{text('समाचार, कार्यक्रम एवं विज्ञापन', 'News, events & advertisements')}</Text>
+                  <Text style={styles.title}>{text('समाचार, कार्यक्रम, शोक सूचना एवं विज्ञापन', 'News, events, obituary notices & advertisements')}</Text>
                 </View>
                 <Pressable
                   style={styles.addButton}
@@ -235,6 +244,19 @@ export default function CommunityScreen() {
                 />
                 <Text style={[styles.tabText, activeCategory === 'EVENT' && styles.activeTabText]}>
                   {text('समारोह', 'Events')}
+                </Text>
+              </Pressable>
+              <Pressable
+                style={[styles.tab, activeCategory === 'OBITUARY' && styles.activeTab]}
+                onPress={() => setActiveCategory('OBITUARY')}
+              >
+                <SymbolView
+                  name={{ ios: 'flame.fill', android: 'local_florist', web: 'local_florist' }}
+                  tintColor={activeCategory === 'OBITUARY' ? '#FFFFFF' : C.maroon}
+                  size={16}
+                />
+                <Text style={[styles.tabText, activeCategory === 'OBITUARY' && styles.activeTabText]}>
+                  {text('शोक सूचना', 'Obituary')}
                 </Text>
               </Pressable>
               <Pressable
