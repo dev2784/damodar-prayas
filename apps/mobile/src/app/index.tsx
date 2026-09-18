@@ -2,7 +2,7 @@ import type { ComponentProps } from 'react';
 import { calculateAge } from '@/lib/profile-format';
 import { useLanguageText } from '@/hooks/use-language-text';
 import { C, styles } from '@/styles/index.styles';
-import { Image, Pressable, ScrollView, Text, View } from 'react-native';
+import { Image, Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { Image as ExpoImage } from 'expo-image';
 import { SymbolView } from 'expo-symbols';
@@ -122,15 +122,15 @@ export default function HomeScreen() {
     pollingInterval: 10000,
     refetchOnMountOrArgChange: true,
   });
-  const { data: matrimonyData, isLoading: isMatrimonyLoading } = useGetMatrimonyProfilesQuery(
+  const { data: matrimonyData, isLoading: isMatrimonyLoading, isFetching: isMatrimonyFetching, refetch: refetchMatrimony } = useGetMatrimonyProfilesQuery(
     { page: 1, limit: 4 },
     { refetchOnMountOrArgChange: true },
   );
-  const { data: committeeData, isLoading: isCommitteesLoading } = useGetCommitteesQuery(
+  const { data: committeeData, isLoading: isCommitteesLoading, isFetching: isCommitteesFetching, refetch: refetchCommittees } = useGetCommitteesQuery(
     { language: apiLanguage },
     { refetchOnMountOrArgChange: true },
   );
-  const { data: advertisementData, isLoading: isAdvertisementsLoading } = useGetCommunityPostsQuery(
+  const { data: advertisementData, isLoading: isAdvertisementsLoading, isFetching: isAdvertisementsFetching, refetch: refetchAdvertisements } = useGetCommunityPostsQuery(
     { category: 'ADVERTISEMENT', language: apiLanguage },
     { refetchOnMountOrArgChange: true },
   );
@@ -140,6 +140,10 @@ export default function HomeScreen() {
     profileTotal = matrimonyData?.pagination.total,
     committeeTotal = committeeData?.pagination.total,
     advertisementTotal = advertisementData?.pagination.total;
+  const isRefreshing = isMatrimonyFetching || isCommitteesFetching || isAdvertisementsFetching;
+  function refreshHome() {
+    void Promise.all([refetchMatrimony(), refetchCommittees(), refetchAdvertisements()]);
+  }
   function openQuickAction(title: string) {
     if (title === 'कार्यक्रम एवं') {
       router.push('/community');
@@ -150,7 +154,18 @@ export default function HomeScreen() {
   }
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.content}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefreshing}
+            onRefresh={refreshHome}
+            tintColor={C.maroon}
+            colors={[C.maroon]}
+          />
+        }
+      >
         <View style={styles.header}>
           <View style={styles.brandBadge}>
             <ExpoImage
