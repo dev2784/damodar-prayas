@@ -2,7 +2,7 @@ import type { ComponentProps } from 'react';
 import { calculateAge } from '@/lib/profile-format';
 import { useLanguageText } from '@/hooks/use-language-text';
 import { C, styles } from '@/styles/index.styles';
-import { Image, Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
+import { Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { Image as ExpoImage } from 'expo-image';
 import { SymbolView } from 'expo-symbols';
@@ -268,7 +268,7 @@ export default function HomeScreen() {
                 }
               >
                 {photo ? (
-                  <Image source={{ uri: photo }} style={styles.profilePhoto} />
+                  <ExpoImage source={{ uri: photo }} style={styles.profilePhoto} contentFit="cover" cachePolicy="none" />
                 ) : (
                   <View style={[styles.profilePhoto, styles.profilePhotoPlaceholder]}>
                     <Icon
@@ -392,7 +392,7 @@ export default function HomeScreen() {
                 onPress={() => router.push({ pathname: '/community-post', params: { id: ad.id } })}
               >
                 {ad.bannerUrl ? (
-                  <Image source={{ uri: ad.bannerUrl }} style={styles.adImage} />
+                  <ExpoImage source={{ uri: ad.bannerUrl }} style={styles.adImage} contentFit="cover" />
                 ) : (
                   <View style={styles.adImagePlaceholder}>
                     <Icon
