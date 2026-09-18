@@ -255,7 +255,7 @@ export default function HomeScreen() {
           contentContainerStyle={styles.profileRow}
         >
           {latestProfiles.map((profile) => {
-            const photo = profile.photos[0]?.url,
+            const photo = profile.photos.find((item) => item.isPrimary)?.url ?? profile.photos[0]?.url,
               age = calculateAge(profile.dateOfBirth);
             return (
               <Pressable
@@ -268,7 +268,14 @@ export default function HomeScreen() {
                 }
               >
                 {photo ? (
-                  <ExpoImage source={{ uri: photo }} style={styles.profilePhoto} contentFit="cover" cachePolicy="none" />
+                  <View style={styles.profilePhoto}>
+                    <ExpoImage
+                      source={photo}
+                      style={{ width: '100%', height: '100%' }}
+                      contentFit="cover"
+                      transition={180}
+                    />
+                  </View>
                 ) : (
                   <View style={[styles.profilePhoto, styles.profilePhotoPlaceholder]}>
                     <Icon
