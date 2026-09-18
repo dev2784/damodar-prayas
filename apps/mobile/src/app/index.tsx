@@ -1,5 +1,6 @@
 import type { ComponentProps } from 'react';
 import { calculateAge } from '@/lib/profile-format';
+import { useLanguageText } from '@/hooks/use-language-text';
 import { C, styles } from '@/styles/index.styles';
 import { Image, Pressable, ScrollView, Text, View } from 'react-native';
 import { router } from 'expo-router';
@@ -102,6 +103,7 @@ function profileWork(profile: MatrimonyProfile) {
 }
 
 export default function HomeScreen() {
+  const { text, apiLanguage } = useLanguageText();
   const accessToken = useAppSelector((state) => state.auth.accessToken);
   const { data: notificationCount } = useGetUnreadNotificationCountQuery(undefined, {
     skip: !accessToken,
@@ -113,11 +115,11 @@ export default function HomeScreen() {
     { refetchOnMountOrArgChange: true },
   );
   const { data: committeeData, isLoading: isCommitteesLoading } = useGetCommitteesQuery(
-    { language: 'HI' },
+    { language: apiLanguage },
     { refetchOnMountOrArgChange: true },
   );
   const { data: advertisementData, isLoading: isAdvertisementsLoading } = useGetCommunityPostsQuery(
-    { category: 'ADVERTISEMENT', language: 'HI' },
+    { category: 'ADVERTISEMENT', language: apiLanguage },
     { refetchOnMountOrArgChange: true },
   );
   const unreadNotificationCount = notificationCount?.unreadCount ?? 0,
@@ -147,7 +149,7 @@ export default function HomeScreen() {
             />
           </View>
           <View style={styles.brandCopy}>
-            <Text style={styles.brandTitle}>दामोदर प्रयास</Text>
+            <Text style={styles.brandTitle}>{text('दामोदर प्रयास', 'Damodar Prayas')}</Text>
             <Text style={styles.brandSubtitle}>Darzi Samaj Community & Matrimony</Text>
           </View>
           <Pressable
@@ -198,7 +200,7 @@ export default function HomeScreen() {
           style={styles.matrimonyBannerWrap}
           onPress={() => router.push('/matrimony')}
           accessibilityRole="button"
-          accessibilityLabel="मैट्रिमोनी देखें"
+          accessibilityLabel={text('मैट्रिमोनी देखें', 'View matrimony')}
         >
           <ExpoImage
             source={MATRIMONY_BANNER}
@@ -208,7 +210,7 @@ export default function HomeScreen() {
           />
         </Pressable>
         <View style={styles.quickRow}>
-          {quickActions.map((item) => (
+          {quickActions.map((item) => { const title = languageQuickTitle(item.title, text); return (
             <Pressable
               key={item.title}
               style={[styles.quickCard, { backgroundColor: item.bg }]}
@@ -218,36 +220,35 @@ export default function HomeScreen() {
                 <Icon name={item.icon} color={item.tint} size={26} />
               </View>
               <Text style={styles.quickTitle} numberOfLines={2}>
-                {item.title}
+                {title}
               </Text>
               <Text style={styles.quickSub} numberOfLines={1}>
                 {item.sub}
               </Text>
-            </Pressable>
-          ))}
+            </Pressable>); })}
         </View>
         <View style={styles.statsStrip}>
           <TrustStat
             icon={{ ios: 'heart.fill', android: 'favorite', web: 'favorite' }}
             value={isMatrimonyLoading ? '…' : String(profileTotal ?? 0)}
-            label="उपलब्ध प्रोफाइल"
+            label={text('उपलब्ध प्रोफाइल', 'Available profiles')}
           />
           <View style={styles.statDivider} />
           <TrustStat
             icon={{ ios: 'person.3.fill', android: 'groups', web: 'groups' }}
             value={isCommitteesLoading ? '…' : String(committeeTotal ?? 0)}
-            label="समितियाँ"
+            label={text('समितियाँ', 'Committees')}
           />
           <View style={styles.statDivider} />
           <TrustStat
             icon={{ ios: 'megaphone.fill', android: 'campaign', web: 'campaign' }}
             value={isAdvertisementsLoading ? '…' : String(advertisementTotal ?? 0)}
-            label="स्वीकृत विज्ञापन"
+            label={text('स्वीकृत विज्ञापन', 'Approved ads')}
           />
           <View style={styles.statDivider} />
           <TrustStat
             icon={{ ios: 'star.fill', android: 'star', web: 'star' }}
-            label="एक मजबूत समाज के लिए साथ"
+            label={text('एक मजबूत समाज के लिए साथ', 'Together for a stronger community')}
             color={C.gold}
           />
         </View>
@@ -258,10 +259,10 @@ export default function HomeScreen() {
               color={C.maroon}
               size={21}
             />
-            <Text style={styles.sectionTitle}>नए Matrimony Profiles</Text>
+            <Text style={styles.sectionTitle}>{text('नए Matrimony Profiles', 'New Matrimony Profiles')}</Text>
           </View>
           <Pressable onPress={() => router.push('/matrimony')}>
-            <Text style={styles.viewAll}>View All →</Text>
+            <Text style={styles.viewAll}>{text('सभी देखें →', 'View All →')}</Text>
           </Pressable>
         </View>
         <ScrollView
@@ -301,7 +302,7 @@ export default function HomeScreen() {
                     color={C.green}
                     size={12}
                   />
-                  <Text style={styles.verifiedText}>Verified</Text>
+                  <Text style={styles.verifiedText}>{text('सत्यापित', 'Verified')}</Text>
                 </View>
                 <View style={styles.profileInfo}>
                   <View style={styles.profileNameRow}>
@@ -333,7 +334,7 @@ export default function HomeScreen() {
                 color={C.maroon}
                 size={25}
               />
-              <Text style={styles.profileEmptyTitle}>प्रोफाइल लोड हो रहे हैं...</Text>
+              <Text style={styles.profileEmptyTitle}>{text('प्रोफाइल लोड हो रहे हैं...', 'Loading profiles...')}</Text>
             </View>
           ) : latestProfiles.length === 0 ? (
             <View style={styles.profileEmptyCard}>
@@ -346,9 +347,9 @@ export default function HomeScreen() {
                 color={C.gold}
                 size={25}
               />
-              <Text style={styles.profileEmptyTitle}>अभी कोई स्वीकृत प्रोफाइल नहीं</Text>
+              <Text style={styles.profileEmptyTitle}>{text('अभी कोई स्वीकृत प्रोफाइल नहीं', 'No approved profiles yet')}</Text>
               <Text style={styles.profileEmptyText}>
-                Admin approval के बाद नए प्रोफाइल यहाँ दिखाई देंगे।
+                {text('Admin approval के बाद नए प्रोफाइल यहाँ दिखाई देंगे।', 'New profiles will appear here after admin approval.')}
               </Text>
             </View>
           ) : null}
@@ -361,7 +362,7 @@ export default function HomeScreen() {
                 color={C.maroon}
                 size={24}
               />
-              <Text style={styles.adsTitle}>समाज व्यापार</Text>
+              <Text style={styles.adsTitle}>{text('समाज व्यापार', 'Community Business')}</Text>
               <Text style={styles.adsEnglish}>Free Classifieds</Text>
             </View>
             <Pressable
@@ -369,11 +370,11 @@ export default function HomeScreen() {
                 router.push({ pathname: '/community', params: { category: 'ADVERTISEMENT' } })
               }
             >
-              <Text style={styles.viewAll}>View All →</Text>
+              <Text style={styles.viewAll}>{text('सभी देखें →', 'View All →')}</Text>
             </Pressable>
           </View>
           <View style={styles.adsActionRow}>
-            <Text style={styles.adsSubtitle}>अपने व्यवसाय, सेवा या ऑफर का विज्ञापन डालें</Text>
+            <Text style={styles.adsSubtitle}>{text('अपने व्यवसाय, सेवा या ऑफर का विज्ञापन डालें', 'Post an advertisement for your business, service or offer')}</Text>
             <Pressable
               style={styles.postAdButton}
               onPress={() =>
@@ -383,7 +384,7 @@ export default function HomeScreen() {
                 })
               }
             >
-              <Text style={styles.postAdButtonText}>+ विज्ञापन डालें</Text>
+              <Text style={styles.postAdButtonText}>{text('+ विज्ञापन डालें', '+ Post ad')}</Text>
               <View style={styles.freeBadge}>
                 <Text style={styles.freeBadgeText}>FREE</Text>
               </View>
@@ -417,10 +418,10 @@ export default function HomeScreen() {
                 )}
                 <View style={styles.adBody}>
                   <Text style={styles.adTitle} numberOfLines={1}>
-                    {translation?.title ?? 'समाज विज्ञापन'}
+                    {translation?.title ?? text('समाज विज्ञापन', 'Community advertisement')}
                   </Text>
                   <Text style={styles.adMeta} numberOfLines={2}>
-                    {translation?.details ?? 'विवरण उपलब्ध नहीं'}
+                    {translation?.details ?? text('विवरण उपलब्ध नहीं', 'Details unavailable')}
                   </Text>
                   <View style={styles.adFooter}>
                     <View style={styles.tag}>
@@ -446,9 +447,9 @@ export default function HomeScreen() {
                 size={24}
               />
               <View style={styles.emptyAdCopy}>
-                <Text style={styles.emptyAdTitle}>अभी कोई स्वीकृत विज्ञापन नहीं</Text>
+                <Text style={styles.emptyAdTitle}>{text('अभी कोई स्वीकृत विज्ञापन नहीं', 'No approved advertisements yet')}</Text>
                 <Text style={styles.emptyAdText}>
-                  Admin approval के बाद विज्ञापन यहाँ दिखाई देंगे।
+                  {text('Admin approval के बाद विज्ञापन यहाँ दिखाई देंगे।', 'Advertisements will appear here after admin approval.')}
                 </Text>
               </View>
             </View>
@@ -464,13 +465,13 @@ export default function HomeScreen() {
           </View>
           <View style={styles.closingCopy}>
             <Text style={styles.closingQuote}>
-              “मिलकर बढ़ें, जुड़े रहें, समाज को और मजबूत बनाएं”
+              {text('“मिलकर बढ़ें, जुड़े रहें, समाज को और मजबूत बनाएं”', '“Grow together, stay connected, strengthen our community”')}
             </Text>
             <View style={styles.goldLine} />
           </View>
           <View style={styles.joinButton}>
-            <Text style={styles.joinTitle}>Join Our Community</Text>
-            <Text style={styles.joinSub}>Because Community Matters</Text>
+            <Text style={styles.joinTitle}>{text('हमारे समाज से जुड़ें', 'Join Our Community')}</Text>
+            <Text style={styles.joinSub}>{text('क्योंकि समाज मायने रखता है', 'Because Community Matters')}</Text>
           </View>
         </View>
       </ScrollView>
