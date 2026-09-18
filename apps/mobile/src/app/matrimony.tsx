@@ -61,6 +61,7 @@ function FilterChip({
 
 function ProfileCard({ profile }: { profile: MatrimonyProfile }) {
   const { text } = useLanguageText();
+  const accessToken = useAppSelector((state) => state.auth.accessToken);
   const photo = profile.photos[0]?.url;
   const age = calculateAge(profile.dateOfBirth);
   const location = [profile.currentCity, profile.state].filter(Boolean).join(', ');
@@ -68,7 +69,11 @@ function ProfileCard({ profile }: { profile: MatrimonyProfile }) {
   return (
     <Pressable
       style={styles.card}
-      onPress={() => router.push({ pathname: '/matrimony-profile', params: { id: profile.id } })}
+      onPress={() =>
+        accessToken
+          ? router.push({ pathname: '/matrimony-profile', params: { id: profile.id } })
+          : router.push({ pathname: '/auth', params: { next: `/matrimony-profile?id=${profile.id}` } })
+      }
     >
       <View style={styles.photoWrap}>
         {photo ? (
