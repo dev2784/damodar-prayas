@@ -49,18 +49,23 @@ export default function CommunityPostScreen() {
     post?.translations.find((item) => item.language === 'HI') ?? post?.translations[0];
   const isEvent = post?.category === 'EVENT';
   const isAdvertisement = post?.category === 'ADVERTISEMENT';
-  const categoryLabel = isEvent ? 'कार्यक्रम' : isAdvertisement ? 'विज्ञापन' : 'समाचार';
+  const isObituary = post?.category === 'OBITUARY';
+  const categoryLabel = isEvent ? 'कार्यक्रम' : isAdvertisement ? 'विज्ञापन' : isObituary ? 'शोक सूचना' : 'समाचार';
   const topTitle = isEvent
     ? 'कार्यक्रम विवरण'
     : isAdvertisement
       ? 'विज्ञापन विवरण'
-      : 'समाचार विवरण';
+      : isObituary
+        ? 'शोक सूचना'
+        : 'समाचार विवरण';
   const categoryIcon = isEvent
     ? ({ ios: 'calendar.badge.clock', android: 'event', web: 'event' } as const)
     : isAdvertisement
       ? ({ ios: 'megaphone.fill', android: 'campaign', web: 'campaign' } as const)
-      : ({ ios: 'newspaper.fill', android: 'newspaper', web: 'newspaper' } as const);
-  const categoryTint = isEvent ? C.gold : isAdvertisement ? C.green : C.maroon;
+      : isObituary
+        ? ({ ios: 'flame.fill', android: 'local_florist', web: 'local_florist' } as const)
+        : ({ ios: 'newspaper.fill', android: 'newspaper', web: 'newspaper' } as const);
+  const categoryTint = isEvent ? C.gold : isAdvertisement ? C.green : isObituary ? C.muted : C.maroon;
   const eventDate = formatDate(post?.eventDate ?? null);
   const publishedDate = formatDate(post?.publishedAt ?? post?.createdAt ?? null);
 
@@ -149,7 +154,15 @@ export default function CommunityPostScreen() {
               ) : null}
             </View>
 
+            {isObituary && post.deceasedName ? <Text style={styles.obituaryName}>स्व. {post.deceasedName}</Text> : null}
             <Text style={styles.title}>{translation?.title ?? 'विवरण उपलब्ध नहीं'}</Text>
+            {isObituary ? (
+              <View style={styles.obituaryMeta}>
+                {post.obituaryType ? <Text style={styles.obituaryType}>{({ DEATH_NOTICE: 'निधन सूचना', UTHAWNA: 'उठावना', CHAUTHA: 'चौथा', TRIBUTE: 'श्रद्धांजलि सभा', OTHER: 'अन्य शोक कार्यक्रम' } as const)[post.obituaryType]}</Text> : null}
+                {post.deathDate ? <Text style={styles.obituaryLine}>निधन: {formatDate(post.deathDate)}</Text> : null}
+                {post.eventDate ? <Text style={styles.obituaryLine}>कार्यक्रम: {formatDate(post.eventDate)}{post.eventTime ? ` • ${post.eventTime}` : ''}</Text> : null}
+              </View>
+            ) : null}
 
             <View style={styles.infoStack}>
               {isEvent && eventDate ? (
