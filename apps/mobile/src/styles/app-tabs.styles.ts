@@ -3,20 +3,21 @@ import { StyleSheet } from 'react-native';
 export const COLORS = {
   cream: '#FFF8ED',
   maroon: '#A30D1E',
-  muted: '#667085',
+  muted: '#FFFFFF',
+  gold: '#F7C84B',
 };
 
 export function createTabStyles(bottomInset: number) {
   return StyleSheet.create({
     bar: {
-      backgroundColor: '#FFFFFF',
-      borderTopColor: '#E9DED0',
+      backgroundColor: '#8F0E22',
+      borderTopColor: '#A52A3B',
       // Reserve system navigation space without reducing the menu's content height.
       height: 76 + bottomInset,
       paddingTop: 8,
       paddingBottom: 8 + bottomInset,
-      shadowColor: '#5E3820',
-      shadowOpacity: 0.08,
+      shadowColor: '#3D0710',
+      shadowOpacity: 0.22,
       shadowRadius: 12,
       elevation: 10,
     },
