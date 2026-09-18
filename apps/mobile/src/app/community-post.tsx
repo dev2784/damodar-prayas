@@ -1,12 +1,13 @@
 import { C, styles } from '@/styles/community-post.styles';
-import { ActivityIndicator, Linking, Modal, Pressable, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Linking, Modal, Pressable, ScrollView, Share, Text, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Image } from 'expo-image';
 import { SymbolView } from 'expo-symbols';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState } from 'react';
 
-import { useGetCommunityPostQuery } from '@/services/community-api';
+import { useGetCommunityPostQuery, useGetCommunityPostLikesQuery, useGetMyCommunityPostLikeQuery, useLikeCommunityPostMutation, useUnlikeCommunityPostMutation } from '@/services/community-api';
+import { useAppSelector } from '@/store/hooks';
 
 function formatDate(value: string | null) {
   if (!value) return null;
@@ -25,6 +26,26 @@ export default function CommunityPostScreen() {
   const id = Array.isArray(params.id) ? params.id[0] : params.id;
   const { data, isLoading, isError, refetch } = useGetCommunityPostQuery(id ?? '', { skip: !id });
   const post = data?.post;
+  const accessToken = useAppSelector((state) => state.auth.accessToken);
+  const { data: likesData } = useGetCommunityPostLikesQuery(id ?? '', { skip: !id });
+  const { data: myLike } = useGetMyCommunityPostLikeQuery(id ?? '', { skip: !id || !accessToken });
+  const [likePost, { isLoading: liking }] = useLikeCommunityPostMutation();
+  const [unlikePost, { isLoading: unliking }] = useUnlikeCommunityPostMutation();
+  const likeBusy = liking || unliking;
+
+  async function toggleLike() {
+    if (!id) return;
+    if (!accessToken) { router.push({ pathname: '/auth', params: { next: `/community-post?id=${id}` } }); return; }
+    try { if (myLike?.isLiked) await unlikePost(id).unwrap(); else await likePost(id).unwrap(); }
+    catch { Alert.alert('Like नहीं हुआ', 'कृपया दोबारा कोशिश करें।'); }
+  }
+
+  async function sharePost() {
+    if (!post) return;
+    const tr=post.translations.find((x)=>x.language==='HI') ?? post.translations[0];
+    const message=[tr?.title, tr?.details?.slice(0,180), post.location ? `स्थान: ${post.location}` : null, 'Damodar Prayas'].filter(Boolean).join('\n\n');
+    await Share.share({ message, title: tr?.title ?? 'Damodar Prayas' });
+  }
 
   if (!id) {
     return (
@@ -217,6 +238,11 @@ export default function CommunityPostScreen() {
             {translation?.details ? (
               <Text style={styles.details}>{translation.details}</Text>
             ) : null}
+
+            <View style={styles.socialRow}>
+              {!isAdvertisement ? <Pressable disabled={likeBusy} style={[styles.socialButton, myLike?.isLiked && styles.socialButtonActive]} onPress={() => void toggleLike()}><Text style={[styles.socialIcon, myLike?.isLiked && styles.socialTextActive]}>{myLike?.isLiked ? '♥' : '♡'}</Text><Text style={[styles.socialText, myLike?.isLiked && styles.socialTextActive]}>{likesData?.likeCount ?? 0} Like</Text></Pressable> : null}
+              <Pressable style={styles.socialButton} onPress={() => void sharePost()}><Text style={styles.socialIcon}>↗</Text><Text style={styles.socialText}>Share</Text></Pressable>
+            </View>
           </View>
 
           {post.contactName || post.contactPhone ? (
