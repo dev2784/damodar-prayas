@@ -10,7 +10,6 @@ import {
   View,
 } from 'react-native';
 import { Image } from 'expo-image';
-import DateTimePicker, { type DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import * as ImagePicker from 'expo-image-picker';
 import { router, useLocalSearchParams } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
@@ -64,7 +63,6 @@ export default function CommunitySubmitScreen() {
   const [deceasedName, setDeceasedName] = useState('');
   const [deathDate, setDeathDate] = useState('');
   const [eventTime, setEventTime] = useState('');
-  const [datePickerTarget, setDatePickerTarget] = useState<'death' | 'event' | null>(null);
   const [contactName, setContactName] = useState('');
   const [contactPhone, setContactPhone] = useState('');
   const [banner, setBanner] = useState<ContentUploadableFile | null>(null);
@@ -73,33 +71,6 @@ export default function CommunitySubmitScreen() {
   const label =
     category === 'EVENT' ? 'कार्यक्रम' : category === 'ADVERTISEMENT' ? 'विज्ञापन' : category === 'OBITUARY' ? 'शोक सूचना' : 'समाचार';
   const busy = isSubmitting || uploading;
-
-  function displayDate(value: string) {
-    if (!value) return '';
-    const [year, month, day] = value.split('-');
-    return `${day}/${month}/${year}`;
-  }
-
-  function isoDate(date: Date) {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  }
-
-  function pickerDate(value: string) {
-    if (!value) return new Date();
-    const [year, month, day] = value.split('-').map(Number);
-    return new Date(year, month - 1, day);
-  }
-
-  function onDatePicked(event: DateTimePickerEvent, selected?: Date) {
-    const target = datePickerTarget;
-    setDatePickerTarget(null);
-    if (event.type !== 'set' || !selected || !target) return;
-    if (target === 'death') setDeathDate(isoDate(selected));
-    else setEventDate(isoDate(selected));
-  }
 
   async function pickBanner() {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -229,15 +200,11 @@ export default function CommunitySubmitScreen() {
               <Text style={styles.label}>दिवंगत व्यक्ति का नाम *</Text>
               <TextInput value={deceasedName} onChangeText={setDeceasedName} style={styles.input} placeholder="स्व. श्री / श्रीमती का नाम" placeholderTextColor="#A49890" />
               <Text style={styles.label}>निधन दिनांक</Text>
-              <Pressable style={styles.input} onPress={() => setDatePickerTarget('death')}>
-                <Text style={{ color: deathDate ? '#332923' : '#A49890' }}>{deathDate ? displayDate(deathDate) : 'निधन दिनांक चुनें (वैकल्पिक)'}</Text>
-              </Pressable>
+              <TextInput value={deathDate} onChangeText={setDeathDate} style={styles.input} placeholder="YYYY-MM-DD (वैकल्पिक)" placeholderTextColor="#A49890" keyboardType="numbers-and-punctuation" />
               {obituaryType !== 'DEATH_NOTICE' ? (
                 <>
                   <Text style={styles.label}>कार्यक्रम तारीख *</Text>
-                  <Pressable style={styles.input} onPress={() => setDatePickerTarget('event')}>
-                  <Text style={{ color: eventDate ? '#332923' : '#A49890' }}>{eventDate ? displayDate(eventDate) : 'कार्यक्रम तारीख चुनें'}</Text>
-                </Pressable>
+                  <TextInput value={eventDate} onChangeText={setEventDate} style={styles.input} placeholder="YYYY-MM-DD" placeholderTextColor="#A49890" keyboardType="numbers-and-punctuation" />
                   <Text style={styles.label}>कार्यक्रम समय</Text>
                   <TextInput value={eventTime} onChangeText={setEventTime} style={styles.input} placeholder="जैसे शाम 4:00 बजे" placeholderTextColor="#A49890" />
                 </>
@@ -336,16 +303,6 @@ export default function CommunitySubmitScreen() {
           )}
         </Pressable>
       </ScrollView>
-      {datePickerTarget ? (
-        <DateTimePicker
-          value={pickerDate(datePickerTarget === 'death' ? deathDate : eventDate)}
-          mode="date"
-          display="default"
-          maximumDate={datePickerTarget === 'death' ? new Date() : undefined}
-          minimumDate={datePickerTarget === 'event' ? new Date() : undefined}
-          onChange={onDatePicked}
-        />
-      ) : null}
     </SafeAreaView>
   );
 }
