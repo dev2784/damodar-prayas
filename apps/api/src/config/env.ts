@@ -39,6 +39,9 @@ if (
 }
 
 export const env = parsed.data;
-export const corsOrigins = env.CORS_ORIGIN.split(',')
-  .map((origin) => origin.trim())
-  .filter(Boolean);
+const productionCorsOrigins = ['https://damodar-prayas-admin.vercel.app'];
+
+export const corsOrigins = [...new Set([
+  ...env.CORS_ORIGIN.split(',').map((origin) => origin.trim()).filter(Boolean),
+  ...productionCorsOrigins,
+])];
