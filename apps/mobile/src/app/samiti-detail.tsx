@@ -1,13 +1,15 @@
 import { C, styles } from '@/styles/samiti-detail.styles';
-import { ActivityIndicator, Linking, Pressable, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Linking, Modal, Pressable, ScrollView, Text, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Image } from 'expo-image';
 import { SymbolView } from 'expo-symbols';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useState } from 'react';
 
 import { useGetCommitteeQuery } from '@/services/committee-api';
 
 export default function SamitiDetailScreen() {
+  const [viewerUrl, setViewerUrl] = useState<string | null>(null);
   const params = useLocalSearchParams<{ id?: string | string[] }>();
   const id = Array.isArray(params.id) ? params.id[0] : params.id;
   const { data, isLoading, isError, refetch } = useGetCommitteeQuery(id ?? '', { skip: !id });
@@ -53,12 +55,12 @@ export default function SamitiDetailScreen() {
       ) : committee ? (
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
           {committee.bannerUrl ? (
-            <Image
+            <Pressable onPress={() => setViewerUrl(committee.bannerUrl)}><Image
               source={{ uri: committee.bannerUrl }}
               style={styles.banner}
               contentFit="cover"
               transition={180}
-            />
+            /></Pressable>
           ) : (
             <View style={styles.bannerPlaceholder}>
               <SymbolView
@@ -140,11 +142,11 @@ export default function SamitiDetailScreen() {
                 {committee.members.map((member) => (
                   <View key={member.id} style={styles.memberCard}>
                     {member.photoUrl ? (
-                      <Image
-                        source={{ uri: member.photoUrl }}
+                      <Pressable onPress={() => setViewerUrl(member.photoUrl)}><Image
+              source={{ uri: member.photoUrl }}
                         style={styles.memberPhoto}
                         contentFit="cover"
-                      />
+                      /></Pressable>
                     ) : (
                       <View style={styles.memberPhotoPlaceholder}>
                         <SymbolView
@@ -181,6 +183,12 @@ export default function SamitiDetailScreen() {
           ) : null}
         </ScrollView>
       ) : null}
+      <Modal visible={Boolean(viewerUrl)} transparent animationType="fade" onRequestClose={() => setViewerUrl(null)}>
+        <View style={styles.viewerOverlay}>
+          <Pressable style={styles.viewerClose} onPress={() => setViewerUrl(null)}><Text style={styles.viewerCloseText}>✕</Text></Pressable>
+          {viewerUrl ? <Image source={{ uri: viewerUrl }} style={styles.viewerImage} contentFit="contain" /> : null}
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
