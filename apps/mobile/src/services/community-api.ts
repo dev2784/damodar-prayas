@@ -1,7 +1,7 @@
 import { api } from '@/services/api';
 
 export type CommunityPostCategory =
-  'NEWS' | 'EVENT' | 'ADVERTISEMENT' | 'REQUEST' | 'GRATITUDE' | 'WISHES';
+  'NEWS' | 'EVENT' | 'ADVERTISEMENT' | 'REQUEST' | 'GRATITUDE' | 'WISHES' | 'OBITUARY';
 
 export type CommunityPostTranslation = {
   language: 'HI' | 'EN';
@@ -19,6 +19,10 @@ export type CommunityPost = {
   contactPhone: string | null;
   location: string | null;
   eventDate: string | null;
+  obituaryType: 'DEATH_NOTICE' | 'UTHAWNA' | 'CHAUTHA' | 'TRIBUTE' | 'OTHER' | null;
+  deceasedName: string | null;
+  deathDate: string | null;
+  eventTime: string | null;
   publishedAt: string | null;
   expiresAt: string | null;
   isFeatured: boolean;
@@ -37,6 +41,10 @@ export type CommunityPostSubmission = {
   contactPhone?: string | null;
   location?: string | null;
   eventDate?: string | null;
+  obituaryType?: 'DEATH_NOTICE' | 'UTHAWNA' | 'CHAUTHA' | 'TRIBUTE' | 'OTHER' | null;
+  deceasedName?: string | null;
+  deathDate?: string | null;
+  eventTime?: string | null;
   expiresAt?: string | null;
   translations: CommunityPostTranslation[];
 };
