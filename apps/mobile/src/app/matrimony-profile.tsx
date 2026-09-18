@@ -1,6 +1,6 @@
 import { calculateAge, heightLabel } from '@/lib/profile-format';
 import { C, styles } from '@/styles/matrimony-profile.styles';
-import { ActivityIndicator, Alert, Modal, Pressable, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Dimensions, Modal, Pressable, ScrollView, Text, View } from 'react-native';
 import { useState } from 'react';
 import { Image } from 'expo-image';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -112,6 +112,8 @@ export default function MatrimonyProfileScreen() {
 function ProfileDetails({ profile }: { profile: MatrimonyProfile }) {
   const accessToken = useAppSelector((state) => state.auth.accessToken);
   const [senderModalOpen, setSenderModalOpen] = useState(false);
+  const [viewerIndex, setViewerIndex] = useState<number | null>(null);
+  const [photoIndex, setPhotoIndex] = useState(0);
   const { data: mineData } = useGetMyMatrimonyProfilesQuery(undefined, { skip: !accessToken });
   const { data: shortlistData } = useGetShortlistsQuery(undefined, { skip: !accessToken });
   const { data: outgoingData } = useGetOutgoingInterestsQuery(undefined, { skip: !accessToken });
@@ -207,7 +209,8 @@ function ProfileDetails({ profile }: { profile: MatrimonyProfile }) {
     setSenderModalOpen(true);
   }
 
-  const photo = profile.photos[0]?.url;
+  const photos = [...profile.photos].sort((a, b) => Number(b.isPrimary) - Number(a.isPrimary) || a.sortOrder - b.sortOrder);
+  const galleryWidth = Dimensions.get('window').width - 28;
   const age = calculateAge(profile.dateOfBirth);
   const location = [profile.currentCity, profile.district, profile.state]
     .filter(Boolean)
@@ -216,13 +219,38 @@ function ProfileDetails({ profile }: { profile: MatrimonyProfile }) {
   return (
     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
       <View style={styles.heroCard}>
-        {photo ? (
-          <Image
-            source={{ uri: photo }}
-            style={styles.heroPhoto}
-            contentFit="cover"
-            transition={180}
-          />
+        {photos.length > 0 ? (
+          <View>
+            <ScrollView
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              onMomentumScrollEnd={(event) =>
+                setPhotoIndex(Math.round(event.nativeEvent.contentOffset.x / galleryWidth))
+              }
+            >
+              {photos.map((item, index) => (
+                <Pressable key={item.id} onPress={() => setViewerIndex(index)}>
+                  <Image
+                    source={{ uri: item.url }}
+                    style={[styles.heroPhoto, { width: galleryWidth }]}
+                    contentFit="cover"
+                    transition={180}
+                  />
+                </Pressable>
+              ))}
+            </ScrollView>
+            {photos.length > 1 ? (
+              <View style={styles.galleryDots}>
+                {photos.map((item, index) => (
+                  <View key={item.id} style={[styles.galleryDot, index === photoIndex && styles.galleryDotActive]} />
+                ))}
+              </View>
+            ) : null}
+            <View style={styles.photoCountBadge}>
+              <Text style={styles.photoCountText}>{photoIndex + 1}/{photos.length}</Text>
+            </View>
+          </View>
         ) : (
           <View style={styles.heroPlaceholder}>
             <SymbolView
@@ -349,6 +377,21 @@ function ProfileDetails({ profile }: { profile: MatrimonyProfile }) {
           )}
         </View>
       ) : null}
+
+      <Modal visible={viewerIndex !== null} transparent animationType="fade" onRequestClose={() => setViewerIndex(null)}>
+        <View style={styles.viewerOverlay}>
+          <Pressable style={styles.viewerClose} onPress={() => setViewerIndex(null)}>
+            <Text style={styles.viewerCloseText}>✕</Text>
+          </Pressable>
+          <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false} contentOffset={{ x: (viewerIndex ?? 0) * Dimensions.get('window').width, y: 0 }}>
+            {photos.map((item) => (
+              <View key={item.id} style={[styles.viewerPage, { width: Dimensions.get('window').width }]}>
+                <Image source={{ uri: item.url }} style={styles.viewerImage} contentFit="contain" />
+              </View>
+            ))}
+          </ScrollView>
+        </View>
+      </Modal>
 
       <Modal
         visible={senderModalOpen}
