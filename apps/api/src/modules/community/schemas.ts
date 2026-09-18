@@ -7,6 +7,7 @@ export const postCategorySchema = z.enum([
   'REQUEST',
   'GRATITUDE',
   'WISHES',
+  'OBITUARY',
 ]);
 
 const translationSchema = z.object({
@@ -23,6 +24,10 @@ export const submitCommunityPostSchema = z.object({
   contactPhone: z.string().trim().regex(/^\+?[1-9]\d{7,14}$/).optional().nullable(),
   location: z.string().trim().max(300).optional().nullable(),
   eventDate: z.coerce.date().optional().nullable(),
+  obituaryType: z.enum(['DEATH_NOTICE', 'UTHAWNA', 'CHAUTHA', 'TRIBUTE', 'OTHER']).optional().nullable(),
+  deceasedName: z.string().trim().max(200).optional().nullable(),
+  deathDate: z.coerce.date().optional().nullable(),
+  eventTime: z.string().trim().max(50).optional().nullable(),
   expiresAt: z.coerce.date().optional().nullable(),
   translations: z.array(translationSchema).min(1).max(2).superRefine((translations, ctx) => {
     const languages = translations.map((item) => item.language);
