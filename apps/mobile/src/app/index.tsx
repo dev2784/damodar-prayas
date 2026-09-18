@@ -221,49 +221,6 @@ export default function HomeScreen() {
             transition={0}
           />
         </Pressable>
-        <View style={styles.quickRow}>
-          {quickActions.map((item) => { const title = languageQuickTitle(item.title, text); return (
-            <Pressable
-              key={item.title}
-              style={[styles.quickCard, { backgroundColor: item.bg }]}
-              onPress={() => openQuickAction(item.title)}
-            >
-              <View style={styles.quickIcon}>
-                <Icon name={item.icon} color={item.tint} size={26} />
-              </View>
-              <Text style={styles.quickTitle} numberOfLines={2}>
-                {title}
-              </Text>
-              <Text style={styles.quickSub} numberOfLines={1}>
-                {item.sub}
-              </Text>
-            </Pressable>); })}
-        </View>
-        <View style={styles.statsStrip}>
-          <TrustStat
-            icon={{ ios: 'heart.fill', android: 'favorite', web: 'favorite' }}
-            value={isMatrimonyLoading ? '…' : String(profileTotal ?? 0)}
-            label={text('उपलब्ध प्रोफाइल', 'Available profiles')}
-          />
-          <View style={styles.statDivider} />
-          <TrustStat
-            icon={{ ios: 'person.3.fill', android: 'groups', web: 'groups' }}
-            value={isCommitteesLoading ? '…' : String(committeeTotal ?? 0)}
-            label={text('समितियाँ', 'Committees')}
-          />
-          <View style={styles.statDivider} />
-          <TrustStat
-            icon={{ ios: 'megaphone.fill', android: 'campaign', web: 'campaign' }}
-            value={isAdvertisementsLoading ? '…' : String(advertisementTotal ?? 0)}
-            label={text('स्वीकृत विज्ञापन', 'Approved ads')}
-          />
-          <View style={styles.statDivider} />
-          <TrustStat
-            icon={{ ios: 'star.fill', android: 'star', web: 'star' }}
-            label={text('एक मजबूत समाज के लिए साथ', 'Together for a stronger community')}
-            color={C.gold}
-          />
-        </View>
         <View style={styles.sectionHeader}>
           <View style={styles.sectionTitleRow}>
             <Icon
@@ -467,6 +424,49 @@ export default function HomeScreen() {
             </View>
           ) : null}
         </ScrollView>
+        <View style={styles.quickRow}>
+          {quickActions.map((item) => { const title = languageQuickTitle(item.title, text); return (
+            <Pressable
+              key={item.title}
+              style={[styles.quickCard, { backgroundColor: item.bg }]}
+              onPress={() => openQuickAction(item.title)}
+            >
+              <View style={styles.quickIcon}>
+                <Icon name={item.icon} color={item.tint} size={26} />
+              </View>
+              <Text style={styles.quickTitle} numberOfLines={2}>
+                {title}
+              </Text>
+              <Text style={styles.quickSub} numberOfLines={1}>
+                {item.sub}
+              </Text>
+            </Pressable>); })}
+        </View>
+        <View style={styles.statsStrip}>
+          <TrustStat
+            icon={{ ios: 'heart.fill', android: 'favorite', web: 'favorite' }}
+            value={isMatrimonyLoading ? '…' : String(profileTotal ?? 0)}
+            label={text('उपलब्ध प्रोफाइल', 'Available profiles')}
+          />
+          <View style={styles.statDivider} />
+          <TrustStat
+            icon={{ ios: 'person.3.fill', android: 'groups', web: 'groups' }}
+            value={isCommitteesLoading ? '…' : String(committeeTotal ?? 0)}
+            label={text('समितियाँ', 'Committees')}
+          />
+          <View style={styles.statDivider} />
+          <TrustStat
+            icon={{ ios: 'megaphone.fill', android: 'campaign', web: 'campaign' }}
+            value={isAdvertisementsLoading ? '…' : String(advertisementTotal ?? 0)}
+            label={text('स्वीकृत विज्ञापन', 'Approved ads')}
+          />
+          <View style={styles.statDivider} />
+          <TrustStat
+            icon={{ ios: 'star.fill', android: 'star', web: 'star' }}
+            label={text('एक मजबूत समाज के लिए साथ', 'Together for a stronger community')}
+            color={C.gold}
+          />
+        </View>
         <View style={styles.closingBanner}>
           <View style={styles.closingIcon}>
             <Icon
