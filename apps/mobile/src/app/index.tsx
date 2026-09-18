@@ -247,7 +247,9 @@ export default function HomeScreen() {
                 style={styles.profileCard}
                 key={profile.id}
                 onPress={() =>
-                  router.push({ pathname: '/matrimony-profile', params: { id: profile.id } })
+                  accessToken
+                    ? router.push({ pathname: '/matrimony-profile', params: { id: profile.id } })
+                    : router.push({ pathname: '/auth', params: { next: `/matrimony-profile?id=${profile.id}` } })
                 }
               >
                 {photo ? (
