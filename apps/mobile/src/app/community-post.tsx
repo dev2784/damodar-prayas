@@ -1,9 +1,10 @@
 import { C, styles } from '@/styles/community-post.styles';
-import { ActivityIndicator, Linking, Pressable, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Linking, Modal, Pressable, ScrollView, Text, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Image } from 'expo-image';
 import { SymbolView } from 'expo-symbols';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useState } from 'react';
 
 import { useGetCommunityPostQuery } from '@/services/community-api';
 
@@ -19,6 +20,7 @@ function formatDate(value: string | null) {
 }
 
 export default function CommunityPostScreen() {
+  const [viewerUrl, setViewerUrl] = useState<string | null>(null);
   const params = useLocalSearchParams<{ id?: string | string[] }>();
   const id = Array.isArray(params.id) ? params.id[0] : params.id;
   const { data, isLoading, isError, refetch } = useGetCommunityPostQuery(id ?? '', { skip: !id });
@@ -33,7 +35,13 @@ export default function CommunityPostScreen() {
             <Text style={styles.retryText}>वापस जाएँ</Text>
           </Pressable>
         </View>
-      </SafeAreaView>
+        <Modal visible={Boolean(viewerUrl)} transparent animationType="fade" onRequestClose={() => setViewerUrl(null)}>
+        <View style={styles.viewerOverlay}>
+          <Pressable style={styles.viewerClose} onPress={() => setViewerUrl(null)}><Text style={styles.viewerCloseText}>✕</Text></Pressable>
+          {viewerUrl ? <Image source={{ uri: viewerUrl }} style={styles.viewerImage} contentFit="contain" /> : null}
+        </View>
+      </Modal>
+    </SafeAreaView>
     );
   }
 
@@ -91,12 +99,12 @@ export default function CommunityPostScreen() {
       ) : (
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
           {post.bannerUrl ? (
-            <Image
+            <Pressable onPress={() => setViewerUrl(post.bannerUrl)}><Image
               source={{ uri: post.bannerUrl }}
               style={styles.banner}
               contentFit="cover"
               transition={180}
-            />
+            /></Pressable>
           ) : (
             <View
               style={[
