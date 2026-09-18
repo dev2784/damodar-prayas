@@ -51,14 +51,22 @@ export function PushNotifications() {
         return;
       }
 
-      responseSubscription = Notifications.addNotificationResponseReceivedListener((response) => {
-        const d = response.notification.request.content.data as Record<string, unknown>;
+      const navigateFromNotification = (d: Record<string, unknown>) => {
         if (d.type === 'OBITUARY' && typeof d.postId === 'string') {
           router.push({ pathname: '/community-post', params: { id: d.postId } });
         } else if ((d.type === 'INTEREST_RECEIVED' || d.type === 'INTEREST_ACCEPTED') && typeof d.profileId === 'string') {
           router.push({ pathname: '/matrimony-profile', params: { id: d.profileId } });
         }
+      };
+
+      responseSubscription = Notifications.addNotificationResponseReceivedListener((response) => {
+        navigateFromNotification(response.notification.request.content.data as Record<string, unknown>);
       });
+
+      const initialResponse = await Notifications.getLastNotificationResponseAsync();
+      if (initialResponse) {
+        navigateFromNotification(initialResponse.notification.request.content.data as Record<string, unknown>);
+      }
     })();
 
     return () => responseSubscription?.remove();
