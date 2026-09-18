@@ -14,6 +14,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { router, useLocalSearchParams } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import DateTimePicker, { type DateTimePickerEvent } from '@react-native-community/datetimepicker';
 
 import { uploadContentBanner, type ContentUploadableFile } from '@/services/content-media';
 import {
@@ -67,6 +68,11 @@ export default function CommunitySubmitScreen() {
   const [contactPhone, setContactPhone] = useState('');
   const [banner, setBanner] = useState<ContentUploadableFile | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [datePickerTarget, setDatePickerTarget] = useState<'death' | 'event' | null>(null);
+  const displayDate=(v:string)=>{if(!v)return 'तारीख चुनें';const [y,m,d]=v.split('-');return y&&m&&d?`${d}/${m}/${y}`:v;};
+  const pickerDate=(v:string)=>{const d=v?new Date(`${v}T12:00:00`):new Date();return Number.isNaN(d.getTime())?new Date():d;};
+  const isoDate=(d:Date)=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  const onDatePicked=(e:DateTimePickerEvent,d?:Date)=>{const t=datePickerTarget;setDatePickerTarget(null);if(e.type!=='set'||!d||!t)return;t==='death'?setDeathDate(isoDate(d)):setEventDate(isoDate(d));};
 
   const label =
     category === 'EVENT' ? 'कार्यक्रम' : category === 'ADVERTISEMENT' ? 'विज्ञापन' : category === 'OBITUARY' ? 'शोक सूचना' : 'समाचार';
@@ -200,11 +206,11 @@ export default function CommunitySubmitScreen() {
               <Text style={styles.label}>दिवंगत व्यक्ति का नाम *</Text>
               <TextInput value={deceasedName} onChangeText={setDeceasedName} style={styles.input} placeholder="स्व. श्री / श्रीमती का नाम" placeholderTextColor="#A49890" />
               <Text style={styles.label}>निधन दिनांक</Text>
-              <TextInput value={deathDate} onChangeText={setDeathDate} style={styles.input} placeholder="YYYY-MM-DD (वैकल्पिक)" placeholderTextColor="#A49890" keyboardType="numbers-and-punctuation" />
+              <Pressable style={styles.input} onPress={() => setDatePickerTarget('death')}><Text>{displayDate(deathDate)}</Text></Pressable>
               {obituaryType !== 'DEATH_NOTICE' ? (
                 <>
                   <Text style={styles.label}>कार्यक्रम तारीख *</Text>
-                  <TextInput value={eventDate} onChangeText={setEventDate} style={styles.input} placeholder="YYYY-MM-DD" placeholderTextColor="#A49890" keyboardType="numbers-and-punctuation" />
+                  <Pressable style={styles.input} onPress={() => setDatePickerTarget('event')}><Text>{displayDate(eventDate)}</Text></Pressable>
                   <Text style={styles.label}>कार्यक्रम समय</Text>
                   <TextInput value={eventTime} onChangeText={setEventTime} style={styles.input} placeholder="जैसे शाम 4:00 बजे" placeholderTextColor="#A49890" />
                 </>
@@ -303,6 +309,7 @@ export default function CommunitySubmitScreen() {
           )}
         </Pressable>
       </ScrollView>
+      {datePickerTarget ? <DateTimePicker value={pickerDate(datePickerTarget === 'death' ? deathDate : eventDate)} mode="date" display="default" maximumDate={datePickerTarget === 'death' ? new Date() : undefined} minimumDate={datePickerTarget === 'event' ? new Date() : undefined} onChange={onDatePicked} /> : null}
     </SafeAreaView>
   );
 }
