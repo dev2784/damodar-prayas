@@ -37,7 +37,10 @@ export const interactionApi = api.injectEndpoints({
       query: () => '/shortlists',
       providesTags: (result) => [
         { type: 'Shortlists', id: 'LIST' },
-        ...(result?.items.map((item) => ({ type: 'Shortlists' as const, id: item.matrimonyProfileId })) ?? []),
+        ...(result?.items.map((item) => ({
+          type: 'Shortlists' as const,
+          id: item.matrimonyProfileId,
+        })) ?? []),
       ],
     }),
     addShortlist: builder.mutation<{ shortlist: { id: string } }, string>({
@@ -62,9 +65,12 @@ export const interactionApi = api.injectEndpoints({
       query: () => '/interests/outgoing',
       providesTags: [{ type: 'Interests', id: 'OUTGOING' }],
     }),
-    getProfileContact: builder.query<ProfileContact, { profileId: string; ownerProfileId: string }>({
-      query: ({ profileId, ownerProfileId }) => '/contacts/' + profileId + '?ownerProfileId=' + encodeURIComponent(ownerProfileId),
-    }),
+    getProfileContact: builder.query<ProfileContact, { profileId: string; ownerProfileId: string }>(
+      {
+        query: ({ profileId, ownerProfileId }) =>
+          '/contacts/' + profileId + '?ownerProfileId=' + encodeURIComponent(ownerProfileId),
+      },
+    ),
     sendInterest: builder.mutation<
       { interest: Interest },
       { senderProfileId: string; receiverProfileId: string; message?: string | null }
@@ -75,7 +81,10 @@ export const interactionApi = api.injectEndpoints({
         { type: 'Notifications', id: 'LIST' },
       ],
     }),
-    respondInterest: builder.mutation<{ interest: Interest }, { id: string; action: 'ACCEPT' | 'REJECT' }>({
+    respondInterest: builder.mutation<
+      { interest: Interest },
+      { id: string; action: 'ACCEPT' | 'REJECT' }
+    >({
       query: ({ id, action }) => ({
         url: `/interests/${id}/respond`,
         method: 'POST',

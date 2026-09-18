@@ -1,0 +1,58 @@
+import { StyleSheet } from 'react-native';
+
+export const C = {
+  bg: '#FFF9F1',
+  paper: '#FFFFFF',
+  maroon: '#A30D1E',
+  text: '#231C19',
+  muted: '#756B66',
+  line: '#E9DCCF',
+  green: '#16865C',
+};
+
+export const styles = StyleSheet.create({
+  flexFill: { flex: 1 },
+  safe: { flex: 1, backgroundColor: C.bg },
+  header: {
+    minHeight: 68,
+    paddingHorizontal: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    backgroundColor: '#FFFDF9',
+    borderBottomWidth: 1,
+    borderBottomColor: C.line,
+  },
+  back: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#FFF0EC',
+  },
+  eyebrow: { color: C.maroon, fontSize: 9, fontWeight: '900', letterSpacing: 1 },
+  title: { color: C.text, fontSize: 18, fontWeight: '900' },
+  readAll: { color: C.maroon, fontSize: 10.5, fontWeight: '900' },
+  content: { padding: 14, gap: 9, paddingBottom: 100 },
+  card: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 9,
+    padding: 12,
+    borderRadius: 14,
+    backgroundColor: C.paper,
+    borderWidth: 1,
+    borderColor: C.line,
+  },
+  unreadCard: { backgroundColor: '#FFF5F2', borderColor: '#EBC9C2' },
+  dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: C.maroon },
+  dotRead: { backgroundColor: '#D2C7C0' },
+  itemTitle: { color: C.text, fontSize: 12, fontWeight: '900' },
+  itemBody: { color: C.muted, fontSize: 10, lineHeight: 15, marginTop: 3 },
+  time: { color: '#9A8D86', fontSize: 8.5, marginTop: 6 },
+  center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 28, gap: 10 },
+  empty: { color: C.muted, fontSize: 12, fontWeight: '700' },
+  retry: { backgroundColor: C.maroon, borderRadius: 10, paddingHorizontal: 14, paddingVertical: 9 },
+  retryText: { color: '#FFFFFF', fontWeight: '900', fontSize: 10 },
+});

@@ -1,56 +1,30 @@
-# Welcome to your Expo app 👋
+# Damodar Prayas mobile
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Expo SDK 57 / React Native app in the pnpm workspace.
 
-## Get started
+Run these commands from the repository root:
 
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```powershell
+pnpm install --frozen-lockfile
+pnpm --filter mobile start
+pnpm --filter mobile typecheck
+pnpm --filter mobile lint
+pnpm --filter mobile test
+pnpm --filter mobile format:check
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Use `pnpm --filter mobile format` to format the source. The tests use Node's built-in test runner with TypeScript stripping; use Node 22.6 or newer.
 
-### Other setup steps
+Routes live in `src/app`, API endpoints in `src/services`, shared logic in `src/lib`, and native styles in `src/styles/*.styles.ts`. Keep style modules outside `src/app` so Expo Router does not treat them as screens. React Native uses `StyleSheet` modules rather than browser CSS; data-dependent style values remain beside their components.
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+The bottom tabs add the device's bottom safe-area inset to their height and padding. Verify both Android three-button and gesture navigation on a device when changing this layout.
 
-## Learn more
+Native authentication uses SecureStore. Web authentication uses sessionStorage and lasts for the current browser tab. Expo starter screens and unused starter components have been removed.
 
-To learn more about developing your project with Expo, look at the following resources:
+For an Android preview build, run from `apps/mobile`:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```powershell
+eas build --platform android --profile preview
+```
 
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+An Android JavaScript export and static checks do not replace device testing of navigation, keyboard behavior, authentication, uploads, and backend workflows.

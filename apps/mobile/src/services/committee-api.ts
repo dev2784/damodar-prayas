@@ -48,12 +48,12 @@ export type CommitteeSubmission = {
   address?: string;
   phone?: string;
   email?: string;
-  translations: Array<{
+  translations: {
     language: 'HI' | 'EN';
     name: string;
     details?: string;
-  }>;
-  members: Array<{
+  }[];
+  members: {
     name: string;
     designationHi?: string;
     designationEn?: string;
@@ -62,7 +62,7 @@ export type CommitteeSubmission = {
     photoUrl?: string;
     sortOrder?: number;
     isActive?: boolean;
-  }>;
+  }[];
 };
 
 type CommitteeList = {
@@ -88,7 +88,10 @@ export const committeeApi = api.injectEndpoints({
       query: (id) => `/committees/${id}`,
       providesTags: (_result, _error, id) => [{ type: 'Committees', id }],
     }),
-    submitCommittee: builder.mutation<{ committee: Committee; message: string }, CommitteeSubmission>({
+    submitCommittee: builder.mutation<
+      { committee: Committee; message: string },
+      CommitteeSubmission
+    >({
       query: (body) => ({
         url: '/committees/submit',
         method: 'POST',
@@ -99,8 +102,5 @@ export const committeeApi = api.injectEndpoints({
   overrideExisting: false,
 });
 
-export const {
-  useGetCommitteesQuery,
-  useGetCommitteeQuery,
-  useSubmitCommitteeMutation,
-} = committeeApi;
+export const { useGetCommitteesQuery, useGetCommitteeQuery, useSubmitCommitteeMutation } =
+  committeeApi;

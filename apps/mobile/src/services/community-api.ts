@@ -1,12 +1,7 @@
 import { api } from '@/services/api';
 
 export type CommunityPostCategory =
-  | 'NEWS'
-  | 'EVENT'
-  | 'ADVERTISEMENT'
-  | 'REQUEST'
-  | 'GRATITUDE'
-  | 'WISHES';
+  'NEWS' | 'EVENT' | 'ADVERTISEMENT' | 'REQUEST' | 'GRATITUDE' | 'WISHES';
 
 export type CommunityPostTranslation = {
   language: 'HI' | 'EN';

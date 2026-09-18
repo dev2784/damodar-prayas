@@ -2,7 +2,16 @@ import { api } from '@/services/api';
 
 export type AppNotification = {
   id: string;
-  type: 'INTEREST_RECEIVED' | 'INTEREST_ACCEPTED' | 'INTEREST_REJECTED' | 'CONTACT_REQUEST' | 'CONTACT_ACCEPTED' | 'PROFILE_APPROVED' | 'PROFILE_REJECTED' | 'COMMUNITY_POST' | 'GENERAL';
+  type:
+    | 'INTEREST_RECEIVED'
+    | 'INTEREST_ACCEPTED'
+    | 'INTEREST_REJECTED'
+    | 'CONTACT_REQUEST'
+    | 'CONTACT_ACCEPTED'
+    | 'PROFILE_APPROVED'
+    | 'PROFILE_REJECTED'
+    | 'COMMUNITY_POST'
+    | 'GENERAL';
   titleHi: string;
   titleEn: string | null;
   bodyHi: string | null;
@@ -30,11 +39,17 @@ export const notificationApi = api.injectEndpoints({
     }),
     markNotificationRead: builder.mutation<{ notification: AppNotification }, string>({
       query: (id) => ({ url: '/notifications/' + id + '/read', method: 'PATCH' }),
-      invalidatesTags: [{ type: 'Notifications', id: 'LIST' }, { type: 'Notifications', id: 'COUNT' }],
+      invalidatesTags: [
+        { type: 'Notifications', id: 'LIST' },
+        { type: 'Notifications', id: 'COUNT' },
+      ],
     }),
     markAllNotificationsRead: builder.mutation<{ updatedCount: number }, void>({
       query: () => ({ url: '/notifications/read-all', method: 'PATCH' }),
-      invalidatesTags: [{ type: 'Notifications', id: 'LIST' }, { type: 'Notifications', id: 'COUNT' }],
+      invalidatesTags: [
+        { type: 'Notifications', id: 'LIST' },
+        { type: 'Notifications', id: 'COUNT' },
+      ],
     }),
   }),
   overrideExisting: false,

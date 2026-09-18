@@ -70,7 +70,10 @@ export async function uploadMatrimonyMediaFile({
 
 export const matrimonyMediaApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    uploadMatrimonyPhoto: builder.mutation<{ photo: MatrimonyOwnerPhoto }, { profileId: string; file: UploadableFile }>({
+    uploadMatrimonyPhoto: builder.mutation<
+      { photo: MatrimonyOwnerPhoto },
+      { profileId: string; file: UploadableFile }
+    >({
       query: ({ profileId, file }) => ({
         url: `/media/matrimony/${profileId}/photos`,
         method: 'POST',
@@ -91,7 +94,10 @@ export const matrimonyMediaApi = api.injectEndpoints({
         { type: 'Matrimony', id: 'MINE' },
       ],
     }),
-    setPrimaryMatrimonyPhoto: builder.mutation<{ photo: MatrimonyOwnerPhoto }, { profileId: string; photoId: string }>({
+    setPrimaryMatrimonyPhoto: builder.mutation<
+      { photo: MatrimonyOwnerPhoto },
+      { profileId: string; photoId: string }
+    >({
       query: ({ profileId, photoId }) => ({
         url: `/media/matrimony/${profileId}/photos/${photoId}/primary`,
         method: 'POST',
@@ -101,7 +107,10 @@ export const matrimonyMediaApi = api.injectEndpoints({
         { type: 'Matrimony', id: 'MINE' },
       ],
     }),
-    uploadMatrimonyKundali: builder.mutation<{ kundali: MatrimonyKundali }, { profileId: string; file: UploadableFile }>({
+    uploadMatrimonyKundali: builder.mutation<
+      { kundali: MatrimonyKundali },
+      { profileId: string; file: UploadableFile }
+    >({
       query: ({ profileId, file }) => ({
         url: `/media/matrimony/${profileId}/kundali`,
         method: 'POST',

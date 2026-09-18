@@ -9,22 +9,23 @@ import {
 } from '@/features/preferences/preferences-slice';
 import { getAccessToken } from '@/lib/auth-storage';
 import { store } from '@/store/store';
+import { DEFAULT_LANGUAGE } from '@/config/app';
 
 function Bootstrapper({ children }: PropsWithChildren) {
   useEffect(() => {
     let active = true;
 
     async function bootstrap() {
-      const [token, language] = await Promise.all([
-        getAccessToken(),
-        loadStoredLanguage(),
-      ]);
+      const [token, language] = await Promise.allSettled([getAccessToken(), loadStoredLanguage()]);
 
       if (!active) return;
 
-      store.dispatch(setAccessToken(token));
+      // Storage failures must not leave the app stuck waiting for hydration.
+      store.dispatch(setAccessToken(token.status === 'fulfilled' ? token.value : null));
       store.dispatch(setAuthHydrated(true));
-      store.dispatch(setLanguage(language));
+      store.dispatch(
+        setLanguage(language.status === 'fulfilled' ? language.value : DEFAULT_LANGUAGE),
+      );
       store.dispatch(setPreferencesHydrated(true));
     }
 

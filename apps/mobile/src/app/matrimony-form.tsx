@@ -1,16 +1,16 @@
+import { C, styles } from '@/styles/matrimony-form.styles';
 import { useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
   Pressable,
   ScrollView,
-  StyleSheet,
   Text,
   TextInput,
   View,
 } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
-import DateTimePicker from '@expo/ui/community/datetime-picker';
+import BirthDatePicker from '@expo/ui/community/datetime-picker';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -36,20 +36,6 @@ import {
   useUpdateMatrimonyProfileMutation,
 } from '@/services/matrimony-api';
 import { useAppSelector } from '@/store/hooks';
-
-const C = {
-  bg: '#FFF8ED',
-  paper: '#FFFFFF',
-  maroon: '#A30D1E',
-  maroonDark: '#77101B',
-  gold: '#D99A2B',
-  text: '#2A211D',
-  muted: '#736660',
-  line: '#E8DCCF',
-  green: '#16865C',
-  red: '#B42318',
-  amber: '#A76512',
-};
 
 type ManglikChoice = 'YES' | 'NO' | 'UNKNOWN';
 
@@ -127,7 +113,7 @@ const initialForm: FormState = {
   about: '',
 };
 
-const profileForChoices: Array<{ label: string; value: MatrimonyProfileFor }> = [
+const profileForChoices: { label: string; value: MatrimonyProfileFor }[] = [
   { label: 'स्वयं', value: 'SELF' },
   { label: 'पुत्र', value: 'SON' },
   { label: 'पुत्री', value: 'DAUGHTER' },
@@ -136,19 +122,19 @@ const profileForChoices: Array<{ label: string; value: MatrimonyProfileFor }> = 
   { label: 'रिश्तेदार', value: 'RELATIVE' },
 ];
 
-const categoryChoices: Array<{ label: string; value: MatrimonyCategory }> = [
+const categoryChoices: { label: string; value: MatrimonyCategory }[] = [
   { label: 'जूना गुजराती', value: 'JUNA_GUJARATI' },
   { label: 'पीपा', value: 'PIPA' },
   { label: 'नामदेव', value: 'NAMDEV' },
 ];
 
-const genderChoices: Array<{ label: string; value: MatrimonyGender }> = [
+const genderChoices: { label: string; value: MatrimonyGender }[] = [
   { label: 'पुरुष', value: 'MALE' },
   { label: 'महिला', value: 'FEMALE' },
   { label: 'अन्य', value: 'OTHER' },
 ];
 
-const maritalChoices: Array<{ label: string; value: MatrimonyMaritalStatus }> = [
+const maritalChoices: { label: string; value: MatrimonyMaritalStatus }[] = [
   { label: 'अविवाहित', value: 'NEVER_MARRIED' },
   { label: 'तलाकशुदा', value: 'DIVORCED' },
   { label: 'विधुर/विधवा', value: 'WIDOWED' },
@@ -190,10 +176,12 @@ function mediaErrorMessage(error: unknown) {
     return 'फोटो/कुंडली upload storage अभी server पर configure नहीं है। Cloudinary configure होते ही यही upload buttons काम करेंगे।';
   }
   if (code === 'PROFILE_PHOTO_LIMIT_REACHED') return 'अधिकतम 6 फोटो जोड़े जा सकते हैं।';
-  if (code === 'KUNDALI_ALREADY_UPLOADED') return 'एक कुंडली पहले से जुड़ी है। नई जोड़ने से पहले पुरानी हटाएँ।';
+  if (code === 'KUNDALI_ALREADY_UPLOADED')
+    return 'एक कुंडली पहले से जुड़ी है। नई जोड़ने से पहले पुरानी हटाएँ।';
   if (code === 'UNSUPPORTED_PHOTO_TYPE') return 'केवल JPG, PNG या WEBP फोटो चुनें।';
   if (code === 'UNSUPPORTED_KUNDALI_TYPE') return 'कुंडली PDF, JPG, PNG या WEBP में होनी चाहिए।';
-  if (code === 'UPLOAD_NETWORK_ERROR') return 'Upload request server तक नहीं पहुँच पाई। इंटरनेट/API connection जाँचकर दोबारा कोशिश करें।';
+  if (code === 'UPLOAD_NETWORK_ERROR')
+    return 'Upload request server तक नहीं पहुँच पाई। इंटरनेट/API connection जाँचकर दोबारा कोशिश करें।';
   if (code) return `Upload fail हुआ: ${code}`;
   return 'Upload पूरा नहीं हुआ। कृपया दोबारा कोशिश करें।';
 }
@@ -243,7 +231,7 @@ function ChoiceRow<T extends string>({
   onChange,
   disabled,
 }: {
-  items: Array<{ label: string; value: T }>;
+  items: { label: string; value: T }[];
   value: T;
   onChange: (value: T) => void;
   disabled?: boolean;
@@ -257,7 +245,12 @@ function ChoiceRow<T extends string>({
             key={item.value}
             disabled={disabled}
             onPress={() => onChange(item.value)}
-            style={[styles.choice, active && styles.choiceActive, disabled && styles.choiceDisabled]}>
+            style={[
+              styles.choice,
+              active && styles.choiceActive,
+              disabled && styles.choiceDisabled,
+            ]}
+          >
             <Text style={[styles.choiceText, active && styles.choiceTextActive]}>{item.label}</Text>
           </Pressable>
         );
@@ -288,7 +281,8 @@ function Field({
   return (
     <View style={styles.fieldBlock}>
       <Text style={styles.fieldLabel}>
-        {label}{required ? <Text style={styles.required}> *</Text> : null}
+        {label}
+        {required ? <Text style={styles.required}> *</Text> : null}
       </Text>
       <TextInput
         value={value}
@@ -337,16 +331,21 @@ function DateField({
   return (
     <View style={styles.fieldBlock}>
       <Text style={styles.fieldLabel}>
-        {label}{required ? <Text style={styles.required}> *</Text> : null}
+        {label}
+        {required ? <Text style={styles.required}> *</Text> : null}
       </Text>
       <Pressable style={[styles.input, styles.dateInput]} onPress={() => setShowPicker(true)}>
         <Text style={value ? styles.dateText : styles.datePlaceholder}>
           {value ? selectedDate.toLocaleDateString('hi-IN') : 'जन्मतिथि चुनें'}
         </Text>
-        <SymbolView name={{ ios: 'calendar', android: 'calendar_month', web: 'calendar_month' }} tintColor={C.maroon} size={19} />
+        <SymbolView
+          name={{ ios: 'calendar', android: 'calendar_month', web: 'calendar_month' }}
+          tintColor={C.maroon}
+          size={19}
+        />
       </Pressable>
       {showPicker ? (
-        <DateTimePicker
+        <BirthDatePicker
           value={selectedDate}
           onValueChange={(_event, date) => {
             setShowPicker(false);
@@ -364,7 +363,15 @@ function DateField({
   );
 }
 
-function Section({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
+function Section({
+  title,
+  subtitle,
+  children,
+}: {
+  title: string;
+  subtitle?: string;
+  children: React.ReactNode;
+}) {
   return (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>{title}</Text>
@@ -377,13 +384,19 @@ function Section({ title, subtitle, children }: { title: string; subtitle?: stri
 export default function MatrimonyFormScreen() {
   const params = useLocalSearchParams<{ id?: string | string[]; newProfile?: string | string[] }>();
   const profileId = Array.isArray(params.id) ? params.id[0] : params.id;
-  const newProfileParam = Array.isArray(params.newProfile) ? params.newProfile[0] : params.newProfile;
+  const newProfileParam = Array.isArray(params.newProfile)
+    ? params.newProfile[0]
+    : params.newProfile;
   const forceNewProfile = newProfileParam === '1';
   const accessToken = useAppSelector((state) => state.auth.accessToken);
   const [form, setForm] = useState<FormState>(initialForm);
   const [hydratedId, setHydratedId] = useState<string | null>(null);
 
-  const { data: mineData, isLoading: isLoadingMine, refetch: refetchMine } = useGetMyMatrimonyProfilesQuery(undefined, {
+  const {
+    data: mineData,
+    isLoading: isLoadingMine,
+    refetch: refetchMine,
+  } = useGetMyMatrimonyProfilesQuery(undefined, {
     skip: !accessToken,
   });
   const [createProfile, { isLoading: isCreating }] = useCreateMatrimonyProfileMutation();
@@ -399,23 +412,28 @@ export default function MatrimonyFormScreen() {
     [mineData?.items, profileId],
   );
 
-  useEffect(() => {
-    if (editingProfile && hydratedId !== editingProfile.id) {
-      setForm(profileToForm(editingProfile));
-      setHydratedId(editingProfile.id);
-    }
-  }, [editingProfile, hydratedId]);
+  // Initialize each loaded profile once without overwriting in-progress edits on refetch.
+  if (editingProfile && hydratedId !== editingProfile.id) {
+    setForm(profileToForm(editingProfile));
+    setHydratedId(editingProfile.id);
+  } else if (!profileId && hydratedId !== null) {
+    setForm(initialForm);
+    setHydratedId(null);
+  }
 
   useEffect(() => {
     if (!accessToken || profileId || forceNewProfile || isLoadingMine || !mineData) return;
-    const resumable = mineData.items.find((item) => item.status === 'DRAFT' || item.status === 'REJECTED');
+    const resumable = mineData.items.find(
+      (item) => item.status === 'DRAFT' || item.status === 'REJECTED',
+    );
     if (resumable) {
       router.replace({ pathname: '/matrimony-form', params: { id: resumable.id } });
     }
   }, [accessToken, forceNewProfile, isLoadingMine, mineData, profileId]);
 
   const busy = isCreating || isUpdating || isSubmitting;
-  const mediaBusy = uploadingMedia !== null || isDeletingPhoto || isSettingPrimary || isDeletingKundali;
+  const mediaBusy =
+    uploadingMedia !== null || isDeletingPhoto || isSettingPrimary || isDeletingKundali;
   const editingApproved = editingProfile?.status === 'APPROVED';
   const editingLocked = Boolean(
     editingProfile && !['DRAFT', 'REJECTED', 'APPROVED'].includes(editingProfile.status),
@@ -438,7 +456,9 @@ export default function MatrimonyFormScreen() {
     }
 
     const today = new Date();
-    const adultCutoff = new Date(Date.UTC(today.getUTCFullYear() - 18, today.getUTCMonth(), today.getUTCDate()));
+    const adultCutoff = new Date(
+      Date.UTC(today.getUTCFullYear() - 18, today.getUTCMonth(), today.getUTCDate()),
+    );
     if (dob > adultCutoff) {
       Alert.alert('आयु सीमा', 'मैट्रिमोनी प्रोफाइल के लिए आयु कम से कम 18 वर्ष होनी चाहिए।');
       return false;
@@ -450,7 +470,11 @@ export default function MatrimonyFormScreen() {
       return false;
     }
 
-    if (form.country.trim().toLowerCase() === 'india' && form.postalCode.trim() && !/^\d{6}$/.test(form.postalCode.trim())) {
+    if (
+      form.country.trim().toLowerCase() === 'india' &&
+      form.postalCode.trim() &&
+      !/^\d{6}$/.test(form.postalCode.trim())
+    ) {
       Alert.alert('पिन कोड जाँचें', 'भारत के लिए 6 अंकों का पिन कोड भरें।');
       return false;
     }
@@ -505,14 +529,20 @@ export default function MatrimonyFormScreen() {
     }
 
     if (editingLocked) {
-      Alert.alert('प्रोफाइल लॉक है', 'यह प्रोफाइल अभी समीक्षा/स्वीकृति स्थिति में है और एडिट नहीं किया जा सकता।');
+      Alert.alert(
+        'प्रोफाइल लॉक है',
+        'यह प्रोफाइल अभी समीक्षा/स्वीकृति स्थिति में है और एडिट नहीं किया जा सकता।',
+      );
       return;
     }
 
     if (!validate()) return;
 
     if (submitAfterSave && editingProfile && editingProfile.photos.length === 0) {
-      Alert.alert('फोटो जरूरी है', 'समीक्षा के लिए भेजने से पहले कम से कम एक प्रोफाइल फोटो जोड़ें।');
+      Alert.alert(
+        'फोटो जरूरी है',
+        'समीक्षा के लिए भेजने से पहले कम से कम एक प्रोफाइल फोटो जोड़ें।',
+      );
       return;
     }
 
@@ -548,17 +578,20 @@ export default function MatrimonyFormScreen() {
       }
 
       if (editingApproved) {
-        Alert.alert('बदलाव समीक्षा में भेज दिए', 'स्वीकृत प्रोफाइल में बदलाव अब दोबारा समीक्षा के बाद सार्वजनिक होंगे।', [
-          { text: 'ठीक है', onPress: () => router.replace('/my-matrimony') },
-        ]);
+        Alert.alert(
+          'बदलाव समीक्षा में भेज दिए',
+          'स्वीकृत प्रोफाइल में बदलाव अब दोबारा समीक्षा के बाद सार्वजनिक होंगे।',
+          [{ text: 'ठीक है', onPress: () => router.replace('/my-matrimony') }],
+        );
         return;
       }
 
       Alert.alert('ड्राफ्ट अपडेट हो गया', 'आपकी जानकारी सेव हो गई है।');
     } catch (error) {
-      const message = typeof error === 'object' && error && 'data' in error
-        ? String((error as { data?: { message?: string } }).data?.message ?? '')
-        : '';
+      const message =
+        typeof error === 'object' && error && 'data' in error
+          ? String((error as { data?: { message?: string } }).data?.message ?? '')
+          : '';
       Alert.alert('सेव नहीं हुआ', message || 'कृपया जानकारी जाँचकर दोबारा कोशिश करें।');
     }
   }
@@ -686,9 +719,15 @@ export default function MatrimonyFormScreen() {
     return (
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.centerState}>
-          <SymbolView name={{ ios: 'person.badge.key.fill', android: 'login', web: 'login' }} tintColor={C.maroon} size={46} />
+          <SymbolView
+            name={{ ios: 'person.badge.key.fill', android: 'login', web: 'login' }}
+            tintColor={C.maroon}
+            size={46}
+          />
           <Text style={styles.centerTitle}>पहले लॉगिन करें</Text>
-          <Text style={styles.centerText}>मैट्रिमोनी ड्राफ्ट निजी डेटा है, इसलिए इसे बनाने या एडिट करने के लिए लॉगिन जरूरी है।</Text>
+          <Text style={styles.centerText}>
+            मैट्रिमोनी ड्राफ्ट निजी डेटा है, इसलिए इसे बनाने या एडिट करने के लिए लॉगिन जरूरी है।
+          </Text>
           <Pressable style={styles.centerButton} onPress={() => router.replace('/profile')}>
             <Text style={styles.centerButtonText}>प्रोफाइल / लॉगिन</Text>
           </Pressable>
@@ -713,7 +752,9 @@ export default function MatrimonyFormScreen() {
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.centerState}>
           <Text style={styles.centerTitle}>प्रोफाइल नहीं मिला</Text>
-          <Text style={styles.centerText}>यह प्रोफाइल आपके अकाउंट से जुड़ा नहीं है या उपलब्ध नहीं है।</Text>
+          <Text style={styles.centerText}>
+            यह प्रोफाइल आपके अकाउंट से जुड़ा नहीं है या उपलब्ध नहीं है।
+          </Text>
           <Pressable style={styles.centerButton} onPress={() => router.replace('/my-matrimony')}>
             <Text style={styles.centerButtonText}>मेरे प्रोफाइल पर जाएँ</Text>
           </Pressable>
@@ -727,28 +768,51 @@ export default function MatrimonyFormScreen() {
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
         <View style={styles.headerRow}>
           <Pressable style={styles.backButton} onPress={() => router.back()}>
-            <SymbolView name={{ ios: 'chevron.left', android: 'arrow_back', web: 'arrow_back' }} tintColor={C.maroon} size={22} />
+            <SymbolView
+              name={{ ios: 'chevron.left', android: 'arrow_back', web: 'arrow_back' }}
+              tintColor={C.maroon}
+              size={22}
+            />
           </Pressable>
           <View style={styles.headerCopy}>
             <Text style={styles.eyebrow}>MATRIMONY PROFILE</Text>
-            <Text style={styles.title}>{profileId ? 'प्रोफाइल एडिट करें' : 'नया प्रोफाइल बनाएँ'}</Text>
+            <Text style={styles.title}>
+              {profileId ? 'प्रोफाइल एडिट करें' : 'नया प्रोफाइल बनाएँ'}
+            </Text>
           </View>
         </View>
 
         {editingLocked ? (
           <View style={styles.lockBanner}>
-            <SymbolView name={{ ios: 'lock.fill', android: 'lock', web: 'lock' }} tintColor={C.maroon} size={20} />
-            <Text style={styles.lockText}>यह प्रोफाइल अभी एडिट नहीं किया जा सकता क्योंकि इसकी स्थिति {editingProfile?.status} है।</Text>
+            <SymbolView
+              name={{ ios: 'lock.fill', android: 'lock', web: 'lock' }}
+              tintColor={C.maroon}
+              size={20}
+            />
+            <Text style={styles.lockText}>
+              यह प्रोफाइल अभी एडिट नहीं किया जा सकता क्योंकि इसकी स्थिति {editingProfile?.status}{' '}
+              है।
+            </Text>
           </View>
         ) : null}
 
         <View style={styles.progressBanner}>
           <View style={styles.progressIcon}>
-            <SymbolView name={{ ios: 'checklist', android: 'checklist', web: 'checklist' }} tintColor={C.green} size={22} />
+            <SymbolView
+              name={{ ios: 'checklist', android: 'checklist', web: 'checklist' }}
+              tintColor={C.green}
+              size={22}
+            />
           </View>
           <View style={styles.progressCopy}>
-            <Text style={styles.progressTitle}>{profileId ? 'जानकारी, फोटो और कुंडली पूरी करें' : 'पहले जरूरी जानकारी भरें'}</Text>
-            <Text style={styles.progressText}>{profileId ? 'फोटो जोड़कर तैयार होने पर समीक्षा के लिए भेजें।' : 'पहले ड्राफ्ट सेव होगा, फिर इसी फॉर्म में फोटो और कुंडली जोड़ सकेंगे।'}</Text>
+            <Text style={styles.progressTitle}>
+              {profileId ? 'जानकारी, फोटो और कुंडली पूरी करें' : 'पहले जरूरी जानकारी भरें'}
+            </Text>
+            <Text style={styles.progressText}>
+              {profileId
+                ? 'फोटो जोड़कर तैयार होने पर समीक्षा के लिए भेजें।'
+                : 'पहले ड्राफ्ट सेव होगा, फिर इसी फॉर्म में फोटो और कुंडली जोड़ सकेंगे।'}
+            </Text>
           </View>
         </View>
 
@@ -762,34 +826,119 @@ export default function MatrimonyFormScreen() {
           />
 
           <Text style={styles.inlineLabel}>समाज / वर्ग</Text>
-          <ChoiceRow items={categoryChoices} value={form.category} onChange={(value) => update('category', value)} />
+          <ChoiceRow
+            items={categoryChoices}
+            value={form.category}
+            onChange={(value) => update('category', value)}
+          />
 
           <Text style={styles.inlineLabel}>लिंग</Text>
-          <ChoiceRow items={genderChoices} value={form.gender} onChange={(value) => update('gender', value)} />
+          <ChoiceRow
+            items={genderChoices}
+            value={form.gender}
+            onChange={(value) => update('gender', value)}
+          />
 
           <View style={styles.twoCol}>
-            <View style={styles.col}><Field label="पहला नाम" value={form.firstName} onChangeText={(value) => update('firstName', value)} required /></View>
-            <View style={styles.col}><Field label="उपनाम" value={form.lastName} onChangeText={(value) => update('lastName', value)} required /></View>
+            <View style={styles.col}>
+              <Field
+                label="पहला नाम"
+                value={form.firstName}
+                onChangeText={(value) => update('firstName', value)}
+                required
+              />
+            </View>
+            <View style={styles.col}>
+              <Field
+                label="उपनाम"
+                value={form.lastName}
+                onChangeText={(value) => update('lastName', value)}
+                required
+              />
+            </View>
           </View>
-          <Field label="मध्य नाम" value={form.middleName} onChangeText={(value) => update('middleName', value)} />
-          <DateField label="जन्मतिथि" value={form.dateOfBirth} onChange={(value) => update('dateOfBirth', value)} maximumDate={new Date(new Date().getFullYear() - 18, new Date().getMonth(), new Date().getDate())} required />
-          <Field label="ऊंचाई (सेमी)" value={form.heightCm} onChangeText={(value) => update('heightCm', value)} placeholder="जैसे 170" keyboardType="numeric" />
+          <Field
+            label="मध्य नाम"
+            value={form.middleName}
+            onChangeText={(value) => update('middleName', value)}
+          />
+          <DateField
+            label="जन्मतिथि"
+            value={form.dateOfBirth}
+            onChange={(value) => update('dateOfBirth', value)}
+            maximumDate={
+              new Date(new Date().getFullYear() - 18, new Date().getMonth(), new Date().getDate())
+            }
+            required
+          />
+          <Field
+            label="ऊंचाई (सेमी)"
+            value={form.heightCm}
+            onChangeText={(value) => update('heightCm', value)}
+            placeholder="जैसे 170"
+            keyboardType="numeric"
+          />
 
           <Text style={styles.inlineLabel}>वैवाहिक स्थिति</Text>
-          <ChoiceRow items={maritalChoices} value={form.maritalStatus} onChange={(value) => update('maritalStatus', value)} />
+          <ChoiceRow
+            items={maritalChoices}
+            value={form.maritalStatus}
+            onChange={(value) => update('maritalStatus', value)}
+          />
         </Section>
 
-        <Section title="2. संपर्क, शिक्षा और काम" subtitle="संपर्क जानकारी सार्वजनिक लिस्ट में नहीं दिखाई जाएगी।">
-          <Field label="मोबाइल नंबर" value={form.contactPhone} onChangeText={(value) => update('contactPhone', value)} placeholder="+91..." keyboardType="phone-pad" />
-          <Field label="ईमेल" value={form.contactEmail} onChangeText={(value) => update('contactEmail', value)} keyboardType="email-address" autoCapitalize="none" />
-          <Field label="शिक्षा" value={form.education} onChangeText={(value) => update('education', value)} placeholder="जैसे B.Tech, MBA" />
-          <Field label="पेशा" value={form.occupation} onChangeText={(value) => update('occupation', value)} placeholder="जैसे Software Engineer" />
-          <Field label="कंपनी / व्यवसाय" value={form.companyOrBusiness} onChangeText={(value) => update('companyOrBusiness', value)} />
-          <Field label="वार्षिक आय (₹)" value={form.annualIncome} onChangeText={(value) => update('annualIncome', value)} keyboardType="numeric" />
+        <Section
+          title="2. संपर्क, शिक्षा और काम"
+          subtitle="संपर्क जानकारी सार्वजनिक लिस्ट में नहीं दिखाई जाएगी।"
+        >
+          <Field
+            label="मोबाइल नंबर"
+            value={form.contactPhone}
+            onChangeText={(value) => update('contactPhone', value)}
+            placeholder="+91..."
+            keyboardType="phone-pad"
+          />
+          <Field
+            label="ईमेल"
+            value={form.contactEmail}
+            onChangeText={(value) => update('contactEmail', value)}
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
+          <Field
+            label="शिक्षा"
+            value={form.education}
+            onChangeText={(value) => update('education', value)}
+            placeholder="जैसे B.Tech, MBA"
+          />
+          <Field
+            label="पेशा"
+            value={form.occupation}
+            onChangeText={(value) => update('occupation', value)}
+            placeholder="जैसे Software Engineer"
+          />
+          <Field
+            label="कंपनी / व्यवसाय"
+            value={form.companyOrBusiness}
+            onChangeText={(value) => update('companyOrBusiness', value)}
+          />
+          <Field
+            label="वार्षिक आय (₹)"
+            value={form.annualIncome}
+            onChangeText={(value) => update('annualIncome', value)}
+            keyboardType="numeric"
+          />
         </Section>
 
-        <Section title="3. समाज, जन्म और स्थान" subtitle="शहर के साथ गाँव और कस्बा भी लिख सकते हैं। पूरा पता private रहेगा।">
-          <Field label="गोत्र" value={form.gotra} onChangeText={(value) => update('gotra', value)} />
+        <Section
+          title="3. समाज, जन्म और स्थान"
+          subtitle="शहर के साथ गाँव और कस्बा भी लिख सकते हैं। पूरा पता private रहेगा।"
+        >
+          <Field
+            label="गोत्र"
+            value={form.gotra}
+            onChangeText={(value) => update('gotra', value)}
+          />
           <Text style={styles.inlineLabel}>मांगलिक</Text>
           <ChoiceRow
             items={[
@@ -801,54 +950,184 @@ export default function MatrimonyFormScreen() {
             onChange={(value) => update('manglik', value)}
           />
           <View style={styles.twoCol}>
-            <View style={styles.col}><Field label="जन्म समय" value={form.birthTime} onChangeText={(value) => update('birthTime', value)} placeholder="जैसे 07:30 AM" /></View>
-            <View style={styles.col}><Field label="जन्म स्थान" value={form.birthPlace} onChangeText={(value) => update('birthPlace', value)} /></View>
+            <View style={styles.col}>
+              <Field
+                label="जन्म समय"
+                value={form.birthTime}
+                onChangeText={(value) => update('birthTime', value)}
+                placeholder="जैसे 07:30 AM"
+              />
+            </View>
+            <View style={styles.col}>
+              <Field
+                label="जन्म स्थान"
+                value={form.birthPlace}
+                onChangeText={(value) => update('birthPlace', value)}
+              />
+            </View>
           </View>
-          <Field label="वर्तमान शहर / गाँव / कस्बा" value={form.currentCity} onChangeText={(value) => update('currentCity', value)} placeholder="जैसे इंदौर / राऊ / ग्राम ..." />
+          <Field
+            label="वर्तमान शहर / गाँव / कस्बा"
+            value={form.currentCity}
+            onChangeText={(value) => update('currentCity', value)}
+            placeholder="जैसे इंदौर / राऊ / ग्राम ..."
+          />
           <View style={styles.twoCol}>
-            <View style={styles.col}><Field label="जिला" value={form.district} onChangeText={(value) => update('district', value)} /></View>
-            <View style={styles.col}><Field label="राज्य" value={form.state} onChangeText={(value) => update('state', value)} /></View>
+            <View style={styles.col}>
+              <Field
+                label="जिला"
+                value={form.district}
+                onChangeText={(value) => update('district', value)}
+              />
+            </View>
+            <View style={styles.col}>
+              <Field
+                label="राज्य"
+                value={form.state}
+                onChangeText={(value) => update('state', value)}
+              />
+            </View>
           </View>
           <View style={styles.twoCol}>
-            <View style={styles.col}><Field label="पिन कोड" value={form.postalCode} onChangeText={(value) => update('postalCode', value)} placeholder="6 अंक" keyboardType="numeric" /></View>
-            <View style={styles.col}><Field label="देश" value={form.country} onChangeText={(value) => update('country', value)} /></View>
+            <View style={styles.col}>
+              <Field
+                label="पिन कोड"
+                value={form.postalCode}
+                onChangeText={(value) => update('postalCode', value)}
+                placeholder="6 अंक"
+                keyboardType="numeric"
+              />
+            </View>
+            <View style={styles.col}>
+              <Field
+                label="देश"
+                value={form.country}
+                onChangeText={(value) => update('country', value)}
+              />
+            </View>
           </View>
-          <Field label="पूरा पता" value={form.fullAddress} onChangeText={(value) => update('fullAddress', value)} placeholder="मोहल्ला / वार्ड / ग्राम, पोस्ट, तहसील आदि" multiline />
-          <Field label="मूल गाँव / शहर" value={form.nativePlace} onChangeText={(value) => update('nativePlace', value)} />
+          <Field
+            label="पूरा पता"
+            value={form.fullAddress}
+            onChangeText={(value) => update('fullAddress', value)}
+            placeholder="मोहल्ला / वार्ड / ग्राम, पोस्ट, तहसील आदि"
+            multiline
+          />
+          <Field
+            label="मूल गाँव / शहर"
+            value={form.nativePlace}
+            onChangeText={(value) => update('nativePlace', value)}
+          />
         </Section>
 
         <Section title="4. परिवार और परिचय">
           <View style={styles.twoCol}>
-            <View style={styles.col}><Field label="पिता का नाम" value={form.fatherName} onChangeText={(value) => update('fatherName', value)} /></View>
-            <View style={styles.col}><Field label="पिता का व्यवसाय" value={form.fatherOccupation} onChangeText={(value) => update('fatherOccupation', value)} /></View>
+            <View style={styles.col}>
+              <Field
+                label="पिता का नाम"
+                value={form.fatherName}
+                onChangeText={(value) => update('fatherName', value)}
+              />
+            </View>
+            <View style={styles.col}>
+              <Field
+                label="पिता का व्यवसाय"
+                value={form.fatherOccupation}
+                onChangeText={(value) => update('fatherOccupation', value)}
+              />
+            </View>
           </View>
           <View style={styles.twoCol}>
-            <View style={styles.col}><Field label="माता का नाम" value={form.motherName} onChangeText={(value) => update('motherName', value)} /></View>
-            <View style={styles.col}><Field label="माता का व्यवसाय" value={form.motherOccupation} onChangeText={(value) => update('motherOccupation', value)} /></View>
+            <View style={styles.col}>
+              <Field
+                label="माता का नाम"
+                value={form.motherName}
+                onChangeText={(value) => update('motherName', value)}
+              />
+            </View>
+            <View style={styles.col}>
+              <Field
+                label="माता का व्यवसाय"
+                value={form.motherOccupation}
+                onChangeText={(value) => update('motherOccupation', value)}
+              />
+            </View>
           </View>
           <View style={styles.twoCol}>
-            <View style={styles.col}><Field label="भाई" value={form.brothers} onChangeText={(value) => update('brothers', value)} keyboardType="numeric" /></View>
-            <View style={styles.col}><Field label="बहनें" value={form.sisters} onChangeText={(value) => update('sisters', value)} keyboardType="numeric" /></View>
+            <View style={styles.col}>
+              <Field
+                label="भाई"
+                value={form.brothers}
+                onChangeText={(value) => update('brothers', value)}
+                keyboardType="numeric"
+              />
+            </View>
+            <View style={styles.col}>
+              <Field
+                label="बहनें"
+                value={form.sisters}
+                onChangeText={(value) => update('sisters', value)}
+                keyboardType="numeric"
+              />
+            </View>
           </View>
-          <Field label="परिवार के बारे में" value={form.familyDetails} onChangeText={(value) => update('familyDetails', value)} multiline />
-          <Field label="अपने बारे में" value={form.about} onChangeText={(value) => update('about', value)} multiline />
+          <Field
+            label="परिवार के बारे में"
+            value={form.familyDetails}
+            onChangeText={(value) => update('familyDetails', value)}
+            multiline
+          />
+          <Field
+            label="अपने बारे में"
+            value={form.about}
+            onChangeText={(value) => update('about', value)}
+            multiline
+          />
         </Section>
 
         <Section
           title="5. फोटो और कुंडली"
-          subtitle={profileId ? 'अधिकतम 6 फोटो जोड़ें। पहली फोटो अपने आप मुख्य फोटो बनती है। कुंडली optional है।' : 'इस सेक्शन को खोलने के लिए पहले ड्राफ्ट सेव करें।'}>
+          subtitle={
+            profileId
+              ? 'अधिकतम 6 फोटो जोड़ें। पहली फोटो अपने आप मुख्य फोटो बनती है। कुंडली optional है।'
+              : 'इस सेक्शन को खोलने के लिए पहले ड्राफ्ट सेव करें।'
+          }
+        >
           {!profileId ? (
             <View style={styles.mediaLockedCard}>
-              <SymbolView name={{ ios: 'lock.fill', android: 'lock', web: 'lock' }} tintColor={C.amber} size={20} />
-              <Text style={styles.mediaLockedText}>ड्राफ्ट सेव होते ही profile ID बनेगी, फिर फोटो और कुंडली upload कर पाएँगे।</Text>
+              <SymbolView
+                name={{ ios: 'lock.fill', android: 'lock', web: 'lock' }}
+                tintColor={C.amber}
+                size={20}
+              />
+              <Text style={styles.mediaLockedText}>
+                ड्राफ्ट सेव होते ही profile ID बनेगी, फिर फोटो और कुंडली upload कर पाएँगे।
+              </Text>
             </View>
           ) : (
             <>
               <View style={styles.mediaHeaderRow}>
-                <Text style={styles.mediaTitle}>प्रोफाइल फोटो ({editingProfile?.photos.length ?? 0}/6)</Text>
+                <Text style={styles.mediaTitle}>
+                  प्रोफाइल फोटो ({editingProfile?.photos.length ?? 0}/6)
+                </Text>
                 {(editingProfile?.photos.length ?? 0) < 6 ? (
-                  <Pressable disabled={mediaBusy || editingLocked} style={[styles.mediaAddButton, (mediaBusy || editingLocked) && styles.disabledButton]} onPress={pickAndUploadPhoto}>
-                    <SymbolView name={{ ios: 'photo.badge.plus', android: 'add_photo_alternate', web: 'add_photo_alternate' }} tintColor="#FFFFFF" size={16} />
+                  <Pressable
+                    disabled={mediaBusy || editingLocked}
+                    style={[
+                      styles.mediaAddButton,
+                      (mediaBusy || editingLocked) && styles.disabledButton,
+                    ]}
+                    onPress={pickAndUploadPhoto}
+                  >
+                    <SymbolView
+                      name={{
+                        ios: 'photo.badge.plus',
+                        android: 'add_photo_alternate',
+                        web: 'add_photo_alternate',
+                      }}
+                      tintColor="#FFFFFF"
+                      size={16}
+                    />
                     <Text style={styles.mediaAddText}>फोटो जोड़ें</Text>
                   </Pressable>
                 ) : null}
@@ -856,14 +1135,28 @@ export default function MatrimonyFormScreen() {
 
               {(editingProfile?.photos.length ?? 0) === 0 ? (
                 <View style={styles.emptyMedia}>
-                  <SymbolView name={{ ios: 'photo.on.rectangle.angled', android: 'photo_library', web: 'photo_library' }} tintColor="#B69B8B" size={30} />
-                  <Text style={styles.emptyMediaText}>अभी कोई फोटो नहीं है। समीक्षा के लिए कम से कम 1 फोटो जरूरी होगी।</Text>
+                  <SymbolView
+                    name={{
+                      ios: 'photo.on.rectangle.angled',
+                      android: 'photo_library',
+                      web: 'photo_library',
+                    }}
+                    tintColor="#B69B8B"
+                    size={30}
+                  />
+                  <Text style={styles.emptyMediaText}>
+                    अभी कोई फोटो नहीं है। समीक्षा के लिए कम से कम 1 फोटो जरूरी होगी।
+                  </Text>
                 </View>
               ) : (
                 <View style={styles.photoGrid}>
                   {editingProfile?.photos.map((photo) => (
                     <View key={photo.id} style={styles.photoCard}>
-                      <Image source={{ uri: photo.url }} style={styles.photoImage} contentFit="cover" />
+                      <Image
+                        source={{ uri: photo.url }}
+                        style={styles.photoImage}
+                        contentFit="cover"
+                      />
                       <View style={styles.photoInfo}>
                         <View style={styles.photoStatusRow}>
                           <Text style={styles.photoStatus}>{mediaStatusLabel[photo.status]}</Text>
@@ -871,11 +1164,19 @@ export default function MatrimonyFormScreen() {
                         </View>
                         <View style={styles.photoActions}>
                           {!photo.isPrimary ? (
-                            <Pressable disabled={mediaBusy || editingLocked} onPress={() => makePrimary(photo.id)}>
+                            <Pressable
+                              disabled={mediaBusy || editingLocked}
+                              onPress={() => makePrimary(photo.id)}
+                            >
                               <Text style={styles.photoActionText}>मुख्य बनाएँ</Text>
                             </Pressable>
-                          ) : <View />}
-                          <Pressable disabled={mediaBusy || editingLocked} onPress={() => confirmDeletePhoto(photo.id)}>
+                          ) : (
+                            <View />
+                          )}
+                          <Pressable
+                            disabled={mediaBusy || editingLocked}
+                            onPress={() => confirmDeletePhoto(photo.id)}
+                          >
                             <Text style={styles.deleteActionText}>हटाएँ</Text>
                           </Pressable>
                         </View>
@@ -892,8 +1193,19 @@ export default function MatrimonyFormScreen() {
                   <Text style={styles.mediaHint}>PDF या image, अधिकतम 10MB</Text>
                 </View>
                 {(editingProfile?.kundalis.length ?? 0) === 0 ? (
-                  <Pressable disabled={mediaBusy || editingLocked} style={[styles.kundaliButton, (mediaBusy || editingLocked) && styles.disabledButton]} onPress={pickAndUploadKundali}>
-                    <SymbolView name={{ ios: 'doc.badge.plus', android: 'upload_file', web: 'upload_file' }} tintColor={C.maroon} size={16} />
+                  <Pressable
+                    disabled={mediaBusy || editingLocked}
+                    style={[
+                      styles.kundaliButton,
+                      (mediaBusy || editingLocked) && styles.disabledButton,
+                    ]}
+                    onPress={pickAndUploadKundali}
+                  >
+                    <SymbolView
+                      name={{ ios: 'doc.badge.plus', android: 'upload_file', web: 'upload_file' }}
+                      tintColor={C.maroon}
+                      size={16}
+                    />
                     <Text style={styles.kundaliButtonText}>कुंडली जोड़ें</Text>
                   </Pressable>
                 ) : null}
@@ -902,13 +1214,24 @@ export default function MatrimonyFormScreen() {
               {editingProfile?.kundalis[0] ? (
                 <View style={styles.kundaliCard}>
                   <View style={styles.kundaliIcon}>
-                    <SymbolView name={{ ios: 'doc.text.fill', android: 'description', web: 'description' }} tintColor={C.maroon} size={24} />
+                    <SymbolView
+                      name={{ ios: 'doc.text.fill', android: 'description', web: 'description' }}
+                      tintColor={C.maroon}
+                      size={24}
+                    />
                   </View>
                   <View style={styles.kundaliCopy}>
-                    <Text style={styles.kundaliName} numberOfLines={1}>{editingProfile.kundalis[0].fileName || 'कुंडली दस्तावेज'}</Text>
-                    <Text style={styles.kundaliStatus}>{mediaStatusLabel[editingProfile.kundalis[0].status]}</Text>
+                    <Text style={styles.kundaliName} numberOfLines={1}>
+                      {editingProfile.kundalis[0].fileName || 'कुंडली दस्तावेज'}
+                    </Text>
+                    <Text style={styles.kundaliStatus}>
+                      {mediaStatusLabel[editingProfile.kundalis[0].status]}
+                    </Text>
                   </View>
-                  <Pressable disabled={mediaBusy || editingLocked} onPress={() => confirmDeleteKundali(editingProfile.kundalis[0].id)}>
+                  <Pressable
+                    disabled={mediaBusy || editingLocked}
+                    onPress={() => confirmDeleteKundali(editingProfile.kundalis[0].id)}
+                  >
                     <Text style={styles.deleteActionText}>हटाएँ</Text>
                   </Pressable>
                 </View>
@@ -928,11 +1251,21 @@ export default function MatrimonyFormScreen() {
           {editingApproved ? (
             <Pressable
               disabled={busy || editingLocked || mediaBusy}
-              style={[styles.submitButton, (busy || editingLocked || mediaBusy) && styles.disabledButton]}
-              onPress={() => save(false)}>
-              {busy ? <ActivityIndicator color="#FFFFFF" size="small" /> : (
+              style={[
+                styles.submitButton,
+                (busy || editingLocked || mediaBusy) && styles.disabledButton,
+              ]}
+              onPress={() => save(false)}
+            >
+              {busy ? (
+                <ActivityIndicator color="#FFFFFF" size="small" />
+              ) : (
                 <>
-                  <SymbolView name={{ ios: 'paperplane.fill', android: 'send', web: 'send' }} tintColor="#FFFFFF" size={16} />
+                  <SymbolView
+                    name={{ ios: 'paperplane.fill', android: 'send', web: 'send' }}
+                    tintColor="#FFFFFF"
+                    size={16}
+                  />
                   <Text style={styles.submitButtonText}>बदलाव सेव करके समीक्षा में भेजें</Text>
                 </>
               )}
@@ -942,22 +1275,41 @@ export default function MatrimonyFormScreen() {
               <Pressable
                 disabled={busy || editingLocked}
                 style={[styles.draftButton, (busy || editingLocked) && styles.disabledButton]}
-                onPress={() => save(false)}>
-                {busy ? <ActivityIndicator color={C.maroon} size="small" /> : (
+                onPress={() => save(false)}
+              >
+                {busy ? (
+                  <ActivityIndicator color={C.maroon} size="small" />
+                ) : (
                   <>
-                    <SymbolView name={{ ios: 'square.and.arrow.down', android: 'save', web: 'save' }} tintColor={C.maroon} size={17} />
-                    <Text style={styles.draftButtonText}>{profileId ? 'ड्राफ्ट अपडेट करें' : 'ड्राफ्ट सेव करके फोटो जोड़ें'}</Text>
+                    <SymbolView
+                      name={{ ios: 'square.and.arrow.down', android: 'save', web: 'save' }}
+                      tintColor={C.maroon}
+                      size={17}
+                    />
+                    <Text style={styles.draftButtonText}>
+                      {profileId ? 'ड्राफ्ट अपडेट करें' : 'ड्राफ्ट सेव करके फोटो जोड़ें'}
+                    </Text>
                   </>
                 )}
               </Pressable>
               {profileId ? (
                 <Pressable
                   disabled={busy || editingLocked || mediaBusy}
-                  style={[styles.submitButton, (busy || editingLocked || mediaBusy) && styles.disabledButton]}
-                  onPress={() => save(true)}>
-                  {busy ? <ActivityIndicator color="#FFFFFF" size="small" /> : (
+                  style={[
+                    styles.submitButton,
+                    (busy || editingLocked || mediaBusy) && styles.disabledButton,
+                  ]}
+                  onPress={() => save(true)}
+                >
+                  {busy ? (
+                    <ActivityIndicator color="#FFFFFF" size="small" />
+                  ) : (
                     <>
-                      <SymbolView name={{ ios: 'paperplane.fill', android: 'send', web: 'send' }} tintColor="#FFFFFF" size={16} />
+                      <SymbolView
+                        name={{ ios: 'paperplane.fill', android: 'send', web: 'send' }}
+                        tintColor="#FFFFFF"
+                        size={16}
+                      />
                       <Text style={styles.submitButtonText}>सेव करके समीक्षा में भेजें</Text>
                     </>
                   )}
@@ -970,87 +1322,3 @@ export default function MatrimonyFormScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: C.bg },
-  content: { padding: 16, paddingBottom: 120 },
-  headerRow: { flexDirection: 'row', alignItems: 'center', gap: 11, marginBottom: 14 },
-  backButton: { width: 40, height: 40, borderRadius: 12, alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: C.line },
-  headerCopy: { flex: 1 },
-  eyebrow: { color: C.gold, fontSize: 10, fontWeight: '900', letterSpacing: 1.1 },
-  title: { color: C.maroonDark, fontSize: 24, lineHeight: 30, fontWeight: '900', marginTop: 2 },
-
-  progressBanner: { flexDirection: 'row', gap: 10, padding: 13, borderRadius: 15, backgroundColor: '#F2FBF6', borderWidth: 1, borderColor: '#CFEBDD', marginBottom: 14 },
-  progressIcon: { width: 36, height: 36, borderRadius: 12, backgroundColor: '#E1F6EA', alignItems: 'center', justifyContent: 'center' },
-  progressCopy: { flex: 1 },
-  progressTitle: { color: '#135C43', fontSize: 12, fontWeight: '900' },
-  progressText: { color: '#497063', fontSize: 10.5, lineHeight: 16, marginTop: 2 },
-  lockBanner: { flexDirection: 'row', gap: 9, alignItems: 'center', padding: 12, borderRadius: 14, backgroundColor: '#FFF0EE', borderWidth: 1, borderColor: '#F1CFC8', marginBottom: 12 },
-  lockText: { flex: 1, color: '#7B3D36', fontSize: 11, lineHeight: 17, fontWeight: '700' },
-
-  section: { borderRadius: 18, backgroundColor: C.paper, borderWidth: 1, borderColor: C.line, padding: 14, marginBottom: 12 },
-  sectionTitle: { color: C.maroonDark, fontSize: 16, fontWeight: '900' },
-  sectionSubtitle: { color: C.muted, fontSize: 10.5, lineHeight: 16, marginTop: 3 },
-  sectionBody: { marginTop: 12, gap: 10 },
-  inlineLabel: { color: C.text, fontSize: 10.5, fontWeight: '900', marginTop: 1 },
-  fieldBlock: { gap: 5 },
-  fieldLabel: { color: C.text, fontSize: 10.5, fontWeight: '900' },
-  required: { color: C.red },
-  input: { minHeight: 43, borderWidth: 1, borderColor: '#DFD2C6', borderRadius: 12, backgroundColor: '#FFFCF8', paddingHorizontal: 12, color: C.text, fontSize: 12 },
-  dateInput: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 10 },
-  dateText: { color: C.text, fontSize: 12, fontWeight: '700' },
-  datePlaceholder: { color: '#A69A94', fontSize: 12 },
-  multilineInput: { minHeight: 88, paddingTop: 11, textAlignVertical: 'top' },
-  twoCol: { flexDirection: 'row', gap: 9 },
-  col: { flex: 1, minWidth: 0 },
-  choiceRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 7 },
-  choice: { paddingHorizontal: 11, paddingVertical: 8, borderRadius: 18, borderWidth: 1, borderColor: '#E0D2C7', backgroundColor: '#FFFCF8' },
-  choiceActive: { backgroundColor: C.maroon, borderColor: C.maroon },
-  choiceDisabled: { opacity: 0.62 },
-  choiceText: { color: '#6E615B', fontSize: 10, fontWeight: '800' },
-  choiceTextActive: { color: '#FFFFFF' },
-
-  mediaLockedCard: { flexDirection: 'row', alignItems: 'center', gap: 9, padding: 12, borderRadius: 13, backgroundColor: '#FFF6E8', borderWidth: 1, borderColor: '#F1D6A9' },
-  mediaLockedText: { flex: 1, color: '#7A5C2B', fontSize: 10.5, lineHeight: 16, fontWeight: '700' },
-  mediaHeaderRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 10 },
-  mediaCopy: { flex: 1 },
-  mediaTitle: { color: C.text, fontSize: 12, fontWeight: '900' },
-  mediaHint: { color: C.muted, fontSize: 9.5, marginTop: 2 },
-  mediaAddButton: { minHeight: 36, paddingHorizontal: 11, borderRadius: 11, backgroundColor: C.maroon, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5 },
-  mediaAddText: { color: '#FFFFFF', fontSize: 9.5, fontWeight: '900' },
-  emptyMedia: { minHeight: 92, borderRadius: 13, backgroundColor: '#FBF7F2', borderWidth: 1, borderStyle: 'dashed', borderColor: '#DFD1C4', alignItems: 'center', justifyContent: 'center', padding: 14 },
-  emptyMediaText: { color: C.muted, fontSize: 10, lineHeight: 15, textAlign: 'center', marginTop: 5 },
-  photoGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 9 },
-  photoCard: { width: '48%', borderRadius: 12, overflow: 'hidden', borderWidth: 1, borderColor: '#E6D8CC', backgroundColor: '#FFFDF9' },
-  photoImage: { width: '100%', aspectRatio: 0.86, backgroundColor: '#F2E7DE' },
-  photoInfo: { padding: 8, gap: 7 },
-  photoStatusRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 5 },
-  photoStatus: { color: C.muted, fontSize: 8.5, fontWeight: '800' },
-  primaryPill: { color: C.green, fontSize: 8, fontWeight: '900', backgroundColor: '#E8F7EF', borderRadius: 7, paddingHorizontal: 6, paddingVertical: 3 },
-  photoActions: { minHeight: 20, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 6 },
-  photoActionText: { color: C.maroon, fontSize: 8.5, fontWeight: '900' },
-  deleteActionText: { color: C.red, fontSize: 8.5, fontWeight: '900' },
-  divider: { height: 1, backgroundColor: '#EEE2D8', marginVertical: 3 },
-  kundaliButton: { minHeight: 36, paddingHorizontal: 10, borderRadius: 11, borderWidth: 1, borderColor: '#DDBDB6', backgroundColor: '#FFF8F5', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5 },
-  kundaliButtonText: { color: C.maroon, fontSize: 9.5, fontWeight: '900' },
-  kundaliCard: { flexDirection: 'row', alignItems: 'center', gap: 9, padding: 11, borderRadius: 13, backgroundColor: '#FBF7F2', borderWidth: 1, borderColor: '#E6D9CE' },
-  kundaliIcon: { width: 40, height: 40, borderRadius: 11, alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFF0EC' },
-  kundaliCopy: { flex: 1 },
-  kundaliName: { color: C.text, fontSize: 10.5, fontWeight: '900' },
-  kundaliStatus: { color: C.muted, fontSize: 9, marginTop: 2 },
-  mediaProgress: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingTop: 3 },
-  mediaProgressText: { color: C.muted, fontSize: 9.5, fontWeight: '700' },
-
-  actionsCard: { gap: 9, paddingTop: 4 },
-  draftButton: { minHeight: 48, borderRadius: 14, borderWidth: 1, borderColor: '#DDBDB6', backgroundColor: '#FFF8F5', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 7 },
-  draftButtonText: { color: C.maroon, fontSize: 12, fontWeight: '900' },
-  submitButton: { minHeight: 50, borderRadius: 14, backgroundColor: C.maroon, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 7 },
-  submitButtonText: { color: '#FFFFFF', fontSize: 12, fontWeight: '900' },
-  disabledButton: { opacity: 0.52 },
-
-  centerState: { flex: 1, paddingHorizontal: 28, alignItems: 'center', justifyContent: 'center' },
-  centerTitle: { color: C.maroonDark, fontSize: 20, fontWeight: '900', textAlign: 'center', marginTop: 14 },
-  centerText: { color: C.muted, fontSize: 12.5, lineHeight: 20, textAlign: 'center', marginTop: 8 },
-  centerButton: { width: '100%', minHeight: 48, marginTop: 20, borderRadius: 14, backgroundColor: C.maroon, alignItems: 'center', justifyContent: 'center' },
-  centerButtonText: { color: '#FFFFFF', fontSize: 12.5, fontWeight: '900' },
-});

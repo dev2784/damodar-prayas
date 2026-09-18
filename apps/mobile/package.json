@@ -39,15 +39,21 @@
   },
   "devDependencies": {
     "@types/react": "~19.2.2",
-    "typescript": "~6.0.3"
+    "typescript": "~6.0.3",
+    "prettier": "3.9.7",
+    "eslint": "^9.39.1",
+    "eslint-config-expo": "57.0.2"
   },
   "scripts": {
     "start": "expo start",
-    "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "eslint src",
+    "typecheck": "tsc --noEmit --noUnusedLocals --noUnusedParameters",
+    "format": "prettier --write src tests *.json *.js",
+    "format:check": "prettier --check src tests *.json *.js",
+    "test": "node --experimental-strip-types --test tests/*.test.mjs"
   },
   "private": true
 }

@@ -4,7 +4,8 @@ export type MatrimonyCategory = 'JUNA_GUJARATI' | 'PIPA' | 'NAMDEV';
 export type MatrimonyGender = 'MALE' | 'FEMALE' | 'OTHER';
 export type MatrimonyMaritalStatus = 'NEVER_MARRIED' | 'DIVORCED' | 'WIDOWED' | 'SEPARATED';
 export type MatrimonyProfileFor = 'SELF' | 'SON' | 'DAUGHTER' | 'BROTHER' | 'SISTER' | 'RELATIVE';
-export type MatrimonyProfileStatus = 'DRAFT' | 'PENDING' | 'APPROVED' | 'REJECTED' | 'SUSPENDED' | 'MARRIED';
+export type MatrimonyProfileStatus =
+  'DRAFT' | 'PENDING' | 'APPROVED' | 'REJECTED' | 'SUSPENDED' | 'MARRIED';
 export type MatrimonyMediaStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 export type MatrimonyDeleteRequestStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 
@@ -222,7 +223,10 @@ export const matrimonyApi = api.injectEndpoints({
         { type: 'Matrimony', id: 'LIST' },
       ],
     }),
-    requestMatrimonyProfileDeletion: builder.mutation<{ request: MatrimonyDeleteRequest }, { id: string; reason: string }>({
+    requestMatrimonyProfileDeletion: builder.mutation<
+      { request: MatrimonyDeleteRequest },
+      { id: string; reason: string }
+    >({
       query: ({ id, reason }) => ({
         url: `/matrimony/${id}/delete-request`,
         method: 'POST',

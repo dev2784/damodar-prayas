@@ -1,35 +1,12 @@
+import { C, styles } from '@/styles/community.styles';
 import { useState } from 'react';
-import {
-  ActivityIndicator,
-  FlatList,
-  Pressable,
-  RefreshControl,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { ActivityIndicator, FlatList, Pressable, RefreshControl, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { Image } from 'expo-image';
 import { SymbolView } from 'expo-symbols';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import {
-  type CommunityPost,
-  useGetCommunityPostsQuery,
-} from '@/services/community-api';
-
-const C = {
-  bg: '#FFF8ED',
-  paper: '#FFFDF9',
-  maroon: '#A30D1E',
-  maroonDark: '#74101B',
-  gold: '#D99A2B',
-  text: '#251B18',
-  muted: '#776A64',
-  line: '#E9D8C5',
-  green: '#168458',
-  blue: '#356AA0',
-};
+import { type CommunityPost, useGetCommunityPostsQuery } from '@/services/community-api';
 
 type FeedCategory = 'NEWS' | 'EVENT' | 'ADVERTISEMENT';
 
@@ -53,27 +30,38 @@ function PostCard({ post }: { post: CommunityPost }) {
   const translation = post.translations[0];
   const isEvent = post.category === 'EVENT';
   const isAdvertisement = post.category === 'ADVERTISEMENT';
-  const date = formatDate(isEvent ? post.eventDate : post.publishedAt ?? post.createdAt);
+  const date = formatDate(isEvent ? post.eventDate : (post.publishedAt ?? post.createdAt));
   const categoryLabel = isEvent ? 'कार्यक्रम' : isAdvertisement ? 'विज्ञापन' : 'समाचार';
   const categoryIcon = isEvent
-    ? { ios: 'calendar.badge.clock', android: 'event', web: 'event' } as const
+    ? ({ ios: 'calendar.badge.clock', android: 'event', web: 'event' } as const)
     : isAdvertisement
-      ? { ios: 'megaphone.fill', android: 'campaign', web: 'campaign' } as const
-      : { ios: 'newspaper.fill', android: 'newspaper', web: 'newspaper' } as const;
+      ? ({ ios: 'megaphone.fill', android: 'campaign', web: 'campaign' } as const)
+      : ({ ios: 'newspaper.fill', android: 'newspaper', web: 'newspaper' } as const);
   const categoryTint = isEvent ? C.gold : isAdvertisement ? C.green : C.maroon;
 
   return (
     <Pressable
       style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
-      onPress={() => router.push({ pathname: '/community-post', params: { id: post.id } })}>
+      onPress={() => router.push({ pathname: '/community-post', params: { id: post.id } })}
+    >
       {post.bannerUrl ? (
-        <Image source={{ uri: post.bannerUrl }} style={styles.banner} contentFit="cover" transition={180} />
+        <Image
+          source={{ uri: post.bannerUrl }}
+          style={styles.banner}
+          contentFit="cover"
+          transition={180}
+        />
       ) : (
         <View
           style={[
             styles.bannerPlaceholder,
-            isEvent ? styles.eventPlaceholder : isAdvertisement ? styles.adPlaceholder : styles.newsPlaceholder,
-          ]}>
+            isEvent
+              ? styles.eventPlaceholder
+              : isAdvertisement
+                ? styles.adPlaceholder
+                : styles.newsPlaceholder,
+          ]}
+        >
           <SymbolView name={categoryIcon} tintColor={categoryTint} size={42} />
         </View>
       )}
@@ -84,18 +72,24 @@ function PostCard({ post }: { post: CommunityPost }) {
             style={[
               styles.categoryPill,
               isEvent ? styles.eventPill : isAdvertisement ? styles.adPill : styles.newsPill,
-            ]}>
+            ]}
+          >
             <Text
               style={[
                 styles.categoryText,
                 isEvent ? styles.eventText : isAdvertisement ? styles.adText : styles.newsText,
-              ]}>
+              ]}
+            >
               {categoryLabel}
             </Text>
           </View>
           {post.isFeatured ? (
             <View style={styles.featuredPill}>
-              <SymbolView name={{ ios: 'star.fill', android: 'star', web: 'star' }} tintColor="#FFFFFF" size={11} />
+              <SymbolView
+                name={{ ios: 'star.fill', android: 'star', web: 'star' }}
+                tintColor="#FFFFFF"
+                size={11}
+              />
               <Text style={styles.featuredText}>मुख्य</Text>
             </View>
           ) : null}
@@ -115,15 +109,25 @@ function PostCard({ post }: { post: CommunityPost }) {
         <View style={styles.cardFooter}>
           {post.location ? (
             <View style={styles.locationRow}>
-              <SymbolView name={{ ios: 'location.fill', android: 'location_on', web: 'location_on' }} tintColor={C.green} size={14} />
-              <Text style={styles.locationText} numberOfLines={1}>{post.location}</Text>
+              <SymbolView
+                name={{ ios: 'location.fill', android: 'location_on', web: 'location_on' }}
+                tintColor={C.green}
+                size={14}
+              />
+              <Text style={styles.locationText} numberOfLines={1}>
+                {post.location}
+              </Text>
             </View>
           ) : (
             <View />
           )}
           <View style={styles.readMoreRow}>
             <Text style={styles.readMore}>पूरा देखें</Text>
-            <SymbolView name={{ ios: 'chevron.right', android: 'chevron_right', web: 'chevron_right' }} tintColor={C.maroon} size={14} />
+            <SymbolView
+              name={{ ios: 'chevron.right', android: 'chevron_right', web: 'chevron_right' }}
+              tintColor={C.maroon}
+              size={14}
+            />
           </View>
         </View>
       </View>
@@ -139,21 +143,24 @@ export default function CommunityScreen() {
   });
 
   const items = data?.items ?? [];
-  const sectionLabel = activeCategory === 'NEWS'
-    ? 'ताज़ा समाचार'
-    : activeCategory === 'EVENT'
-      ? 'आने वाले कार्यक्रम'
-      : 'समाज व्यापार विज्ञापन';
-  const emptyLabel = activeCategory === 'NEWS'
-    ? 'अभी कोई समाचार प्रकाशित नहीं है'
-    : activeCategory === 'EVENT'
-      ? 'अभी कोई कार्यक्रम प्रकाशित नहीं है'
-      : 'अभी कोई विज्ञापन प्रकाशित नहीं है';
-  const emptyIcon = activeCategory === 'NEWS'
-    ? { ios: 'newspaper', android: 'newspaper', web: 'newspaper' } as const
-    : activeCategory === 'EVENT'
-      ? { ios: 'calendar', android: 'event', web: 'event' } as const
-      : { ios: 'megaphone', android: 'campaign', web: 'campaign' } as const;
+  const sectionLabel =
+    activeCategory === 'NEWS'
+      ? 'ताज़ा समाचार'
+      : activeCategory === 'EVENT'
+        ? 'आने वाले कार्यक्रम'
+        : 'समाज व्यापार विज्ञापन';
+  const emptyLabel =
+    activeCategory === 'NEWS'
+      ? 'अभी कोई समाचार प्रकाशित नहीं है'
+      : activeCategory === 'EVENT'
+        ? 'अभी कोई कार्यक्रम प्रकाशित नहीं है'
+        : 'अभी कोई विज्ञापन प्रकाशित नहीं है';
+  const emptyIcon =
+    activeCategory === 'NEWS'
+      ? ({ ios: 'newspaper', android: 'newspaper', web: 'newspaper' } as const)
+      : activeCategory === 'EVENT'
+        ? ({ ios: 'calendar', android: 'event', web: 'event' } as const)
+        : ({ ios: 'megaphone', android: 'campaign', web: 'campaign' } as const);
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
@@ -180,8 +187,18 @@ export default function CommunityScreen() {
                 </View>
                 <Pressable
                   style={styles.addButton}
-                  onPress={() => router.push({ pathname: '/community-submit', params: { category: activeCategory } })}>
-                  <SymbolView name={{ ios: 'plus', android: 'add', web: 'add' }} tintColor="#FFFFFF" size={16} />
+                  onPress={() =>
+                    router.push({
+                      pathname: '/community-submit',
+                      params: { category: activeCategory },
+                    })
+                  }
+                >
+                  <SymbolView
+                    name={{ ios: 'plus', android: 'add', web: 'add' }}
+                    tintColor="#FFFFFF"
+                    size={16}
+                  />
                   <Text style={styles.addButtonText}>जोड़ें</Text>
                 </Pressable>
               </View>
@@ -193,33 +210,47 @@ export default function CommunityScreen() {
             <View style={styles.tabs}>
               <Pressable
                 style={[styles.tab, activeCategory === 'NEWS' && styles.activeTab]}
-                onPress={() => setActiveCategory('NEWS')}>
+                onPress={() => setActiveCategory('NEWS')}
+              >
                 <SymbolView
                   name={{ ios: 'newspaper.fill', android: 'newspaper', web: 'newspaper' }}
                   tintColor={activeCategory === 'NEWS' ? '#FFFFFF' : C.maroon}
                   size={16}
                 />
-                <Text style={[styles.tabText, activeCategory === 'NEWS' && styles.activeTabText]}>समाचार</Text>
+                <Text style={[styles.tabText, activeCategory === 'NEWS' && styles.activeTabText]}>
+                  समाचार
+                </Text>
               </Pressable>
               <Pressable
                 style={[styles.tab, activeCategory === 'EVENT' && styles.activeTab]}
-                onPress={() => setActiveCategory('EVENT')}>
+                onPress={() => setActiveCategory('EVENT')}
+              >
                 <SymbolView
                   name={{ ios: 'calendar', android: 'calendar_month', web: 'calendar_month' }}
                   tintColor={activeCategory === 'EVENT' ? '#FFFFFF' : C.maroon}
                   size={16}
                 />
-                <Text style={[styles.tabText, activeCategory === 'EVENT' && styles.activeTabText]}>समारोह</Text>
+                <Text style={[styles.tabText, activeCategory === 'EVENT' && styles.activeTabText]}>
+                  समारोह
+                </Text>
               </Pressable>
               <Pressable
                 style={[styles.tab, activeCategory === 'ADVERTISEMENT' && styles.activeTab]}
-                onPress={() => setActiveCategory('ADVERTISEMENT')}>
+                onPress={() => setActiveCategory('ADVERTISEMENT')}
+              >
                 <SymbolView
                   name={{ ios: 'megaphone.fill', android: 'campaign', web: 'campaign' }}
                   tintColor={activeCategory === 'ADVERTISEMENT' ? '#FFFFFF' : C.maroon}
                   size={16}
                 />
-                <Text style={[styles.tabText, activeCategory === 'ADVERTISEMENT' && styles.activeTabText]}>विज्ञापन</Text>
+                <Text
+                  style={[
+                    styles.tabText,
+                    activeCategory === 'ADVERTISEMENT' && styles.activeTabText,
+                  ]}
+                >
+                  विज्ञापन
+                </Text>
               </Pressable>
             </View>
 
@@ -239,7 +270,11 @@ export default function CommunityScreen() {
             </View>
           ) : isError ? (
             <View style={styles.stateCard}>
-              <SymbolView name={{ ios: 'wifi.exclamationmark', android: 'wifi_off', web: 'wifi_off' }} tintColor={C.maroon} size={42} />
+              <SymbolView
+                name={{ ios: 'wifi.exclamationmark', android: 'wifi_off', web: 'wifi_off' }}
+                tintColor={C.maroon}
+                size={42}
+              />
               <Text style={styles.stateTitle}>अभी जानकारी लोड नहीं हो पाई</Text>
               <Text style={styles.stateText}>इंटरनेट या API कनेक्शन जाँचकर दोबारा कोशिश करें।</Text>
               <Pressable style={styles.retryButton} onPress={refetch}>
@@ -250,7 +285,9 @@ export default function CommunityScreen() {
             <View style={styles.stateCard}>
               <SymbolView name={emptyIcon} tintColor={C.gold} size={42} />
               <Text style={styles.stateTitle}>{emptyLabel}</Text>
-              <Text style={styles.stateText}>Admin approval के बाद नई जानकारी यहाँ दिखाई देगी।</Text>
+              <Text style={styles.stateText}>
+                Admin approval के बाद नई जानकारी यहाँ दिखाई देगी।
+              </Text>
             </View>
           )
         }
@@ -258,108 +295,3 @@ export default function CommunityScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: C.bg },
-  listContent: { paddingHorizontal: 14, paddingTop: 10, paddingBottom: 110, flexGrow: 1 },
-  header: { paddingHorizontal: 2, paddingTop: 5, paddingBottom: 13 },
-  headerTop: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  headerCopy: { flex: 1 },
-  addButton: { minHeight: 36, borderRadius: 11, paddingHorizontal: 11, backgroundColor: C.maroon, flexDirection: 'row', alignItems: 'center', gap: 4 },
-  addButtonText: { color: '#FFFFFF', fontSize: 9.5, fontWeight: '900' },
-  eyebrow: { color: C.gold, fontSize: 10, fontWeight: '900', letterSpacing: 1.1 },
-  title: { color: C.maroonDark, fontSize: 25, lineHeight: 32, fontWeight: '900', marginTop: 3 },
-  subtitle: { color: C.muted, fontSize: 11, lineHeight: 17, marginTop: 4, maxWidth: 360 },
-  tabs: {
-    flexDirection: 'row',
-    gap: 6,
-    padding: 5,
-    borderRadius: 16,
-    backgroundColor: '#F5EBDD',
-    borderWidth: 1,
-    borderColor: '#E8D9C8',
-    marginBottom: 13,
-  },
-  tab: {
-    flex: 1,
-    minHeight: 43,
-    borderRadius: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 5,
-  },
-  activeTab: { backgroundColor: C.maroon },
-  tabText: { color: C.maroon, fontSize: 10.5, fontWeight: '900' },
-  activeTabText: { color: '#FFFFFF' },
-  countRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 9, paddingHorizontal: 2 },
-  countText: { color: C.text, fontSize: 12, fontWeight: '900' },
-  countValue: {
-    marginLeft: 7,
-    minWidth: 22,
-    height: 22,
-    paddingHorizontal: 6,
-    borderRadius: 11,
-    overflow: 'hidden',
-    backgroundColor: '#F3E5E2',
-    color: C.maroon,
-    textAlign: 'center',
-    lineHeight: 22,
-    fontSize: 9,
-    fontWeight: '900',
-  },
-  card: {
-    backgroundColor: C.paper,
-    borderRadius: 18,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: C.line,
-    marginBottom: 13,
-    elevation: 2,
-    shadowColor: '#5D3724',
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-  },
-  cardPressed: { opacity: 0.92, transform: [{ scale: 0.995 }] },
-  banner: { width: '100%', aspectRatio: 1.85, backgroundColor: '#EEDFD3' },
-  bannerPlaceholder: { width: '100%', aspectRatio: 1.85, alignItems: 'center', justifyContent: 'center' },
-  newsPlaceholder: { backgroundColor: '#FAECEC' },
-  eventPlaceholder: { backgroundColor: '#FFF4DC' },
-  adPlaceholder: { backgroundColor: '#EAF7EF' },
-  cardBody: { padding: 13 },
-  metaRow: { flexDirection: 'row', alignItems: 'center', minHeight: 24 },
-  categoryPill: { borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4 },
-  newsPill: { backgroundColor: '#FCE9EC' },
-  eventPill: { backgroundColor: '#FFF1D5' },
-  adPill: { backgroundColor: '#EAF7EF' },
-  categoryText: { fontSize: 8.5, fontWeight: '900' },
-  newsText: { color: C.maroon },
-  eventText: { color: '#A86600' },
-  adText: { color: C.green },
-  featuredPill: { flexDirection: 'row', alignItems: 'center', gap: 3, marginLeft: 6, borderRadius: 8, backgroundColor: C.gold, paddingHorizontal: 7, paddingVertical: 4 },
-  featuredText: { color: '#FFFFFF', fontSize: 8, fontWeight: '900' },
-  metaSpacer: { flex: 1 },
-  dateText: { color: C.muted, fontSize: 8.5, fontWeight: '700' },
-  cardTitle: { color: C.text, fontSize: 17, lineHeight: 23, fontWeight: '900', marginTop: 9 },
-  cardExcerpt: { color: C.muted, fontSize: 10.5, lineHeight: 16, marginTop: 6 },
-  cardFooter: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginTop: 11 },
-  locationRow: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 4 },
-  locationText: { flex: 1, color: C.green, fontSize: 9.5, fontWeight: '800' },
-  readMoreRow: { flexDirection: 'row', alignItems: 'center', gap: 2 },
-  readMore: { color: C.maroon, fontSize: 9.5, fontWeight: '900' },
-  stateCard: {
-    minHeight: 260,
-    marginTop: 6,
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: C.line,
-    backgroundColor: C.paper,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 26,
-  },
-  stateTitle: { color: C.text, fontSize: 14, fontWeight: '900', textAlign: 'center', marginTop: 10 },
-  stateText: { color: C.muted, fontSize: 10.5, lineHeight: 16, textAlign: 'center', marginTop: 5 },
-  retryButton: { marginTop: 14, borderRadius: 11, backgroundColor: C.maroon, paddingHorizontal: 17, paddingVertical: 10 },
-  retryText: { color: '#FFFFFF', fontSize: 10.5, fontWeight: '900' },
-});
