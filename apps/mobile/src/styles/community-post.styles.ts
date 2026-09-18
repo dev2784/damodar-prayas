@@ -97,6 +97,12 @@ export const styles = StyleSheet.create({
   infoLabel: { color: C.muted, fontSize: 8.5, fontWeight: '800' },
   infoValue: { color: C.text, fontSize: 11.5, fontWeight: '900', marginTop: 1 },
   details: { color: '#4A403B', fontSize: 13, lineHeight: 22, marginTop: 18 },
+  socialRow: { flexDirection: 'row', gap: 10, marginTop: 18, paddingTop: 14, borderTopWidth: 1, borderTopColor: C.line },
+  socialButton: { minHeight: 42, paddingHorizontal: 14, borderRadius: 12, borderWidth: 1, borderColor: C.line, backgroundColor: '#FFF9F2', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
+  socialButtonActive: { backgroundColor: '#FCE9EC', borderColor: '#E8B8C0' },
+  socialIcon: { color: C.maroon, fontSize: 19, fontWeight: '900' },
+  socialText: { color: C.maroonDark, fontSize: 11, fontWeight: '900' },
+  socialTextActive: { color: C.maroon },
   contactCard: {
     marginTop: 13,
     borderRadius: 18,
