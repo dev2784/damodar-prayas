@@ -5,9 +5,11 @@ import { Image } from 'expo-image';
 import { SymbolView } from 'expo-symbols';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { useLanguageText } from '@/hooks/use-language-text';
 import { type Committee, useGetCommitteesQuery } from '@/services/committee-api';
 
 function CommitteeCard({ committee }: { committee: Committee }) {
+  const { text } = useLanguageText();
   const translation = committee.translations[0];
   const location = [committee.city, committee.state].filter(Boolean).join(', ');
 
@@ -38,7 +40,7 @@ function CommitteeCard({ committee }: { committee: Committee }) {
       )}
 
       <View style={styles.cardBody}>
-        <Text style={styles.cardTitle}>{translation?.name ?? 'समिति'}</Text>
+        <Text style={styles.cardTitle}>{translation?.name ?? text('समिति', 'Committee')}</Text>
         {location ? (
           <View style={styles.locationRow}>
             <SymbolView
@@ -58,13 +60,13 @@ function CommitteeCard({ committee }: { committee: Committee }) {
                 tintColor={C.gold}
                 size={15}
               />
-              <Text style={styles.memberMetaText}>{committee.members.length} पदाधिकारी</Text>
+              <Text style={styles.memberMetaText}>{committee.members.length} {text('पदाधिकारी', 'office bearers')}</Text>
             </View>
           ) : (
-            <Text style={styles.optionalText}>पदाधिकारी विवरण वैकल्पिक</Text>
+            <Text style={styles.optionalText}>{text('पदाधिकारी विवरण वैकल्पिक', 'Office bearer details optional')}</Text>
           )}
           <View style={styles.openRow}>
-            <Text style={styles.openText}>समिति देखें</Text>
+            <Text style={styles.openText}>{text('समिति देखें', 'View committee')}</Text>
             <SymbolView
               name={{ ios: 'chevron.right', android: 'chevron_right', web: 'chevron_right' }}
               tintColor={C.maroon}
@@ -78,8 +80,9 @@ function CommitteeCard({ committee }: { committee: Committee }) {
 }
 
 export default function SamitiScreen() {
+  const { text, apiLanguage } = useLanguageText();
   const { data, isLoading, isFetching, isError, refetch } = useGetCommitteesQuery({
-    language: 'HI',
+    language: apiLanguage,
   });
   const items = data?.items ?? [];
 
@@ -102,8 +105,8 @@ export default function SamitiScreen() {
           <View style={styles.header}>
             <View style={styles.headerTop}>
               <View style={styles.headerCopy}>
-                <Text style={styles.eyebrow}>समाज संगठन</Text>
-                <Text style={styles.title}>समितियाँ</Text>
+                <Text style={styles.eyebrow}>{text('समाज संगठन', 'Community organisation')}</Text>
+                <Text style={styles.title}>{text('समितियाँ', 'Committees')}</Text>
               </View>
               <Pressable style={styles.addButton} onPress={() => router.push('/samiti-submit')}>
                 <SymbolView
@@ -111,16 +114,16 @@ export default function SamitiScreen() {
                   tintColor="#FFFFFF"
                   size={16}
                 />
-                <Text style={styles.addButtonText}>समिति जोड़ें</Text>
+                <Text style={styles.addButtonText}>{text('समिति जोड़ें', 'Add committee')}</Text>
               </Pressable>
             </View>
             <Text style={styles.subtitle}>
-              शहर और राज्य के अनुसार समाज की सक्रिय समितियाँ देखें। पदाधिकारी जोड़ना वैकल्पिक है।
+              {text('शहर और राज्य के अनुसार समाज की सक्रिय समितियाँ देखें। पदाधिकारी जोड़ना वैकल्पिक है।', 'View active community committees by city and state. Adding office bearers is optional.')}
             </Text>
             {!isLoading && !isError && items.length > 0 ? (
               <View style={styles.countPill}>
                 <Text style={styles.countText}>
-                  {data?.pagination.total ?? items.length} समितियाँ
+                  {data?.pagination.total ?? items.length} {text('समितियाँ', 'committees')}
                 </Text>
               </View>
             ) : null}
@@ -130,7 +133,7 @@ export default function SamitiScreen() {
           isLoading ? (
             <View style={styles.stateCard}>
               <ActivityIndicator color={C.maroon} size="large" />
-              <Text style={styles.stateTitle}>समितियाँ लोड हो रही हैं...</Text>
+              <Text style={styles.stateTitle}>{text('समितियाँ लोड हो रही हैं...', 'Loading committees...')}</Text>
             </View>
           ) : isError ? (
             <View style={styles.stateCard}>
@@ -139,10 +142,10 @@ export default function SamitiScreen() {
                 tintColor={C.maroon}
                 size={42}
               />
-              <Text style={styles.stateTitle}>समिति जानकारी लोड नहीं हो पाई</Text>
-              <Text style={styles.stateText}>इंटरनेट या API कनेक्शन जाँचकर दोबारा कोशिश करें।</Text>
+              <Text style={styles.stateTitle}>{text('समिति जानकारी लोड नहीं हो पाई', 'Could not load committee information')}</Text>
+              <Text style={styles.stateText}>{text('इंटरनेट या API कनेक्शन जाँचकर दोबारा कोशिश करें।', 'Check your internet or API connection and try again.')}</Text>
               <Pressable style={styles.retryButton} onPress={refetch}>
-                <Text style={styles.retryText}>फिर से कोशिश करें</Text>
+                <Text style={styles.retryText}>{text('फिर से कोशिश करें', 'Try again')}</Text>
               </Pressable>
             </View>
           ) : (
@@ -156,9 +159,9 @@ export default function SamitiScreen() {
                 tintColor={C.gold}
                 size={46}
               />
-              <Text style={styles.stateTitle}>अभी कोई समिति प्रकाशित नहीं है</Text>
+              <Text style={styles.stateTitle}>{text('अभी कोई समिति प्रकाशित नहीं है', 'No committee published yet')}</Text>
               <Text style={styles.stateText}>
-                नई समिति जुड़ते ही उसका banner, नाम, शहर और राज्य यहाँ दिखाई देगा।
+                {text('नई समिति जुड़ते ही उसका banner, नाम, शहर और राज्य यहाँ दिखाई देगा।', 'New committee details will appear here after publication.')}
               </Text>
             </View>
           )
