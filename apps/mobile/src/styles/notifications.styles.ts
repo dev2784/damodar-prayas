@@ -51,6 +51,8 @@ export const styles = StyleSheet.create({
   itemTitle: { color: C.text, fontSize: 12, fontWeight: '900' },
   itemBody: { color: C.muted, fontSize: 10, lineHeight: 15, marginTop: 3 },
   time: { color: '#9A8D86', fontSize: 8.5, marginTop: 6 },
+  loginButton: { marginTop: 16, minWidth: 140, minHeight: 44, borderRadius: 12, backgroundColor: C.maroon, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 20 },
+  loginButtonText: { color: '#FFFFFF', fontSize: 12, fontWeight: '900' },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 28, gap: 10 },
   empty: { color: C.muted, fontSize: 12, fontWeight: '700' },
   retry: { backgroundColor: C.maroon, borderRadius: 10, paddingHorizontal: 14, paddingVertical: 9 },
