@@ -45,7 +45,18 @@ export default function NotificationsScreen() {
     return (
       <SafeAreaView style={styles.safe}>
         <View style={styles.center}>
+          <SymbolView
+            name={{ ios: 'person.crop.circle.badge.exclamationmark', android: 'login', web: 'login' }}
+            tintColor={C.maroon}
+            size={48}
+          />
           <Text style={styles.title}>Notifications देखने के लिए लॉगिन करें</Text>
+          <Pressable
+            style={styles.loginButton}
+            onPress={() => router.push({ pathname: '/auth', params: { next: '/notifications' } })}
+          >
+            <Text style={styles.loginButtonText}>लॉगिन करें</Text>
+          </Pressable>
         </View>
       </SafeAreaView>
     );
