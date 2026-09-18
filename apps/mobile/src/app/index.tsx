@@ -53,6 +53,18 @@ const quickActions = [
     bg: '#EEF7FF',
   },
 ];
+function languageQuickTitle(title: string, text: (hi: string, en: string) => string) {
+  const labels: Record<string, [string, string]> = {
+    'समाज सदस्य': ['समाज सदस्य', 'Community Members'],
+    'कार्यक्रम एवं': ['कार्यक्रम एवं', 'Events &'],
+    'समाज व्यापार': ['समाज व्यापार', 'Community Business'],
+    'लेख / ज्ञान': ['लेख / ज्ञान', 'Articles / Knowledge'],
+    'सहायता': ['सहायता', 'Help'],
+  };
+  const pair = labels[title];
+  return pair ? text(pair[0], pair[1]) : title;
+}
+
 function Icon({
   name,
   color,
