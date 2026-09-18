@@ -32,6 +32,13 @@
           "imageWidth": 280,
           "resizeMode": "contain"
         }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/icon.png",
+          "defaultChannel": "default"
+        }
       ]
     ],
     "experiments": {
