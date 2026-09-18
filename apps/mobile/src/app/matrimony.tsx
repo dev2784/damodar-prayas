@@ -15,6 +15,7 @@ import {
   useGetMyMatrimonyProfilesQuery,
 } from '@/services/matrimony-api';
 import { useAppSelector } from '@/store/hooks';
+import { useLanguageText } from '@/hooks/use-language-text';
 
 const genderFilters: { label: string; value?: MatrimonyGender }[] = [
   { label: 'सभी' },
@@ -58,6 +59,7 @@ function FilterChip({
 }
 
 function ProfileCard({ profile }: { profile: MatrimonyProfile }) {
+  const { text } = useLanguageText();
   const photo = profile.photos[0]?.url;
   const age = calculateAge(profile.dateOfBirth);
   const location = [profile.currentCity, profile.state].filter(Boolean).join(', ');
@@ -90,7 +92,7 @@ function ProfileCard({ profile }: { profile: MatrimonyProfile }) {
             tintColor={C.green}
             size={13}
           />
-          <Text style={styles.verifiedText}>सत्यापित</Text>
+          <Text style={styles.verifiedText}>{text('सत्यापित', 'Verified')}</Text>
         </View>
 
         {profile.isFeatured ? (
@@ -118,10 +120,10 @@ function ProfileCard({ profile }: { profile: MatrimonyProfile }) {
         </View>
 
         <Text style={styles.meta} numberOfLines={1}>
-          {location || 'भारत'}
+          {location || text('भारत', 'India')}
         </Text>
         <Text style={styles.work} numberOfLines={1}>
-          {profile.education || profile.occupation || 'विवरण देखें'}
+          {profile.education || profile.occupation || text('विवरण देखें', 'View details')}
         </Text>
       </View>
     </Pressable>
@@ -129,6 +131,7 @@ function ProfileCard({ profile }: { profile: MatrimonyProfile }) {
 }
 
 export default function MatrimonyScreen() {
+  const { text } = useLanguageText();
   const accessToken = useAppSelector((state) => state.auth.accessToken);
   const [gender, setGender] = useState<MatrimonyGender | undefined>();
   const [category, setCategory] = useState<MatrimonyCategory | undefined>();
@@ -208,9 +211,9 @@ export default function MatrimonyScreen() {
           <View>
             <View style={styles.header}>
               <View>
-                <Text style={styles.eyebrow}>दर्जी समाज मैट्रिमोनी</Text>
-                <Text style={styles.title}>अपना जीवनसाथी खोजें</Text>
-                <Text style={styles.subtitle}>केवल स्वीकृत और सत्यापित प्रोफाइल</Text>
+                <Text style={styles.eyebrow}>{text('दर्जी समाज मैट्रिमोनी', 'Darzi Samaj Matrimony')}</Text>
+                <Text style={styles.title}>{text('अपना जीवनसाथी खोजें', 'Find your life partner')}</Text>
+                <Text style={styles.subtitle}>{text('केवल स्वीकृत और सत्यापित प्रोफाइल', 'Only approved and verified profiles')}</Text>
               </View>
               <Pressable
                 style={styles.myProfileButton}
@@ -225,7 +228,7 @@ export default function MatrimonyScreen() {
                   tintColor={C.maroon}
                   size={22}
                 />
-                <Text style={styles.myProfileText}>मेरा प्रोफाइल</Text>
+                <Text style={styles.myProfileText}>{text('मेरा प्रोफाइल', 'My profile')}</Text>
               </Pressable>
             </View>
 
@@ -240,18 +243,18 @@ export default function MatrimonyScreen() {
               <View style={styles.createProfileCopy}>
                 <Text style={styles.createProfileTitle}>
                   {hasAnyOwnProfile
-                    ? 'अपने मैट्रिमोनी प्रोफाइल देखें'
-                    : 'अपना मैट्रिमोनी प्रोफाइल बनाएँ'}
+                    ? text('अपने मैट्रिमोनी प्रोफाइल देखें', 'View your matrimony profiles')
+                    : text('अपना मैट्रिमोनी प्रोफाइल बनाएँ', 'Create your matrimony profile')}
                 </Text>
                 <Text style={styles.createProfileText}>
                   {hasAnyOwnProfile
-                    ? 'आपके अकाउंट में पहले से प्रोफाइल मौजूद है। उसे देखने, एडिट करने या स्थिति जांचने के लिए आगे बढ़ें।'
-                    : 'अपनी जानकारी भरें, ड्राफ्ट सेव करें और तैयार होने पर समीक्षा के लिए भेजें।'}
+                    ? text('आपके अकाउंट में पहले से प्रोफाइल मौजूद है। उसे देखने, एडिट करने या स्थिति जांचने के लिए आगे बढ़ें।', 'A profile already exists in your account. Continue to view, edit or check its status.')
+                    : text('अपनी जानकारी भरें, ड्राफ्ट सेव करें और तैयार होने पर समीक्षा के लिए भेजें।', 'Fill in your details, save a draft and submit it for review when ready.')}
                 </Text>
               </View>
               <View style={styles.createProfileButton}>
                 <Text style={styles.createProfileButtonText}>
-                  {isLoadingMine ? 'जाँच रहे हैं' : hasAnyOwnProfile ? 'मेरे प्रोफाइल' : 'बनाएँ'}
+                  {isLoadingMine ? text('जाँच रहे हैं', 'Checking') : hasAnyOwnProfile ? text('मेरे प्रोफाइल', 'My profiles') : text('बनाएँ', 'Create')}
                 </Text>
                 <SymbolView
                   name={{ ios: 'chevron.right', android: 'chevron_right', web: 'chevron_right' }}
@@ -262,7 +265,7 @@ export default function MatrimonyScreen() {
             </Pressable>
 
             <View style={styles.filterBlock}>
-              <Text style={styles.filterLabel}>मैं देखना चाहता/चाहती हूँ</Text>
+              <Text style={styles.filterLabel}>{text('मैं देखना चाहता/चाहती हूँ', 'I want to see')}</Text>
               <View style={styles.genderRow}>
                 {genderFilters.map((item) => (
                   <FilterChip
@@ -276,7 +279,7 @@ export default function MatrimonyScreen() {
             </View>
 
             <View style={styles.filterBlockCompact}>
-              <Text style={styles.filterLabel}>समाज</Text>
+              <Text style={styles.filterLabel}>{text('समाज', 'Community')}</Text>
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
@@ -294,7 +297,7 @@ export default function MatrimonyScreen() {
             </View>
 
             <View style={styles.filterBlockCompact}>
-              <Text style={styles.filterLabel}>आयु</Text>
+              <Text style={styles.filterLabel}>{text('आयु', 'Age')}</Text>
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
@@ -313,8 +316,8 @@ export default function MatrimonyScreen() {
 
             <View style={styles.resultsRow}>
               <View>
-                <Text style={styles.resultsTitle}>मैट्रिमोनी प्रोफाइल</Text>
-                <Text style={styles.resultsCount}>{total} प्रोफाइल मिले</Text>
+                <Text style={styles.resultsTitle}>{text('मैट्रिमोनी प्रोफाइल', 'Matrimony profiles')}</Text>
+                <Text style={styles.resultsCount}>{total} {text('प्रोफाइल मिले', 'profiles found')}</Text>
               </View>
               {isFetching && !isLoading ? (
                 <ActivityIndicator color={C.maroon} size="small" />
@@ -327,7 +330,7 @@ export default function MatrimonyScreen() {
             {isLoading ? (
               <>
                 <ActivityIndicator color={C.maroon} size="large" />
-                <Text style={styles.emptyTitle}>प्रोफाइल लोड हो रहे हैं...</Text>
+                <Text style={styles.emptyTitle}>{text('प्रोफाइल लोड हो रहे हैं...', 'Loading profiles...')}</Text>
               </>
             ) : isError ? (
               <>
@@ -336,12 +339,12 @@ export default function MatrimonyScreen() {
                   tintColor={C.maroon}
                   size={42}
                 />
-                <Text style={styles.emptyTitle}>प्रोफाइल लोड नहीं हो पाए</Text>
+                <Text style={styles.emptyTitle}>{text('प्रोफाइल लोड नहीं हो पाए', 'Could not load profiles')}</Text>
                 <Text style={styles.emptyText}>
                   API connection और EXPO_PUBLIC_API_URL check करें।
                 </Text>
                 <Pressable style={styles.retryButton} onPress={refetch}>
-                  <Text style={styles.retryText}>फिर से कोशिश करें</Text>
+                  <Text style={styles.retryText}>{text('फिर से कोशिश करें', 'Try again')}</Text>
                 </Pressable>
               </>
             ) : (
@@ -351,8 +354,8 @@ export default function MatrimonyScreen() {
                   tintColor="#B99D8C"
                   size={46}
                 />
-                <Text style={styles.emptyTitle}>इस फ़िल्टर में कोई प्रोफाइल नहीं मिला</Text>
-                <Text style={styles.emptyText}>दूसरा समाज, आयु या वर/वधू विकल्प चुनकर देखें।</Text>
+                <Text style={styles.emptyTitle}>{text('इस फ़िल्टर में कोई प्रोफाइल नहीं मिला', 'No profiles found for these filters')}</Text>
+                <Text style={styles.emptyText}>{text('दूसरा समाज, आयु या वर/वधू विकल्प चुनकर देखें।', 'Try another community, age or bride/groom filter.')}</Text>
               </>
             )}
           </View>
@@ -365,7 +368,7 @@ export default function MatrimonyScreen() {
                 onPress={() => setPage((current) => Math.max(1, current - 1))}
                 style={[styles.pageButton, (page <= 1 || isFetching) && styles.pageButtonDisabled]}
               >
-                <Text style={styles.pageButtonText}>‹ पिछला</Text>
+                <Text style={styles.pageButtonText}>{text('‹ पिछला', '‹ Previous')}</Text>
               </Pressable>
 
               <Text style={styles.pageInfo}>
@@ -380,7 +383,7 @@ export default function MatrimonyScreen() {
                   (page >= totalPages || isFetching) && styles.pageButtonDisabled,
                 ]}
               >
-                <Text style={styles.pageButtonText}>अगला ›</Text>
+                <Text style={styles.pageButtonText}>{text('अगला ›', 'Next ›')}</Text>
               </Pressable>
             </View>
           ) : (
