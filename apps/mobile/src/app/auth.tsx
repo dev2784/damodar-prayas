@@ -19,6 +19,7 @@ import { isValidNewPassword } from '@/lib/password';
 import { api } from '@/services/api';
 import { useLoginMutation, useRegisterMutation } from '@/services/auth-api';
 import { useAppDispatch } from '@/store/hooks';
+import { useLanguageText } from '@/hooks/use-language-text';
 
 type Mode = 'login' | 'register';
 
@@ -79,6 +80,7 @@ function Field({
 }
 
 export default function AuthScreen() {
+  const { text } = useLanguageText();
   const params = useLocalSearchParams<{ next?: string | string[]; mode?: string | string[] }>();
   const nextParam = Array.isArray(params.next) ? params.next[0] : params.next;
   const initialMode =
@@ -175,8 +177,8 @@ export default function AuthScreen() {
           </Pressable>
           <View style={styles.headerCopy}>
             <Text style={styles.eyebrow}>DAMODAR PRAYAS</Text>
-            <Text style={styles.title}>समाज से जुड़ें</Text>
-            <Text style={styles.subtitle}>एक अकाउंट से community और matrimony दोनों सुविधाएँ।</Text>
+            <Text style={styles.title}>{text('समाज से जुड़ें', 'Join the community')}</Text>
+            <Text style={styles.subtitle}>{text('एक अकाउंट से community और matrimony दोनों सुविधाएँ।', 'One account for both community and matrimony features.')}</Text>
           </View>
         </View>
 
@@ -189,9 +191,9 @@ export default function AuthScreen() {
             />
           </View>
           <View style={styles.trustCopy}>
-            <Text style={styles.trustTitle}>आपकी जानकारी निजी रखी जाएगी</Text>
+            <Text style={styles.trustTitle}>{text('आपकी जानकारी निजी रखी जाएगी', 'Your information will remain private')}</Text>
             <Text style={styles.trustText}>
-              मोबाइल नंबर और संपर्क विवरण public matrimony listing में सीधे नहीं दिखेंगे।
+              {text('मोबाइल नंबर और संपर्क विवरण public matrimony listing में सीधे नहीं दिखेंगे।', 'Your mobile number and contact details will not be shown directly in public matrimony listings.')}
             </Text>
           </View>
         </View>
@@ -203,7 +205,7 @@ export default function AuthScreen() {
               onPress={() => setMode('login')}
             >
               <Text style={[styles.segmentText, mode === 'login' && styles.segmentTextActive]}>
-                लॉगिन
+                {text('लॉगिन', 'Login')}
               </Text>
             </Pressable>
             <Pressable
@@ -211,18 +213,18 @@ export default function AuthScreen() {
               onPress={() => setMode('register')}
             >
               <Text style={[styles.segmentText, mode === 'register' && styles.segmentTextActive]}>
-                नया अकाउंट
+                {text('नया अकाउंट', 'New account')}
               </Text>
             </Pressable>
           </View>
 
           <Text style={styles.formTitle}>
-            {mode === 'login' ? 'वापस स्वागत है' : 'अपना अकाउंट बनाएँ'}
+            {mode === 'login' ? text('वापस स्वागत है', 'Welcome back') : text('अपना अकाउंट बनाएँ', 'Create your account')}
           </Text>
           <Text style={styles.formSubtitle}>
             {mode === 'login'
-              ? 'अपने मोबाइल नंबर और पासवर्ड से लॉगिन करें।'
-              : 'पहले basic account बनाएँ, फिर matrimony profile अलग से भरें।'}
+              ? text('अपने मोबाइल नंबर और पासवर्ड से लॉगिन करें।', 'Log in with your mobile number and password.')
+              : text('पहले basic account बनाएँ, फिर matrimony profile अलग से भरें।', 'Create a basic account first, then fill your matrimony profile separately.')}
           </Text>
 
           {mode === 'register' ? (
@@ -230,7 +232,7 @@ export default function AuthScreen() {
               <View style={styles.twoCol}>
                 <View style={styles.col}>
                   <Field
-                    label="पहला नाम"
+                    label={text('पहला नाम', 'First name')}
                     value={firstName}
                     onChangeText={setFirstName}
                     autoCapitalize="words"
@@ -238,7 +240,7 @@ export default function AuthScreen() {
                 </View>
                 <View style={styles.col}>
                   <Field
-                    label="उपनाम"
+                    label={text('उपनाम', 'Last name')}
                     value={lastName}
                     onChangeText={setLastName}
                     autoCapitalize="words"
@@ -246,7 +248,7 @@ export default function AuthScreen() {
                 </View>
               </View>
               <Field
-                label="ईमेल (वैकल्पिक)"
+                label={text('ईमेल (वैकल्पिक)', 'Email (optional)')}
                 value={email}
                 onChangeText={setEmail}
                 keyboardType="email-address"
@@ -257,24 +259,24 @@ export default function AuthScreen() {
           ) : null}
 
           <Field
-            label="मोबाइल नंबर"
+            label={text('मोबाइल नंबर', 'Mobile number')}
             value={phone}
             onChangeText={setPhone}
             keyboardType="phone-pad"
             placeholder="9876543210"
           />
           <Field
-            label="पासवर्ड"
+            label={text('पासवर्ड', 'Password')}
             value={password}
             onChangeText={setPassword}
             secureTextEntry
             autoCapitalize="none"
-            placeholder="कम से कम 8 अक्षर"
+            placeholder={text('कम से कम 8 अक्षर', 'At least 8 characters')}
           />
 
           {mode === 'register' ? (
             <Field
-              label="पासवर्ड दोबारा"
+              label={text('पासवर्ड दोबारा', 'Confirm password')}
               value={confirmPassword}
               onChangeText={setConfirmPassword}
               secureTextEntry
@@ -292,7 +294,7 @@ export default function AuthScreen() {
             ) : (
               <>
                 <Text style={styles.submitText}>
-                  {mode === 'login' ? 'लॉगिन करें' : 'अकाउंट बनाएँ'}
+                  {mode === 'login' ? text('लॉगिन करें', 'Login') : text('अकाउंट बनाएँ', 'Create account')}
                 </Text>
                 <SymbolView
                   name={{
@@ -308,7 +310,7 @@ export default function AuthScreen() {
           </Pressable>
 
           <Text style={styles.helperText}>
-            भारतीय 10 digit नंबर डालने पर +91 अपने आप जोड़ा जाएगा।
+            {text('भारतीय 10 digit नंबर डालने पर +91 अपने आप जोड़ा जाएगा।', '+91 will be added automatically for a 10-digit Indian number.')}
           </Text>
         </View>
 
@@ -319,7 +321,7 @@ export default function AuthScreen() {
             size={18}
           />
           <Text style={styles.otpText}>
-            OTP verification अगला security upgrade रहेगा। अभी account login password से काम करेगा।
+            {text('OTP verification अगला security upgrade रहेगा। अभी account login password से काम करेगा।', 'OTP verification will be a future security upgrade. For now, login works with a password.')}
           </Text>
         </View>
       </ScrollView>
