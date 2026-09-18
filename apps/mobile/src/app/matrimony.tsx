@@ -8,7 +8,6 @@ import { SymbolView } from 'expo-symbols';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import {
-  type MatrimonyCategory,
   type MatrimonyGender,
   type MatrimonyProfile,
   useGetMatrimonyProfilesQuery,
@@ -23,12 +22,14 @@ const genderFilters: { label: string; value?: MatrimonyGender }[] = [
   { label: 'वधू', value: 'FEMALE' },
 ];
 
-const categoryFilters: { label: string; value?: MatrimonyCategory }[] = [
+/* Future community-category filter. Re-enable when Darzi/Pipa/Namdev segmentation is needed.
+const categoryFilters = [
   { label: 'सभी समाज' },
   { label: 'जूना गुजराती', value: 'JUNA_GUJARATI' },
   { label: 'पीपा', value: 'PIPA' },
   { label: 'नामदेव', value: 'NAMDEV' },
 ];
+*/
 
 const ageFilters = [
   { label: 'सभी आयु' },
@@ -134,7 +135,6 @@ export default function MatrimonyScreen() {
   const { text } = useLanguageText();
   const accessToken = useAppSelector((state) => state.auth.accessToken);
   const [gender, setGender] = useState<MatrimonyGender | undefined>();
-  const [category, setCategory] = useState<MatrimonyCategory | undefined>();
   const [ageIndex, setAgeIndex] = useState(0);
   const [page, setPage] = useState(1);
 
@@ -142,13 +142,12 @@ export default function MatrimonyScreen() {
   const queryArgs = useMemo(
     () => ({
       gender,
-      category,
       minAge: selectedAge.minAge,
       maxAge: selectedAge.maxAge,
       page,
       limit: 20,
     }),
-    [category, gender, page, selectedAge.maxAge, selectedAge.minAge],
+    [gender, page, selectedAge.maxAge, selectedAge.minAge],
   );
 
   const { data, isLoading, isFetching, isError, refetch } = useGetMatrimonyProfilesQuery(queryArgs);
@@ -180,11 +179,6 @@ export default function MatrimonyScreen() {
 
   function changeGender(value?: MatrimonyGender) {
     setGender(value);
-    setPage(1);
-  }
-
-  function changeCategory(value?: MatrimonyCategory) {
-    setCategory(value);
     setPage(1);
   }
 
@@ -278,24 +272,7 @@ export default function MatrimonyScreen() {
               </View>
             </View>
 
-            <View style={styles.filterBlockCompact}>
-              <Text style={styles.filterLabel}>{text('समाज', 'Community')}</Text>
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.horizontalChips}
-              >
-                {categoryFilters.map((item) => (
-                  <FilterChip
-                    key={item.label}
-                    label={item.label}
-                    active={category === item.value}
-                    onPress={() => changeCategory(item.value)}
-                  />
-                ))}
-              </ScrollView>
-            </View>
-
+            {/* Community category filter hidden for now. Keep category support in API for future use. */}
             <View style={styles.filterBlockCompact}>
               <Text style={styles.filterLabel}>{text('आयु', 'Age')}</Text>
               <ScrollView
