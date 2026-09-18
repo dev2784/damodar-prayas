@@ -22,7 +22,12 @@ import {
 } from '@/services/community-api';
 import { useAppSelector } from '@/store/hooks';
 
-type SupportedCategory = Extract<CommunityPostCategory, 'NEWS' | 'EVENT' | 'ADVERTISEMENT'>;
+type SupportedCategory = Extract<CommunityPostCategory, 'NEWS' | 'EVENT' | 'ADVERTISEMENT' | 'OBITUARY'>;
+type ObituaryType = 'DEATH_NOTICE' | 'UTHAWNA' | 'CHAUTHA' | 'TRIBUTE' | 'OTHER';
+const obituaryOptions: { value: ObituaryType; label: string }[] = [
+  { value: 'DEATH_NOTICE', label: 'निधन सूचना' }, { value: 'UTHAWNA', label: 'उठावना' },
+  { value: 'CHAUTHA', label: 'चौथा' }, { value: 'TRIBUTE', label: 'श्रद्धांजलि सभा' }, { value: 'OTHER', label: 'अन्य' },
+];
 
 function optionalText(value: string) {
   const trimmed = value.trim();
@@ -46,7 +51,7 @@ export default function CommunitySubmitScreen() {
   const params = useLocalSearchParams<{ category?: string | string[] }>();
   const rawCategory = Array.isArray(params.category) ? params.category[0] : params.category;
   const category: SupportedCategory =
-    rawCategory === 'EVENT' ? 'EVENT' : rawCategory === 'ADVERTISEMENT' ? 'ADVERTISEMENT' : 'NEWS';
+    rawCategory === 'EVENT' ? 'EVENT' : rawCategory === 'ADVERTISEMENT' ? 'ADVERTISEMENT' : rawCategory === 'OBITUARY' ? 'OBITUARY' : 'NEWS';
 
   const accessToken = useAppSelector((state) => state.auth.accessToken);
   const [submitPost, { isLoading: isSubmitting }] = useSubmitCommunityPostMutation();
@@ -54,13 +59,17 @@ export default function CommunitySubmitScreen() {
   const [details, setDetails] = useState('');
   const [location, setLocation] = useState('');
   const [eventDate, setEventDate] = useState('');
+  const [obituaryType, setObituaryType] = useState<ObituaryType>('DEATH_NOTICE');
+  const [deceasedName, setDeceasedName] = useState('');
+  const [deathDate, setDeathDate] = useState('');
+  const [eventTime, setEventTime] = useState('');
   const [contactName, setContactName] = useState('');
   const [contactPhone, setContactPhone] = useState('');
   const [banner, setBanner] = useState<ContentUploadableFile | null>(null);
   const [uploading, setUploading] = useState(false);
 
   const label =
-    category === 'EVENT' ? 'कार्यक्रम' : category === 'ADVERTISEMENT' ? 'विज्ञापन' : 'समाचार';
+    category === 'EVENT' ? 'कार्यक्रम' : category === 'ADVERTISEMENT' ? 'विज्ञापन' : category === 'OBITUARY' ? 'शोक सूचना' : 'समाचार';
   const busy = isSubmitting || uploading;
 
   async function pickBanner() {
@@ -123,9 +132,12 @@ export default function CommunitySubmitScreen() {
         contactPhone: optionalText(contactPhone),
         location: optionalText(location),
         eventDate:
-          category === 'EVENT'
-            ? new Date(`${eventDate.trim()}T12:00:00+05:30`).toISOString()
-            : null,
+          category === 'EVENT' || (category === 'OBITUARY' && obituaryType !== 'DEATH_NOTICE')
+            ? new Date(`${eventDate.trim()}T12:00:00+05:30`).toISOString() : null,
+        obituaryType: category === 'OBITUARY' ? obituaryType : null,
+        deceasedName: category === 'OBITUARY' ? deceasedName.trim() : null,
+        deathDate: category === 'OBITUARY' && deathDate.trim() ? new Date(`${deathDate.trim()}T12:00:00+05:30`).toISOString() : null,
+        eventTime: category === 'OBITUARY' ? optionalText(eventTime) : null,
         translations: [
           {
             language: 'HI',
@@ -175,6 +187,31 @@ export default function CommunitySubmitScreen() {
         </View>
 
         <View style={styles.card}>
+          {category === 'OBITUARY' ? (
+            <>
+              <Text style={styles.label}>सूचना का प्रकार *</Text>
+              <View style={styles.optionWrap}>
+                {obituaryOptions.map((option) => (
+                  <Pressable key={option.value} style={[styles.optionChip, obituaryType === option.value && styles.optionChipActive]} onPress={() => setObituaryType(option.value)}>
+                    <Text style={[styles.optionText, obituaryType === option.value && styles.optionTextActive]}>{option.label}</Text>
+                  </Pressable>
+                ))}
+              </View>
+              <Text style={styles.label}>दिवंगत व्यक्ति का नाम *</Text>
+              <TextInput value={deceasedName} onChangeText={setDeceasedName} style={styles.input} placeholder="स्व. श्री / श्रीमती का नाम" placeholderTextColor="#A49890" />
+              <Text style={styles.label}>निधन दिनांक</Text>
+              <TextInput value={deathDate} onChangeText={setDeathDate} style={styles.input} placeholder="YYYY-MM-DD (वैकल्पिक)" placeholderTextColor="#A49890" keyboardType="numbers-and-punctuation" />
+              {obituaryType !== 'DEATH_NOTICE' ? (
+                <>
+                  <Text style={styles.label}>कार्यक्रम तारीख *</Text>
+                  <TextInput value={eventDate} onChangeText={setEventDate} style={styles.input} placeholder="YYYY-MM-DD" placeholderTextColor="#A49890" keyboardType="numbers-and-punctuation" />
+                  <Text style={styles.label}>कार्यक्रम समय</Text>
+                  <TextInput value={eventTime} onChangeText={setEventTime} style={styles.input} placeholder="जैसे शाम 4:00 बजे" placeholderTextColor="#A49890" />
+                </>
+              ) : null}
+            </>
+          ) : null}
+
           <Text style={styles.label}>शीर्षक *</Text>
           <TextInput
             value={title}
