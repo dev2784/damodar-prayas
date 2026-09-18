@@ -8,6 +8,7 @@ const nav=[
   ['＋','Add Entry','/assisted-entry'],
   ['♡','Matrimony','/matrimony'],
   ['▤','Community','/community'],
+  ['🕯','Shok Suchna','/obituaries'],
   ['◈','Samiti','/samiti'],
   ['⌁','Advertisements','/advertisements'],
   ['⚑','Reports','/reports'],
