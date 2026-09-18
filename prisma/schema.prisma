@@ -95,6 +95,15 @@ enum PostCategory {
   REQUEST
   GRATITUDE
   WISHES
+  OBITUARY
+}
+
+enum ObituaryType {
+  DEATH_NOTICE
+  UTHAWNA
+  CHAUTHA
+  TRIBUTE
+  OTHER
 }
 
 enum PostStatus {
@@ -369,6 +378,10 @@ model CommunityPost {
   contactPhone   String?
   location       String?
   eventDate      DateTime?
+  obituaryType   ObituaryType?
+  deceasedName   String?
+  deathDate      DateTime?
+  eventTime      String?
   publishedAt    DateTime?
   expiresAt      DateTime?
   isFeatured     Boolean                    @default(false)
