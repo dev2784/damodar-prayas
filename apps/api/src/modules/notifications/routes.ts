@@ -2,6 +2,8 @@ import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { z } from 'zod';
 import { prisma } from '../../lib/prisma.js';
 
+const pushTokenSchema = z.object({ token: z.string().trim().min(10), platform: z.string().trim().max(30).optional() });
+
 const listQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(50).default(20),
@@ -37,6 +39,8 @@ async function getActiveUser(request: FastifyRequest, reply: FastifyReply) {
 }
 
 export async function notificationRoutes(app: FastifyInstance) {
+  app.post('/push-token', async (request, reply) => { const user=await getActiveUser(request,reply); if(!user)return; const parsed=pushTokenSchema.safeParse(request.body); if(!parsed.success)return reply.code(400).send({error:'INVALID_PUSH_TOKEN'}); const pushToken=await prisma.pushToken.upsert({where:{token:parsed.data.token},update:{userId:user.id,platform:parsed.data.platform,isActive:true},create:{userId:user.id,token:parsed.data.token,platform:parsed.data.platform}}); return reply.send({pushToken:{id:pushToken.id}}); });
+  app.delete('/push-token', async (request, reply) => { const user=await getActiveUser(request,reply); if(!user)return; const parsed=z.object({token:z.string().min(10)}).safeParse(request.body); if(!parsed.success)return reply.code(400).send({error:'INVALID_PUSH_TOKEN'}); await prisma.pushToken.updateMany({where:{userId:user.id,token:parsed.data.token},data:{isActive:false}}); return reply.code(204).send(); });
   app.get('/', async (request, reply) => {
     const user = await getActiveUser(request, reply);
     if (!user) return;
