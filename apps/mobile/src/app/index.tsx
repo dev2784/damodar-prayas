@@ -175,9 +175,9 @@ export default function HomeScreen() {
           </Pressable>
           <Pressable
             style={styles.headerIcon}
-            onPress={() => router.push('/change-password')}
+            onPress={() => router.push('/settings')}
             accessibilityRole="button"
-            accessibilityLabel="Change password"
+            accessibilityLabel="Language and settings"
           >
             <Icon
               name={{ ios: 'gearshape.fill', android: 'settings', web: 'settings' }}
