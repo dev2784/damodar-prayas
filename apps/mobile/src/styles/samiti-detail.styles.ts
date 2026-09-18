@@ -14,6 +14,10 @@ export const C = {
 
 export const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: C.bg },
+  viewerOverlay: { flex: 1, backgroundColor: '#000000', alignItems: 'center', justifyContent: 'center' },
+  viewerImage: { width: '100%', height: '86%' },
+  viewerClose: { position: 'absolute', top: 45, right: 18, zIndex: 10, width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.16)', alignItems: 'center', justifyContent: 'center' },
+  viewerCloseText: { color: '#FFFFFF', fontSize: 20, fontWeight: '800' },
   topBar: {
     height: 58,
     paddingHorizontal: 14,
