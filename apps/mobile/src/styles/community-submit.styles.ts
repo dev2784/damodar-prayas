@@ -47,6 +47,11 @@ export const styles = StyleSheet.create({
     borderRadius: 18,
     padding: 14,
   },
+  optionWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 7, marginBottom: 3 },
+  optionChip: { borderRadius: 18, borderWidth: 1, borderColor: C.line, backgroundColor: '#FFFFFF', paddingHorizontal: 11, paddingVertical: 8 },
+  optionChipActive: { backgroundColor: C.maroon, borderColor: C.maroon },
+  optionText: { color: C.muted, fontSize: 9.5, fontWeight: '800' },
+  optionTextActive: { color: '#FFFFFF' },
   label: { color: C.text, fontSize: 10.5, fontWeight: '900', marginTop: 12, marginBottom: 6 },
   input: {
     minHeight: 47,
