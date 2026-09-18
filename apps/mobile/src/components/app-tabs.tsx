@@ -4,6 +4,8 @@ import type { ColorValue } from 'react-native';
 import { Tabs } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { translate } from '@/lib/i18n';
+import { useAppSelector } from '@/store/hooks';
 
 function tabIcon(name: ComponentProps<typeof SymbolView>['name']) {
   return function TabIcon({ color, focused }: { color: ColorValue; focused: boolean }) {
@@ -13,6 +15,7 @@ function tabIcon(name: ComponentProps<typeof SymbolView>['name']) {
 
 export default function AppTabs() {
   const insets = useSafeAreaInsets();
+  const language = useAppSelector((state) => state.preferences.language);
   const styles = createTabStyles(insets.bottom);
 
   return (
@@ -29,14 +32,14 @@ export default function AppTabs() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'होम',
+          title: translate(language, 'home'),
           tabBarIcon: tabIcon({ ios: 'house.fill', android: 'home', web: 'home' }),
         }}
       />
       <Tabs.Screen
         name="matrimony"
         options={{
-          title: 'मैट्रिमोनी',
+          title: translate(language, 'matrimony'),
           tabBarIcon: tabIcon({
             ios: 'heart.circle.fill',
             android: 'person_search',
@@ -47,14 +50,14 @@ export default function AppTabs() {
       <Tabs.Screen
         name="community"
         options={{
-          title: 'समाज',
+          title: translate(language, 'community'),
           tabBarIcon: tabIcon({ ios: 'person.3.fill', android: 'groups', web: 'groups' }),
         }}
       />
       <Tabs.Screen
         name="samiti"
         options={{
-          title: 'समिति',
+          title: translate(language, 'committee'),
           tabBarIcon: tabIcon({
             ios: 'building.columns.fill',
             android: 'storefront',
@@ -65,7 +68,7 @@ export default function AppTabs() {
       <Tabs.Screen
         name="profile"
         options={{
-          title: 'प्रोफाइल',
+          title: translate(language, 'profile'),
           tabBarIcon: tabIcon({ ios: 'person.crop.circle.fill', android: 'person', web: 'person' }),
         }}
       />
@@ -80,6 +83,7 @@ export default function AppTabs() {
       <Tabs.Screen name="matrimony-interests" options={{ href: null }} />
       <Tabs.Screen name="notifications" options={{ href: null }} />
       <Tabs.Screen name="change-password" options={{ href: null }} />
+      <Tabs.Screen name="settings" options={{ href: null }} />
       <Tabs.Screen name="auth" options={{ href: null }} />
     </Tabs>
   );
