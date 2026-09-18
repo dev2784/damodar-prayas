@@ -6,6 +6,7 @@ import { Image } from 'expo-image';
 import { SymbolView } from 'expo-symbols';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { useLanguageText } from '@/hooks/use-language-text';
 import { type CommunityPost, useGetCommunityPostsQuery } from '@/services/community-api';
 
 type FeedCategory = 'NEWS' | 'EVENT' | 'ADVERTISEMENT';
@@ -27,11 +28,12 @@ function excerpt(value: string) {
 }
 
 function PostCard({ post }: { post: CommunityPost }) {
+  const { text } = useLanguageText();
   const translation = post.translations[0];
   const isEvent = post.category === 'EVENT';
   const isAdvertisement = post.category === 'ADVERTISEMENT';
   const date = formatDate(isEvent ? post.eventDate : (post.publishedAt ?? post.createdAt));
-  const categoryLabel = isEvent ? 'कार्यक्रम' : isAdvertisement ? 'विज्ञापन' : 'समाचार';
+  const categoryLabel = isEvent ? text('कार्यक्रम', 'Event') : isAdvertisement ? text('विज्ञापन', 'Advertisement') : text('समाचार', 'News');
   const categoryIcon = isEvent
     ? ({ ios: 'calendar.badge.clock', android: 'event', web: 'event' } as const)
     : isAdvertisement
@@ -90,7 +92,7 @@ function PostCard({ post }: { post: CommunityPost }) {
                 tintColor="#FFFFFF"
                 size={11}
               />
-              <Text style={styles.featuredText}>मुख्य</Text>
+              <Text style={styles.featuredText}>{text('मुख्य', 'Featured')}</Text>
             </View>
           ) : null}
           <View style={styles.metaSpacer} />
@@ -98,7 +100,7 @@ function PostCard({ post }: { post: CommunityPost }) {
         </View>
 
         <Text style={styles.cardTitle} numberOfLines={2}>
-          {translation?.title ?? 'विवरण उपलब्ध नहीं'}
+          {translation?.title ?? text('विवरण उपलब्ध नहीं', 'Details unavailable')}
         </Text>
         {translation?.details ? (
           <Text style={styles.cardExcerpt} numberOfLines={3}>
@@ -122,7 +124,7 @@ function PostCard({ post }: { post: CommunityPost }) {
             <View />
           )}
           <View style={styles.readMoreRow}>
-            <Text style={styles.readMore}>पूरा देखें</Text>
+            <Text style={styles.readMore}>{text('पूरा देखें', 'View details')}</Text>
             <SymbolView
               name={{ ios: 'chevron.right', android: 'chevron_right', web: 'chevron_right' }}
               tintColor={C.maroon}
@@ -136,25 +138,26 @@ function PostCard({ post }: { post: CommunityPost }) {
 }
 
 export default function CommunityScreen() {
+  const { text, apiLanguage } = useLanguageText();
   const [activeCategory, setActiveCategory] = useState<FeedCategory>('NEWS');
   const { data, isLoading, isFetching, isError, refetch } = useGetCommunityPostsQuery({
     category: activeCategory,
-    language: 'HI',
+    language: apiLanguage,
   });
 
   const items = data?.items ?? [];
   const sectionLabel =
     activeCategory === 'NEWS'
-      ? 'ताज़ा समाचार'
+      ? text('ताज़ा समाचार', 'Latest news')
       : activeCategory === 'EVENT'
-        ? 'आने वाले कार्यक्रम'
-        : 'समाज व्यापार विज्ञापन';
+        ? text('आने वाले कार्यक्रम', 'Upcoming events')
+        : text('समाज व्यापार विज्ञापन', 'Community business ads');
   const emptyLabel =
     activeCategory === 'NEWS'
-      ? 'अभी कोई समाचार प्रकाशित नहीं है'
+      ? text('अभी कोई समाचार प्रकाशित नहीं है', 'No news published yet')
       : activeCategory === 'EVENT'
-        ? 'अभी कोई कार्यक्रम प्रकाशित नहीं है'
-        : 'अभी कोई विज्ञापन प्रकाशित नहीं है';
+        ? text('अभी कोई कार्यक्रम प्रकाशित नहीं है', 'No events published yet')
+        : text('अभी कोई विज्ञापन प्रकाशित नहीं है', 'No advertisements published yet');
   const emptyIcon =
     activeCategory === 'NEWS'
       ? ({ ios: 'newspaper', android: 'newspaper', web: 'newspaper' } as const)
@@ -182,8 +185,8 @@ export default function CommunityScreen() {
             <View style={styles.header}>
               <View style={styles.headerTop}>
                 <View style={styles.headerCopy}>
-                  <Text style={styles.eyebrow}>समाज अपडेट्स</Text>
-                  <Text style={styles.title}>समाचार, कार्यक्रम एवं विज्ञापन</Text>
+                  <Text style={styles.eyebrow}>{text('समाज अपडेट्स', 'Community updates')}</Text>
+                  <Text style={styles.title}>{text('समाचार, कार्यक्रम एवं विज्ञापन', 'News, events & advertisements')}</Text>
                 </View>
                 <Pressable
                   style={styles.addButton}
@@ -199,11 +202,11 @@ export default function CommunityScreen() {
                     tintColor="#FFFFFF"
                     size={16}
                   />
-                  <Text style={styles.addButtonText}>जोड़ें</Text>
+                  <Text style={styles.addButtonText}>{text('जोड़ें', 'Add')}</Text>
                 </Pressable>
               </View>
               <Text style={styles.subtitle}>
-                समाज की खबरें, समारोह और स्वीकृत व्यापार विज्ञापन एक ही जगह।
+                {text('समाज की खबरें, समारोह और स्वीकृत व्यापार विज्ञापन एक ही जगह।', 'Community news, events and approved business advertisements in one place.')}
               </Text>
             </View>
 
@@ -266,7 +269,7 @@ export default function CommunityScreen() {
           isLoading ? (
             <View style={styles.stateCard}>
               <ActivityIndicator color={C.maroon} size="large" />
-              <Text style={styles.stateTitle}>जानकारी लोड हो रही है...</Text>
+              <Text style={styles.stateTitle}>{text('जानकारी लोड हो रही है...', 'Loading information...')}</Text>
             </View>
           ) : isError ? (
             <View style={styles.stateCard}>
@@ -275,10 +278,10 @@ export default function CommunityScreen() {
                 tintColor={C.maroon}
                 size={42}
               />
-              <Text style={styles.stateTitle}>अभी जानकारी लोड नहीं हो पाई</Text>
-              <Text style={styles.stateText}>इंटरनेट या API कनेक्शन जाँचकर दोबारा कोशिश करें।</Text>
+              <Text style={styles.stateTitle}>{text('अभी जानकारी लोड नहीं हो पाई', 'Could not load information')}</Text>
+              <Text style={styles.stateText}>{text('इंटरनेट या API कनेक्शन जाँचकर दोबारा कोशिश करें।', 'Check your internet or API connection and try again.')}</Text>
               <Pressable style={styles.retryButton} onPress={refetch}>
-                <Text style={styles.retryText}>फिर से कोशिश करें</Text>
+                <Text style={styles.retryText}>{text('फिर से कोशिश करें', 'Try again')}</Text>
               </Pressable>
             </View>
           ) : (
@@ -286,7 +289,7 @@ export default function CommunityScreen() {
               <SymbolView name={emptyIcon} tintColor={C.gold} size={42} />
               <Text style={styles.stateTitle}>{emptyLabel}</Text>
               <Text style={styles.stateText}>
-                Admin approval के बाद नई जानकारी यहाँ दिखाई देगी।
+                {text('Admin approval के बाद नई जानकारी यहाँ दिखाई देगी।', 'New information will appear here after admin approval.')}
               </Text>
             </View>
           )
