@@ -11,6 +11,7 @@ import { adminUserRoutes } from './modules/admin/users/routes.js';
 import { authRoutes } from './modules/auth/routes.js';
 import { committeeRoutes } from './modules/committees/routes.js';
 import { communityRoutes } from './modules/community/routes.js';
+import { communityLikeRoutes } from './modules/community/likes.js';
 import { healthRoutes } from './modules/health/routes.js';
 import { interactionRoutes } from './modules/interactions/routes.js';
 import { matrimonyRoutes } from './modules/matrimony/routes.js';
@@ -30,6 +31,7 @@ export async function buildApp() {
   await app.register(mediaRoutes, { prefix: '/api/v1/media' });
   await app.register(interactionRoutes, { prefix: '/api/v1' });
   await app.register(communityRoutes, { prefix: '/api/v1/posts' });
+  await app.register(communityLikeRoutes, { prefix: '/api/v1/posts' });
   await app.register(committeeRoutes, { prefix: '/api/v1/committees' });
   await app.register(notificationRoutes, { prefix: '/api/v1/notifications' });
   await app.register(reportRoutes, { prefix: '/api/v1/reports' });
