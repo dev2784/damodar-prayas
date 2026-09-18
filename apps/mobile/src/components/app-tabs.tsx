@@ -22,7 +22,7 @@ export default function AppTabs() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: COLORS.maroon,
+        tabBarActiveTintColor: COLORS.gold,
         tabBarInactiveTintColor: COLORS.muted,
         tabBarStyle: styles.bar,
         tabBarLabelStyle: styles.label,
