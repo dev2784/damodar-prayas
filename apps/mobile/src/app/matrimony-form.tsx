@@ -122,11 +122,13 @@ const profileForChoices: { label: string; value: MatrimonyProfileFor }[] = [
   { label: 'रिश्तेदार', value: 'RELATIVE' },
 ];
 
+/* Future community-category choices. Keep model/API compatibility, but hide selector for now.
 const categoryChoices: { label: string; value: MatrimonyCategory }[] = [
   { label: 'जूना गुजराती', value: 'JUNA_GUJARATI' },
   { label: 'पीपा', value: 'PIPA' },
   { label: 'नामदेव', value: 'NAMDEV' },
 ];
+*/
 
 const genderChoices: { label: string; value: MatrimonyGender }[] = [
   { label: 'पुरुष', value: 'MALE' },
