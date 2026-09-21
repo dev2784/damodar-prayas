@@ -88,6 +88,14 @@ export default function SettingsScreen() {
         </View>
       </View>
 
+      <Pressable style={styles.helpCard} onPress={() => router.push('/faq')}>
+        <View style={styles.helpCopy}>
+          <Text style={styles.label}>{language === 'hi' ? 'सहायता और सवाल' : 'Help & FAQ'}</Text>
+          <Text style={styles.hint}>{language === 'hi' ? 'ऐप इस्तेमाल करने, प्रोफाइल, मैट्रिमोनी और समाज सुविधाओं की जानकारी' : 'Help with profiles, matrimony, community features and using the app'}</Text>
+        </View>
+        <Text style={styles.helpArrow}>›</Text>
+      </Pressable>
+
       <View style={styles.card}>
         <Text style={styles.label}>Push Notification Diagnostics</Text>
         <Text style={styles.hint}>Checks permission, Expo token and backend registration.</Text>
@@ -116,6 +124,9 @@ const styles = StyleSheet.create({
   optionTextSelected: { color: C.maroon },
   check: { fontSize: 18, color: 'transparent' },
   checkSelected: { color: C.maroon },
+  helpCard: { marginTop: 12, padding: 18, borderRadius: 20, backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: '#EEDFCF', flexDirection: 'row', alignItems: 'center' },
+  helpCopy: { flex: 1, paddingRight: 12 },
+  helpArrow: { fontSize: 28, color: C.gold },
   testButton: { marginTop: 16, minHeight: 48, borderRadius: 14, alignItems: 'center', justifyContent: 'center', backgroundColor: C.maroon },
   testButtonText: { color: '#FFFFFF', fontSize: 15, fontWeight: '800' },
   diagnostic: { marginTop: 14, padding: 12, borderRadius: 12, backgroundColor: '#F8F2EA', color: C.ink, fontSize: 13, lineHeight: 20 },
