@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "151769542887",
+    "project_id": "damodar-prayas-76cb3",
+    "storage_bucket": "damodar-prayas-76cb3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:151769542887:android:3b7557878fae47d1e2f242",
+        "android_client_info": {
+          "package_name": "com.dev2784.damodarprayas"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCg74FW8TP6Ru0L1sWSExnJwIz_qgNoV7M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
