@@ -309,7 +309,7 @@ export default function CommunitySubmitScreen() {
           )}
         </Pressable>
       </ScrollView>
-      {datePickerTarget ? <DateTimePicker value={pickerDate(datePickerTarget === 'death' ? deathDate : eventDate)} mode="date" display="default" maximumDate={datePickerTarget === 'death' ? new Date() : undefined} minimumDate={datePickerTarget === 'event' ? new Date() : undefined} onChange={onDatePicked} /> : null}
+      {datePickerTarget ? <DateTimePicker value={pickerDate(datePickerTarget === 'death' ? deathDate : eventDate)} mode="date" display="default" onChange={onDatePicked} /> : null}
     </SafeAreaView>
   );
 }
