@@ -825,13 +825,6 @@ export default function MatrimonyFormScreen() {
             disabled={Boolean(profileId)}
           />
 
-          <Text style={styles.inlineLabel}>समाज / वर्ग</Text>
-          <ChoiceRow
-            items={categoryChoices}
-            value={form.category}
-            onChange={(value) => update('category', value)}
-          />
-
           <Text style={styles.inlineLabel}>लिंग</Text>
           <ChoiceRow
             items={genderChoices}
