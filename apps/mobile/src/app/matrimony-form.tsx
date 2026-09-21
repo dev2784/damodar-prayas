@@ -10,7 +10,7 @@ import {
   View,
 } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
-import BirthDatePicker from '@expo/ui/community/datetime-picker';
+import DateTimePicker, { type DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -347,15 +347,13 @@ function DateField({
         />
       </Pressable>
       {showPicker ? (
-        <BirthDatePicker
+        <DateTimePicker
           value={selectedDate}
-          onValueChange={(_event, date) => {
+          onChange={(event: DateTimePickerEvent, date?: Date) => {
             setShowPicker(false);
-            onChange(formatFormDate(date));
+            if (event.type === 'set' && date) onChange(formatFormDate(date));
           }}
-          onDismiss={() => setShowPicker(false)}
           mode="date"
-          presentation="dialog"
           display="default"
           maximumDate={maximumDate}
           accentColor={C.maroon}
