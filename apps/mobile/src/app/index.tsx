@@ -1,4 +1,7 @@
 import type { ComponentProps } from 'react';
+import { useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ONBOARDING_KEY } from './onboarding';
 import { calculateAge } from '@/lib/profile-format';
 import { useLanguageText } from '@/hooks/use-language-text';
 import { C, styles } from '@/styles/index.styles';
@@ -116,6 +119,16 @@ function profileWork(profile: MatrimonyProfile) {
 
 export default function HomeScreen() {
   const { text, apiLanguage } = useLanguageText();
+  const [onboardingChecked, setOnboardingChecked] = useState(false);
+  useEffect(() => {
+    let active = true;
+    AsyncStorage.getItem(ONBOARDING_KEY).then((value) => {
+      if (!active) return;
+      if (value !== '1') router.replace('/onboarding');
+      setOnboardingChecked(true);
+    });
+    return () => { active = false; };
+  }, []);
   const accessToken = useAppSelector((state) => state.auth.accessToken);
   const { data: notificationCount } = useGetUnreadNotificationCountQuery(undefined, {
     skip: !accessToken,
@@ -152,6 +165,7 @@ export default function HomeScreen() {
     if (title === 'समाज व्यापार')
       router.push({ pathname: '/community', params: { category: 'ADVERTISEMENT' } });
   }
+  if (!onboardingChecked) return <View style={{ flex: 1, backgroundColor: '#FFF9EF' }} />;
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
       <ScrollView
