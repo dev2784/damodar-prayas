@@ -30,7 +30,7 @@
         {
           "backgroundColor": "#FDF7E9",
           "image": "./assets/images/damodar-splash.png",
-          "imageWidth": 280,
+          "imageWidth": 390,
           "resizeMode": "contain"
         }
       ],
