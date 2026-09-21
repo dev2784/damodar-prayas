@@ -32,7 +32,7 @@ export default function OnboardingScreen(){
  const ref=useRef<FlatList<(typeof slides)[number]>>(null); const [index,setIndex]=useState(0);
  async function done(){await AsyncStorage.setItem(ONBOARDING_KEY,'1');router.replace('/');}
  const next=()=>index===slides.length-1?void done():ref.current?.scrollToIndex({index:index+1,animated:true});
- const viewability=useRef(({viewableItems}:{viewableItems:Array<ViewToken<(typeof slides)[number]>})=>{const i=viewableItems[0]?.index;if(i!=null)setIndex(i);}).current;
+ const viewability=useRef(({viewableItems}:{viewableItems:ViewToken<(typeof slides)[number]>[]})=>{const i=viewableItems[0]?.index;if(i!=null)setIndex(i);}).current;
  return <SafeAreaView style={styles.safe}>
   <FlatList ref={ref} data={slides} horizontal pagingEnabled showsHorizontalScrollIndicator={false} keyExtractor={x=>x.title} onViewableItemsChanged={viewability} viewabilityConfig={{itemVisiblePercentThreshold:60}}
    renderItem={({item,i})=><View style={styles.slide}>
