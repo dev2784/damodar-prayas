@@ -67,6 +67,12 @@ enum MatrimonyDeleteRequestStatus {
   REJECTED
 }
 
+enum AccountDeleteRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 enum InterestStatus {
   PENDING
   ACCEPTED
@@ -167,8 +173,24 @@ model User {
   matrimonyDeleteRequests MatrimonyDeleteRequest[]
   communityPostLikes CommunityPostLike[]
   pushTokens        PushToken[]
+  accountDeleteRequests AccountDeleteRequest[]
 
   @@index([isActive, createdAt])
+}
+
+model AccountDeleteRequest {
+  id          String                     @id @default(cuid())
+  requestedById String
+  requestedBy User                       @relation(fields: [requestedById], references: [id], onDelete: Restrict)
+  reason      String?
+  status      AccountDeleteRequestStatus @default(PENDING)
+  adminNote   String?
+  reviewedAt  DateTime?
+  createdAt   DateTime                   @default(now())
+  updatedAt   DateTime                   @updatedAt
+
+  @@index([requestedById, status, createdAt])
+  @@index([status, createdAt])
 }
 
 model MatrimonyProfile {
