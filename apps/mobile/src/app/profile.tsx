@@ -1,5 +1,5 @@
 import { C, styles } from '@/styles/profile.styles';
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Pressable, ScrollView, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -12,6 +12,7 @@ import { useLanguageText } from '@/hooks/use-language-text';
 import { useUnregisterPushTokenMutation } from '@/services/push-api';
 import Constants from 'expo-constants';
 import * as Device from 'expo-device';
+import { useGetAccountDeleteRequestQuery, useRequestAccountDeletionMutation } from '@/services/account-api';
 
 export default function ProfileScreen() {
   const { text } = useLanguageText();
@@ -21,6 +22,29 @@ export default function ProfileScreen() {
   const { data, isLoading } = useGetMeQuery(undefined, { skip: !accessToken });
   const user = data?.user;
   const [unregisterPushToken] = useUnregisterPushTokenMutation();
+  const { data: deleteRequestData } = useGetAccountDeleteRequestQuery(undefined, { skip: !accessToken });
+  const [requestAccountDeletion, { isLoading: requestingDeletion }] = useRequestAccountDeletionMutation();
+
+  function confirmAccountDeletionRequest() {
+    if (deleteRequestData?.request?.status === 'PENDING') {
+      Alert.alert(text('अनुरोध पहले से भेजा गया है', 'Request already sent'), text('आपका account deletion request admin review में है।', 'Your account deletion request is under admin review.'));
+      return;
+    }
+    Alert.alert(
+      text('Account delete request भेजें?', 'Request account deletion?'),
+      text('Admin review के बाद आपका Damodar Prayas account और उससे जुड़ी personal जानकारी हटाई जाएगी।', 'After admin review, your Damodar Prayas account and associated personal information will be removed.'),
+      [
+        { text: text('रद्द करें', 'Cancel'), style: 'cancel' },
+        {
+          text: text('Request भेजें', 'Send request'),
+          style: 'destructive',
+          onPress: () => void requestAccountDeletion({}).unwrap()
+            .then(() => Alert.alert(text('Request भेज दी गई', 'Request sent'), text('Admin आपके अनुरोध की समीक्षा करेगा।', 'An admin will review your request.')))
+            .catch(() => Alert.alert(text('Request नहीं भेजी गई', 'Request failed'), text('कृपया दोबारा कोशिश करें।', 'Please try again.'))),
+        },
+      ],
+    );
+  }
 
   async function logout() {
     if (Device.isDevice && Constants.appOwnership !== 'expo') {
@@ -143,6 +167,21 @@ export default function ProfileScreen() {
             <Text style={styles.menuText}>अगले चरण में personal/community profile details</Text>
           </View>
         </View>
+        {accessToken ? (
+          <Pressable
+            style={styles.deleteRequestButton}
+            onPress={confirmAccountDeletionRequest}
+            disabled={requestingDeletion}
+          >
+            <Text style={styles.deleteRequestText}>
+              {deleteRequestData?.request?.status === 'PENDING'
+                ? text('Account delete request pending', 'Account delete request pending')
+                : requestingDeletion
+                  ? text('Request भेज रहे हैं...', 'Sending request...')
+                  : text('Account delete request', 'Account deletion request')}
+            </Text>
+          </Pressable>
+        ) : null}
         {accessToken ? (
           <Pressable style={styles.logoutButton} onPress={logout}>
             <Text style={styles.logoutText}>{text('लॉगआउट', 'Logout')}</Text>
