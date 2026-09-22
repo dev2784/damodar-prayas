@@ -9,6 +9,9 @@ import { api } from '@/services/api';
 import { useGetMeQuery } from '@/services/auth-api';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { useLanguageText } from '@/hooks/use-language-text';
+import { useUnregisterPushTokenMutation } from '@/services/push-api';
+import Constants from 'expo-constants';
+import * as Device from 'expo-device';
 
 export default function ProfileScreen() {
   const { text } = useLanguageText();
@@ -17,7 +20,24 @@ export default function ProfileScreen() {
   const hydrated = useAppSelector((s) => s.auth.hydrated);
   const { data, isLoading } = useGetMeQuery(undefined, { skip: !accessToken });
   const user = data?.user;
+  const [unregisterPushToken] = useUnregisterPushTokenMutation();
+
   async function logout() {
+    if (Device.isDevice && Constants.appOwnership !== 'expo') {
+      try {
+        const Notifications = await import('expo-notifications');
+        const projectId = Constants.expoConfig?.extra?.eas?.projectId ?? Constants.easConfig?.projectId;
+        if (projectId) {
+          const permission = await Notifications.getPermissionsAsync();
+          if (permission.status === 'granted') {
+            const token = (await Notifications.getExpoPushTokenAsync({ projectId })).data;
+            await unregisterPushToken({ token }).unwrap();
+          }
+        }
+      } catch {
+        // Logout must still succeed if notification cleanup is unavailable.
+      }
+    }
     await clearAccessToken();
     dispatch(setAccessToken(null));
     dispatch(api.util.resetApiState());
