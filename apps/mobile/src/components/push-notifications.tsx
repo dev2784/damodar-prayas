@@ -17,7 +17,6 @@ export function PushNotifications() {
     let responseSubscription: { remove: () => void } | undefined;
 
     void (async () => {
-      console.log('[push] registration start');
       const Notifications = await import('expo-notifications');
       Notifications.setNotificationHandler({
         handleNotification: async () => ({
@@ -30,7 +29,6 @@ export function PushNotifications() {
       const current = await Notifications.getPermissionsAsync();
       let status = current.status;
       if (status !== 'granted') status = (await Notifications.requestPermissionsAsync()).status;
-      console.log('[push] permission', status);
       if (status !== 'granted') return;
       if (Platform.OS === 'android') {
         await Notifications.setNotificationChannelAsync('default', {
@@ -39,15 +37,11 @@ export function PushNotifications() {
         });
       }
       const projectId = Constants.expoConfig?.extra?.eas?.projectId ?? Constants.easConfig?.projectId;
-      console.log('[push] projectId', projectId ? 'found' : 'missing');
       if (!projectId) return;
       try {
         const token = (await Notifications.getExpoPushTokenAsync({ projectId })).data;
-        console.log('[push] expo token generated');
         await registerToken({ token, platform: Platform.OS }).unwrap();
-        console.log('[push] backend registration success');
-      } catch (error) {
-        console.error('[push] token/backend registration failed', error);
+      } catch {
         return;
       }
 
