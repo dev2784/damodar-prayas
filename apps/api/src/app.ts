@@ -9,6 +9,7 @@ import { adminMatrimonyRoutes } from './modules/admin/matrimony/routes.js';
 import { adminReportRoutes } from './modules/admin/reports/routes.js';
 import { adminUserRoutes } from './modules/admin/users/routes.js';
 import { authRoutes } from './modules/auth/routes.js';
+import { accountRoutes } from './modules/account/routes.js';
 import { committeeRoutes } from './modules/committees/routes.js';
 import { communityRoutes } from './modules/community/routes.js';
 import { communityLikeRoutes } from './modules/community/likes.js';
@@ -27,6 +28,7 @@ export async function buildApp() {
   await app.register(authPlugin);
   await app.register(healthRoutes, { prefix: '/api/v1' });
   await app.register(authRoutes, { prefix: '/api/v1/auth' });
+  await app.register(accountRoutes, { prefix: '/api/v1/account' });
   await app.register(matrimonyRoutes, { prefix: '/api/v1/matrimony' });
   await app.register(mediaRoutes, { prefix: '/api/v1/media' });
   await app.register(interactionRoutes, { prefix: '/api/v1' });
