@@ -112,6 +112,18 @@ export const styles = StyleSheet.create({
   menuTitle: { color: C.maroonDark, fontSize: 13, fontWeight: '900' },
   menuTitleMuted: { color: '#605650', fontSize: 13, fontWeight: '900' },
   menuText: { color: C.muted, fontSize: 10, lineHeight: 15, marginTop: 3 },
+  deleteRequestButton: {
+    alignSelf: 'center',
+    marginTop: 14,
+    paddingHorizontal: 10,
+    paddingVertical: 7,
+  },
+  deleteRequestText: {
+    color: '#9A5B5B',
+    fontSize: 10,
+    fontWeight: '700',
+    textDecorationLine: 'underline',
+  },
   logoutButton: {
     minHeight: 46,
     marginTop: 18,
