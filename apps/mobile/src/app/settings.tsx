@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 
@@ -12,17 +12,12 @@ const C = { maroon: '#7A1024', gold: '#C99A3D', paper: '#FFF9EF', ink: '#2F2020'
 export default function SettingsScreen() {
   const dispatch = useAppDispatch();
   const language = useAppSelector((state) => state.preferences.language);
-  let saving = false;
+  const privacyPolicyUrl = 'https://damodar-prayas-admin.vercel.app/privacy-policy';
 
   async function chooseLanguage(next: AppLanguage) {
-    if (next === language || saving) return;
-    saving = true;
+    if (next === language) return;
     dispatch(setLanguage(next));
-    try {
-      await persistLanguage(next);
-    } finally {
-      saving = false;
-    }
+    await persistLanguage(next);
   }
 
   return (
@@ -63,6 +58,10 @@ export default function SettingsScreen() {
         <Text style={styles.helpArrow}>›</Text>
       </Pressable>
 
+      <Pressable style={styles.privacyLink} onPress={() => void Linking.openURL(privacyPolicyUrl)}>
+        <Text style={styles.privacyText}>{language === 'hi' ? 'Privacy Policy / गोपनीयता नीति' : 'Privacy Policy'}</Text>
+      </Pressable>
+
     </SafeAreaView>
   );
 }
@@ -86,7 +85,6 @@ const styles = StyleSheet.create({
   helpCard: { marginTop: 12, padding: 18, borderRadius: 20, backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: '#EEDFCF', flexDirection: 'row', alignItems: 'center' },
   helpCopy: { flex: 1, paddingRight: 12 },
   helpArrow: { fontSize: 28, color: C.gold },
-  testButton: { marginTop: 16, minHeight: 48, borderRadius: 14, alignItems: 'center', justifyContent: 'center', backgroundColor: C.maroon },
-  testButtonText: { color: '#FFFFFF', fontSize: 15, fontWeight: '800' },
-  diagnostic: { marginTop: 14, padding: 12, borderRadius: 12, backgroundColor: '#F8F2EA', color: C.ink, fontSize: 13, lineHeight: 20 },
+  privacyLink: { alignSelf: 'center', marginTop: 18, padding: 8 },
+  privacyText: { color: C.maroon, fontSize: 12, fontWeight: '700', textDecorationLine: 'underline' },
 });
