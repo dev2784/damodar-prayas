@@ -8,6 +8,7 @@ import { adminMediaRoutes } from './modules/admin/media/routes.js';
 import { adminMatrimonyRoutes } from './modules/admin/matrimony/routes.js';
 import { adminReportRoutes } from './modules/admin/reports/routes.js';
 import { adminUserRoutes } from './modules/admin/users/routes.js';
+import { adminAccountDeleteRequestRoutes } from './modules/admin/account-delete-requests/routes.js';
 import { authRoutes } from './modules/auth/routes.js';
 import { accountRoutes } from './modules/account/routes.js';
 import { committeeRoutes } from './modules/committees/routes.js';
@@ -43,6 +44,7 @@ export async function buildApp() {
   await app.register(adminReportRoutes, { prefix: '/api/v1/admin/reports' });
   await app.register(adminMediaRoutes, { prefix: '/api/v1/admin/media' });
   await app.register(adminUserRoutes, { prefix: '/api/v1/admin/users' });
+  await app.register(adminAccountDeleteRequestRoutes, { prefix: '/api/v1/admin/account-delete-requests' });
   app.get('/', async () => ({ name: 'Damodar Prayas API', version: 'v1', primaryLanguage: 'hi', supportedLanguages: ['hi', 'en'] }));
   app.setErrorHandler((error: FastifyError, request, reply) => { request.log.error(error); const statusCode = error.statusCode && error.statusCode >= 400 ? error.statusCode : 500; return reply.code(statusCode).send({ error: statusCode === 500 ? 'INTERNAL_SERVER_ERROR' : error.name, message: statusCode === 500 ? 'Something went wrong.' : error.message }); });
   return app;
