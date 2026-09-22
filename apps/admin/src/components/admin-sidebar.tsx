@@ -13,6 +13,7 @@ const nav=[
   ['⌁','Advertisements','/advertisements'],
   ['⚑','Reports','/reports'],
   ['◎','Users','/users'],
+  ['⌫','Account Delete Requests','/account-delete-requests'],
   ['⚙','Settings','/settings'],
 ] as const;
 
