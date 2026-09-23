@@ -15,6 +15,7 @@ const envSchema = z.object({
   DATABASE_URL: z.string().min(1, 'DATABASE_URL is required'),
   JWT_SECRET: z.string().min(32, 'JWT_SECRET must be at least 32 characters'),
   CORS_ORIGIN: z.string().default('http://localhost:3000,http://localhost:8081'),
+  GOOGLE_WEB_CLIENT_ID: z.string().optional().default(''),
   OTP_PROVIDER: z.enum(['disabled']).default('disabled'),
   MEDIA_PROVIDER: z.enum(['disabled', 'local', 'cloudinary']).default('disabled'),
   CLOUDINARY_CLOUD_NAME: z.string().optional().default(''),
