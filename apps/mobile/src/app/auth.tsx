@@ -97,6 +97,7 @@ export default function AuthScreen() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const dispatch = useAppDispatch();
   const [googleToken, setGoogleToken] = useState<string | null>(null);
+  const [googleEmail, setGoogleEmail] = useState<string | null>(null);
   const [googleBusy, setGoogleBusy] = useState(false);
   const [googleLogin] = useGoogleLoginMutation();
   const [googleRegister] = useGoogleRegisterMutation();
@@ -139,6 +140,7 @@ export default function AuthScreen() {
         const data = (error as { data?: { error?: string } })?.data;
         if (data?.error === 'GOOGLE_REGISTRATION_REQUIRED') {
           setGoogleToken(idToken);
+          setGoogleEmail(response.data.user.email || null);
           setFirstName(response.data.user.givenName || '');
           setLastName(response.data.user.familyName || '');
           setMode('register');
@@ -162,6 +164,7 @@ export default function AuthScreen() {
     try {
       const result = await googleRegister({ idToken: googleToken, phone: normalized, firstName: firstName.trim(), lastName: lastName.trim() }).unwrap();
       setGoogleToken(null);
+      setGoogleEmail(null);
       await completeAuth(result.accessToken);
     } catch (error) { Alert.alert(text('अकाउंट नहीं बन पाया', 'Registration failed'), errorMessage(error)); }
     finally { setGoogleBusy(false); }
@@ -303,14 +306,21 @@ export default function AuthScreen() {
                   />
                 </View>
               </View>
-              <Field
-                label={text('ईमेल (वैकल्पिक)', 'Email (optional)')}
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                placeholder="name@example.com"
-              />
+              {googleToken ? (
+                <View style={styles.fieldBlock}>
+                  <Text style={styles.label}>{text('Google ईमेल (स्वतः प्राप्त)', 'Google email (automatic)')}</Text>
+                  <Text style={styles.formSubtitle}>{googleEmail || text('Google से ईमेल उपलब्ध नहीं है', 'Google did not provide an email')}</Text>
+                </View>
+              ) : (
+                <Field
+                  label={text('ईमेल (वैकल्पिक)', 'Email (optional)')}
+                  value={email}
+                  onChangeText={setEmail}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  placeholder="name@example.com"
+                />
+              )}
             </>
           ) : null}
 
@@ -365,7 +375,7 @@ export default function AuthScreen() {
             )}
           </Pressable>
 
-          {googleToken ? <Pressable onPress={() => { setGoogleToken(null); setMode('login'); }}><Text style={styles.helperText}>{text('पुराने अकाउंट से लॉगिन करें', 'Sign in with existing account')}</Text></Pressable> : null}
+          {googleToken ? <Pressable onPress={() => { setGoogleToken(null); setGoogleEmail(null); setMode('login'); }}><Text style={styles.helperText}>{text('पुराने अकाउंट से लॉगिन करें', 'Sign in with existing account')}</Text></Pressable> : null}
           <View style={{ marginTop: 15, paddingTop: 15, borderTopWidth: 1, borderTopColor: C.line }}>
             <Pressable disabled={busy} onPress={() => void signInWithGoogle()} style={{ minHeight: 48, borderWidth: 1, borderColor: C.line, borderRadius: 12, justifyContent: 'center', alignItems: 'center', backgroundColor: '#FFFFFF' }}>
               {googleBusy ? <ActivityIndicator /> : <Text style={{ color: C.text, fontWeight: '800' }}>{text('Google से जारी रखें', 'Continue with Google')}</Text>}
