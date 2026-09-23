@@ -34,6 +34,18 @@ export const authApi = api.injectEndpoints({
       query: (body) => ({ url: '/auth/login', method: 'POST', body }),
       invalidatesTags: ['Me'],
     }),
+    googleLogin: builder.mutation<AuthResponse, { idToken: string }>({
+      query: (body) => ({ url: '/auth/google', method: 'POST', body }),
+      invalidatesTags: ['Me'],
+    }),
+    googleRegister: builder.mutation<AuthResponse, { idToken: string; phone: string; firstName: string; lastName: string }>({
+      query: (body) => ({ url: '/auth/google/register', method: 'POST', body }),
+      invalidatesTags: ['Me'],
+    }),
+    googleLink: builder.mutation<{ success: boolean }, { idToken: string }>({
+      query: (body) => ({ url: '/auth/google/link', method: 'POST', body }),
+      invalidatesTags: ['Me'],
+    }),
     changePassword: builder.mutation<
       { success: boolean; message: string },
       { currentPassword: string; newPassword: string }
@@ -45,5 +57,5 @@ export const authApi = api.injectEndpoints({
   }),
   overrideExisting: false,
 });
-export const { useRegisterMutation, useLoginMutation, useChangePasswordMutation, useGetMeQuery } =
+export const { useRegisterMutation, useLoginMutation, useGoogleLoginMutation, useGoogleRegisterMutation, useGoogleLinkMutation, useChangePasswordMutation, useGetMeQuery } =
   authApi;
