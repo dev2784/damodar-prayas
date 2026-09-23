@@ -1,5 +1,6 @@
 import { C, styles } from '@/styles/auth.styles';
 import { useState } from 'react';
+import Constants from 'expo-constants';
 import {
   ActivityIndicator,
   Alert,
@@ -17,7 +18,7 @@ import { setAccessToken } from '@/features/auth/auth-slice';
 import { saveAccessToken } from '@/lib/auth-storage';
 import { isValidNewPassword } from '@/lib/password';
 import { api } from '@/services/api';
-import { useLoginMutation, useRegisterMutation } from '@/services/auth-api';
+import { useLoginMutation, useRegisterMutation, useGoogleLoginMutation, useGoogleRegisterMutation } from '@/services/auth-api';
 import { useAppDispatch } from '@/store/hooks';
 import { useLanguageText } from '@/hooks/use-language-text';
 
@@ -95,9 +96,13 @@ export default function AuthScreen() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const dispatch = useAppDispatch();
+  const [googleToken, setGoogleToken] = useState<string | null>(null);
+  const [googleBusy, setGoogleBusy] = useState(false);
+  const [googleLogin] = useGoogleLoginMutation();
+  const [googleRegister] = useGoogleRegisterMutation();
   const [login, { isLoading: loggingIn }] = useLoginMutation();
   const [register, { isLoading: registering }] = useRegisterMutation();
-  const busy = loggingIn || registering;
+  const busy = loggingIn || registering || googleBusy;
 
   function destination() {
     if (nextParam === '/change-password') return '/change-password' as const;
@@ -113,7 +118,57 @@ export default function AuthScreen() {
     router.replace(destination());
   }
 
+  async function signInWithGoogle() {
+    if (Constants.appOwnership === 'expo') {
+      Alert.alert(text('नई APK जरूरी है', 'New APK required'), text('Google Login Expo Go में नहीं चलेगा। Preview APK इस्तेमाल करें।', 'Google Sign-In requires a preview APK, not Expo Go.'));
+      return;
+    }
+    setGoogleBusy(true);
+    try {
+      const { GoogleSignin, isSuccessResponse } = await import('@react-native-google-signin/google-signin');
+      GoogleSignin.configure({ webClientId: '151769542887-a1fcac712rbsq39jtv22broidceocjqm.apps.googleusercontent.com' });
+      await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+      const response = await GoogleSignin.signIn();
+      if (!isSuccessResponse(response)) return;
+      const idToken = response.data.idToken;
+      if (!idToken) throw new Error('Google did not return an ID token.');
+      try {
+        const result = await googleLogin({ idToken }).unwrap();
+        await completeAuth(result.accessToken);
+      } catch (error) {
+        const data = (error as { data?: { error?: string } })?.data;
+        if (data?.error === 'GOOGLE_REGISTRATION_REQUIRED') {
+          setGoogleToken(idToken);
+          setFirstName(response.data.user.givenName || '');
+          setLastName(response.data.user.familyName || '');
+          setMode('register');
+        } else {
+          Alert.alert(text('Google Login नहीं हुआ', 'Google sign-in failed'), errorMessage(error));
+        }
+      }
+    } catch (error) {
+      Alert.alert(text('Google Login नहीं हुआ', 'Google sign-in failed'), error instanceof Error ? error.message : text('फिर कोशिश करें।', 'Please try again.'));
+    } finally { setGoogleBusy(false); }
+  }
+
+  async function submitGoogleRegistration() {
+    if (!googleToken) return;
+    const normalized = normalizePhone(phone);
+    if (!/^\\+?[1-9]\\d{7,14}$/.test(normalized) || !firstName.trim() || !lastName.trim()) {
+      Alert.alert(text('जानकारी पूरी करें', 'Complete details'), text('सही मोबाइल नंबर और पूरा नाम भरें।', 'Enter a valid mobile number and full name.'));
+      return;
+    }
+    setGoogleBusy(true);
+    try {
+      const result = await googleRegister({ idToken: googleToken, phone: normalized, firstName: firstName.trim(), lastName: lastName.trim() }).unwrap();
+      setGoogleToken(null);
+      await completeAuth(result.accessToken);
+    } catch (error) { Alert.alert(text('अकाउंट नहीं बन पाया', 'Registration failed'), errorMessage(error)); }
+    finally { setGoogleBusy(false); }
+  }
+
   async function submit() {
+    if (googleToken) return submitGoogleRegistration();
     const normalizedPhone = normalizePhone(phone);
 
     if (!/^\+?[1-9]\d{7,14}$/.test(normalizedPhone)) {
@@ -221,6 +276,7 @@ export default function AuthScreen() {
           <Text style={styles.formTitle}>
             {mode === 'login' ? text('वापस स्वागत है', 'Welcome back') : text('अपना अकाउंट बनाएँ', 'Create your account')}
           </Text>
+          {googleToken ? <Text style={styles.formSubtitle}>{text('Google account चुना गया है। मोबाइल नंबर और नाम भरकर registration पूरा करें। मौजूदा अकाउंट है तो पहले पुराने तरीके से login करके Google link करें।', 'Google account selected. Enter your name and mobile number. If you already have an account, log in normally first and link Google.')}</Text> : null}
           <Text style={styles.formSubtitle}>
             {mode === 'login'
               ? text('अपने मोबाइल नंबर और पासवर्ड से लॉगिन करें।', 'Log in with your mobile number and password.')
@@ -265,16 +321,16 @@ export default function AuthScreen() {
             keyboardType="phone-pad"
             placeholder="9876543210"
           />
-          <Field
+          {!googleToken ? <Field
             label={text('पासवर्ड', 'Password')}
             value={password}
             onChangeText={setPassword}
             secureTextEntry
             autoCapitalize="none"
             placeholder={text('कम से कम 8 अक्षर', 'At least 8 characters')}
-          />
+          /> : null}
 
-          {mode === 'register' ? (
+          {mode === 'register' && !googleToken ? (
             <Field
               label={text('पासवर्ड दोबारा', 'Confirm password')}
               value={confirmPassword}
@@ -294,7 +350,7 @@ export default function AuthScreen() {
             ) : (
               <>
                 <Text style={styles.submitText}>
-                  {mode === 'login' ? text('लॉगिन करें', 'Login') : text('अकाउंट बनाएँ', 'Create account')}
+                  {googleToken ? text('Google Registration पूरा करें', 'Complete Google registration') : mode === 'login' ? text('लॉगिन करें', 'Login') : text('अकाउंट बनाएँ', 'Create account')}
                 </Text>
                 <SymbolView
                   name={{
@@ -309,6 +365,12 @@ export default function AuthScreen() {
             )}
           </Pressable>
 
+          {googleToken ? <Pressable onPress={() => { setGoogleToken(null); setMode('login'); }}><Text style={styles.helperText}>{text('पुराने अकाउंट से लॉगिन करें', 'Sign in with existing account')}</Text></Pressable> : null}
+          <View style={{ marginTop: 15, paddingTop: 15, borderTopWidth: 1, borderTopColor: C.line }}>
+            <Pressable disabled={busy} onPress={() => void signInWithGoogle()} style={{ minHeight: 48, borderWidth: 1, borderColor: C.line, borderRadius: 12, justifyContent: 'center', alignItems: 'center', backgroundColor: '#FFFFFF' }}>
+              {googleBusy ? <ActivityIndicator /> : <Text style={{ color: C.text, fontWeight: '800' }}>{text('Google से जारी रखें', 'Continue with Google')}</Text>}
+            </Pressable>
+          </View>
           <Text style={styles.helperText}>
             {text('भारतीय 10 digit नंबर डालने पर +91 अपने आप जोड़ा जाएगा।', '+91 will be added automatically for a 10-digit Indian number.')}
           </Text>
