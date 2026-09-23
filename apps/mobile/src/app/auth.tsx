@@ -154,7 +154,7 @@ export default function AuthScreen() {
   async function submitGoogleRegistration() {
     if (!googleToken) return;
     const normalized = normalizePhone(phone);
-    if (!/^\\+?[1-9]\\d{7,14}$/.test(normalized) || !firstName.trim() || !lastName.trim()) {
+    if (!/^\+?[1-9]\d{7,14}$/.test(normalized) || !firstName.trim() || !lastName.trim()) {
       Alert.alert(text('जानकारी पूरी करें', 'Complete details'), text('सही मोबाइल नंबर और पूरा नाम भरें।', 'Enter a valid mobile number and full name.'));
       return;
     }
