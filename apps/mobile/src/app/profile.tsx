@@ -11,6 +11,7 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { useLanguageText } from '@/hooks/use-language-text';
 import { useUnregisterPushTokenMutation } from '@/services/push-api';
 import Constants from 'expo-constants';
+import { useGoogleLinkMutation } from '@/services/auth-api';
 import * as Device from 'expo-device';
 import { useGetAccountDeleteRequestQuery, useRequestAccountDeletionMutation } from '@/services/account-api';
 
@@ -21,6 +22,19 @@ export default function ProfileScreen() {
   const hydrated = useAppSelector((s) => s.auth.hydrated);
   const { data, isLoading } = useGetMeQuery(undefined, { skip: !accessToken });
   const user = data?.user;
+  const [linkGoogle, { isLoading: linkingGoogle }] = useGoogleLinkMutation();
+  async function connectGoogle() {
+    if (Constants.appOwnership === 'expo') { Alert.alert('Google Sign-In', text('Preview APK में उपलब्ध है।', 'Available in preview APK.')); return; }
+    try {
+      const { GoogleSignin, isSuccessResponse } = await import('@react-native-google-signin/google-signin');
+      GoogleSignin.configure({ webClientId: '151769542887-a1fcac712rbsq39jtv22broidceocjqm.apps.googleusercontent.com' });
+      await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+      const response = await GoogleSignin.signIn();
+      if (!isSuccessResponse(response) || !response.data.idToken) return;
+      await linkGoogle({ idToken: response.data.idToken }).unwrap();
+      Alert.alert(text('Google जुड़ गया', 'Google linked'), text('अब आप Google से भी लॉगिन कर सकते हैं।', 'You can now sign in with Google.'));
+    } catch { Alert.alert(text('Google नहीं जुड़ा', 'Could not link Google'), text('यह Google account किसी अन्य सदस्य से जुड़ा हो सकता है।', 'This Google account may already be linked to another member.')); }
+  }
   const [unregisterPushToken] = useUnregisterPushTokenMutation();
   const { data: deleteRequestData } = useGetAccountDeleteRequestQuery(undefined, { skip: !accessToken });
   const [requestAccountDeletion, { isLoading: requestingDeletion }] = useRequestAccountDeletionMutation();
@@ -128,6 +142,7 @@ export default function ProfileScreen() {
             </View>
           </View>
         )}
+        {accessToken ? <Pressable disabled={linkingGoogle} style={styles.menuCard} onPress={() => void connectGoogle()}><View style={styles.menuCopy}><Text style={styles.menuTitle}>{text('Google अकाउंट लिंक करें', 'Link Google account')}</Text><Text style={styles.menuText}>{text('पुराने अकाउंट से Google Login सुरक्षित रूप से जोड़ें।', 'Securely connect Google to your existing account.')}</Text></View></Pressable> : null}
         <Text style={styles.sectionTitle}>{text('मेरी सुविधाएँ', 'My services')}</Text>
         <Pressable
           style={styles.menuCard}
