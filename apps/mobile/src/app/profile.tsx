@@ -27,7 +27,7 @@ export default function ProfileScreen() {
     if (Constants.appOwnership === 'expo') { Alert.alert('Google Sign-In', text('Preview APK में उपलब्ध है।', 'Available in preview APK.')); return; }
     try {
       const { GoogleSignin, isSuccessResponse } = await import('@react-native-google-signin/google-signin');
-      GoogleSignin.configure({ webClientId: '151769542887-a1fcac712rbsq39jtv22broidceocjqm.apps.googleusercontent.com' });
+      GoogleSignin.configure({ webClientId: '151769542887-313fspli1cj3m2628v1un0l8nvrijio0.apps.googleusercontent.com' });
       await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
       const response = await GoogleSignin.signIn();
       if (!isSuccessResponse(response) || !response.data.idToken) return;
