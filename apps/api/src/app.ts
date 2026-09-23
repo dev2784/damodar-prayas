@@ -9,6 +9,7 @@ import { adminMatrimonyRoutes } from './modules/admin/matrimony/routes.js';
 import { adminReportRoutes } from './modules/admin/reports/routes.js';
 import { adminUserRoutes } from './modules/admin/users/routes.js';
 import { adminAccountDeleteRequestRoutes } from './modules/admin/account-delete-requests/routes.js';
+import { googleAuthRoutes } from './modules/auth/google.js';
 import { authRoutes } from './modules/auth/routes.js';
 import { accountRoutes } from './modules/account/routes.js';
 import { committeeRoutes } from './modules/committees/routes.js';
@@ -29,6 +30,7 @@ export async function buildApp() {
   await app.register(authPlugin);
   await app.register(healthRoutes, { prefix: '/api/v1' });
   await app.register(authRoutes, { prefix: '/api/v1/auth' });
+  await app.register(googleAuthRoutes, { prefix: '/api/v1/auth' });
   await app.register(accountRoutes, { prefix: '/api/v1/account' });
   await app.register(matrimonyRoutes, { prefix: '/api/v1/matrimony' });
   await app.register(mediaRoutes, { prefix: '/api/v1/media' });
