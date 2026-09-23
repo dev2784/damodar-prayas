@@ -152,6 +152,7 @@ model User {
   id                String              @id @default(cuid())
   phone             String              @unique
   email             String?             @unique
+  googleSub         String?             @unique
   firstName         String?
   lastName          String?
   preferredLanguage Language            @default(HI)
