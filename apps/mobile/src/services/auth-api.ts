@@ -22,6 +22,7 @@ export type RegisterInput = {
   phone: string;
   email?: string | null;
   password: string;
+  otpAccessToken?: string;
 };
 export type LoginInput = { phone: string; password: string };
 export const authApi = api.injectEndpoints({
@@ -38,7 +39,7 @@ export const authApi = api.injectEndpoints({
       query: (body) => ({ url: '/auth/google', method: 'POST', body }),
       invalidatesTags: ['Me'],
     }),
-    googleRegister: builder.mutation<AuthResponse, { idToken: string; phone: string; firstName: string; lastName: string }>({
+    googleRegister: builder.mutation<AuthResponse, { idToken: string; phone: string; firstName: string; lastName: string; otpAccessToken?: string }>({
       query: (body) => ({ url: '/auth/google/register', method: 'POST', body }),
       invalidatesTags: ['Me'],
     }),
