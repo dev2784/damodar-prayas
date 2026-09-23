@@ -37,7 +37,7 @@ async function verifyGoogleToken(token: string): Promise<GoogleClaims | null> {
     }
     const key = cachedKeys.keys.find((item) => item.kid === header.kid && item.kty === 'RSA' && item.use === 'sig');
     if (!key) return null;
-    const publicKey = createPublicKey({ key: key as Parameters<typeof createPublicKey>[0] extends { key: infer K } ? K : never, format: 'jwk' });
+    const publicKey = createPublicKey({ key: key as import('node:crypto').JsonWebKey, format: 'jwk' });
     const valid = verify('RSA-SHA256', Buffer.from(segments[0] + '.' + segments[1]), publicKey, Buffer.from(segments[2], 'base64url'));
     return valid ? claims : null;
   } catch { return null; }
