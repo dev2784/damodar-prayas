@@ -6,7 +6,7 @@ import { prisma } from '../../lib/prisma.js';
 
 const tokenSchema = z.object({ idToken: z.string().min(100).max(10000) });
 const registrationSchema = tokenSchema.extend({
-  phone: z.string().regex(/^\\+?[1-9]\\d{7,14}$/),
+  phone: z.string().regex(/^\+?[1-9]\d{7,14}$/),
   firstName: z.string().trim().min(1).max(80),
   lastName: z.string().trim().min(1).max(80),
 });
