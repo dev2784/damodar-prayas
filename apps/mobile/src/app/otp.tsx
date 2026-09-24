@@ -53,6 +53,16 @@ function otpErrorMessage(error: unknown, fallback: string): string {
   return fallback;
 }
 
+function findAccessToken(value: unknown): string | null {
+  const token = findString(value, ['access-token', 'accessToken', 'access_token']);
+  if (token && token.length >= 20) return token;
+  if (value && typeof value === 'object') {
+    const message = (value as Record<string, unknown>).message;
+    if (typeof message === 'string' && message.length >= 20) return message;
+  }
+  return null;
+}
+
 function digitsOnly(value: string) { return value.replace(/\D/g, ''); }
 function msg91Identifier(phone: string) {
   const digits = digitsOnly(phone);
@@ -129,7 +139,7 @@ export default function OtpScreen() {
           widgetReady.current = true;
         }
         const result = assertMsg91Success(await OTPWidget.sendOTP({ identifier: msg91Identifier(phone) }), 'send');
-        const immediateToken = findString(result, ['access-token', 'accessToken', 'token']);
+        const immediateToken = findAccessToken(result);
         const id = findString(result, ['reqId', 'requestId', 'request_id', 'message']);
         if (immediateToken) await finishVerification(immediateToken);
         else if (id) setRequestId(id);
@@ -143,6 +153,7 @@ export default function OtpScreen() {
   }
 
   async function finishVerification(accessToken: string) {
+    if (accessToken.length < 20) throw new Error('MSG91 did not return a valid verification access token.');
     const result = await verifyOtp({ phone, accessToken }).unwrap();
     await saveAccessToken(result.accessToken);
     dispatch(setAccessToken(result.accessToken));
@@ -155,9 +166,9 @@ export default function OtpScreen() {
     if (code.length !== otpLength || !requestId) return;
     setBusy(true);
     try {
-      const result = await OTPWidget.verifyOTP({ reqId: requestId, otp: code });
-      const accessToken = findString(result, ['access-token', 'accessToken', 'token']) ?? (typeof (result as { message?: unknown })?.message === 'string' ? (result as { message: string }).message : null);
-      if (!accessToken) throw new Error('MSG91 did not return a verification token.');
+      const result = assertMsg91Success(await OTPWidget.verifyOTP({ reqId: requestId, otp: code }), 'verification');
+      const accessToken = findAccessToken(result);
+      if (!accessToken) throw new Error('MSG91 verified the code but did not return a valid access token.');
       await finishVerification(accessToken);
     } catch (error) {
       Alert.alert(text('OTP सही नहीं है', 'OTP verification failed'), otpErrorMessage(error, text('सही कोड दर्ज करें।', 'Check the code and try again.')));
