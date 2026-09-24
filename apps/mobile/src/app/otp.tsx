@@ -19,6 +19,16 @@ const { OTPWidget } = require('@msg91comm/sendotp-react-native') as { OTPWidget:
 const widgetToken = process.env.EXPO_PUBLIC_MSG91_WIDGET_TOKEN ?? '';
 const countryCode = process.env.EXPO_PUBLIC_MSG91_COUNTRY_CODE ?? '91';
 
+function assertMsg91Success(value: unknown, action: string): Record<string, unknown> {
+  if (!value || typeof value !== 'object') throw new Error(`MSG91 ${action} returned an invalid response.`);
+  const payload = value as Record<string, unknown>;
+  if (String(payload.type ?? '').toLowerCase() !== 'success') {
+    const reason = findString(payload, ['error', 'message', 'description']);
+    throw new Error(reason ? `MSG91 ${action} failed: ${reason}` : `MSG91 ${action} failed. Check widget configuration and MSG91 delivery logs.`);
+  }
+  return payload;
+}
+
 function findString(value: unknown, keys: string[]): string | null {
   if (!value || typeof value !== 'object') return null;
   const record = value as Record<string, unknown>;
@@ -30,6 +40,19 @@ function findString(value: unknown, keys: string[]): string | null {
   return null;
 }
 
+function otpErrorMessage(error: unknown, fallback: string): string {
+  if (error instanceof Error && error.message) return error.message;
+  if (error && typeof error === 'object') {
+    const record = error as Record<string, unknown>;
+    const data = record.data && typeof record.data === 'object' ? record.data as Record<string, unknown> : null;
+    if (typeof data?.message === 'string') return data.message;
+    if (typeof data?.error === 'string') return data.error;
+    if (typeof record.error === 'string') return record.error;
+    if (typeof record.status === 'number') return `OTP request failed (HTTP ${record.status}).`;
+  }
+  return fallback;
+}
+
 function digitsOnly(value: string) { return value.replace(/\D/g, ''); }
 function msg91Identifier(phone: string) {
   const digits = digitsOnly(phone);
@@ -39,7 +62,7 @@ function msg91Identifier(phone: string) {
 export default function OtpScreen() {
   const { text } = useLanguageText();
   const params = useLocalSearchParams<{ phone?: string; next?: string }>();
-  const phone = Array.isArray(params.phone) ? params.phone[0] : params.phone ?? '';
+  const phone = '8839817483'; // Temporary static number for OTP testing; remove after verification.
   const next = Array.isArray(params.next) ? params.next[0] : params.next;
   const [code, setCode] = useState('');
   const [requestId, setRequestId] = useState<string | null>(null);
@@ -79,7 +102,7 @@ export default function OtpScreen() {
       try {
         await sendCode(false);
       } catch (error) {
-        Alert.alert(text('OTP नहीं भेजा जा सका', 'Could not send OTP'), error instanceof Error ? error.message : text('फिर कोशिश करें।', 'Please try again.'));
+        Alert.alert(text('OTP नहीं भेजा जा सका', 'Could not send OTP'), otpErrorMessage(error, text('फिर कोशिश करें।', 'Please try again.')));
       } finally { if (active) setInitializing(false); }
     };
     void start();
@@ -97,16 +120,17 @@ export default function OtpScreen() {
       setOtpExpiryMinutes(settings.otpExpiryMinutes);
       if (isRetry) {
         if (!requestId) throw new Error('OTP request has expired. Go back and sign in again.');
-        await OTPWidget.retryOTP({ reqId: requestId, retryChannel: 11 });
+        const result = await OTPWidget.retryOTP({ reqId: requestId, retryChannel: 11 });
+        assertMsg91Success(result, 'resend');
         setRetries((count) => count + 1);
       } else {
         if (!widgetReady.current) {
           OTPWidget.initializeWidget(settings.widgetId, widgetToken);
           widgetReady.current = true;
         }
-        const result = await OTPWidget.sendOTP({ identifier: msg91Identifier(phone) });
+        const result = assertMsg91Success(await OTPWidget.sendOTP({ identifier: msg91Identifier(phone) }), 'send');
         const immediateToken = findString(result, ['access-token', 'accessToken', 'token']);
-        const id = findString(result, ['reqId', 'requestId', 'request_id']) ?? (typeof (result as { message?: unknown })?.message === 'string' ? (result as { message: string }).message : null);
+        const id = findString(result, ['reqId', 'requestId', 'request_id', 'message']);
         if (immediateToken) await finishVerification(immediateToken);
         else if (id) setRequestId(id);
         else throw new Error('MSG91 did not return an OTP request ID.');
@@ -136,14 +160,14 @@ export default function OtpScreen() {
       if (!accessToken) throw new Error('MSG91 did not return a verification token.');
       await finishVerification(accessToken);
     } catch (error) {
-      Alert.alert(text('OTP सही नहीं है', 'OTP verification failed'), error instanceof Error ? error.message : text('सही कोड दर्ज करें।', 'Check the code and try again.'));
+      Alert.alert(text('OTP सही नहीं है', 'OTP verification failed'), otpErrorMessage(error, text('सही कोड दर्ज करें।', 'Check the code and try again.')));
     } finally { setBusy(false); }
   }
 
   async function resend() {
     if (busy || seconds > 0 || (retries >= 2 && expiresInSeconds > 0)) return;
     try { await sendCode(retries < 2 && expiresInSeconds > 0 && !!requestId); }
-    catch (error) { Alert.alert(text('OTP फिर से नहीं भेजा जा सका', 'Could not resend OTP'), error instanceof Error ? error.message : text('कुछ गलत हुआ।', 'Something went wrong.')); }
+    catch (error) { Alert.alert(text('OTP फिर से नहीं भेजा जा सका', 'Could not resend OTP'), otpErrorMessage(error, text('कुछ गलत हुआ।', 'Something went wrong.'))); }
   }
 
   return (
