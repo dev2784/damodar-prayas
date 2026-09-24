@@ -9,6 +9,10 @@ function readIdentifier(value: unknown): string | null {
   for (const key of ['identifier', 'mobile', 'phone', 'number', 'mobileNumber', 'phoneNumber']) {
     if (typeof record[key] === 'string') return record[key] as string;
   }
+  // MSG91 returns the verified mobile as a string in message on success.
+  if (typeof record.message === 'string' && /^\+?[1-9]\d{7,14}$/.test(record.message)) {
+    return record.message;
+  }
   for (const key of ['data', 'message', 'details', 'user']) {
     const nested = readIdentifier(record[key]);
     if (nested) return nested;
