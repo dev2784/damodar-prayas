@@ -20,7 +20,7 @@ function digits(value: string) { return value.replace(/\D/g, ''); }
 
 export type Msg91AccessTokenResult =
   | { verified: true }
-  | { verified: false; reason: 'not_configured' | 'http_error' | 'provider_rejected' | 'phone_missing' | 'phone_mismatch' | 'request_error'; httpStatus?: number; responseType?: string; responseKeys?: string[] };
+  | { verified: false; reason: 'not_configured' | 'http_error' | 'provider_rejected' | 'phone_missing' | 'phone_mismatch' | 'request_error'; httpStatus?: number; responseType?: string; responseKeys?: string[]; providerCode?: string };
 
 export async function verifyAccessToken(accessToken: string, expectedPhone: string): Promise<Msg91AccessTokenResult> {
   if (env.OTP_PROVIDER !== 'msg91' || !env.MSG91_AUTH_KEY || !env.MSG91_WIDGET_ID) return { verified: false, reason: 'not_configured' };
@@ -36,7 +36,9 @@ export async function verifyAccessToken(accessToken: string, expectedPhone: stri
     const payload = await response.json() as Msg91Payload;
     const type = String(payload.type ?? payload.status ?? '').toLowerCase();
     const responseKeys = Object.keys(payload);
-    if (type !== 'success') return { verified: false, reason: 'provider_rejected', httpStatus: response.status, responseType: type || 'missing', responseKeys };
+    const rawCode = payload.code;
+    const providerCode = (typeof rawCode === 'string' || typeof rawCode === 'number') && /^[A-Za-z0-9_-]{1,64}$/.test(String(rawCode)) ? String(rawCode) : undefined;
+    if (type !== 'success') return { verified: false, reason: 'provider_rejected', httpStatus: response.status, responseType: type || 'missing', responseKeys, providerCode };
     const verifiedPhone = readIdentifier(payload);
     if (!verifiedPhone) return { verified: false, reason: 'phone_missing', httpStatus: response.status, responseType: type, responseKeys };
     const expected = digits(expectedPhone);
