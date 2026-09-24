@@ -18,8 +18,12 @@ function readIdentifier(value: unknown): string | null {
 
 function digits(value: string) { return value.replace(/\D/g, ''); }
 
-export async function verifyAccessToken(accessToken: string, expectedPhone: string): Promise<boolean> {
-  if (env.OTP_PROVIDER !== 'msg91' || !env.MSG91_AUTH_KEY || !env.MSG91_WIDGET_ID) return false;
+export type Msg91AccessTokenResult =
+  | { verified: true }
+  | { verified: false; reason: 'not_configured' | 'http_error' | 'provider_rejected' | 'phone_missing' | 'phone_mismatch' | 'request_error'; httpStatus?: number; responseType?: string; responseKeys?: string[] };
+
+export async function verifyAccessToken(accessToken: string, expectedPhone: string): Promise<Msg91AccessTokenResult> {
+  if (env.OTP_PROVIDER !== 'msg91' || !env.MSG91_AUTH_KEY || !env.MSG91_WIDGET_ID) return { verified: false, reason: 'not_configured' };
   try {
     const response = await fetch('https://control.msg91.com/api/v5/widget/verifyAccessToken', {
       method: 'POST',
@@ -27,21 +31,27 @@ export async function verifyAccessToken(accessToken: string, expectedPhone: stri
       body: JSON.stringify({ authkey: env.MSG91_AUTH_KEY, 'access-token': accessToken }),
       signal: AbortSignal.timeout(8000),
     });
-    if (!response.ok) return false;
+    if (!response.ok) return { verified: false, reason: 'http_error', httpStatus: response.status };
 
     const payload = await response.json() as Msg91Payload;
     const type = String(payload.type ?? payload.status ?? '').toLowerCase();
-    if (type !== 'success') return false;
+    const responseKeys = Object.keys(payload);
+    if (type !== 'success') return { verified: false, reason: 'provider_rejected', httpStatus: response.status, responseType: type || 'missing', responseKeys };
     const verifiedPhone = readIdentifier(payload);
-    if (!verifiedPhone) return false;
+    if (!verifiedPhone) return { verified: false, reason: 'phone_missing', httpStatus: response.status, responseType: type, responseKeys };
     const expected = digits(expectedPhone);
     const actual = digits(verifiedPhone);
     const expectedLocal = expected.length === 12 && expected.startsWith('91') ? expected.slice(2) : expected;
     const actualLocal = actual.length === 12 && actual.startsWith('91') ? actual.slice(2) : actual;
-    return actual === expected || (expectedLocal.length === 10 && actualLocal === expectedLocal);
+    const matched = actual === expected || (expectedLocal.length === 10 && actualLocal === expectedLocal);
+    return matched
+      ? { verified: true }
+      : { verified: false, reason: 'phone_mismatch', httpStatus: response.status, responseType: type, responseKeys };
   } catch {
-    return false;
+    return { verified: false, reason: 'request_error' };
   }
 }
 
-export const verifyMsg91Phone = verifyAccessToken;
+export async function verifyMsg91Phone(accessToken: string, expectedPhone: string): Promise<boolean> {
+  return (await verifyAccessToken(accessToken, expectedPhone)).verified;
+}
