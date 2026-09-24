@@ -55,6 +55,7 @@ export async function googleAuthRoutes(app: FastifyInstance) {
     const user = await prisma.user.findFirst({ where: { googleSub: claims.sub, isActive: true, deletedAt: null }, select: publicUser });
     if (!user) return reply.code(409).send({ error: 'GOOGLE_REGISTRATION_REQUIRED', message: 'Complete registration with a mobile number to use Google sign-in.', profile: { firstName: claims.given_name ?? '', lastName: claims.family_name ?? '' } });
     await prisma.user.update({ where: { id: user.id }, data: { lastLoginAt: new Date() } });
+    if (!user.isPhoneVerified) return { requiresPhoneVerification: true, user };
     return { accessToken: await reply.jwtSign({ sub: user.id, role: user.role }, { expiresIn: '7d' }), tokenType: 'Bearer', expiresIn: '7d', user };
   });
   app.post('/google/register', async (request, reply) => {
@@ -63,9 +64,11 @@ export async function googleAuthRoutes(app: FastifyInstance) {
     const claims = await verifyGoogleToken(input.data.idToken);
     if (!claims?.sub) return reply.code(401).send({ error: 'INVALID_GOOGLE_TOKEN' });
     const phone = input.data.phone;
-    if (env.OTP_PROVIDER === 'msg91' && (!input.data.otpAccessToken || !await verifyMsg91Phone(input.data.otpAccessToken, phone))) return reply.code(401).send({ error: 'PHONE_VERIFICATION_REQUIRED', message: 'Verify the mobile OTP before registration.' });
+    const phoneVerified = env.OTP_PROVIDER !== 'msg91' || (!!input.data.otpAccessToken && await verifyMsg91Phone(input.data.otpAccessToken, phone));
     try {
-      const user = await prisma.user.create({ data: { phone, firstName: input.data.firstName, lastName: input.data.lastName, googleSub: claims.sub, email: claims.email_verified && claims.email ? claims.email : null, role: 'MEMBER', isPhoneVerified: env.OTP_PROVIDER === 'msg91', lastLoginAt: new Date() }, select: publicUser });
+
+      const user = await prisma.user.create({ data: { phone, firstName: input.data.firstName, lastName: input.data.lastName, googleSub: claims.sub, email: claims.email_verified && claims.email ? claims.email : null, role: 'MEMBER', isPhoneVerified: phoneVerified, lastLoginAt: new Date() }, select: publicUser });
+      if (!user.isPhoneVerified) return reply.code(201).send({ requiresPhoneVerification: true, user });
       return reply.code(201).send({ accessToken: await reply.jwtSign({ sub: user.id, role: user.role }, { expiresIn: '7d' }), tokenType: 'Bearer', expiresIn: '7d', user });
     } catch (error) {
       request.log.info({ error }, 'Google registration conflict');
