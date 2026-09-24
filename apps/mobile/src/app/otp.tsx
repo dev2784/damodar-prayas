@@ -53,10 +53,10 @@ function otpErrorMessage(error: unknown, fallback: string): string {
   return fallback;
 }
 
-function findAccessToken(value: unknown): string | null {
+function findAccessToken(value: unknown, allowMessageFallback = false): string | null {
   const token = findString(value, ['access-token', 'accessToken', 'access_token']);
   if (token && token.length >= 20) return token;
-  if (value && typeof value === 'object') {
+  if (allowMessageFallback && value && typeof value === 'object') {
     const message = (value as Record<string, unknown>).message;
     if (typeof message === 'string' && message.length >= 20) return message;
   }
@@ -167,7 +167,7 @@ export default function OtpScreen() {
     setBusy(true);
     try {
       const result = assertMsg91Success(await OTPWidget.verifyOTP({ reqId: requestId, otp: code }), 'verification');
-      const accessToken = findAccessToken(result);
+      const accessToken = findAccessToken(result, true);
       if (!accessToken) throw new Error('MSG91 verified the code but did not return a valid access token.');
       await finishVerification(accessToken);
     } catch (error) {
