@@ -109,16 +109,4 @@ export const styles = StyleSheet.create({
   submitText: { color: '#FFFFFF', fontSize: 12.5, fontWeight: '900' },
   helperText: { color: C.muted, fontSize: 9.2, lineHeight: 14, textAlign: 'center', marginTop: 9 },
 
-  otpNote: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    padding: 12,
-    marginTop: 12,
-    borderRadius: 14,
-    backgroundColor: '#FFF5E8',
-    borderWidth: 1,
-    borderColor: '#F0D8B1',
-  },
-  otpText: { flex: 1, color: '#796445', fontSize: 9.8, lineHeight: 15 },
 });

@@ -18,7 +18,7 @@ import { setAccessToken } from '@/features/auth/auth-slice';
 import { saveAccessToken } from '@/lib/auth-storage';
 import { isValidNewPassword } from '@/lib/password';
 import { api } from '@/services/api';
-import { requiresPhoneVerification, useLoginMutation, useRegisterMutation, useGoogleLoginMutation, useGoogleRegisterMutation } from '@/services/auth-api';
+import { useLoginMutation, useRegisterMutation, useGoogleLoginMutation, useGoogleRegisterMutation } from '@/services/auth-api';
 import { useAppDispatch } from '@/store/hooks';
 import { useLanguageText } from '@/hooks/use-language-text';
 
@@ -119,10 +119,6 @@ export default function AuthScreen() {
     router.replace(destination());
   }
 
-  function continueToPhoneVerification(phoneNumber: string) {
-    router.push({ pathname: '/otp', params: { phone: phoneNumber, next: nextParam ?? '' } });
-  }
-
   async function signInWithGoogle() {
     if (Constants.appOwnership === 'expo') {
       Alert.alert(text('नई APK जरूरी है', 'New APK required'), text('Google Login Expo Go में नहीं चलेगा। Preview APK इस्तेमाल करें।', 'Google Sign-In requires a preview APK, not Expo Go.'));
@@ -139,8 +135,7 @@ export default function AuthScreen() {
       if (!idToken) throw new Error('Google did not return an ID token.');
       try {
         const result = await googleLogin({ idToken }).unwrap();
-        if (requiresPhoneVerification(result)) continueToPhoneVerification(result.user.phone);
-        else await completeAuth(result.accessToken);
+        await completeAuth(result.accessToken);
       } catch (error) {
         const data = (error as { data?: { error?: string } })?.data;
         if (data?.error === 'GOOGLE_REGISTRATION_REQUIRED') {
@@ -171,8 +166,7 @@ export default function AuthScreen() {
       setGoogleToken(null);
       setGoogleEmail(null);
 
-      if (requiresPhoneVerification(result)) continueToPhoneVerification(result.user.phone);
-      else await completeAuth(result.accessToken);
+      await completeAuth(result.accessToken);
     } catch (error) { Alert.alert(text('अकाउंट नहीं बन पाया', 'Registration failed'), errorMessage(error)); }
     finally { setGoogleBusy(false); }
   }
@@ -215,14 +209,12 @@ export default function AuthScreen() {
           email: email.trim() || null,
           password,
         }).unwrap();
-        if (requiresPhoneVerification(result)) continueToPhoneVerification(result.user.phone);
-        else await completeAuth(result.accessToken);
+        await completeAuth(result.accessToken);
         return;
       }
 
       const result = await login({ phone: normalizedPhone, password }).unwrap();
-      if (requiresPhoneVerification(result)) continueToPhoneVerification(result.user.phone);
-      else await completeAuth(result.accessToken);
+      await completeAuth(result.accessToken);
     } catch (error) {
       Alert.alert(
         mode === 'register' ? 'अकाउंट नहीं बन पाया' : 'लॉगिन नहीं हुआ',
@@ -395,16 +387,6 @@ export default function AuthScreen() {
           </Text>
         </View>
 
-        <View style={styles.otpNote}>
-          <SymbolView
-            name={{ ios: 'message.fill', android: 'sms', web: 'sms' }}
-            tintColor={C.gold}
-            size={18}
-          />
-          <Text style={styles.otpText}>
-            {text('नए अकाउंट और अप्रमाणित मोबाइल नंबर के लिए OTP जरूरी है।', 'Phone verification is required for new accounts and unverified numbers.')}
-          </Text>
-        </View>
       </ScrollView>
     </SafeAreaView>
   );

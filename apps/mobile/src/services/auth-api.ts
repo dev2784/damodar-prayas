@@ -16,18 +16,13 @@ export type AuthResponse = {
   expiresIn: string;
   user: AuthUser;
 };
-export type PendingPhoneVerification = { requiresPhoneVerification: true; user: AuthUser };
-export type AuthResult = AuthResponse | PendingPhoneVerification;
-export function requiresPhoneVerification(result: AuthResult): result is PendingPhoneVerification {
-  return 'requiresPhoneVerification' in result && result.requiresPhoneVerification;
-}
+export type AuthResult = AuthResponse;
 export type RegisterInput = {
   firstName: string;
   lastName: string;
   phone: string;
   email?: string | null;
   password: string;
-  otpAccessToken?: string;
 };
 export type LoginInput = { phone: string; password: string };
 export const authApi = api.injectEndpoints({
@@ -45,19 +40,12 @@ export const authApi = api.injectEndpoints({
       invalidatesTags: ['Me'],
     }),
 
-    googleRegister: builder.mutation<AuthResult, { idToken: string; phone: string; firstName: string; lastName: string; otpAccessToken?: string }>({
+    googleRegister: builder.mutation<AuthResult, { idToken: string; phone: string; firstName: string; lastName: string }>({
       query: (body) => ({ url: '/auth/google/register', method: 'POST', body }),
       invalidatesTags: ['Me'],
     }),
     googleLink: builder.mutation<{ success: boolean }, { idToken: string }>({
       query: (body) => ({ url: '/auth/google/link', method: 'POST', body }),
-      invalidatesTags: ['Me'],
-    }),
-    sendOtp: builder.mutation<{ success: boolean; widgetId: string; otpLength: number; resendSeconds: number; otpExpiryMinutes: number }, { phone: string }>({
-      query: (body) => ({ url: '/auth/otp/send', method: 'POST', body }),
-    }),
-    verifyOtp: builder.mutation<AuthResponse, { phone: string; accessToken: string }>({
-      query: (body) => ({ url: '/auth/otp/verify', method: 'POST', body }),
       invalidatesTags: ['Me'],
     }),
     changePassword: builder.mutation<
@@ -71,5 +59,5 @@ export const authApi = api.injectEndpoints({
   }),
   overrideExisting: false,
 });
-export const { useRegisterMutation, useLoginMutation, useGoogleLoginMutation, useGoogleRegisterMutation, useGoogleLinkMutation, useSendOtpMutation, useVerifyOtpMutation, useChangePasswordMutation, useGetMeQuery } =
+export const { useRegisterMutation, useLoginMutation, useGoogleLoginMutation, useGoogleRegisterMutation, useGoogleLinkMutation, useChangePasswordMutation, useGetMeQuery } =
   authApi;

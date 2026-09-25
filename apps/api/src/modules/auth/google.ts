@@ -3,12 +3,10 @@ import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
 import { env } from '../../config/env.js';
 import { prisma } from '../../lib/prisma.js';
-import { verifyMsg91Phone } from './msg91.js';
 
 const tokenSchema = z.object({ idToken: z.string().min(100).max(10000) });
 const registrationSchema = tokenSchema.extend({
   phone: z.string().regex(/^\+?[1-9]\d{7,14}$/),
-  otpAccessToken: z.string().min(20).max(10000).optional(),
   firstName: z.string().trim().min(1).max(80),
   lastName: z.string().trim().min(1).max(80),
 });
@@ -54,9 +52,8 @@ export async function googleAuthRoutes(app: FastifyInstance) {
     if (!claims?.sub) return reply.code(401).send({ error: 'INVALID_GOOGLE_TOKEN' });
     const user = await prisma.user.findFirst({ where: { googleSub: claims.sub, isActive: true, deletedAt: null }, select: publicUser });
     if (!user) return reply.code(409).send({ error: 'GOOGLE_REGISTRATION_REQUIRED', message: 'Complete registration with a mobile number to use Google sign-in.', profile: { firstName: claims.given_name ?? '', lastName: claims.family_name ?? '' } });
-    await prisma.user.update({ where: { id: user.id }, data: { lastLoginAt: new Date() } });
-    if (!user.isPhoneVerified) return { requiresPhoneVerification: true, user };
-    return { accessToken: await reply.jwtSign({ sub: user.id, role: user.role }, { expiresIn: '7d' }), tokenType: 'Bearer', expiresIn: '7d', user };
+    const verifiedUser = await prisma.user.update({ where: { id: user.id }, data: { isPhoneVerified: true, lastLoginAt: new Date() }, select: publicUser });
+    return { accessToken: await reply.jwtSign({ sub: verifiedUser.id, role: verifiedUser.role }, { expiresIn: '7d' }), tokenType: 'Bearer', expiresIn: '7d', user: verifiedUser };
   });
   app.post('/google/register', async (request, reply) => {
     const input = registrationSchema.safeParse(request.body);
@@ -64,11 +61,9 @@ export async function googleAuthRoutes(app: FastifyInstance) {
     const claims = await verifyGoogleToken(input.data.idToken);
     if (!claims?.sub) return reply.code(401).send({ error: 'INVALID_GOOGLE_TOKEN' });
     const phone = input.data.phone;
-    const phoneVerified = env.OTP_PROVIDER !== 'msg91' || (!!input.data.otpAccessToken && await verifyMsg91Phone(input.data.otpAccessToken, phone));
     try {
 
-      const user = await prisma.user.create({ data: { phone, firstName: input.data.firstName, lastName: input.data.lastName, googleSub: claims.sub, email: claims.email_verified && claims.email ? claims.email : null, role: 'MEMBER', isPhoneVerified: phoneVerified, lastLoginAt: new Date() }, select: publicUser });
-      if (!user.isPhoneVerified) return reply.code(201).send({ requiresPhoneVerification: true, user });
+      const user = await prisma.user.create({ data: { phone, firstName: input.data.firstName, lastName: input.data.lastName, googleSub: claims.sub, email: claims.email_verified && claims.email ? claims.email : null, role: 'MEMBER', isPhoneVerified: true, lastLoginAt: new Date() }, select: publicUser });
       return reply.code(201).send({ accessToken: await reply.jwtSign({ sub: user.id, role: user.role }, { expiresIn: '7d' }), tokenType: 'Bearer', expiresIn: '7d', user });
     } catch (error) {
       request.log.info({ error }, 'Google registration conflict');
