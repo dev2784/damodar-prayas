@@ -402,6 +402,9 @@ model CommunityPost {
   contactName    String?
   contactPhone   String?
   location       String?
+  state          String?
+  cityId         String?
+  postDate       DateTime?                  @db.Date
   eventDate      DateTime?
   obituaryType   ObituaryType?
   deceasedName   String?
@@ -420,6 +423,8 @@ model CommunityPost {
 
   @@index([status, category, publishedAt])
   @@index([isFeatured, status, publishedAt])
+  @@index([status, category, cityId, createdAt])
+  @@index([status, category, postDate])
   @@index([expiresAt])
 }
 

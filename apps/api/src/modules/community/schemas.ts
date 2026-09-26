@@ -1,4 +1,8 @@
 import { z } from 'zod';
+import { mpCities } from './mp-cities.js';
+
+const cityIdSchema = z.string().refine((id) => mpCities.some((city) => city.id === id), 'Select a city in Madhya Pradesh');
+export const calendarDateSchema = z.iso.date();
 
 export const postCategorySchema = z.enum([
   'NEWS',
@@ -22,6 +26,9 @@ export const submitCommunityPostSchema = z.object({
   bannerStorageKey: z.string().trim().max(500).optional().nullable(),
   contactName: z.string().trim().max(150).optional().nullable(),
   contactPhone: z.string().trim().regex(/^\+?[1-9]\d{7,14}$/).optional().nullable(),
+  state: z.literal('Madhya Pradesh').optional(),
+  cityId: cityIdSchema.optional(),
+  postDate: calendarDateSchema.transform((day) => new Date(`${day}T00:00:00.000Z`)).optional(),
   location: z.string().trim().max(300).optional().nullable(),
   eventDate: z.coerce.date().optional().nullable(),
   obituaryType: z.enum(['DEATH_NOTICE', 'UTHAWNA', 'CHAUTHA', 'TRIBUTE', 'OTHER']).optional().nullable(),
@@ -42,6 +49,8 @@ export const submitCommunityPostSchema = z.object({
 
 export const communityPostListQuerySchema = z.object({
   category: postCategorySchema.optional(),
+  cityId: cityIdSchema.optional(),
+  date: calendarDateSchema.optional(),
   language: z.enum(['HI', 'EN']).default('HI'),
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(50).default(20),

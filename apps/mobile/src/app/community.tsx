@@ -1,3 +1,9 @@
+import { useRef, useState } from 'react';
+import {
+  CitySelect,
+  DateSelect,
+  selectorStyles as filterStyles,
+} from '@/features/community/selectors';
 import { C, styles } from '@/styles/community.styles';
 import { ActivityIndicator, FlatList, Pressable, RefreshControl, Text, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -6,15 +12,20 @@ import { SymbolView } from 'expo-symbols';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useLanguageText } from '@/hooks/use-language-text';
-import { type CommunityPost, useGetCommunityPostsQuery } from '@/services/community-api';
+import {
+  type CommunityPost,
+  useGetCommunityLocationsQuery,
+  useGetCommunityPostsQuery,
+} from '@/services/community-api';
 
 type FeedCategory = 'NEWS' | 'EVENT' | 'OBITUARY' | 'ADVERTISEMENT';
 
-function formatDate(value: string | null) {
+function formatDate(value: string | null, language: string) {
   if (!value) return null;
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return null;
-  return new Intl.DateTimeFormat('hi-IN', {
+  return new Intl.DateTimeFormat(language === 'hi' ? 'hi-IN' : 'en-IN', {
+    timeZone: 'Asia/Kolkata',
     day: 'numeric',
     month: 'short',
     year: 'numeric',
@@ -27,12 +38,22 @@ function excerpt(value: string) {
 }
 
 function PostCard({ post }: { post: CommunityPost }) {
-  const { text } = useLanguageText();
+  const { text, language } = useLanguageText();
+  const { data: locations } = useGetCommunityLocationsQuery();
+  const city = locations?.cities.find((item) => item.id === post.cityId);
   const translation = post.translations[0];
   const isEvent = post.category === 'EVENT';
   const isAdvertisement = post.category === 'ADVERTISEMENT';
   const isObituary = post.category === 'OBITUARY';
-  const date = formatDate(isEvent ? post.eventDate : (post.publishedAt ?? post.createdAt));
+  const date = formatDate(
+    post.postDate ??
+      (isEvent
+        ? post.eventDate
+        : isObituary
+          ? (post.eventDate ?? post.deathDate ?? post.createdAt)
+          : post.createdAt),
+    language,
+  );
   const categoryLabel = isEvent
     ? text('कार्यक्रम', 'Event')
     : isAdvertisement
@@ -137,7 +158,7 @@ function PostCard({ post }: { post: CommunityPost }) {
         ) : null}
 
         <View style={styles.cardFooter}>
-          {post.location ? (
+          {city || post.location ? (
             <View style={styles.locationRow}>
               <SymbolView
                 name={{ ios: 'location.fill', android: 'location_on', web: 'location_on' }}
@@ -145,7 +166,7 @@ function PostCard({ post }: { post: CommunityPost }) {
                 size={14}
               />
               <Text style={styles.locationText} numberOfLines={1}>
-                {post.location}
+                {[city?.name, post.location].filter(Boolean).join(' · ')}
               </Text>
             </View>
           ) : (
@@ -166,17 +187,35 @@ function PostCard({ post }: { post: CommunityPost }) {
 }
 
 export default function CommunityScreen() {
-  const { text, apiLanguage } = useLanguageText();
+  const { apiLanguage } = useLanguageText();
   const params = useLocalSearchParams<{ category?: string | string[] }>();
   const rawCategory = Array.isArray(params.category) ? params.category[0] : params.category;
   const activeCategory: FeedCategory =
     rawCategory === 'EVENT' || rawCategory === 'ADVERTISEMENT' || rawCategory === 'OBITUARY'
       ? rawCategory
       : 'NEWS';
+  return <CommunityFeed key={`${activeCategory}-${apiLanguage}`} activeCategory={activeCategory} />;
+}
+
+function CommunityFeed({ activeCategory }: { activeCategory: FeedCategory }) {
+  const { text, apiLanguage } = useLanguageText();
+  const [cityId, setCityId] = useState('');
+  const [date, setDate] = useState('');
+  const [page, setPage] = useState(1);
+  const list = useRef<FlatList<CommunityPost>>(null);
   const setActiveCategory = (category: FeedCategory) => router.setParams({ category });
-  const { data, isLoading, isFetching, isError, refetch } = useGetCommunityPostsQuery({
+  const {
+    currentData: data,
+    isLoading,
+    isFetching,
+    isError,
+    refetch,
+  } = useGetCommunityPostsQuery({
     category: activeCategory,
     language: apiLanguage,
+    cityId: cityId || undefined,
+    date: date || undefined,
+    page,
   });
 
   const items = data?.items ?? [];
@@ -184,7 +223,7 @@ export default function CommunityScreen() {
     activeCategory === 'NEWS'
       ? text('ताज़ा समाचार', 'Latest news')
       : activeCategory === 'EVENT'
-        ? text('आने वाले कार्यक्रम', 'Upcoming events')
+        ? text('समारोह', 'Events')
         : activeCategory === 'OBITUARY'
           ? text('शोक सूचनाएँ', 'Obituary notices')
           : text('समाज व्यापार विज्ञापन', 'Community business ads');
@@ -208,6 +247,7 @@ export default function CommunityScreen() {
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
       <FlatList
+        ref={list}
         data={items}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <PostCard post={item} />}
@@ -320,6 +360,43 @@ export default function CommunityScreen() {
               </Pressable>
             </View>
 
+            <View style={filterStyles.group}>
+              <Text style={filterStyles.hint}>
+                {text('मध्य प्रदेश · सबसे नई पोस्ट पहले', 'Madhya Pradesh · Newest added first')}
+              </Text>
+              <Text style={filterStyles.label}>{text('शहर के अनुसार', 'Filter by city')}</Text>
+              <CitySelect
+                optional
+                value={cityId}
+                onChange={(value) => {
+                  setCityId(value);
+                  setPage(1);
+                }}
+              />
+              <Text style={filterStyles.label}>{text('तारीख के अनुसार', 'Filter by date')}</Text>
+              <DateSelect
+                optional
+                value={date}
+                onChange={(value) => {
+                  setDate(value);
+                  setPage(1);
+                }}
+              />
+              {cityId || date ? (
+                <Pressable
+                  style={styles.retryButton}
+                  onPress={() => {
+                    setCityId('');
+                    setDate('');
+                    setPage(1);
+                  }}
+                >
+                  <Text style={styles.retryText}>
+                    {text('फ़िल्टर हटाएँ · सभी दिखाएँ', 'Clear filters · Show all')}
+                  </Text>
+                </Pressable>
+              ) : null}
+            </View>
             {!isLoading && !isError && items.length > 0 ? (
               <View style={styles.countRow}>
                 <Text style={styles.countText}>{sectionLabel}</Text>
@@ -328,8 +405,42 @@ export default function CommunityScreen() {
             ) : null}
           </View>
         }
+        ListFooterComponent={
+          data && data.pagination.totalPages > 1 ? (
+            <View style={filterStyles.group}>
+              <Text style={filterStyles.hint}>
+                {text('पृष्ठ', 'Page')} {page} / {data.pagination.totalPages}
+              </Text>
+              <View style={filterStyles.row}>
+                <Pressable
+                  disabled={page === 1 || isFetching}
+                  style={[styles.retryButton, { opacity: page === 1 ? 0.4 : 1 }]}
+                  onPress={() => {
+                    setPage(page - 1);
+                    list.current?.scrollToOffset({ offset: 0, animated: true });
+                  }}
+                >
+                  <Text style={styles.retryText}>{text('← पिछला', '← Previous')}</Text>
+                </Pressable>
+                <Pressable
+                  disabled={page >= data.pagination.totalPages || isFetching}
+                  style={[
+                    styles.retryButton,
+                    { opacity: page >= data.pagination.totalPages ? 0.4 : 1 },
+                  ]}
+                  onPress={() => {
+                    setPage(page + 1);
+                    list.current?.scrollToOffset({ offset: 0, animated: true });
+                  }}
+                >
+                  <Text style={styles.retryText}>{text('अगला →', 'Next →')}</Text>
+                </Pressable>
+              </View>
+            </View>
+          ) : null
+        }
         ListEmptyComponent={
-          isLoading ? (
+          isLoading || (isFetching && !data) ? (
             <View style={styles.stateCard}>
               <ActivityIndicator color={C.maroon} size="large" />
               <Text style={styles.stateTitle}>
@@ -359,7 +470,11 @@ export default function CommunityScreen() {
           ) : (
             <View style={styles.stateCard}>
               <SymbolView name={emptyIcon} tintColor={C.gold} size={42} />
-              <Text style={styles.stateTitle}>{emptyLabel}</Text>
+              <Text style={styles.stateTitle}>
+                {cityId || date
+                  ? text('इन फ़िल्टर में कोई पोस्ट नहीं मिली', 'No posts match these filters')
+                  : emptyLabel}
+              </Text>
               <Text style={styles.stateText}>
                 {text(
                   'Admin approval के बाद नई जानकारी यहाँ दिखाई देगी।',
