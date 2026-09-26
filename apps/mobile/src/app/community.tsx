@@ -1,7 +1,6 @@
 import { C, styles } from '@/styles/community.styles';
-import { useState } from 'react';
 import { ActivityIndicator, FlatList, Pressable, RefreshControl, Text, View } from 'react-native';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { Image } from 'expo-image';
 import { SymbolView } from 'expo-symbols';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -34,7 +33,13 @@ function PostCard({ post }: { post: CommunityPost }) {
   const isAdvertisement = post.category === 'ADVERTISEMENT';
   const isObituary = post.category === 'OBITUARY';
   const date = formatDate(isEvent ? post.eventDate : (post.publishedAt ?? post.createdAt));
-  const categoryLabel = isEvent ? text('कार्यक्रम', 'Event') : isAdvertisement ? text('विज्ञापन', 'Advertisement') : isObituary ? text('शोक सूचना', 'Obituary') : text('समाचार', 'News');
+  const categoryLabel = isEvent
+    ? text('कार्यक्रम', 'Event')
+    : isAdvertisement
+      ? text('विज्ञापन', 'Advertisement')
+      : isObituary
+        ? text('शोक सूचना', 'Obituary')
+        : text('समाचार', 'News');
   const categoryIcon = isEvent
     ? ({ ios: 'calendar.badge.clock', android: 'event', web: 'event' } as const)
     : isAdvertisement
@@ -42,7 +47,13 @@ function PostCard({ post }: { post: CommunityPost }) {
       : isObituary
         ? ({ ios: 'flame.fill', android: 'local_florist', web: 'local_florist' } as const)
         : ({ ios: 'newspaper.fill', android: 'newspaper', web: 'newspaper' } as const);
-  const categoryTint = isEvent ? C.gold : isAdvertisement ? C.green : isObituary ? C.muted : C.maroon;
+  const categoryTint = isEvent
+    ? C.gold
+    : isAdvertisement
+      ? C.green
+      : isObituary
+        ? C.muted
+        : C.maroon;
 
   return (
     <Pressable
@@ -64,7 +75,9 @@ function PostCard({ post }: { post: CommunityPost }) {
               ? styles.eventPlaceholder
               : isAdvertisement
                 ? styles.adPlaceholder
-                : isObituary ? styles.obituaryPlaceholder : styles.newsPlaceholder,
+                : isObituary
+                  ? styles.obituaryPlaceholder
+                  : styles.newsPlaceholder,
           ]}
         >
           <SymbolView name={categoryIcon} tintColor={categoryTint} size={42} />
@@ -76,13 +89,25 @@ function PostCard({ post }: { post: CommunityPost }) {
           <View
             style={[
               styles.categoryPill,
-              isEvent ? styles.eventPill : isAdvertisement ? styles.adPill : isObituary ? styles.obituaryPill : styles.newsPill,
+              isEvent
+                ? styles.eventPill
+                : isAdvertisement
+                  ? styles.adPill
+                  : isObituary
+                    ? styles.obituaryPill
+                    : styles.newsPill,
             ]}
           >
             <Text
               style={[
                 styles.categoryText,
-                isEvent ? styles.eventText : isAdvertisement ? styles.adText : isObituary ? styles.obituaryText : styles.newsText,
+                isEvent
+                  ? styles.eventText
+                  : isAdvertisement
+                    ? styles.adText
+                    : isObituary
+                      ? styles.obituaryText
+                      : styles.newsText,
               ]}
             >
               {categoryLabel}
@@ -142,7 +167,13 @@ function PostCard({ post }: { post: CommunityPost }) {
 
 export default function CommunityScreen() {
   const { text, apiLanguage } = useLanguageText();
-  const [activeCategory, setActiveCategory] = useState<FeedCategory>('NEWS');
+  const params = useLocalSearchParams<{ category?: string | string[] }>();
+  const rawCategory = Array.isArray(params.category) ? params.category[0] : params.category;
+  const activeCategory: FeedCategory =
+    rawCategory === 'EVENT' || rawCategory === 'ADVERTISEMENT' || rawCategory === 'OBITUARY'
+      ? rawCategory
+      : 'NEWS';
+  const setActiveCategory = (category: FeedCategory) => router.setParams({ category });
   const { data, isLoading, isFetching, isError, refetch } = useGetCommunityPostsQuery({
     category: activeCategory,
     language: apiLanguage,
@@ -195,7 +226,12 @@ export default function CommunityScreen() {
               <View style={styles.headerTop}>
                 <View style={styles.headerCopy}>
                   <Text style={styles.eyebrow}>{text('समाज अपडेट्स', 'Community updates')}</Text>
-                  <Text style={styles.title}>{text('समाचार, कार्यक्रम, शोक सूचना एवं विज्ञापन', 'News, events, obituary notices & advertisements')}</Text>
+                  <Text style={styles.title}>
+                    {text(
+                      'समाचार, कार्यक्रम, शोक सूचना एवं विज्ञापन',
+                      'News, events, obituary notices & advertisements',
+                    )}
+                  </Text>
                 </View>
                 <Pressable
                   style={styles.addButton}
@@ -215,7 +251,10 @@ export default function CommunityScreen() {
                 </Pressable>
               </View>
               <Text style={styles.subtitle}>
-                {text('समाज की खबरें, समारोह और स्वीकृत व्यापार विज्ञापन एक ही जगह।', 'Community news, events and approved business advertisements in one place.')}
+                {text(
+                  'समाज की खबरें, समारोह और स्वीकृत व्यापार विज्ञापन एक ही जगह।',
+                  'Community news, events and approved business advertisements in one place.',
+                )}
               </Text>
             </View>
 
@@ -255,7 +294,9 @@ export default function CommunityScreen() {
                   tintColor={activeCategory === 'OBITUARY' ? '#FFFFFF' : C.maroon}
                   size={16}
                 />
-                <Text style={[styles.tabText, activeCategory === 'OBITUARY' && styles.activeTabText]}>
+                <Text
+                  style={[styles.tabText, activeCategory === 'OBITUARY' && styles.activeTabText]}
+                >
                   {text('शोक सूचना', 'Obituary')}
                 </Text>
               </Pressable>
@@ -291,7 +332,9 @@ export default function CommunityScreen() {
           isLoading ? (
             <View style={styles.stateCard}>
               <ActivityIndicator color={C.maroon} size="large" />
-              <Text style={styles.stateTitle}>{text('जानकारी लोड हो रही है...', 'Loading information...')}</Text>
+              <Text style={styles.stateTitle}>
+                {text('जानकारी लोड हो रही है...', 'Loading information...')}
+              </Text>
             </View>
           ) : isError ? (
             <View style={styles.stateCard}>
@@ -300,8 +343,15 @@ export default function CommunityScreen() {
                 tintColor={C.maroon}
                 size={42}
               />
-              <Text style={styles.stateTitle}>{text('अभी जानकारी लोड नहीं हो पाई', 'Could not load information')}</Text>
-              <Text style={styles.stateText}>{text('इंटरनेट या API कनेक्शन जाँचकर दोबारा कोशिश करें।', 'Check your internet or API connection and try again.')}</Text>
+              <Text style={styles.stateTitle}>
+                {text('अभी जानकारी लोड नहीं हो पाई', 'Could not load information')}
+              </Text>
+              <Text style={styles.stateText}>
+                {text(
+                  'इंटरनेट या API कनेक्शन जाँचकर दोबारा कोशिश करें।',
+                  'Check your internet or API connection and try again.',
+                )}
+              </Text>
               <Pressable style={styles.retryButton} onPress={refetch}>
                 <Text style={styles.retryText}>{text('फिर से कोशिश करें', 'Try again')}</Text>
               </Pressable>
@@ -311,7 +361,10 @@ export default function CommunityScreen() {
               <SymbolView name={emptyIcon} tintColor={C.gold} size={42} />
               <Text style={styles.stateTitle}>{emptyLabel}</Text>
               <Text style={styles.stateText}>
-                {text('Admin approval के बाद नई जानकारी यहाँ दिखाई देगी।', 'New information will appear here after admin approval.')}
+                {text(
+                  'Admin approval के बाद नई जानकारी यहाँ दिखाई देगी।',
+                  'New information will appear here after admin approval.',
+                )}
               </Text>
             </View>
           )
