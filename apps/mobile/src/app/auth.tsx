@@ -106,6 +106,7 @@ export default function AuthScreen() {
   const busy = loggingIn || registering || googleBusy;
 
   function destination() {
+    if (nextParam === '/support') return '/support' as const;
     if (nextParam === '/change-password') return '/change-password' as const;
     if (nextParam === '/matrimony-form') return '/matrimony-form' as const;
     if (nextParam === '/my-matrimony') return '/my-matrimony' as const;
@@ -116,7 +117,8 @@ export default function AuthScreen() {
     await saveAccessToken(accessToken);
     dispatch(setAccessToken(accessToken));
     dispatch(api.util.invalidateTags(['Me', 'Matrimony']));
-    router.replace(destination());
+    if (nextParam === '/support') router.navigate('/support');
+    else router.replace(destination());
   }
 
   async function signInWithGoogle() {

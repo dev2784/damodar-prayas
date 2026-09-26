@@ -168,6 +168,7 @@ model User {
   shortlists        Shortlist[]
   reports           ProfileReport[]
   notifications     Notification[]
+  supportTickets    SupportTicket[]
   communityPosts    CommunityPost[]
   committees        Committee[]
   auditLogs         AuditLog[]           @relation("AuditActor")
@@ -556,4 +557,34 @@ model AuditLog {
 
   @@index([actorUserId, createdAt])
   @@index([entityType, entityId])
+}
+
+
+enum SupportCategory {
+  FEEDBACK
+  COMPLAINT
+  CONTACT
+}
+
+enum SupportStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+}
+
+model SupportTicket {
+  id        String          @id @default(cuid())
+  userId    String?
+  user      User?           @relation(fields: [userId], references: [id], onDelete: SetNull)
+  category  SupportCategory
+  subject   String
+  message   String
+  status    SupportStatus   @default(OPEN)
+  adminNote String          @default("")
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  @@index([status, createdAt])
+  @@index([category, createdAt])
+  @@index([userId])
 }

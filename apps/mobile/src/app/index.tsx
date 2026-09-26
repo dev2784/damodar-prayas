@@ -423,6 +423,13 @@ export default function HomeScreen() {
           </View>
           <Text style={styles.arrow}>›</Text>
         </Pressable>
+        <Pressable accessibilityRole="button" style={[styles.committeeBanner, { marginTop: 12 }]} onPress={() => router.push('/support')}>
+          <Icon name={{ ios: 'bubble.left.and.bubble.right.fill', android: 'support_agent', web: 'support_agent' }} size={28} />
+          <View style={styles.committeeCopy}>
+            <Text style={styles.actionTitle}>{text('सहायता और संपर्क', 'Help & contact')}</Text>
+            <Text style={styles.actionDescription}>{text('सुझाव या शिकायत हमें भेजें', 'Share feedback or report a concern')}</Text>
+          </View><Text style={styles.arrow}>›</Text>
+        </Pressable>
       </ScrollView>
     </SafeAreaView>
   );

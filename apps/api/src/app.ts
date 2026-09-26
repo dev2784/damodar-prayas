@@ -1,3 +1,4 @@
+import { supportRoutes, adminSupportRoutes } from './modules/support/routes.js';
 import cors from '@fastify/cors';
 import multipart from '@fastify/multipart';
 import Fastify, { type FastifyError } from 'fastify';
@@ -39,6 +40,8 @@ export async function buildApp() {
   await app.register(communityLikeRoutes, { prefix: '/api/v1/posts' });
   await app.register(committeeRoutes, { prefix: '/api/v1/committees' });
   await app.register(notificationRoutes, { prefix: '/api/v1/notifications' });
+  await app.register(supportRoutes, { prefix: '/api/v1/support' });
+  await app.register(adminSupportRoutes, { prefix: '/api/v1/admin/support' });
   await app.register(reportRoutes, { prefix: '/api/v1/reports' });
   await app.register(adminMatrimonyRoutes, { prefix: '/api/v1/admin/matrimony' });
   await app.register(adminCommunityRoutes, { prefix: '/api/v1/admin/posts' });

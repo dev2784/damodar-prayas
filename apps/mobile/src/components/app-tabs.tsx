@@ -84,6 +84,7 @@ export default function AppTabs() {
       <Tabs.Screen name="notifications" options={{ href: null }} />
       <Tabs.Screen name="change-password" options={{ href: null }} />
       <Tabs.Screen name="settings" options={{ href: null }} />
+      <Tabs.Screen name="support" options={{ href: null }} />
       <Tabs.Screen name="faq" options={{ href: null }} />
       <Tabs.Screen name="onboarding" options={{ href: null, tabBarStyle: { display: 'none' } }} />
       <Tabs.Screen name="auth" options={{ href: null }} />
