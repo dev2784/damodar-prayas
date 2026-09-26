@@ -2,7 +2,7 @@
   "expo": {
     "name": "Damodar Prayas",
     "slug": "damodar-prayas",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "mobile",
@@ -12,7 +12,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#FDF7E9",
+        "backgroundColor": "#5A0F1D",
         "foregroundImage": "./assets/images/android-icon-foreground.png"
       },
       "predictiveBackGestureEnabled": false,
@@ -29,8 +29,8 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#FDF7E9",
-          "image": "./assets/images/damodar-splash.png",
+          "backgroundColor": "#5A0F1D",
+          "image": "./assets/images/splash.png",
           "imageWidth": 390,
           "resizeMode": "contain"
         }
