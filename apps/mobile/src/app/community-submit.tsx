@@ -14,7 +14,8 @@ import * as ImagePicker from 'expo-image-picker';
 import { router, useLocalSearchParams } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import DateTimePicker, { type DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import { CitySelect, StateSelect, DateSelect, todayInIndia } from '@/features/community/selectors';
+import { useLanguageText } from '@/hooks/use-language-text';
 
 import { uploadContentBanner, type ContentUploadableFile } from '@/services/content-media';
 import {
@@ -23,11 +24,17 @@ import {
 } from '@/services/community-api';
 import { useAppSelector } from '@/store/hooks';
 
-type SupportedCategory = Extract<CommunityPostCategory, 'NEWS' | 'EVENT' | 'ADVERTISEMENT' | 'OBITUARY'>;
+type SupportedCategory = Extract<
+  CommunityPostCategory,
+  'NEWS' | 'EVENT' | 'ADVERTISEMENT' | 'OBITUARY'
+>;
 type ObituaryType = 'DEATH_NOTICE' | 'UTHAWNA' | 'CHAUTHA' | 'TRIBUTE' | 'OTHER';
 const obituaryOptions: { value: ObituaryType; label: string }[] = [
-  { value: 'DEATH_NOTICE', label: 'निधन सूचना' }, { value: 'UTHAWNA', label: 'उठावना' },
-  { value: 'CHAUTHA', label: 'चौथा' }, { value: 'TRIBUTE', label: 'श्रद्धांजलि सभा' }, { value: 'OTHER', label: 'अन्य' },
+  { value: 'DEATH_NOTICE', label: 'निधन सूचना' },
+  { value: 'UTHAWNA', label: 'उठावना' },
+  { value: 'CHAUTHA', label: 'चौथा' },
+  { value: 'TRIBUTE', label: 'श्रद्धांजलि सभा' },
+  { value: 'OTHER', label: 'अन्य' },
 ];
 
 function optionalText(value: string) {
@@ -49,10 +56,19 @@ function errorMessage(error: unknown) {
 }
 
 export default function CommunitySubmitScreen() {
+  const { text, apiLanguage } = useLanguageText();
+  const [cityId, setCityId] = useState('');
+  const [postDate, setPostDate] = useState(todayInIndia);
   const params = useLocalSearchParams<{ category?: string | string[] }>();
   const rawCategory = Array.isArray(params.category) ? params.category[0] : params.category;
   const category: SupportedCategory =
-    rawCategory === 'EVENT' ? 'EVENT' : rawCategory === 'ADVERTISEMENT' ? 'ADVERTISEMENT' : rawCategory === 'OBITUARY' ? 'OBITUARY' : 'NEWS';
+    rawCategory === 'EVENT'
+      ? 'EVENT'
+      : rawCategory === 'ADVERTISEMENT'
+        ? 'ADVERTISEMENT'
+        : rawCategory === 'OBITUARY'
+          ? 'OBITUARY'
+          : 'NEWS';
 
   const accessToken = useAppSelector((state) => state.auth.accessToken);
   const [submitPost, { isLoading: isSubmitting }] = useSubmitCommunityPostMutation();
@@ -62,20 +78,21 @@ export default function CommunitySubmitScreen() {
   const [eventDate, setEventDate] = useState('');
   const [obituaryType, setObituaryType] = useState<ObituaryType>('DEATH_NOTICE');
   const [deceasedName, setDeceasedName] = useState('');
-  const [deathDate, setDeathDate] = useState('');
+  const [deathDate, setDeathDate] = useState(todayInIndia);
   const [eventTime, setEventTime] = useState('');
   const [contactName, setContactName] = useState('');
   const [contactPhone, setContactPhone] = useState('');
   const [banner, setBanner] = useState<ContentUploadableFile | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [datePickerTarget, setDatePickerTarget] = useState<'death' | 'event' | null>(null);
-  const displayDate=(v:string)=>{if(!v)return 'तारीख चुनें';const [y,m,d]=v.split('-');return y&&m&&d?`${d}/${m}/${y}`:v;};
-  const pickerDate=(v:string)=>{const d=v?new Date(`${v}T12:00:00`):new Date();return Number.isNaN(d.getTime())?new Date():d;};
-  const isoDate=(d:Date)=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-  const onDatePicked=(e:DateTimePickerEvent,d?:Date)=>{const t=datePickerTarget;setDatePickerTarget(null);if(e.type!=='set'||!d||!t)return;t==='death'?setDeathDate(isoDate(d)):setEventDate(isoDate(d));};
 
   const label =
-    category === 'EVENT' ? 'कार्यक्रम' : category === 'ADVERTISEMENT' ? 'विज्ञापन' : category === 'OBITUARY' ? 'शोक सूचना' : 'समाचार';
+    category === 'EVENT'
+      ? 'कार्यक्रम'
+      : category === 'ADVERTISEMENT'
+        ? 'विज्ञापन'
+        : category === 'OBITUARY'
+          ? 'शोक सूचना'
+          : 'समाचार';
   const busy = isSubmitting || uploading;
 
   async function pickBanner() {
@@ -111,8 +128,30 @@ export default function CommunitySubmitScreen() {
       return;
     }
 
-    if (category === 'EVENT' && !/^\d{4}-\d{2}-\d{2}$/.test(eventDate.trim())) {
-      Alert.alert('कार्यक्रम की तारीख', 'तारीख YYYY-MM-DD में भरें, जैसे 2026-10-05।');
+    if (category === 'OBITUARY' && !deceasedName.trim()) {
+      Alert.alert(
+        text('नाम भरें', 'Enter name'),
+        text('दिवंगत व्यक्ति का नाम भरें।', 'Enter the deceased person’s name.'),
+      );
+      return;
+    }
+
+    if (!cityId) {
+      Alert.alert(
+        text('शहर चुनें', 'Select city'),
+        text('कृपया सूची से अपना शहर चुनें।', 'Please select your city from the list.'),
+      );
+      return;
+    }
+
+    if (
+      (category === 'EVENT' || (category === 'OBITUARY' && obituaryType !== 'DEATH_NOTICE')) &&
+      !eventDate
+    ) {
+      Alert.alert(
+        text('कार्यक्रम की तारीख', 'Event date'),
+        text('कृपया तारीख चुनें।', 'Please select a date.'),
+      );
       return;
     }
 
@@ -132,6 +171,14 @@ export default function CommunitySubmitScreen() {
 
       await submitPost({
         category,
+        state: 'Madhya Pradesh',
+        cityId,
+        postDate:
+          category === 'EVENT' || (category === 'OBITUARY' && obituaryType !== 'DEATH_NOTICE')
+            ? eventDate
+            : category === 'OBITUARY'
+              ? deathDate || postDate
+              : postDate,
         bannerUrl: uploaded?.url ?? null,
         bannerStorageKey: uploaded?.storageKey ?? null,
         contactName: optionalText(contactName),
@@ -139,14 +186,18 @@ export default function CommunitySubmitScreen() {
         location: optionalText(location),
         eventDate:
           category === 'EVENT' || (category === 'OBITUARY' && obituaryType !== 'DEATH_NOTICE')
-            ? new Date(`${eventDate.trim()}T12:00:00+05:30`).toISOString() : null,
+            ? new Date(`${eventDate.trim()}T12:00:00+05:30`).toISOString()
+            : null,
         obituaryType: category === 'OBITUARY' ? obituaryType : null,
         deceasedName: category === 'OBITUARY' ? deceasedName.trim() : null,
-        deathDate: category === 'OBITUARY' && deathDate.trim() ? new Date(`${deathDate.trim()}T12:00:00+05:30`).toISOString() : null,
+        deathDate:
+          category === 'OBITUARY' && deathDate.trim()
+            ? new Date(`${deathDate.trim()}T12:00:00+05:30`).toISOString()
+            : null,
         eventTime: category === 'OBITUARY' ? optionalText(eventTime) : null,
         translations: [
           {
-            language: 'HI',
+            language: apiLanguage,
             title: title.trim(),
             details: details.trim(),
           },
@@ -156,7 +207,12 @@ export default function CommunitySubmitScreen() {
       Alert.alert(
         'समीक्षा के लिए भेज दिया',
         `${label} अभी सार्वजनिक नहीं होगा। Admin approval के बाद ही ऐप में दिखाई देगा।`,
-        [{ text: 'ठीक है', onPress: () => router.replace('/community') }],
+        [
+          {
+            text: 'ठीक है',
+            onPress: () => router.replace({ pathname: '/community', params: { category } }),
+          },
+        ],
       );
     } catch (error) {
       setUploading(false);
@@ -198,21 +254,47 @@ export default function CommunitySubmitScreen() {
               <Text style={styles.label}>सूचना का प्रकार *</Text>
               <View style={styles.optionWrap}>
                 {obituaryOptions.map((option) => (
-                  <Pressable key={option.value} style={[styles.optionChip, obituaryType === option.value && styles.optionChipActive]} onPress={() => setObituaryType(option.value)}>
-                    <Text style={[styles.optionText, obituaryType === option.value && styles.optionTextActive]}>{option.label}</Text>
+                  <Pressable
+                    key={option.value}
+                    style={[
+                      styles.optionChip,
+                      obituaryType === option.value && styles.optionChipActive,
+                    ]}
+                    onPress={() => setObituaryType(option.value)}
+                  >
+                    <Text
+                      style={[
+                        styles.optionText,
+                        obituaryType === option.value && styles.optionTextActive,
+                      ]}
+                    >
+                      {option.label}
+                    </Text>
                   </Pressable>
                 ))}
               </View>
               <Text style={styles.label}>दिवंगत व्यक्ति का नाम *</Text>
-              <TextInput value={deceasedName} onChangeText={setDeceasedName} style={styles.input} placeholder="स्व. श्री / श्रीमती का नाम" placeholderTextColor="#A49890" />
-              <Text style={styles.label}>निधन दिनांक</Text>
-              <Pressable style={styles.input} onPress={() => setDatePickerTarget('death')}><Text>{displayDate(deathDate)}</Text></Pressable>
+              <TextInput
+                value={deceasedName}
+                onChangeText={setDeceasedName}
+                style={styles.input}
+                placeholder="स्व. श्री / श्रीमती का नाम"
+                placeholderTextColor="#A49890"
+              />
+              <Text style={styles.label}>{text('निधन दिनांक *', 'Date of death *')}</Text>
+              <DateSelect value={deathDate} onChange={setDeathDate} />
               {obituaryType !== 'DEATH_NOTICE' ? (
                 <>
-                  <Text style={styles.label}>कार्यक्रम तारीख *</Text>
-                  <Pressable style={styles.input} onPress={() => setDatePickerTarget('event')}><Text>{displayDate(eventDate)}</Text></Pressable>
+                  <Text style={styles.label}>{text('समारोह की तारीख *', 'Event date *')}</Text>
+                  <DateSelect value={eventDate} onChange={setEventDate} />
                   <Text style={styles.label}>कार्यक्रम समय</Text>
-                  <TextInput value={eventTime} onChangeText={setEventTime} style={styles.input} placeholder="जैसे शाम 4:00 बजे" placeholderTextColor="#A49890" />
+                  <TextInput
+                    value={eventTime}
+                    onChangeText={setEventTime}
+                    style={styles.input}
+                    placeholder="जैसे शाम 4:00 बजे"
+                    placeholderTextColor="#A49890"
+                  />
                 </>
               ) : null}
             </>
@@ -256,24 +338,29 @@ export default function CommunitySubmitScreen() {
 
           {category === 'EVENT' ? (
             <>
-              <Text style={styles.label}>कार्यक्रम तारीख *</Text>
-              <TextInput
-                value={eventDate}
-                onChangeText={setEventDate}
-                style={styles.input}
-                placeholder="YYYY-MM-DD"
-                placeholderTextColor="#A49890"
-                keyboardType="numbers-and-punctuation"
-              />
+              <Text style={styles.label}>{text('समारोह की तारीख *', 'Event date *')}</Text>
+              <DateSelect value={eventDate} onChange={setEventDate} />
             </>
           ) : null}
 
-          <Text style={styles.label}>स्थान</Text>
+          <Text style={styles.label}>{text('राज्य *', 'State *')}</Text>
+          <StateSelect />
+          <Text style={styles.label}>{text('शहर *', 'City *')}</Text>
+          <CitySelect value={cityId} onChange={setCityId} />
+          {category === 'NEWS' || category === 'ADVERTISEMENT' ? (
+            <>
+              <Text style={styles.label}>{text('तारीख *', 'Date *')}</Text>
+              <DateSelect value={postDate} onChange={setPostDate} />
+            </>
+          ) : null}
+          <Text style={styles.label}>
+            {text('पता / आयोजन स्थल (वैकल्पिक)', 'Address / venue (optional)')}
+          </Text>
           <TextInput
             value={location}
             onChangeText={setLocation}
             style={styles.input}
-            placeholder="शहर / स्थान"
+            placeholder={text('मोहल्ला, हॉल या पूरा पता', 'Area, hall or full address')}
             placeholderTextColor="#A49890"
           />
 
@@ -309,7 +396,6 @@ export default function CommunitySubmitScreen() {
           )}
         </Pressable>
       </ScrollView>
-      {datePickerTarget ? <DateTimePicker value={pickerDate(datePickerTarget === 'death' ? deathDate : eventDate)} mode="date" display="default" onChange={onDatePicked} /> : null}
     </SafeAreaView>
   );
 }

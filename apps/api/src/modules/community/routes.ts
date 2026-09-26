@@ -1,5 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
+import { mpCities } from './mp-cities.js';
+import { postDateForSubmission, communityWhere, newestFirst } from './filters.js';
 import { prisma } from '../../lib/prisma.js';
 import { communityPostListQuerySchema, submitCommunityPostSchema } from './schemas.js';
 
@@ -14,30 +16,25 @@ async function getActiveUserId(request: Parameters<FastifyInstance['get']>[1] ex
 }
 
 export async function communityRoutes(app: FastifyInstance) {
+  app.get('/locations', async () => ({ state: 'Madhya Pradesh', cities: mpCities }));
+
   app.get('/', async (request, reply) => {
     const parsed = communityPostListQuerySchema.safeParse(request.query);
     if (!parsed.success) {
       return reply.code(400).send({ error: 'VALIDATION_ERROR', fields: parsed.error.flatten().fieldErrors });
     }
 
-    const { category, language, page, limit } = parsed.data;
-    const now = new Date();
-    const where = {
-      status: 'PUBLISHED' as const,
-      deletedAt: null,
-      ...(category ? { category } : {}),
-      OR: [{ expiresAt: null }, { expiresAt: { gte: now } }],
-    };
+    const { language, page, limit } = parsed.data;
+    const where = communityWhere(parsed.data);
 
     const [posts, total] = await Promise.all([
       prisma.communityPost.findMany({
         where,
-        orderBy: [{ isFeatured: 'desc' }, { publishedAt: 'desc' }, { createdAt: 'desc' }],
+        orderBy: newestFirst,
         skip: (page - 1) * limit,
         take: limit,
         include: {
           translations: {
-            where: { language },
             select: { language: true, title: true, details: true },
           },
         },
@@ -46,7 +43,7 @@ export async function communityRoutes(app: FastifyInstance) {
     ]);
 
     return {
-      items: posts,
+      items: posts.map((post) => ({ ...post, translations: post.translations.sort((a, b) => Number(b.language === language) - Number(a.language === language)) })),
       pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
     };
   });
@@ -87,6 +84,8 @@ export async function communityRoutes(app: FastifyInstance) {
     const post = await prisma.communityPost.create({
       data: {
         ...data,
+        postDate: postDateForSubmission(data),
+        ...(data.cityId ? { state: 'Madhya Pradesh' } : {}),
         createdById: userId,
         status: 'PENDING',
         translations: { create: translations },
