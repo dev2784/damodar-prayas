@@ -16,10 +16,20 @@ import {
 import { useAppSelector } from '@/store/hooks';
 import { useLanguageText } from '@/hooks/use-language-text';
 
-const genderFilters: { label: string; value?: MatrimonyGender }[] = [
-  { label: 'सभी' },
-  { label: 'वर', value: 'MALE' },
-  { label: 'वधू', value: 'FEMALE' },
+const vector = (body: string) => ({
+  uri: `data:image/svg+xml;utf8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">${body}</svg>`)}`,
+});
+const FLORAL = vector(
+  '<g stroke="#C69649" stroke-width="1.1"><path d="M95 5Q40 30 15 95M82 12Q55 0 55 26Q72 30 82 12ZM65 28Q35 14 38 44Q56 44 65 28ZM46 49Q15 39 20 66Q38 66 46 49ZM31 70Q4 68 8 90Q23 88 31 70ZM75 20Q95 22 88 42Q69 44 75 20ZM57 39Q81 44 70 62Q50 60 57 39ZM39 62Q64 66 53 83Q34 82 39 62Z"/></g>',
+);
+const HEARTS = vector(
+  '<path d="M43 30C20 4 0 36 18 52L46 77L66 57" stroke="#790D21" stroke-width="5" stroke-linecap="round"/><path d="M43 30C57 10 77 23 71 41" stroke="#790D21" stroke-width="5"/><path d="M66 47C85 27 104 51 86 68L66 86L45 66C28 48 49 29 66 47Z" stroke="#BF8B37" stroke-width="5"/><path d="M78 10V2M87 16L94 9" stroke="#BF8B37" stroke-width="3"/>',
+);
+
+const genderFilters: { label: string; en: string; value?: MatrimonyGender }[] = [
+  { label: 'सभी', en: 'All' },
+  { label: 'वर', en: 'Groom', value: 'MALE' },
+  { label: 'वधू', en: 'Bride', value: 'FEMALE' },
 ];
 
 /* Future community-category filter. Re-enable when Darzi/Pipa/Namdev segmentation is needed.
@@ -53,7 +63,12 @@ function FilterChip({
   onPress: () => void;
 }) {
   return (
-    <Pressable onPress={onPress} style={[styles.chip, active && styles.chipActive]}>
+    <Pressable
+      accessibilityRole="button"
+      accessibilityState={{ selected: active }}
+      onPress={onPress}
+      style={[styles.chip, active && styles.chipActive]}
+    >
       <Text style={[styles.chipText, active && styles.chipTextActive]}>{label}</Text>
     </Pressable>
   );
@@ -62,17 +77,22 @@ function FilterChip({
 function ProfileCard({ profile }: { profile: MatrimonyProfile }) {
   const { text } = useLanguageText();
   const accessToken = useAppSelector((state) => state.auth.accessToken);
-  const photo = profile.photos[0]?.url;
+  const photo = profile.photos.find((item) => item.isPrimary)?.url ?? profile.photos[0]?.url;
   const age = calculateAge(profile.dateOfBirth);
   const location = [profile.currentCity, profile.state].filter(Boolean).join(', ');
 
   return (
     <Pressable
-      style={styles.card}
+      accessibilityRole="button"
+      accessibilityLabel={`${text('प्रोफाइल देखें', 'View profile')}: ${fullName(profile)}`}
+      style={({ pressed }) => [styles.card, pressed && styles.pressed]}
       onPress={() =>
         accessToken
           ? router.push({ pathname: '/matrimony-profile', params: { id: profile.id } })
-          : router.push({ pathname: '/auth', params: { next: `/matrimony-profile?id=${profile.id}` } })
+          : router.push({
+              pathname: '/auth',
+              params: { next: `/matrimony-profile?id=${profile.id}` },
+            })
       }
     >
       <View style={styles.photoWrap}>
@@ -92,15 +112,6 @@ function ProfileCard({ profile }: { profile: MatrimonyProfile }) {
           </View>
         )}
 
-        <View style={styles.verifiedBadge}>
-          <SymbolView
-            name={{ ios: 'checkmark.seal.fill', android: 'verified', web: 'verified' }}
-            tintColor={C.green}
-            size={13}
-          />
-          <Text style={styles.verifiedText}>{text('सत्यापित', 'Verified')}</Text>
-        </View>
-
         {profile.isFeatured ? (
           <View style={styles.featuredBadge}>
             <SymbolView
@@ -108,29 +119,38 @@ function ProfileCard({ profile }: { profile: MatrimonyProfile }) {
               tintColor="#FFFFFF"
               size={10}
             />
-            <Text style={styles.featuredText}>Featured</Text>
+            <Text style={styles.featuredText}>{text('विशेष', 'Featured')}</Text>
           </View>
         ) : null}
       </View>
 
       <View style={styles.cardBody}>
-        <View style={styles.nameRow}>
-          <Text style={styles.name} numberOfLines={1}>
-            {fullName(profile)}, {age}
-          </Text>
+        <Text style={styles.name} numberOfLines={2}>
+          {fullName(profile)}, {age}
+        </Text>
+        <View style={styles.detailRow}>
           <SymbolView
-            name={{ ios: 'chevron.right', android: 'chevron_right', web: 'chevron_right' }}
+            name={{ ios: 'mappin', android: 'location_on', web: 'location_on' }}
+            size={14}
             tintColor={C.maroon}
-            size={15}
           />
+          <Text style={styles.meta} numberOfLines={2}>
+            {location || text('स्थान उपलब्ध नहीं', 'Location unavailable')}
+          </Text>
         </View>
-
-        <Text style={styles.meta} numberOfLines={1}>
-          {location || text('भारत', 'India')}
-        </Text>
-        <Text style={styles.work} numberOfLines={1}>
-          {profile.education || profile.occupation || text('विवरण देखें', 'View details')}
-        </Text>
+        <View style={styles.detailRow}>
+          <SymbolView
+            name={{ ios: 'graduationcap', android: 'school', web: 'school' }}
+            size={14}
+            tintColor={C.maroon}
+          />
+          <Text style={styles.meta} numberOfLines={2}>
+            {profile.education || profile.occupation || text('विवरण देखें', 'View details')}
+          </Text>
+        </View>
+        <View style={styles.viewProfileButton}>
+          <Text style={styles.viewProfileText}>{text('प्रोफाइल देखें →', 'View profile →')}</Text>
+        </View>
       </View>
     </Pressable>
   );
@@ -209,12 +229,28 @@ export default function MatrimonyScreen() {
         ListHeaderComponent={
           <View>
             <View style={styles.header}>
-              <View>
-                <Text style={styles.eyebrow}>{text('दर्जी समाज मैट्रिमोनी', 'Darzi Samaj Matrimony')}</Text>
-                <Text style={styles.title}>{text('अपना जीवनसाथी खोजें', 'Find your life partner')}</Text>
-                <Text style={styles.subtitle}>{text('केवल स्वीकृत और सत्यापित प्रोफाइल', 'Only approved and verified profiles')}</Text>
+              <Image
+                pointerEvents="none"
+                accessible={false}
+                source={FLORAL}
+                style={styles.headerFloral}
+              />
+              <View style={styles.headerCopy}>
+                <Text style={styles.eyebrow}>
+                  {text('दर्जी समाज मैट्रिमोनी', 'Darzi Samaj Matrimony')}
+                </Text>
+                <Text style={styles.title}>
+                  {text('अपना जीवनसाथी खोजें', 'Find your life partner')}
+                </Text>
+                <Text style={styles.subtitle}>
+                  {text(
+                    'अपने समाज में रिश्तों की नई शुरुआत',
+                    'A new beginning within your community',
+                  )}
+                </Text>
               </View>
               <Pressable
+                accessibilityRole="button"
                 style={styles.myProfileButton}
                 onPress={() => router.push('/my-matrimony')}
               >
@@ -231,13 +267,20 @@ export default function MatrimonyScreen() {
               </Pressable>
             </View>
 
-            <Pressable style={styles.createProfileBanner} onPress={openOwnerFlow}>
+            <Pressable
+              accessibilityRole="button"
+              disabled={isLoadingMine}
+              style={styles.createProfileBanner}
+              onPress={openOwnerFlow}
+            >
+              <Image
+                pointerEvents="none"
+                accessible={false}
+                source={FLORAL}
+                style={styles.bannerFloral}
+              />
               <View style={styles.createProfileIcon}>
-                <SymbolView
-                  name={{ ios: 'heart.circle.fill', android: 'favorite', web: 'favorite' }}
-                  tintColor={C.maroon}
-                  size={26}
-                />
+                <Image accessible={false} source={HEARTS} style={styles.hearts} />
               </View>
               <View style={styles.createProfileCopy}>
                 <Text style={styles.createProfileTitle}>
@@ -247,13 +290,17 @@ export default function MatrimonyScreen() {
                 </Text>
                 <Text style={styles.createProfileText}>
                   {hasAnyOwnProfile
-                    ? text('आपके अकाउंट में पहले से प्रोफाइल मौजूद है। उसे देखने, एडिट करने या स्थिति जांचने के लिए आगे बढ़ें।', 'A profile already exists in your account. Continue to view, edit or check its status.')
-                    : text('अपनी जानकारी भरें, ड्राफ्ट सेव करें और तैयार होने पर समीक्षा के लिए भेजें।', 'Fill in your details, save a draft and submit it for review when ready.')}
+                    ? text('प्रोफाइल बदलें या स्थिति देखें', 'Edit profiles or check their status')
+                    : text('रिश्तों की नई शुरुआत करें', 'Begin your journey together')}
                 </Text>
               </View>
               <View style={styles.createProfileButton}>
                 <Text style={styles.createProfileButtonText}>
-                  {isLoadingMine ? text('जाँच रहे हैं', 'Checking') : hasAnyOwnProfile ? text('मेरे प्रोफाइल', 'My profiles') : text('बनाएँ', 'Create')}
+                  {isLoadingMine
+                    ? text('जाँच रहे हैं', 'Checking')
+                    : hasAnyOwnProfile
+                      ? text('देखें', 'View')
+                      : text('बनाएँ', 'Create')}
                 </Text>
                 <SymbolView
                   name={{ ios: 'chevron.right', android: 'chevron_right', web: 'chevron_right' }}
@@ -264,43 +311,54 @@ export default function MatrimonyScreen() {
             </Pressable>
 
             <View style={styles.filterBlock}>
-              <Text style={styles.filterLabel}>{text('मैं देखना चाहता/चाहती हूँ', 'I want to see')}</Text>
+              <Text style={styles.filterLabel}>
+                {text('मैं देखना चाहता/चाहती हूँ', 'I want to see')}
+              </Text>
               <View style={styles.genderRow}>
                 {genderFilters.map((item) => (
                   <FilterChip
                     key={item.label}
-                    label={item.label}
+                    label={text(item.label, item.en)}
                     active={gender === item.value}
                     onPress={() => changeGender(item.value)}
                   />
                 ))}
               </View>
-            </View>
-
-            {/* Community category filter hidden for now. Keep category support in API for future use. */}
-            <View style={styles.filterBlockCompact}>
-              <Text style={styles.filterLabel}>{text('आयु', 'Age')}</Text>
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.horizontalChips}
-              >
-                {ageFilters.map((item, index) => (
-                  <FilterChip
-                    key={item.label}
-                    label={item.label}
-                    active={ageIndex === index}
-                    onPress={() => changeAge(index)}
-                  />
-                ))}
-              </ScrollView>
-            </View>
-
-            <View style={styles.resultsRow}>
-              <View>
-                <Text style={styles.resultsTitle}>{text('मैट्रिमोनी प्रोफाइल', 'Matrimony profiles')}</Text>
-                <Text style={styles.resultsCount}>{total} {text('प्रोफाइल मिले', 'profiles found')}</Text>
+              <View style={styles.filterBlockCompact}>
+                <Text style={styles.filterLabel}>{text('आयु', 'Age')}</Text>
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={styles.horizontalChips}
+                >
+                  {ageFilters.map((item, index) => (
+                    <FilterChip
+                      key={item.label}
+                      label={index === 0 ? text('सभी आयु', 'All ages') : item.label}
+                      active={ageIndex === index}
+                      onPress={() => changeAge(index)}
+                    />
+                  ))}
+                </ScrollView>
               </View>
+            </View>
+            <View style={styles.resultsRow}>
+              <View style={styles.resultRule} />
+              <Text accessible={false} style={styles.ornament}>
+                ◇
+              </Text>
+              <View style={styles.resultsCopy}>
+                <Text style={styles.resultsTitle}>
+                  {text('मैट्रिमोनी प्रोफाइल', 'Matrimony profiles')}
+                </Text>
+                <Text style={styles.resultsCount}>
+                  {total} {text('प्रोफाइल मिले', 'profiles found')}
+                </Text>
+              </View>
+              <Text accessible={false} style={styles.ornament}>
+                ◇
+              </Text>
+              <View style={styles.resultRule} />
               {isFetching && !isLoading ? (
                 <ActivityIndicator color={C.maroon} size="small" />
               ) : null}
@@ -312,7 +370,9 @@ export default function MatrimonyScreen() {
             {isLoading ? (
               <>
                 <ActivityIndicator color={C.maroon} size="large" />
-                <Text style={styles.emptyTitle}>{text('प्रोफाइल लोड हो रहे हैं...', 'Loading profiles...')}</Text>
+                <Text style={styles.emptyTitle}>
+                  {text('प्रोफाइल लोड हो रहे हैं...', 'Loading profiles...')}
+                </Text>
               </>
             ) : isError ? (
               <>
@@ -321,9 +381,14 @@ export default function MatrimonyScreen() {
                   tintColor={C.maroon}
                   size={42}
                 />
-                <Text style={styles.emptyTitle}>{text('प्रोफाइल लोड नहीं हो पाए', 'Could not load profiles')}</Text>
+                <Text style={styles.emptyTitle}>
+                  {text('प्रोफाइल लोड नहीं हो पाए', 'Could not load profiles')}
+                </Text>
                 <Text style={styles.emptyText}>
-                  API connection और EXPO_PUBLIC_API_URL check करें।
+                  {text(
+                    'कनेक्शन जाँचें और फिर कोशिश करें।',
+                    'Check your connection and try again.',
+                  )}
                 </Text>
                 <Pressable style={styles.retryButton} onPress={refetch}>
                   <Text style={styles.retryText}>{text('फिर से कोशिश करें', 'Try again')}</Text>
@@ -336,8 +401,18 @@ export default function MatrimonyScreen() {
                   tintColor="#B99D8C"
                   size={46}
                 />
-                <Text style={styles.emptyTitle}>{text('इस फ़िल्टर में कोई प्रोफाइल नहीं मिला', 'No profiles found for these filters')}</Text>
-                <Text style={styles.emptyText}>{text('दूसरा समाज, आयु या वर/वधू विकल्प चुनकर देखें।', 'Try another community, age or bride/groom filter.')}</Text>
+                <Text style={styles.emptyTitle}>
+                  {text(
+                    'इस फ़िल्टर में कोई प्रोफाइल नहीं मिला',
+                    'No profiles found for these filters',
+                  )}
+                </Text>
+                <Text style={styles.emptyText}>
+                  {text(
+                    'दूसरी आयु या वर/वधू विकल्प चुनकर देखें।',
+                    'Try another age or bride/groom filter.',
+                  )}
+                </Text>
               </>
             )}
           </View>
