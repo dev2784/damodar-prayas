@@ -12,7 +12,7 @@ export default function RootLayout() {
   const finishLaunch = useCallback(() => setLaunchVisible(false), []);
   return (
     <AppProvider>
-      <View style={{ flex: 1, backgroundColor: LAUNCH_BACKGROUND }}>
+      <View style={{ flex: 1, backgroundColor: launchVisible ? LAUNCH_BACKGROUND : '#FFF8ED' }}>
         <StatusBar hidden={launchVisible} style={launchVisible ? 'light' : 'dark'} />
         <PushNotifications />
         <View

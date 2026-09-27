@@ -1,6 +1,6 @@
 import type { ComponentProps } from 'react';
 import { COLORS, createTabStyles } from '@/styles/app-tabs.styles';
-import type { ColorValue } from 'react-native';
+import { View, StyleSheet, type ColorValue } from 'react-native';
 import { Tabs } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -9,7 +9,11 @@ import { useAppSelector } from '@/store/hooks';
 
 function tabIcon(name: ComponentProps<typeof SymbolView>['name']) {
   return function TabIcon({ color, focused }: { color: ColorValue; focused: boolean }) {
-    return <SymbolView name={name} tintColor={color} size={focused ? 29 : 27} />;
+    return (
+      <View style={[iconStyles.circle, focused && iconStyles.selected]}>
+        <SymbolView name={name} tintColor={focused ? COLORS.maroon : color} size={27} />
+      </View>
+    );
   };
 }
 
@@ -20,12 +24,16 @@ export default function AppTabs() {
 
   return (
     <Tabs
+      safeAreaInsets={{ bottom: 0 }}
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: COLORS.gold,
         tabBarInactiveTintColor: COLORS.muted,
         tabBarStyle: styles.bar,
         tabBarLabelStyle: styles.label,
+        tabBarItemStyle: styles.item,
+        tabBarLabelPosition: 'below-icon',
+        tabBarHideOnKeyboard: true,
         sceneStyle: styles.scene,
       }}
     >
@@ -34,6 +42,13 @@ export default function AppTabs() {
         options={{
           title: translate(language, 'home'),
           tabBarIcon: tabIcon({ ios: 'house.fill', android: 'home', web: 'home' }),
+        }}
+      />
+      <Tabs.Screen
+        name="community"
+        options={{
+          title: translate(language, 'community'),
+          tabBarIcon: tabIcon({ ios: 'person.3.fill', android: 'groups', web: 'groups' }),
         }}
       />
       <Tabs.Screen
@@ -48,20 +63,13 @@ export default function AppTabs() {
         }}
       />
       <Tabs.Screen
-        name="community"
-        options={{
-          title: translate(language, 'community'),
-          tabBarIcon: tabIcon({ ios: 'person.3.fill', android: 'groups', web: 'groups' }),
-        }}
-      />
-      <Tabs.Screen
         name="samiti"
         options={{
           title: translate(language, 'committee'),
           tabBarIcon: tabIcon({
             ios: 'building.columns.fill',
-            android: 'storefront',
-            web: 'storefront',
+            android: 'account_balance',
+            web: 'account_balance',
           }),
         }}
       />
@@ -91,3 +99,25 @@ export default function AppTabs() {
     </Tabs>
   );
 }
+
+const iconStyles = StyleSheet.create({
+  circle: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    borderWidth: 2,
+    borderColor: 'transparent',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  selected: {
+    transform: [{ translateY: -10 }, { scale: 1.04 }],
+    backgroundColor: '#FFF2D3',
+    borderColor: '#E6B557',
+    shadowColor: '#31050E',
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.28,
+    shadowRadius: 7,
+    elevation: 7,
+  },
+});
