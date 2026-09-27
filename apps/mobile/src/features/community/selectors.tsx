@@ -23,10 +23,12 @@ export function CitySelect({
   value,
   onChange,
   optional = false,
+  compact = false,
 }: {
   value: string;
   onChange: (id: string) => void;
   optional?: boolean;
+  compact?: boolean;
 }) {
   const { text } = useLanguageText();
   const [open, setOpen] = useState(false);
@@ -41,15 +43,17 @@ export function CitySelect({
     <>
       <Pressable
         accessibilityRole="button"
-        style={s.field}
+        style={[s.field, compact && s.compactField]}
         onPress={() => {
           setSearch('');
           setOpen(true);
         }}
       >
-        <Text style={s.value}>
+        <Text numberOfLines={compact ? 1 : undefined} style={[s.value, compact && s.compactValue]}>
           {selected
-            ? `${selected.name} · ${selected.district}`
+            ? compact
+              ? selected.name
+              : `${selected.name} · ${selected.district}`
             : optional
               ? text('सभी शहर', 'All cities')
               : text('शहर चुनें *', 'Select city *')}{' '}
@@ -68,7 +72,7 @@ export function CitySelect({
             {text('मध्य प्रदेश · शहर / जिला खोजें', 'Madhya Pradesh · Search city / district')}
           </Text>
           <TextInput
-            style={s.field}
+            style={[s.field, compact && s.compactField]}
             value={search}
             onChangeText={setSearch}
             placeholder={text('शहर या जिला (English में)', 'City or district')}
@@ -152,10 +156,12 @@ export function DateSelect({
   value,
   onChange,
   optional = false,
+  compact = false,
 }: {
   value: string;
   onChange: (day: string) => void;
   optional?: boolean;
+  compact?: boolean;
 }) {
   const { text } = useLanguageText();
   const [open, setOpen] = useState(false);
@@ -168,13 +174,13 @@ export function DateSelect({
     <>
       <Pressable
         accessibilityRole="button"
-        style={s.field}
+        style={[s.field, compact && s.compactField]}
         onPress={() => {
           setDraft(value || todayInIndia());
           setOpen(true);
         }}
       >
-        <Text style={s.value}>
+        <Text numberOfLines={compact ? 1 : undefined} style={[s.value, compact && s.compactValue]}>
           {value
             ? value.split('-').reverse().join('/')
             : optional
@@ -252,6 +258,18 @@ export const selectorStyles = StyleSheet.create({
     gap: 8,
     marginBottom: 16,
   },
+  compactGroup: { padding: 10, gap: 7, marginBottom: 10 },
+  filterRow: { flexDirection: 'row', gap: 8 },
+  filterCell: { flex: 1, minWidth: 0, gap: 4 },
+  compactLabel: { color: '#78685E', fontSize: 11 },
+  compactHint: { color: '#78685E', fontSize: 11 },
+  clearButton: {
+    minHeight: 44,
+    justifyContent: 'center',
+    alignSelf: 'flex-end',
+    paddingHorizontal: 8,
+  },
+  clearText: { color: '#8E1528', fontSize: 12, fontWeight: '600' },
   label: { color: '#6B5750', fontSize: 14, marginTop: 6 },
   row: {
     flexDirection: 'row',
@@ -263,6 +281,8 @@ export const selectorStyles = StyleSheet.create({
   hint: { color: '#78685E', fontSize: 13 },
 });
 const s = StyleSheet.create({
+  compactField: { minHeight: 44, paddingHorizontal: 10, paddingVertical: 8, marginVertical: 0 },
+  compactValue: { fontSize: 13 },
   field: {
     minHeight: 48,
     padding: 12,
