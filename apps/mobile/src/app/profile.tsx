@@ -6,12 +6,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { setAccessToken } from '@/features/auth/auth-slice';
 import { clearAccessToken } from '@/lib/auth-storage';
 import { api } from '@/services/api';
-import { useGetMeQuery } from '@/services/auth-api';
+import { useGetMeQuery, useGoogleLinkMutation } from '@/services/auth-api';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { useLanguageText } from '@/hooks/use-language-text';
 import { useUnregisterPushTokenMutation } from '@/services/push-api';
 import Constants from 'expo-constants';
-import { useGoogleLinkMutation } from '@/services/auth-api';
 import * as Device from 'expo-device';
 import { useGetAccountDeleteRequestQuery, useRequestAccountDeletionMutation } from '@/services/account-api';
 
@@ -144,6 +143,12 @@ export default function ProfileScreen() {
         )}
         {accessToken ? <Pressable disabled={linkingGoogle} style={styles.menuCard} onPress={() => void connectGoogle()}><View style={styles.menuCopy}><Text style={styles.menuTitle}>{text('Google अकाउंट लिंक करें', 'Link Google account')}</Text><Text style={styles.menuText}>{text('पुराने अकाउंट से Google Login सुरक्षित रूप से जोड़ें।', 'Securely connect Google to your existing account.')}</Text></View></Pressable> : null}
         <Text style={styles.sectionTitle}>{text('मेरी सुविधाएँ', 'My services')}</Text>
+        <Pressable accessibilityRole="button" style={styles.menuCard} onPress={() => router.push('/support')}>
+          <View style={styles.menuCopy}>
+            <Text style={styles.menuTitle}>{text('सहायता और संपर्क', 'Help & contact')}</Text>
+            <Text style={styles.menuText}>{text('सुझाव, शिकायत या अपना संदेश भेजें', 'Send feedback, a complaint or a message')}</Text>
+          </View><Text>›</Text>
+        </Pressable>
         <Pressable
           style={styles.menuCard}
           onPress={() =>

@@ -52,8 +52,8 @@ export async function googleAuthRoutes(app: FastifyInstance) {
     if (!claims?.sub) return reply.code(401).send({ error: 'INVALID_GOOGLE_TOKEN' });
     const user = await prisma.user.findFirst({ where: { googleSub: claims.sub, isActive: true, deletedAt: null }, select: publicUser });
     if (!user) return reply.code(409).send({ error: 'GOOGLE_REGISTRATION_REQUIRED', message: 'Complete registration with a mobile number to use Google sign-in.', profile: { firstName: claims.given_name ?? '', lastName: claims.family_name ?? '' } });
-    await prisma.user.update({ where: { id: user.id }, data: { lastLoginAt: new Date() } });
-    return { accessToken: await reply.jwtSign({ sub: user.id, role: user.role }, { expiresIn: '7d' }), tokenType: 'Bearer', expiresIn: '7d', user };
+    const verifiedUser = await prisma.user.update({ where: { id: user.id }, data: { isPhoneVerified: true, lastLoginAt: new Date() }, select: publicUser });
+    return { accessToken: await reply.jwtSign({ sub: verifiedUser.id, role: verifiedUser.role }, { expiresIn: '7d' }), tokenType: 'Bearer', expiresIn: '7d', user: verifiedUser };
   });
   app.post('/google/register', async (request, reply) => {
     const input = registrationSchema.safeParse(request.body);
@@ -62,7 +62,8 @@ export async function googleAuthRoutes(app: FastifyInstance) {
     if (!claims?.sub) return reply.code(401).send({ error: 'INVALID_GOOGLE_TOKEN' });
     const phone = input.data.phone;
     try {
-      const user = await prisma.user.create({ data: { phone, firstName: input.data.firstName, lastName: input.data.lastName, googleSub: claims.sub, email: claims.email_verified && claims.email ? claims.email : null, role: 'MEMBER', isPhoneVerified: false, lastLoginAt: new Date() }, select: publicUser });
+
+      const user = await prisma.user.create({ data: { phone, firstName: input.data.firstName, lastName: input.data.lastName, googleSub: claims.sub, email: claims.email_verified && claims.email ? claims.email : null, role: 'MEMBER', isPhoneVerified: true, lastLoginAt: new Date() }, select: publicUser });
       return reply.code(201).send({ accessToken: await reply.jwtSign({ sub: user.id, role: user.role }, { expiresIn: '7d' }), tokenType: 'Bearer', expiresIn: '7d', user });
     } catch (error) {
       request.log.info({ error }, 'Google registration conflict');

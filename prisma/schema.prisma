@@ -168,6 +168,7 @@ model User {
   shortlists        Shortlist[]
   reports           ProfileReport[]
   notifications     Notification[]
+  supportTickets    SupportTicket[]
   communityPosts    CommunityPost[]
   committees        Committee[]
   auditLogs         AuditLog[]           @relation("AuditActor")
@@ -402,6 +403,9 @@ model CommunityPost {
   contactName    String?
   contactPhone   String?
   location       String?
+  state          String?
+  cityId         String?
+  postDate       DateTime?                  @db.Date
   eventDate      DateTime?
   obituaryType   ObituaryType?
   deceasedName   String?
@@ -420,6 +424,8 @@ model CommunityPost {
 
   @@index([status, category, publishedAt])
   @@index([isFeatured, status, publishedAt])
+  @@index([status, category, cityId, createdAt])
+  @@index([status, category, postDate])
   @@index([expiresAt])
 }
 
@@ -551,4 +557,34 @@ model AuditLog {
 
   @@index([actorUserId, createdAt])
   @@index([entityType, entityId])
+}
+
+
+enum SupportCategory {
+  FEEDBACK
+  COMPLAINT
+  CONTACT
+}
+
+enum SupportStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+}
+
+model SupportTicket {
+  id        String          @id @default(cuid())
+  userId    String?
+  user      User?           @relation(fields: [userId], references: [id], onDelete: SetNull)
+  category  SupportCategory
+  subject   String
+  message   String
+  status    SupportStatus   @default(OPEN)
+  adminNote String          @default("")
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  @@index([status, createdAt])
+  @@index([category, createdAt])
+  @@index([userId])
 }

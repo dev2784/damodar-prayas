@@ -16,6 +16,7 @@ export type AuthResponse = {
   expiresIn: string;
   user: AuthUser;
 };
+export type AuthResult = AuthResponse;
 export type RegisterInput = {
   firstName: string;
   lastName: string;
@@ -26,19 +27,20 @@ export type RegisterInput = {
 export type LoginInput = { phone: string; password: string };
 export const authApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    register: builder.mutation<AuthResponse, RegisterInput>({
+    register: builder.mutation<AuthResult, RegisterInput>({
       query: (body) => ({ url: '/auth/register', method: 'POST', body }),
       invalidatesTags: ['Me'],
     }),
-    login: builder.mutation<AuthResponse, LoginInput>({
+    login: builder.mutation<AuthResult, LoginInput>({
       query: (body) => ({ url: '/auth/login', method: 'POST', body }),
       invalidatesTags: ['Me'],
     }),
-    googleLogin: builder.mutation<AuthResponse, { idToken: string }>({
+    googleLogin: builder.mutation<AuthResult, { idToken: string }>({
       query: (body) => ({ url: '/auth/google', method: 'POST', body }),
       invalidatesTags: ['Me'],
     }),
-    googleRegister: builder.mutation<AuthResponse, { idToken: string; phone: string; firstName: string; lastName: string }>({
+
+    googleRegister: builder.mutation<AuthResult, { idToken: string; phone: string; firstName: string; lastName: string }>({
       query: (body) => ({ url: '/auth/google/register', method: 'POST', body }),
       invalidatesTags: ['Me'],
     }),

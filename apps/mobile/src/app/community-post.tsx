@@ -1,12 +1,30 @@
+import { useLanguageText } from '@/hooks/use-language-text';
 import { C, styles } from '@/styles/community-post.styles';
-import { ActivityIndicator, Alert, Linking, Modal, Pressable, ScrollView, Share, Text, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Alert,
+  Linking,
+  Modal,
+  Pressable,
+  ScrollView,
+  Share,
+  Text,
+  View,
+} from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Image } from 'expo-image';
 import { SymbolView } from 'expo-symbols';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState } from 'react';
 
-import { useGetCommunityPostQuery, useGetCommunityPostLikesQuery, useGetMyCommunityPostLikeQuery, useLikeCommunityPostMutation, useUnlikeCommunityPostMutation } from '@/services/community-api';
+import {
+  useGetCommunityLocationsQuery,
+  useGetCommunityPostQuery,
+  useGetCommunityPostLikesQuery,
+  useGetMyCommunityPostLikeQuery,
+  useLikeCommunityPostMutation,
+  useUnlikeCommunityPostMutation,
+} from '@/services/community-api';
 import { useAppSelector } from '@/store/hooks';
 
 function formatDate(value: string | null) {
@@ -14,6 +32,7 @@ function formatDate(value: string | null) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return null;
   return new Intl.DateTimeFormat('hi-IN', {
+    timeZone: 'Asia/Kolkata',
     day: 'numeric',
     month: 'long',
     year: 'numeric',
@@ -21,11 +40,15 @@ function formatDate(value: string | null) {
 }
 
 export default function CommunityPostScreen() {
+  const { text, apiLanguage } = useLanguageText();
+  const { data: locations } = useGetCommunityLocationsQuery();
   const [viewerUrl, setViewerUrl] = useState<string | null>(null);
   const params = useLocalSearchParams<{ id?: string | string[] }>();
   const id = Array.isArray(params.id) ? params.id[0] : params.id;
   const { data, isLoading, isError, refetch } = useGetCommunityPostQuery(id ?? '', { skip: !id });
   const post = data?.post;
+  const city = locations?.cities.find((item) => item.id === post?.cityId);
+  const location = [city?.name, post?.location].filter(Boolean).join(' · ');
   const accessToken = useAppSelector((state) => state.auth.accessToken);
   const { data: likesData } = useGetCommunityPostLikesQuery(id ?? '', { skip: !id });
   const { data: myLike } = useGetMyCommunityPostLikeQuery(id ?? '', { skip: !id || !accessToken });
@@ -35,15 +58,29 @@ export default function CommunityPostScreen() {
 
   async function toggleLike() {
     if (!id) return;
-    if (!accessToken) { router.push({ pathname: '/auth', params: { next: `/community-post?id=${id}` } }); return; }
-    try { if (myLike?.isLiked) await unlikePost(id).unwrap(); else await likePost(id).unwrap(); }
-    catch { Alert.alert('Like नहीं हुआ', 'कृपया दोबारा कोशिश करें।'); }
+    if (!accessToken) {
+      router.push({ pathname: '/auth', params: { next: `/community-post?id=${id}` } });
+      return;
+    }
+    try {
+      if (myLike?.isLiked) await unlikePost(id).unwrap();
+      else await likePost(id).unwrap();
+    } catch {
+      Alert.alert('Like नहीं हुआ', 'कृपया दोबारा कोशिश करें।');
+    }
   }
 
   async function sharePost() {
     if (!post) return;
-    const tr=post.translations.find((x)=>x.language==='HI') ?? post.translations[0];
-    const message=[tr?.title, tr?.details?.slice(0,180), post.location ? `स्थान: ${post.location}` : null, 'Damodar Prayas'].filter(Boolean).join('\n\n');
+    const tr = post.translations.find((x) => x.language === apiLanguage) ?? post.translations[0];
+    const message = [
+      tr?.title,
+      tr?.details?.slice(0, 180),
+      location ? `${text('स्थान', 'Location')}: ${location}` : null,
+      'Damodar Prayas',
+    ]
+      .filter(Boolean)
+      .join('\n\n');
     await Share.share({ message, title: tr?.title ?? 'Damodar Prayas' });
   }
 
@@ -56,22 +93,37 @@ export default function CommunityPostScreen() {
             <Text style={styles.retryText}>वापस जाएँ</Text>
           </Pressable>
         </View>
-        <Modal visible={Boolean(viewerUrl)} transparent animationType="fade" onRequestClose={() => setViewerUrl(null)}>
-        <View style={styles.viewerOverlay}>
-          <Pressable style={styles.viewerClose} onPress={() => setViewerUrl(null)}><Text style={styles.viewerCloseText}>✕</Text></Pressable>
-          {viewerUrl ? <Image source={{ uri: viewerUrl }} style={styles.viewerImage} contentFit="contain" /> : null}
-        </View>
-      </Modal>
-    </SafeAreaView>
+        <Modal
+          visible={Boolean(viewerUrl)}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setViewerUrl(null)}
+        >
+          <View style={styles.viewerOverlay}>
+            <Pressable style={styles.viewerClose} onPress={() => setViewerUrl(null)}>
+              <Text style={styles.viewerCloseText}>✕</Text>
+            </Pressable>
+            {viewerUrl ? (
+              <Image source={{ uri: viewerUrl }} style={styles.viewerImage} contentFit="contain" />
+            ) : null}
+          </View>
+        </Modal>
+      </SafeAreaView>
     );
   }
 
   const translation =
-    post?.translations.find((item) => item.language === 'HI') ?? post?.translations[0];
+    post?.translations.find((item) => item.language === apiLanguage) ?? post?.translations[0];
   const isEvent = post?.category === 'EVENT';
   const isAdvertisement = post?.category === 'ADVERTISEMENT';
   const isObituary = post?.category === 'OBITUARY';
-  const categoryLabel = isEvent ? 'कार्यक्रम' : isAdvertisement ? 'विज्ञापन' : isObituary ? 'शोक सूचना' : 'समाचार';
+  const categoryLabel = isEvent
+    ? 'कार्यक्रम'
+    : isAdvertisement
+      ? 'विज्ञापन'
+      : isObituary
+        ? 'शोक सूचना'
+        : 'समाचार';
   const topTitle = isEvent
     ? 'कार्यक्रम विवरण'
     : isAdvertisement
@@ -86,9 +138,15 @@ export default function CommunityPostScreen() {
       : isObituary
         ? ({ ios: 'flame.fill', android: 'local_florist', web: 'local_florist' } as const)
         : ({ ios: 'newspaper.fill', android: 'newspaper', web: 'newspaper' } as const);
-  const categoryTint = isEvent ? C.gold : isAdvertisement ? C.green : isObituary ? C.muted : C.maroon;
+  const categoryTint = isEvent
+    ? C.gold
+    : isAdvertisement
+      ? C.green
+      : isObituary
+        ? C.muted
+        : C.maroon;
   const eventDate = formatDate(post?.eventDate ?? null);
-  const publishedDate = formatDate(post?.publishedAt ?? post?.createdAt ?? null);
+  const publishedDate = formatDate(post?.postDate ?? post?.publishedAt ?? post?.createdAt ?? null);
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
@@ -125,12 +183,14 @@ export default function CommunityPostScreen() {
       ) : (
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
           {post.bannerUrl ? (
-            <Pressable onPress={() => setViewerUrl(post.bannerUrl)}><Image
-              source={{ uri: post.bannerUrl }}
-              style={styles.banner}
-              contentFit="cover"
-              transition={180}
-            /></Pressable>
+            <Pressable onPress={() => setViewerUrl(post.bannerUrl)}>
+              <Image
+                source={{ uri: post.bannerUrl }}
+                style={styles.banner}
+                contentFit="cover"
+                transition={180}
+              />
+            </Pressable>
           ) : (
             <View
               style={[
@@ -175,13 +235,36 @@ export default function CommunityPostScreen() {
               ) : null}
             </View>
 
-            {isObituary && post.deceasedName ? <Text style={styles.obituaryName}>स्व. {post.deceasedName}</Text> : null}
+            {isObituary && post.deceasedName ? (
+              <Text style={styles.obituaryName}>स्व. {post.deceasedName}</Text>
+            ) : null}
             <Text style={styles.title}>{translation?.title ?? 'विवरण उपलब्ध नहीं'}</Text>
             {isObituary ? (
               <View style={styles.obituaryMeta}>
-                {post.obituaryType ? <Text style={styles.obituaryType}>{({ DEATH_NOTICE: 'निधन सूचना', UTHAWNA: 'उठावना', CHAUTHA: 'चौथा', TRIBUTE: 'श्रद्धांजलि सभा', OTHER: 'अन्य शोक कार्यक्रम' } as const)[post.obituaryType]}</Text> : null}
-                {post.deathDate ? <Text style={styles.obituaryLine}>निधन: {formatDate(post.deathDate)}</Text> : null}
-                {post.eventDate ? <Text style={styles.obituaryLine}>कार्यक्रम: {formatDate(post.eventDate)}{post.eventTime ? ` • ${post.eventTime}` : ''}</Text> : null}
+                {post.obituaryType ? (
+                  <Text style={styles.obituaryType}>
+                    {
+                      (
+                        {
+                          DEATH_NOTICE: 'निधन सूचना',
+                          UTHAWNA: 'उठावना',
+                          CHAUTHA: 'चौथा',
+                          TRIBUTE: 'श्रद्धांजलि सभा',
+                          OTHER: 'अन्य शोक कार्यक्रम',
+                        } as const
+                      )[post.obituaryType]
+                    }
+                  </Text>
+                ) : null}
+                {post.deathDate ? (
+                  <Text style={styles.obituaryLine}>निधन: {formatDate(post.deathDate)}</Text>
+                ) : null}
+                {post.eventDate ? (
+                  <Text style={styles.obituaryLine}>
+                    कार्यक्रम: {formatDate(post.eventDate)}
+                    {post.eventTime ? ` • ${post.eventTime}` : ''}
+                  </Text>
+                ) : null}
               </View>
             ) : null}
 
@@ -202,7 +285,7 @@ export default function CommunityPostScreen() {
                 </View>
               ) : null}
 
-              {post.location ? (
+              {location ? (
                 <View style={styles.infoRow}>
                   <View style={styles.infoIconWrap}>
                     <SymbolView
@@ -213,7 +296,7 @@ export default function CommunityPostScreen() {
                   </View>
                   <View style={styles.infoCopy}>
                     <Text style={styles.infoLabel}>स्थान</Text>
-                    <Text style={styles.infoValue}>{post.location}</Text>
+                    <Text style={styles.infoValue}>{location}</Text>
                   </View>
                 </View>
               ) : null}
@@ -228,7 +311,9 @@ export default function CommunityPostScreen() {
                     />
                   </View>
                   <View style={styles.infoCopy}>
-                    <Text style={styles.infoLabel}>प्रकाशित</Text>
+                    <Text style={styles.infoLabel}>
+                      {post.postDate ? text('तारीख', 'Date') : text('प्रकाशित', 'Published')}
+                    </Text>
                     <Text style={styles.infoValue}>{publishedDate}</Text>
                   </View>
                 </View>
@@ -240,8 +325,24 @@ export default function CommunityPostScreen() {
             ) : null}
 
             <View style={styles.socialRow}>
-              {!isAdvertisement ? <Pressable disabled={likeBusy} style={[styles.socialButton, myLike?.isLiked && styles.socialButtonActive]} onPress={() => void toggleLike()}><Text style={[styles.socialIcon, myLike?.isLiked && styles.socialTextActive]}>{myLike?.isLiked ? '♥' : '♡'}</Text><Text style={[styles.socialText, myLike?.isLiked && styles.socialTextActive]}>{likesData?.likeCount ?? 0} Like</Text></Pressable> : null}
-              <Pressable style={styles.socialButton} onPress={() => void sharePost()}><Text style={styles.socialIcon}>↗</Text><Text style={styles.socialText}>Share</Text></Pressable>
+              {!isAdvertisement ? (
+                <Pressable
+                  disabled={likeBusy}
+                  style={[styles.socialButton, myLike?.isLiked && styles.socialButtonActive]}
+                  onPress={() => void toggleLike()}
+                >
+                  <Text style={[styles.socialIcon, myLike?.isLiked && styles.socialTextActive]}>
+                    {myLike?.isLiked ? '♥' : '♡'}
+                  </Text>
+                  <Text style={[styles.socialText, myLike?.isLiked && styles.socialTextActive]}>
+                    {likesData?.likeCount ?? 0} Like
+                  </Text>
+                </Pressable>
+              ) : null}
+              <Pressable style={styles.socialButton} onPress={() => void sharePost()}>
+                <Text style={styles.socialIcon}>↗</Text>
+                <Text style={styles.socialText}>Share</Text>
+              </Pressable>
             </View>
           </View>
 

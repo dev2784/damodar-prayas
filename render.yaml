@@ -18,7 +18,5 @@ services:
         generateValue: true
       - key: CORS_ORIGIN
         value: http://localhost:3000,http://localhost:8081
-      - key: OTP_PROVIDER
-        value: disabled
       - key: MEDIA_PROVIDER
         value: disabled

@@ -11,6 +11,7 @@ const nav=[
   ['🕯','Shok Suchna','/obituaries'],
   ['◈','Samiti','/samiti'],
   ['⌁','Advertisements','/advertisements'],
+  ['✉','Feedback & Complaints','/support'],
   ['⚑','Reports','/reports'],
   ['◎','Users','/users'],
   ['⌫','Account Delete Requests','/account-delete-requests'],

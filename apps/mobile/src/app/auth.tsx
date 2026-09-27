@@ -106,6 +106,7 @@ export default function AuthScreen() {
   const busy = loggingIn || registering || googleBusy;
 
   function destination() {
+    if (nextParam === '/support') return '/support' as const;
     if (nextParam === '/change-password') return '/change-password' as const;
     if (nextParam === '/matrimony-form') return '/matrimony-form' as const;
     if (nextParam === '/my-matrimony') return '/my-matrimony' as const;
@@ -116,7 +117,8 @@ export default function AuthScreen() {
     await saveAccessToken(accessToken);
     dispatch(setAccessToken(accessToken));
     dispatch(api.util.invalidateTags(['Me', 'Matrimony']));
-    router.replace(destination());
+    if (nextParam === '/support') router.navigate('/support');
+    else router.replace(destination());
   }
 
   async function signInWithGoogle() {
@@ -165,6 +167,7 @@ export default function AuthScreen() {
       const result = await googleRegister({ idToken: googleToken, phone: normalized, firstName: firstName.trim(), lastName: lastName.trim() }).unwrap();
       setGoogleToken(null);
       setGoogleEmail(null);
+
       await completeAuth(result.accessToken);
     } catch (error) { Alert.alert(text('अकाउंट नहीं बन पाया', 'Registration failed'), errorMessage(error)); }
     finally { setGoogleBusy(false); }
@@ -386,16 +389,6 @@ export default function AuthScreen() {
           </Text>
         </View>
 
-        <View style={styles.otpNote}>
-          <SymbolView
-            name={{ ios: 'message.fill', android: 'sms', web: 'sms' }}
-            tintColor={C.gold}
-            size={18}
-          />
-          <Text style={styles.otpText}>
-            {text('OTP verification अगला security upgrade रहेगा। अभी account login password से काम करेगा।', 'OTP verification will be a future security upgrade. For now, login works with a password.')}
-          </Text>
-        </View>
       </ScrollView>
     </SafeAreaView>
   );
