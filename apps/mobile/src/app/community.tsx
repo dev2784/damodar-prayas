@@ -360,39 +360,48 @@ function CommunityFeed({ activeCategory }: { activeCategory: FeedCategory }) {
               </Pressable>
             </View>
 
-            <View style={filterStyles.group}>
-              <Text style={filterStyles.hint}>
-                {text('मध्य प्रदेश · सबसे नई पोस्ट पहले', 'Madhya Pradesh · Newest added first')}
+            <View style={[filterStyles.group, filterStyles.compactGroup]}>
+              <Text style={filterStyles.compactHint}>
+                {text('मध्य प्रदेश · नई पोस्ट पहले', 'Madhya Pradesh · Newest first')}
               </Text>
-              <Text style={filterStyles.label}>{text('शहर के अनुसार', 'Filter by city')}</Text>
-              <CitySelect
-                optional
-                value={cityId}
-                onChange={(value) => {
-                  setCityId(value);
-                  setPage(1);
-                }}
-              />
-              <Text style={filterStyles.label}>{text('तारीख के अनुसार', 'Filter by date')}</Text>
-              <DateSelect
-                optional
-                value={date}
-                onChange={(value) => {
-                  setDate(value);
-                  setPage(1);
-                }}
-              />
+              <View style={filterStyles.filterRow}>
+                <View style={filterStyles.filterCell}>
+                  <Text style={filterStyles.compactLabel}>{text('शहर', 'City')}</Text>
+                  <CitySelect
+                    compact
+                    optional
+                    value={cityId}
+                    onChange={(value) => {
+                      setCityId(value);
+                      setPage(1);
+                    }}
+                  />
+                </View>
+                <View style={filterStyles.filterCell}>
+                  <Text style={filterStyles.compactLabel}>{text('तारीख', 'Date')}</Text>
+                  <DateSelect
+                    compact
+                    optional
+                    value={date}
+                    onChange={(value) => {
+                      setDate(value);
+                      setPage(1);
+                    }}
+                  />
+                </View>
+              </View>
               {cityId || date ? (
                 <Pressable
-                  style={styles.retryButton}
+                  accessibilityRole="button"
+                  style={filterStyles.clearButton}
                   onPress={() => {
                     setCityId('');
                     setDate('');
                     setPage(1);
                   }}
                 >
-                  <Text style={styles.retryText}>
-                    {text('फ़िल्टर हटाएँ · सभी दिखाएँ', 'Clear filters · Show all')}
+                  <Text style={filterStyles.clearText}>
+                    {text('फ़िल्टर हटाएँ ✕', 'Clear filters ✕')}
                   </Text>
                 </Pressable>
               ) : null}
