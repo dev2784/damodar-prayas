@@ -298,6 +298,9 @@ exports.Prisma.CommunityPostScalarFieldEnum = {
   contactName: 'contactName',
   contactPhone: 'contactPhone',
   location: 'location',
+  state: 'state',
+  cityId: 'cityId',
+  postDate: 'postDate',
   eventDate: 'eventDate',
   obituaryType: 'obituaryType',
   deceasedName: 'deceasedName',
@@ -407,6 +410,18 @@ exports.Prisma.AuditLogScalarFieldEnum = {
   entityId: 'entityId',
   metadata: 'metadata',
   createdAt: 'createdAt'
+};
+
+exports.Prisma.SupportTicketScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  category: 'category',
+  subject: 'subject',
+  message: 'message',
+  status: 'status',
+  adminNote: 'adminNote',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -575,6 +590,18 @@ exports.NotificationType = exports.$Enums.NotificationType = {
   GENERAL: 'GENERAL'
 };
 
+exports.SupportCategory = exports.$Enums.SupportCategory = {
+  FEEDBACK: 'FEEDBACK',
+  COMPLAINT: 'COMPLAINT',
+  CONTACT: 'CONTACT'
+};
+
+exports.SupportStatus = exports.$Enums.SupportStatus = {
+  OPEN: 'OPEN',
+  IN_PROGRESS: 'IN_PROGRESS',
+  RESOLVED: 'RESOLVED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   AccountDeleteRequest: 'AccountDeleteRequest',
@@ -595,7 +622,8 @@ exports.Prisma.ModelName = {
   CommitteeMember: 'CommitteeMember',
   PushToken: 'PushToken',
   Notification: 'Notification',
-  AuditLog: 'AuditLog'
+  AuditLog: 'AuditLog',
+  SupportTicket: 'SupportTicket'
 };
 
 /**

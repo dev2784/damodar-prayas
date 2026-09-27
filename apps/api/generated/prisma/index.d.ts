@@ -113,6 +113,11 @@ export type Notification = $Result.DefaultSelection<Prisma.$NotificationPayload>
  * 
  */
 export type AuditLog = $Result.DefaultSelection<Prisma.$AuditLogPayload>
+/**
+ * Model SupportTicket
+ * 
+ */
+export type SupportTicket = $Result.DefaultSelection<Prisma.$SupportTicketPayload>
 
 /**
  * Enums
@@ -315,6 +320,24 @@ export const NotificationType: {
 
 export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType]
 
+
+export const SupportCategory: {
+  FEEDBACK: 'FEEDBACK',
+  COMPLAINT: 'COMPLAINT',
+  CONTACT: 'CONTACT'
+};
+
+export type SupportCategory = (typeof SupportCategory)[keyof typeof SupportCategory]
+
+
+export const SupportStatus: {
+  OPEN: 'OPEN',
+  IN_PROGRESS: 'IN_PROGRESS',
+  RESOLVED: 'RESOLVED'
+};
+
+export type SupportStatus = (typeof SupportStatus)[keyof typeof SupportStatus]
+
 }
 
 export type UserRole = $Enums.UserRole
@@ -392,6 +415,14 @@ export const ReportStatus: typeof $Enums.ReportStatus
 export type NotificationType = $Enums.NotificationType
 
 export const NotificationType: typeof $Enums.NotificationType
+
+export type SupportCategory = $Enums.SupportCategory
+
+export const SupportCategory: typeof $Enums.SupportCategory
+
+export type SupportStatus = $Enums.SupportStatus
+
+export const SupportStatus: typeof $Enums.SupportStatus
 
 /**
  * ##  Prisma Client ʲˢ
@@ -710,6 +741,16 @@ export class PrismaClient<
     * ```
     */
   get auditLog(): Prisma.AuditLogDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.supportTicket`: Exposes CRUD operations for the **SupportTicket** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more SupportTickets
+    * const supportTickets = await prisma.supportTicket.findMany()
+    * ```
+    */
+  get supportTicket(): Prisma.SupportTicketDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -1170,7 +1211,8 @@ export namespace Prisma {
     CommitteeMember: 'CommitteeMember',
     PushToken: 'PushToken',
     Notification: 'Notification',
-    AuditLog: 'AuditLog'
+    AuditLog: 'AuditLog',
+    SupportTicket: 'SupportTicket'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1189,7 +1231,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "accountDeleteRequest" | "matrimonyProfile" | "matrimonyDeleteRequest" | "partnerPreference" | "profilePhoto" | "kundali" | "interest" | "contactRequest" | "shortlist" | "profileReport" | "communityPost" | "communityPostLike" | "communityPostTranslation" | "committee" | "committeeTranslation" | "committeeMember" | "pushToken" | "notification" | "auditLog"
+      modelProps: "user" | "accountDeleteRequest" | "matrimonyProfile" | "matrimonyDeleteRequest" | "partnerPreference" | "profilePhoto" | "kundali" | "interest" | "contactRequest" | "shortlist" | "profileReport" | "communityPost" | "communityPostLike" | "communityPostTranslation" | "committee" | "committeeTranslation" | "committeeMember" | "pushToken" | "notification" | "auditLog" | "supportTicket"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2673,6 +2715,80 @@ export namespace Prisma {
           }
         }
       }
+      SupportTicket: {
+        payload: Prisma.$SupportTicketPayload<ExtArgs>
+        fields: Prisma.SupportTicketFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SupportTicketFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportTicketPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SupportTicketFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportTicketPayload>
+          }
+          findFirst: {
+            args: Prisma.SupportTicketFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportTicketPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SupportTicketFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportTicketPayload>
+          }
+          findMany: {
+            args: Prisma.SupportTicketFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportTicketPayload>[]
+          }
+          create: {
+            args: Prisma.SupportTicketCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportTicketPayload>
+          }
+          createMany: {
+            args: Prisma.SupportTicketCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.SupportTicketCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportTicketPayload>[]
+          }
+          delete: {
+            args: Prisma.SupportTicketDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportTicketPayload>
+          }
+          update: {
+            args: Prisma.SupportTicketUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportTicketPayload>
+          }
+          deleteMany: {
+            args: Prisma.SupportTicketDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SupportTicketUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.SupportTicketUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportTicketPayload>[]
+          }
+          upsert: {
+            args: Prisma.SupportTicketUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportTicketPayload>
+          }
+          aggregate: {
+            args: Prisma.SupportTicketAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSupportTicket>
+          }
+          groupBy: {
+            args: Prisma.SupportTicketGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SupportTicketGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SupportTicketCountArgs<ExtArgs>
+            result: $Utils.Optional<SupportTicketCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -2789,6 +2905,7 @@ export namespace Prisma {
     pushToken?: PushTokenOmit
     notification?: NotificationOmit
     auditLog?: AuditLogOmit
+    supportTicket?: SupportTicketOmit
   }
 
   /* Types for Logging */
@@ -2873,6 +2990,7 @@ export namespace Prisma {
     shortlists: number
     reports: number
     notifications: number
+    supportTickets: number
     communityPosts: number
     committees: number
     auditLogs: number
@@ -2887,6 +3005,7 @@ export namespace Prisma {
     shortlists?: boolean | UserCountOutputTypeCountShortlistsArgs
     reports?: boolean | UserCountOutputTypeCountReportsArgs
     notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
+    supportTickets?: boolean | UserCountOutputTypeCountSupportTicketsArgs
     communityPosts?: boolean | UserCountOutputTypeCountCommunityPostsArgs
     committees?: boolean | UserCountOutputTypeCountCommitteesArgs
     auditLogs?: boolean | UserCountOutputTypeCountAuditLogsArgs
@@ -2933,6 +3052,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountNotificationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: NotificationWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountSupportTicketsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SupportTicketWhereInput
   }
 
   /**
@@ -3412,6 +3538,7 @@ export namespace Prisma {
     shortlists?: boolean | User$shortlistsArgs<ExtArgs>
     reports?: boolean | User$reportsArgs<ExtArgs>
     notifications?: boolean | User$notificationsArgs<ExtArgs>
+    supportTickets?: boolean | User$supportTicketsArgs<ExtArgs>
     communityPosts?: boolean | User$communityPostsArgs<ExtArgs>
     committees?: boolean | User$committeesArgs<ExtArgs>
     auditLogs?: boolean | User$auditLogsArgs<ExtArgs>
@@ -3479,6 +3606,7 @@ export namespace Prisma {
     shortlists?: boolean | User$shortlistsArgs<ExtArgs>
     reports?: boolean | User$reportsArgs<ExtArgs>
     notifications?: boolean | User$notificationsArgs<ExtArgs>
+    supportTickets?: boolean | User$supportTicketsArgs<ExtArgs>
     communityPosts?: boolean | User$communityPostsArgs<ExtArgs>
     committees?: boolean | User$committeesArgs<ExtArgs>
     auditLogs?: boolean | User$auditLogsArgs<ExtArgs>
@@ -3498,6 +3626,7 @@ export namespace Prisma {
       shortlists: Prisma.$ShortlistPayload<ExtArgs>[]
       reports: Prisma.$ProfileReportPayload<ExtArgs>[]
       notifications: Prisma.$NotificationPayload<ExtArgs>[]
+      supportTickets: Prisma.$SupportTicketPayload<ExtArgs>[]
       communityPosts: Prisma.$CommunityPostPayload<ExtArgs>[]
       committees: Prisma.$CommitteePayload<ExtArgs>[]
       auditLogs: Prisma.$AuditLogPayload<ExtArgs>[]
@@ -3919,6 +4048,7 @@ export namespace Prisma {
     shortlists<T extends User$shortlistsArgs<ExtArgs> = {}>(args?: Subset<T, User$shortlistsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ShortlistPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     reports<T extends User$reportsArgs<ExtArgs> = {}>(args?: Subset<T, User$reportsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProfileReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     notifications<T extends User$notificationsArgs<ExtArgs> = {}>(args?: Subset<T, User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    supportTickets<T extends User$supportTicketsArgs<ExtArgs> = {}>(args?: Subset<T, User$supportTicketsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SupportTicketPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     communityPosts<T extends User$communityPostsArgs<ExtArgs> = {}>(args?: Subset<T, User$communityPostsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommunityPostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     committees<T extends User$committeesArgs<ExtArgs> = {}>(args?: Subset<T, User$committeesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommitteePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     auditLogs<T extends User$auditLogsArgs<ExtArgs> = {}>(args?: Subset<T, User$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -4450,6 +4580,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: NotificationScalarFieldEnum | NotificationScalarFieldEnum[]
+  }
+
+  /**
+   * User.supportTickets
+   */
+  export type User$supportTicketsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportTicket
+     */
+    select?: SupportTicketSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportTicket
+     */
+    omit?: SupportTicketOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportTicketInclude<ExtArgs> | null
+    where?: SupportTicketWhereInput
+    orderBy?: SupportTicketOrderByWithRelationInput | SupportTicketOrderByWithRelationInput[]
+    cursor?: SupportTicketWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SupportTicketScalarFieldEnum | SupportTicketScalarFieldEnum[]
   }
 
   /**
@@ -16588,6 +16742,9 @@ export namespace Prisma {
     contactName: string | null
     contactPhone: string | null
     location: string | null
+    state: string | null
+    cityId: string | null
+    postDate: Date | null
     eventDate: Date | null
     obituaryType: $Enums.ObituaryType | null
     deceasedName: string | null
@@ -16612,6 +16769,9 @@ export namespace Prisma {
     contactName: string | null
     contactPhone: string | null
     location: string | null
+    state: string | null
+    cityId: string | null
+    postDate: Date | null
     eventDate: Date | null
     obituaryType: $Enums.ObituaryType | null
     deceasedName: string | null
@@ -16636,6 +16796,9 @@ export namespace Prisma {
     contactName: number
     contactPhone: number
     location: number
+    state: number
+    cityId: number
+    postDate: number
     eventDate: number
     obituaryType: number
     deceasedName: number
@@ -16662,6 +16825,9 @@ export namespace Prisma {
     contactName?: true
     contactPhone?: true
     location?: true
+    state?: true
+    cityId?: true
+    postDate?: true
     eventDate?: true
     obituaryType?: true
     deceasedName?: true
@@ -16686,6 +16852,9 @@ export namespace Prisma {
     contactName?: true
     contactPhone?: true
     location?: true
+    state?: true
+    cityId?: true
+    postDate?: true
     eventDate?: true
     obituaryType?: true
     deceasedName?: true
@@ -16710,6 +16879,9 @@ export namespace Prisma {
     contactName?: true
     contactPhone?: true
     location?: true
+    state?: true
+    cityId?: true
+    postDate?: true
     eventDate?: true
     obituaryType?: true
     deceasedName?: true
@@ -16807,6 +16979,9 @@ export namespace Prisma {
     contactName: string | null
     contactPhone: string | null
     location: string | null
+    state: string | null
+    cityId: string | null
+    postDate: Date | null
     eventDate: Date | null
     obituaryType: $Enums.ObituaryType | null
     deceasedName: string | null
@@ -16848,6 +17023,9 @@ export namespace Prisma {
     contactName?: boolean
     contactPhone?: boolean
     location?: boolean
+    state?: boolean
+    cityId?: boolean
+    postDate?: boolean
     eventDate?: boolean
     obituaryType?: boolean
     deceasedName?: boolean
@@ -16876,6 +17054,9 @@ export namespace Prisma {
     contactName?: boolean
     contactPhone?: boolean
     location?: boolean
+    state?: boolean
+    cityId?: boolean
+    postDate?: boolean
     eventDate?: boolean
     obituaryType?: boolean
     deceasedName?: boolean
@@ -16901,6 +17082,9 @@ export namespace Prisma {
     contactName?: boolean
     contactPhone?: boolean
     location?: boolean
+    state?: boolean
+    cityId?: boolean
+    postDate?: boolean
     eventDate?: boolean
     obituaryType?: boolean
     deceasedName?: boolean
@@ -16926,6 +17110,9 @@ export namespace Prisma {
     contactName?: boolean
     contactPhone?: boolean
     location?: boolean
+    state?: boolean
+    cityId?: boolean
+    postDate?: boolean
     eventDate?: boolean
     obituaryType?: boolean
     deceasedName?: boolean
@@ -16940,7 +17127,7 @@ export namespace Prisma {
     deletedAt?: boolean
   }
 
-  export type CommunityPostOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdById" | "category" | "status" | "bannerUrl" | "bannerStorageKey" | "contactName" | "contactPhone" | "location" | "eventDate" | "obituaryType" | "deceasedName" | "deathDate" | "eventTime" | "publishedAt" | "expiresAt" | "isFeatured" | "rejectionReason" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["communityPost"]>
+  export type CommunityPostOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdById" | "category" | "status" | "bannerUrl" | "bannerStorageKey" | "contactName" | "contactPhone" | "location" | "state" | "cityId" | "postDate" | "eventDate" | "obituaryType" | "deceasedName" | "deathDate" | "eventTime" | "publishedAt" | "expiresAt" | "isFeatured" | "rejectionReason" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["communityPost"]>
   export type CommunityPostInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     createdBy?: boolean | CommunityPost$createdByArgs<ExtArgs>
     translations?: boolean | CommunityPost$translationsArgs<ExtArgs>
@@ -16971,6 +17158,9 @@ export namespace Prisma {
       contactName: string | null
       contactPhone: string | null
       location: string | null
+      state: string | null
+      cityId: string | null
+      postDate: Date | null
       eventDate: Date | null
       obituaryType: $Enums.ObituaryType | null
       deceasedName: string | null
@@ -17418,6 +17608,9 @@ export namespace Prisma {
     readonly contactName: FieldRef<"CommunityPost", 'String'>
     readonly contactPhone: FieldRef<"CommunityPost", 'String'>
     readonly location: FieldRef<"CommunityPost", 'String'>
+    readonly state: FieldRef<"CommunityPost", 'String'>
+    readonly cityId: FieldRef<"CommunityPost", 'String'>
+    readonly postDate: FieldRef<"CommunityPost", 'DateTime'>
     readonly eventDate: FieldRef<"CommunityPost", 'DateTime'>
     readonly obituaryType: FieldRef<"CommunityPost", 'ObituaryType'>
     readonly deceasedName: FieldRef<"CommunityPost", 'String'>
@@ -26969,6 +27162,1135 @@ export namespace Prisma {
 
 
   /**
+   * Model SupportTicket
+   */
+
+  export type AggregateSupportTicket = {
+    _count: SupportTicketCountAggregateOutputType | null
+    _min: SupportTicketMinAggregateOutputType | null
+    _max: SupportTicketMaxAggregateOutputType | null
+  }
+
+  export type SupportTicketMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    category: $Enums.SupportCategory | null
+    subject: string | null
+    message: string | null
+    status: $Enums.SupportStatus | null
+    adminNote: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type SupportTicketMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    category: $Enums.SupportCategory | null
+    subject: string | null
+    message: string | null
+    status: $Enums.SupportStatus | null
+    adminNote: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type SupportTicketCountAggregateOutputType = {
+    id: number
+    userId: number
+    category: number
+    subject: number
+    message: number
+    status: number
+    adminNote: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type SupportTicketMinAggregateInputType = {
+    id?: true
+    userId?: true
+    category?: true
+    subject?: true
+    message?: true
+    status?: true
+    adminNote?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type SupportTicketMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    category?: true
+    subject?: true
+    message?: true
+    status?: true
+    adminNote?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type SupportTicketCountAggregateInputType = {
+    id?: true
+    userId?: true
+    category?: true
+    subject?: true
+    message?: true
+    status?: true
+    adminNote?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type SupportTicketAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SupportTicket to aggregate.
+     */
+    where?: SupportTicketWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SupportTickets to fetch.
+     */
+    orderBy?: SupportTicketOrderByWithRelationInput | SupportTicketOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SupportTicketWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SupportTickets from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SupportTickets.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned SupportTickets
+    **/
+    _count?: true | SupportTicketCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SupportTicketMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SupportTicketMaxAggregateInputType
+  }
+
+  export type GetSupportTicketAggregateType<T extends SupportTicketAggregateArgs> = {
+        [P in keyof T & keyof AggregateSupportTicket]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSupportTicket[P]>
+      : GetScalarType<T[P], AggregateSupportTicket[P]>
+  }
+
+
+
+
+  export type SupportTicketGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SupportTicketWhereInput
+    orderBy?: SupportTicketOrderByWithAggregationInput | SupportTicketOrderByWithAggregationInput[]
+    by: SupportTicketScalarFieldEnum[] | SupportTicketScalarFieldEnum
+    having?: SupportTicketScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SupportTicketCountAggregateInputType | true
+    _min?: SupportTicketMinAggregateInputType
+    _max?: SupportTicketMaxAggregateInputType
+  }
+
+  export type SupportTicketGroupByOutputType = {
+    id: string
+    userId: string | null
+    category: $Enums.SupportCategory
+    subject: string
+    message: string
+    status: $Enums.SupportStatus
+    adminNote: string
+    createdAt: Date
+    updatedAt: Date
+    _count: SupportTicketCountAggregateOutputType | null
+    _min: SupportTicketMinAggregateOutputType | null
+    _max: SupportTicketMaxAggregateOutputType | null
+  }
+
+  type GetSupportTicketGroupByPayload<T extends SupportTicketGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SupportTicketGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SupportTicketGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SupportTicketGroupByOutputType[P]>
+            : GetScalarType<T[P], SupportTicketGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SupportTicketSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    category?: boolean
+    subject?: boolean
+    message?: boolean
+    status?: boolean
+    adminNote?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | SupportTicket$userArgs<ExtArgs>
+  }, ExtArgs["result"]["supportTicket"]>
+
+  export type SupportTicketSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    category?: boolean
+    subject?: boolean
+    message?: boolean
+    status?: boolean
+    adminNote?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | SupportTicket$userArgs<ExtArgs>
+  }, ExtArgs["result"]["supportTicket"]>
+
+  export type SupportTicketSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    category?: boolean
+    subject?: boolean
+    message?: boolean
+    status?: boolean
+    adminNote?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | SupportTicket$userArgs<ExtArgs>
+  }, ExtArgs["result"]["supportTicket"]>
+
+  export type SupportTicketSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    category?: boolean
+    subject?: boolean
+    message?: boolean
+    status?: boolean
+    adminNote?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type SupportTicketOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "category" | "subject" | "message" | "status" | "adminNote" | "createdAt" | "updatedAt", ExtArgs["result"]["supportTicket"]>
+  export type SupportTicketInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | SupportTicket$userArgs<ExtArgs>
+  }
+  export type SupportTicketIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | SupportTicket$userArgs<ExtArgs>
+  }
+  export type SupportTicketIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | SupportTicket$userArgs<ExtArgs>
+  }
+
+  export type $SupportTicketPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "SupportTicket"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string | null
+      category: $Enums.SupportCategory
+      subject: string
+      message: string
+      status: $Enums.SupportStatus
+      adminNote: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["supportTicket"]>
+    composites: {}
+  }
+
+  type SupportTicketGetPayload<S extends boolean | null | undefined | SupportTicketDefaultArgs> = $Result.GetResult<Prisma.$SupportTicketPayload, S>
+
+  type SupportTicketCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<SupportTicketFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: SupportTicketCountAggregateInputType | true
+    }
+
+  export interface SupportTicketDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['SupportTicket'], meta: { name: 'SupportTicket' } }
+    /**
+     * Find zero or one SupportTicket that matches the filter.
+     * @param {SupportTicketFindUniqueArgs} args - Arguments to find a SupportTicket
+     * @example
+     * // Get one SupportTicket
+     * const supportTicket = await prisma.supportTicket.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SupportTicketFindUniqueArgs>(args: SelectSubset<T, SupportTicketFindUniqueArgs<ExtArgs>>): Prisma__SupportTicketClient<$Result.GetResult<Prisma.$SupportTicketPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one SupportTicket that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {SupportTicketFindUniqueOrThrowArgs} args - Arguments to find a SupportTicket
+     * @example
+     * // Get one SupportTicket
+     * const supportTicket = await prisma.supportTicket.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SupportTicketFindUniqueOrThrowArgs>(args: SelectSubset<T, SupportTicketFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SupportTicketClient<$Result.GetResult<Prisma.$SupportTicketPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SupportTicket that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupportTicketFindFirstArgs} args - Arguments to find a SupportTicket
+     * @example
+     * // Get one SupportTicket
+     * const supportTicket = await prisma.supportTicket.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SupportTicketFindFirstArgs>(args?: SelectSubset<T, SupportTicketFindFirstArgs<ExtArgs>>): Prisma__SupportTicketClient<$Result.GetResult<Prisma.$SupportTicketPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SupportTicket that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupportTicketFindFirstOrThrowArgs} args - Arguments to find a SupportTicket
+     * @example
+     * // Get one SupportTicket
+     * const supportTicket = await prisma.supportTicket.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SupportTicketFindFirstOrThrowArgs>(args?: SelectSubset<T, SupportTicketFindFirstOrThrowArgs<ExtArgs>>): Prisma__SupportTicketClient<$Result.GetResult<Prisma.$SupportTicketPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more SupportTickets that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupportTicketFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all SupportTickets
+     * const supportTickets = await prisma.supportTicket.findMany()
+     * 
+     * // Get first 10 SupportTickets
+     * const supportTickets = await prisma.supportTicket.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const supportTicketWithIdOnly = await prisma.supportTicket.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends SupportTicketFindManyArgs>(args?: SelectSubset<T, SupportTicketFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SupportTicketPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a SupportTicket.
+     * @param {SupportTicketCreateArgs} args - Arguments to create a SupportTicket.
+     * @example
+     * // Create one SupportTicket
+     * const SupportTicket = await prisma.supportTicket.create({
+     *   data: {
+     *     // ... data to create a SupportTicket
+     *   }
+     * })
+     * 
+     */
+    create<T extends SupportTicketCreateArgs>(args: SelectSubset<T, SupportTicketCreateArgs<ExtArgs>>): Prisma__SupportTicketClient<$Result.GetResult<Prisma.$SupportTicketPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many SupportTickets.
+     * @param {SupportTicketCreateManyArgs} args - Arguments to create many SupportTickets.
+     * @example
+     * // Create many SupportTickets
+     * const supportTicket = await prisma.supportTicket.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SupportTicketCreateManyArgs>(args?: SelectSubset<T, SupportTicketCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many SupportTickets and returns the data saved in the database.
+     * @param {SupportTicketCreateManyAndReturnArgs} args - Arguments to create many SupportTickets.
+     * @example
+     * // Create many SupportTickets
+     * const supportTicket = await prisma.supportTicket.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many SupportTickets and only return the `id`
+     * const supportTicketWithIdOnly = await prisma.supportTicket.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends SupportTicketCreateManyAndReturnArgs>(args?: SelectSubset<T, SupportTicketCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SupportTicketPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a SupportTicket.
+     * @param {SupportTicketDeleteArgs} args - Arguments to delete one SupportTicket.
+     * @example
+     * // Delete one SupportTicket
+     * const SupportTicket = await prisma.supportTicket.delete({
+     *   where: {
+     *     // ... filter to delete one SupportTicket
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SupportTicketDeleteArgs>(args: SelectSubset<T, SupportTicketDeleteArgs<ExtArgs>>): Prisma__SupportTicketClient<$Result.GetResult<Prisma.$SupportTicketPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one SupportTicket.
+     * @param {SupportTicketUpdateArgs} args - Arguments to update one SupportTicket.
+     * @example
+     * // Update one SupportTicket
+     * const supportTicket = await prisma.supportTicket.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SupportTicketUpdateArgs>(args: SelectSubset<T, SupportTicketUpdateArgs<ExtArgs>>): Prisma__SupportTicketClient<$Result.GetResult<Prisma.$SupportTicketPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more SupportTickets.
+     * @param {SupportTicketDeleteManyArgs} args - Arguments to filter SupportTickets to delete.
+     * @example
+     * // Delete a few SupportTickets
+     * const { count } = await prisma.supportTicket.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SupportTicketDeleteManyArgs>(args?: SelectSubset<T, SupportTicketDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SupportTickets.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupportTicketUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many SupportTickets
+     * const supportTicket = await prisma.supportTicket.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SupportTicketUpdateManyArgs>(args: SelectSubset<T, SupportTicketUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SupportTickets and returns the data updated in the database.
+     * @param {SupportTicketUpdateManyAndReturnArgs} args - Arguments to update many SupportTickets.
+     * @example
+     * // Update many SupportTickets
+     * const supportTicket = await prisma.supportTicket.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more SupportTickets and only return the `id`
+     * const supportTicketWithIdOnly = await prisma.supportTicket.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends SupportTicketUpdateManyAndReturnArgs>(args: SelectSubset<T, SupportTicketUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SupportTicketPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one SupportTicket.
+     * @param {SupportTicketUpsertArgs} args - Arguments to update or create a SupportTicket.
+     * @example
+     * // Update or create a SupportTicket
+     * const supportTicket = await prisma.supportTicket.upsert({
+     *   create: {
+     *     // ... data to create a SupportTicket
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the SupportTicket we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SupportTicketUpsertArgs>(args: SelectSubset<T, SupportTicketUpsertArgs<ExtArgs>>): Prisma__SupportTicketClient<$Result.GetResult<Prisma.$SupportTicketPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of SupportTickets.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupportTicketCountArgs} args - Arguments to filter SupportTickets to count.
+     * @example
+     * // Count the number of SupportTickets
+     * const count = await prisma.supportTicket.count({
+     *   where: {
+     *     // ... the filter for the SupportTickets we want to count
+     *   }
+     * })
+    **/
+    count<T extends SupportTicketCountArgs>(
+      args?: Subset<T, SupportTicketCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SupportTicketCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a SupportTicket.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupportTicketAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SupportTicketAggregateArgs>(args: Subset<T, SupportTicketAggregateArgs>): Prisma.PrismaPromise<GetSupportTicketAggregateType<T>>
+
+    /**
+     * Group by SupportTicket.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupportTicketGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SupportTicketGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SupportTicketGroupByArgs['orderBy'] }
+        : { orderBy?: SupportTicketGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SupportTicketGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSupportTicketGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the SupportTicket model
+   */
+  readonly fields: SupportTicketFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for SupportTicket.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SupportTicketClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends SupportTicket$userArgs<ExtArgs> = {}>(args?: Subset<T, SupportTicket$userArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the SupportTicket model
+   */
+  interface SupportTicketFieldRefs {
+    readonly id: FieldRef<"SupportTicket", 'String'>
+    readonly userId: FieldRef<"SupportTicket", 'String'>
+    readonly category: FieldRef<"SupportTicket", 'SupportCategory'>
+    readonly subject: FieldRef<"SupportTicket", 'String'>
+    readonly message: FieldRef<"SupportTicket", 'String'>
+    readonly status: FieldRef<"SupportTicket", 'SupportStatus'>
+    readonly adminNote: FieldRef<"SupportTicket", 'String'>
+    readonly createdAt: FieldRef<"SupportTicket", 'DateTime'>
+    readonly updatedAt: FieldRef<"SupportTicket", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * SupportTicket findUnique
+   */
+  export type SupportTicketFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportTicket
+     */
+    select?: SupportTicketSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportTicket
+     */
+    omit?: SupportTicketOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportTicketInclude<ExtArgs> | null
+    /**
+     * Filter, which SupportTicket to fetch.
+     */
+    where: SupportTicketWhereUniqueInput
+  }
+
+  /**
+   * SupportTicket findUniqueOrThrow
+   */
+  export type SupportTicketFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportTicket
+     */
+    select?: SupportTicketSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportTicket
+     */
+    omit?: SupportTicketOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportTicketInclude<ExtArgs> | null
+    /**
+     * Filter, which SupportTicket to fetch.
+     */
+    where: SupportTicketWhereUniqueInput
+  }
+
+  /**
+   * SupportTicket findFirst
+   */
+  export type SupportTicketFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportTicket
+     */
+    select?: SupportTicketSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportTicket
+     */
+    omit?: SupportTicketOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportTicketInclude<ExtArgs> | null
+    /**
+     * Filter, which SupportTicket to fetch.
+     */
+    where?: SupportTicketWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SupportTickets to fetch.
+     */
+    orderBy?: SupportTicketOrderByWithRelationInput | SupportTicketOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SupportTickets.
+     */
+    cursor?: SupportTicketWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SupportTickets from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SupportTickets.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SupportTickets.
+     */
+    distinct?: SupportTicketScalarFieldEnum | SupportTicketScalarFieldEnum[]
+  }
+
+  /**
+   * SupportTicket findFirstOrThrow
+   */
+  export type SupportTicketFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportTicket
+     */
+    select?: SupportTicketSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportTicket
+     */
+    omit?: SupportTicketOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportTicketInclude<ExtArgs> | null
+    /**
+     * Filter, which SupportTicket to fetch.
+     */
+    where?: SupportTicketWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SupportTickets to fetch.
+     */
+    orderBy?: SupportTicketOrderByWithRelationInput | SupportTicketOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SupportTickets.
+     */
+    cursor?: SupportTicketWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SupportTickets from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SupportTickets.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SupportTickets.
+     */
+    distinct?: SupportTicketScalarFieldEnum | SupportTicketScalarFieldEnum[]
+  }
+
+  /**
+   * SupportTicket findMany
+   */
+  export type SupportTicketFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportTicket
+     */
+    select?: SupportTicketSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportTicket
+     */
+    omit?: SupportTicketOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportTicketInclude<ExtArgs> | null
+    /**
+     * Filter, which SupportTickets to fetch.
+     */
+    where?: SupportTicketWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SupportTickets to fetch.
+     */
+    orderBy?: SupportTicketOrderByWithRelationInput | SupportTicketOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing SupportTickets.
+     */
+    cursor?: SupportTicketWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SupportTickets from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SupportTickets.
+     */
+    skip?: number
+    distinct?: SupportTicketScalarFieldEnum | SupportTicketScalarFieldEnum[]
+  }
+
+  /**
+   * SupportTicket create
+   */
+  export type SupportTicketCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportTicket
+     */
+    select?: SupportTicketSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportTicket
+     */
+    omit?: SupportTicketOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportTicketInclude<ExtArgs> | null
+    /**
+     * The data needed to create a SupportTicket.
+     */
+    data: XOR<SupportTicketCreateInput, SupportTicketUncheckedCreateInput>
+  }
+
+  /**
+   * SupportTicket createMany
+   */
+  export type SupportTicketCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many SupportTickets.
+     */
+    data: SupportTicketCreateManyInput | SupportTicketCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * SupportTicket createManyAndReturn
+   */
+  export type SupportTicketCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportTicket
+     */
+    select?: SupportTicketSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportTicket
+     */
+    omit?: SupportTicketOmit<ExtArgs> | null
+    /**
+     * The data used to create many SupportTickets.
+     */
+    data: SupportTicketCreateManyInput | SupportTicketCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportTicketIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * SupportTicket update
+   */
+  export type SupportTicketUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportTicket
+     */
+    select?: SupportTicketSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportTicket
+     */
+    omit?: SupportTicketOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportTicketInclude<ExtArgs> | null
+    /**
+     * The data needed to update a SupportTicket.
+     */
+    data: XOR<SupportTicketUpdateInput, SupportTicketUncheckedUpdateInput>
+    /**
+     * Choose, which SupportTicket to update.
+     */
+    where: SupportTicketWhereUniqueInput
+  }
+
+  /**
+   * SupportTicket updateMany
+   */
+  export type SupportTicketUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update SupportTickets.
+     */
+    data: XOR<SupportTicketUpdateManyMutationInput, SupportTicketUncheckedUpdateManyInput>
+    /**
+     * Filter which SupportTickets to update
+     */
+    where?: SupportTicketWhereInput
+    /**
+     * Limit how many SupportTickets to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * SupportTicket updateManyAndReturn
+   */
+  export type SupportTicketUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportTicket
+     */
+    select?: SupportTicketSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportTicket
+     */
+    omit?: SupportTicketOmit<ExtArgs> | null
+    /**
+     * The data used to update SupportTickets.
+     */
+    data: XOR<SupportTicketUpdateManyMutationInput, SupportTicketUncheckedUpdateManyInput>
+    /**
+     * Filter which SupportTickets to update
+     */
+    where?: SupportTicketWhereInput
+    /**
+     * Limit how many SupportTickets to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportTicketIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * SupportTicket upsert
+   */
+  export type SupportTicketUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportTicket
+     */
+    select?: SupportTicketSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportTicket
+     */
+    omit?: SupportTicketOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportTicketInclude<ExtArgs> | null
+    /**
+     * The filter to search for the SupportTicket to update in case it exists.
+     */
+    where: SupportTicketWhereUniqueInput
+    /**
+     * In case the SupportTicket found by the `where` argument doesn't exist, create a new SupportTicket with this data.
+     */
+    create: XOR<SupportTicketCreateInput, SupportTicketUncheckedCreateInput>
+    /**
+     * In case the SupportTicket was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SupportTicketUpdateInput, SupportTicketUncheckedUpdateInput>
+  }
+
+  /**
+   * SupportTicket delete
+   */
+  export type SupportTicketDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportTicket
+     */
+    select?: SupportTicketSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportTicket
+     */
+    omit?: SupportTicketOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportTicketInclude<ExtArgs> | null
+    /**
+     * Filter which SupportTicket to delete.
+     */
+    where: SupportTicketWhereUniqueInput
+  }
+
+  /**
+   * SupportTicket deleteMany
+   */
+  export type SupportTicketDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SupportTickets to delete
+     */
+    where?: SupportTicketWhereInput
+    /**
+     * Limit how many SupportTickets to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * SupportTicket.user
+   */
+  export type SupportTicket$userArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * SupportTicket without action
+   */
+  export type SupportTicketDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportTicket
+     */
+    select?: SupportTicketSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportTicket
+     */
+    omit?: SupportTicketOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportTicketInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -27192,6 +28514,9 @@ export namespace Prisma {
     contactName: 'contactName',
     contactPhone: 'contactPhone',
     location: 'location',
+    state: 'state',
+    cityId: 'cityId',
+    postDate: 'postDate',
     eventDate: 'eventDate',
     obituaryType: 'obituaryType',
     deceasedName: 'deceasedName',
@@ -27328,6 +28653,21 @@ export namespace Prisma {
   };
 
   export type AuditLogScalarFieldEnum = (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum]
+
+
+  export const SupportTicketScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    category: 'category',
+    subject: 'subject',
+    message: 'message',
+    status: 'status',
+    adminNote: 'adminNote',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type SupportTicketScalarFieldEnum = (typeof SupportTicketScalarFieldEnum)[keyof typeof SupportTicketScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -27706,6 +29046,34 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'SupportCategory'
+   */
+  export type EnumSupportCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SupportCategory'>
+    
+
+
+  /**
+   * Reference to a field of type 'SupportCategory[]'
+   */
+  export type ListEnumSupportCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SupportCategory[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'SupportStatus'
+   */
+  export type EnumSupportStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SupportStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'SupportStatus[]'
+   */
+  export type ListEnumSupportStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SupportStatus[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Float'
    */
   export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -27744,6 +29112,7 @@ export namespace Prisma {
     shortlists?: ShortlistListRelationFilter
     reports?: ProfileReportListRelationFilter
     notifications?: NotificationListRelationFilter
+    supportTickets?: SupportTicketListRelationFilter
     communityPosts?: CommunityPostListRelationFilter
     committees?: CommitteeListRelationFilter
     auditLogs?: AuditLogListRelationFilter
@@ -27772,6 +29141,7 @@ export namespace Prisma {
     shortlists?: ShortlistOrderByRelationAggregateInput
     reports?: ProfileReportOrderByRelationAggregateInput
     notifications?: NotificationOrderByRelationAggregateInput
+    supportTickets?: SupportTicketOrderByRelationAggregateInput
     communityPosts?: CommunityPostOrderByRelationAggregateInput
     committees?: CommitteeOrderByRelationAggregateInput
     auditLogs?: AuditLogOrderByRelationAggregateInput
@@ -27803,6 +29173,7 @@ export namespace Prisma {
     shortlists?: ShortlistListRelationFilter
     reports?: ProfileReportListRelationFilter
     notifications?: NotificationListRelationFilter
+    supportTickets?: SupportTicketListRelationFilter
     communityPosts?: CommunityPostListRelationFilter
     committees?: CommitteeListRelationFilter
     auditLogs?: AuditLogListRelationFilter
@@ -28819,6 +30190,9 @@ export namespace Prisma {
     contactName?: StringNullableFilter<"CommunityPost"> | string | null
     contactPhone?: StringNullableFilter<"CommunityPost"> | string | null
     location?: StringNullableFilter<"CommunityPost"> | string | null
+    state?: StringNullableFilter<"CommunityPost"> | string | null
+    cityId?: StringNullableFilter<"CommunityPost"> | string | null
+    postDate?: DateTimeNullableFilter<"CommunityPost"> | Date | string | null
     eventDate?: DateTimeNullableFilter<"CommunityPost"> | Date | string | null
     obituaryType?: EnumObituaryTypeNullableFilter<"CommunityPost"> | $Enums.ObituaryType | null
     deceasedName?: StringNullableFilter<"CommunityPost"> | string | null
@@ -28846,6 +30220,9 @@ export namespace Prisma {
     contactName?: SortOrderInput | SortOrder
     contactPhone?: SortOrderInput | SortOrder
     location?: SortOrderInput | SortOrder
+    state?: SortOrderInput | SortOrder
+    cityId?: SortOrderInput | SortOrder
+    postDate?: SortOrderInput | SortOrder
     eventDate?: SortOrderInput | SortOrder
     obituaryType?: SortOrderInput | SortOrder
     deceasedName?: SortOrderInput | SortOrder
@@ -28876,6 +30253,9 @@ export namespace Prisma {
     contactName?: StringNullableFilter<"CommunityPost"> | string | null
     contactPhone?: StringNullableFilter<"CommunityPost"> | string | null
     location?: StringNullableFilter<"CommunityPost"> | string | null
+    state?: StringNullableFilter<"CommunityPost"> | string | null
+    cityId?: StringNullableFilter<"CommunityPost"> | string | null
+    postDate?: DateTimeNullableFilter<"CommunityPost"> | Date | string | null
     eventDate?: DateTimeNullableFilter<"CommunityPost"> | Date | string | null
     obituaryType?: EnumObituaryTypeNullableFilter<"CommunityPost"> | $Enums.ObituaryType | null
     deceasedName?: StringNullableFilter<"CommunityPost"> | string | null
@@ -28903,6 +30283,9 @@ export namespace Prisma {
     contactName?: SortOrderInput | SortOrder
     contactPhone?: SortOrderInput | SortOrder
     location?: SortOrderInput | SortOrder
+    state?: SortOrderInput | SortOrder
+    cityId?: SortOrderInput | SortOrder
+    postDate?: SortOrderInput | SortOrder
     eventDate?: SortOrderInput | SortOrder
     obituaryType?: SortOrderInput | SortOrder
     deceasedName?: SortOrderInput | SortOrder
@@ -28933,6 +30316,9 @@ export namespace Prisma {
     contactName?: StringNullableWithAggregatesFilter<"CommunityPost"> | string | null
     contactPhone?: StringNullableWithAggregatesFilter<"CommunityPost"> | string | null
     location?: StringNullableWithAggregatesFilter<"CommunityPost"> | string | null
+    state?: StringNullableWithAggregatesFilter<"CommunityPost"> | string | null
+    cityId?: StringNullableWithAggregatesFilter<"CommunityPost"> | string | null
+    postDate?: DateTimeNullableWithAggregatesFilter<"CommunityPost"> | Date | string | null
     eventDate?: DateTimeNullableWithAggregatesFilter<"CommunityPost"> | Date | string | null
     obituaryType?: EnumObituaryTypeNullableWithAggregatesFilter<"CommunityPost"> | $Enums.ObituaryType | null
     deceasedName?: StringNullableWithAggregatesFilter<"CommunityPost"> | string | null
@@ -29568,6 +30954,81 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"AuditLog"> | Date | string
   }
 
+  export type SupportTicketWhereInput = {
+    AND?: SupportTicketWhereInput | SupportTicketWhereInput[]
+    OR?: SupportTicketWhereInput[]
+    NOT?: SupportTicketWhereInput | SupportTicketWhereInput[]
+    id?: StringFilter<"SupportTicket"> | string
+    userId?: StringNullableFilter<"SupportTicket"> | string | null
+    category?: EnumSupportCategoryFilter<"SupportTicket"> | $Enums.SupportCategory
+    subject?: StringFilter<"SupportTicket"> | string
+    message?: StringFilter<"SupportTicket"> | string
+    status?: EnumSupportStatusFilter<"SupportTicket"> | $Enums.SupportStatus
+    adminNote?: StringFilter<"SupportTicket"> | string
+    createdAt?: DateTimeFilter<"SupportTicket"> | Date | string
+    updatedAt?: DateTimeFilter<"SupportTicket"> | Date | string
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }
+
+  export type SupportTicketOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrderInput | SortOrder
+    category?: SortOrder
+    subject?: SortOrder
+    message?: SortOrder
+    status?: SortOrder
+    adminNote?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type SupportTicketWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: SupportTicketWhereInput | SupportTicketWhereInput[]
+    OR?: SupportTicketWhereInput[]
+    NOT?: SupportTicketWhereInput | SupportTicketWhereInput[]
+    userId?: StringNullableFilter<"SupportTicket"> | string | null
+    category?: EnumSupportCategoryFilter<"SupportTicket"> | $Enums.SupportCategory
+    subject?: StringFilter<"SupportTicket"> | string
+    message?: StringFilter<"SupportTicket"> | string
+    status?: EnumSupportStatusFilter<"SupportTicket"> | $Enums.SupportStatus
+    adminNote?: StringFilter<"SupportTicket"> | string
+    createdAt?: DateTimeFilter<"SupportTicket"> | Date | string
+    updatedAt?: DateTimeFilter<"SupportTicket"> | Date | string
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }, "id">
+
+  export type SupportTicketOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrderInput | SortOrder
+    category?: SortOrder
+    subject?: SortOrder
+    message?: SortOrder
+    status?: SortOrder
+    adminNote?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: SupportTicketCountOrderByAggregateInput
+    _max?: SupportTicketMaxOrderByAggregateInput
+    _min?: SupportTicketMinOrderByAggregateInput
+  }
+
+  export type SupportTicketScalarWhereWithAggregatesInput = {
+    AND?: SupportTicketScalarWhereWithAggregatesInput | SupportTicketScalarWhereWithAggregatesInput[]
+    OR?: SupportTicketScalarWhereWithAggregatesInput[]
+    NOT?: SupportTicketScalarWhereWithAggregatesInput | SupportTicketScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"SupportTicket"> | string
+    userId?: StringNullableWithAggregatesFilter<"SupportTicket"> | string | null
+    category?: EnumSupportCategoryWithAggregatesFilter<"SupportTicket"> | $Enums.SupportCategory
+    subject?: StringWithAggregatesFilter<"SupportTicket"> | string
+    message?: StringWithAggregatesFilter<"SupportTicket"> | string
+    status?: EnumSupportStatusWithAggregatesFilter<"SupportTicket"> | $Enums.SupportStatus
+    adminNote?: StringWithAggregatesFilter<"SupportTicket"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"SupportTicket"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"SupportTicket"> | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     phone: string
@@ -29587,6 +31048,7 @@ export namespace Prisma {
     shortlists?: ShortlistCreateNestedManyWithoutUserInput
     reports?: ProfileReportCreateNestedManyWithoutReporterInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    supportTickets?: SupportTicketCreateNestedManyWithoutUserInput
     communityPosts?: CommunityPostCreateNestedManyWithoutCreatedByInput
     committees?: CommitteeCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -29615,6 +31077,7 @@ export namespace Prisma {
     shortlists?: ShortlistUncheckedCreateNestedManyWithoutUserInput
     reports?: ProfileReportUncheckedCreateNestedManyWithoutReporterInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    supportTickets?: SupportTicketUncheckedCreateNestedManyWithoutUserInput
     communityPosts?: CommunityPostUncheckedCreateNestedManyWithoutCreatedByInput
     committees?: CommitteeUncheckedCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -29643,6 +31106,7 @@ export namespace Prisma {
     shortlists?: ShortlistUpdateManyWithoutUserNestedInput
     reports?: ProfileReportUpdateManyWithoutReporterNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    supportTickets?: SupportTicketUpdateManyWithoutUserNestedInput
     communityPosts?: CommunityPostUpdateManyWithoutCreatedByNestedInput
     committees?: CommitteeUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -29671,6 +31135,7 @@ export namespace Prisma {
     shortlists?: ShortlistUncheckedUpdateManyWithoutUserNestedInput
     reports?: ProfileReportUncheckedUpdateManyWithoutReporterNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    supportTickets?: SupportTicketUncheckedUpdateManyWithoutUserNestedInput
     communityPosts?: CommunityPostUncheckedUpdateManyWithoutCreatedByNestedInput
     committees?: CommitteeUncheckedUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -30815,6 +32280,9 @@ export namespace Prisma {
     contactName?: string | null
     contactPhone?: string | null
     location?: string | null
+    state?: string | null
+    cityId?: string | null
+    postDate?: Date | string | null
     eventDate?: Date | string | null
     obituaryType?: $Enums.ObituaryType | null
     deceasedName?: string | null
@@ -30842,6 +32310,9 @@ export namespace Prisma {
     contactName?: string | null
     contactPhone?: string | null
     location?: string | null
+    state?: string | null
+    cityId?: string | null
+    postDate?: Date | string | null
     eventDate?: Date | string | null
     obituaryType?: $Enums.ObituaryType | null
     deceasedName?: string | null
@@ -30867,6 +32338,9 @@ export namespace Prisma {
     contactName?: NullableStringFieldUpdateOperationsInput | string | null
     contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     location?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    cityId?: NullableStringFieldUpdateOperationsInput | string | null
+    postDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     eventDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     obituaryType?: NullableEnumObituaryTypeFieldUpdateOperationsInput | $Enums.ObituaryType | null
     deceasedName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -30894,6 +32368,9 @@ export namespace Prisma {
     contactName?: NullableStringFieldUpdateOperationsInput | string | null
     contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     location?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    cityId?: NullableStringFieldUpdateOperationsInput | string | null
+    postDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     eventDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     obituaryType?: NullableEnumObituaryTypeFieldUpdateOperationsInput | $Enums.ObituaryType | null
     deceasedName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -30920,6 +32397,9 @@ export namespace Prisma {
     contactName?: string | null
     contactPhone?: string | null
     location?: string | null
+    state?: string | null
+    cityId?: string | null
+    postDate?: Date | string | null
     eventDate?: Date | string | null
     obituaryType?: $Enums.ObituaryType | null
     deceasedName?: string | null
@@ -30943,6 +32423,9 @@ export namespace Prisma {
     contactName?: NullableStringFieldUpdateOperationsInput | string | null
     contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     location?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    cityId?: NullableStringFieldUpdateOperationsInput | string | null
+    postDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     eventDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     obituaryType?: NullableEnumObituaryTypeFieldUpdateOperationsInput | $Enums.ObituaryType | null
     deceasedName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -30967,6 +32450,9 @@ export namespace Prisma {
     contactName?: NullableStringFieldUpdateOperationsInput | string | null
     contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     location?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    cityId?: NullableStringFieldUpdateOperationsInput | string | null
+    postDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     eventDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     obituaryType?: NullableEnumObituaryTypeFieldUpdateOperationsInput | $Enums.ObituaryType | null
     deceasedName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -31659,6 +33145,89 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type SupportTicketCreateInput = {
+    id?: string
+    category: $Enums.SupportCategory
+    subject: string
+    message: string
+    status?: $Enums.SupportStatus
+    adminNote?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user?: UserCreateNestedOneWithoutSupportTicketsInput
+  }
+
+  export type SupportTicketUncheckedCreateInput = {
+    id?: string
+    userId?: string | null
+    category: $Enums.SupportCategory
+    subject: string
+    message: string
+    status?: $Enums.SupportStatus
+    adminNote?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SupportTicketUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    category?: EnumSupportCategoryFieldUpdateOperationsInput | $Enums.SupportCategory
+    subject?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    status?: EnumSupportStatusFieldUpdateOperationsInput | $Enums.SupportStatus
+    adminNote?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneWithoutSupportTicketsNestedInput
+  }
+
+  export type SupportTicketUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: EnumSupportCategoryFieldUpdateOperationsInput | $Enums.SupportCategory
+    subject?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    status?: EnumSupportStatusFieldUpdateOperationsInput | $Enums.SupportStatus
+    adminNote?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SupportTicketCreateManyInput = {
+    id?: string
+    userId?: string | null
+    category: $Enums.SupportCategory
+    subject: string
+    message: string
+    status?: $Enums.SupportStatus
+    adminNote?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SupportTicketUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    category?: EnumSupportCategoryFieldUpdateOperationsInput | $Enums.SupportCategory
+    subject?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    status?: EnumSupportStatusFieldUpdateOperationsInput | $Enums.SupportStatus
+    adminNote?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SupportTicketUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: EnumSupportCategoryFieldUpdateOperationsInput | $Enums.SupportCategory
+    subject?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    status?: EnumSupportStatusFieldUpdateOperationsInput | $Enums.SupportStatus
+    adminNote?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -31754,6 +33323,12 @@ export namespace Prisma {
     none?: NotificationWhereInput
   }
 
+  export type SupportTicketListRelationFilter = {
+    every?: SupportTicketWhereInput
+    some?: SupportTicketWhereInput
+    none?: SupportTicketWhereInput
+  }
+
   export type CommunityPostListRelationFilter = {
     every?: CommunityPostWhereInput
     some?: CommunityPostWhereInput
@@ -31814,6 +33389,10 @@ export namespace Prisma {
   }
 
   export type NotificationOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type SupportTicketOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -32867,6 +34446,9 @@ export namespace Prisma {
     contactName?: SortOrder
     contactPhone?: SortOrder
     location?: SortOrder
+    state?: SortOrder
+    cityId?: SortOrder
+    postDate?: SortOrder
     eventDate?: SortOrder
     obituaryType?: SortOrder
     deceasedName?: SortOrder
@@ -32891,6 +34473,9 @@ export namespace Prisma {
     contactName?: SortOrder
     contactPhone?: SortOrder
     location?: SortOrder
+    state?: SortOrder
+    cityId?: SortOrder
+    postDate?: SortOrder
     eventDate?: SortOrder
     obituaryType?: SortOrder
     deceasedName?: SortOrder
@@ -32915,6 +34500,9 @@ export namespace Prisma {
     contactName?: SortOrder
     contactPhone?: SortOrder
     location?: SortOrder
+    state?: SortOrder
+    cityId?: SortOrder
+    postDate?: SortOrder
     eventDate?: SortOrder
     obituaryType?: SortOrder
     deceasedName?: SortOrder
@@ -33390,6 +34978,76 @@ export namespace Prisma {
     createdAt?: SortOrder
   }
 
+  export type EnumSupportCategoryFilter<$PrismaModel = never> = {
+    equals?: $Enums.SupportCategory | EnumSupportCategoryFieldRefInput<$PrismaModel>
+    in?: $Enums.SupportCategory[] | ListEnumSupportCategoryFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SupportCategory[] | ListEnumSupportCategoryFieldRefInput<$PrismaModel>
+    not?: NestedEnumSupportCategoryFilter<$PrismaModel> | $Enums.SupportCategory
+  }
+
+  export type EnumSupportStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.SupportStatus | EnumSupportStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.SupportStatus[] | ListEnumSupportStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SupportStatus[] | ListEnumSupportStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumSupportStatusFilter<$PrismaModel> | $Enums.SupportStatus
+  }
+
+  export type SupportTicketCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    category?: SortOrder
+    subject?: SortOrder
+    message?: SortOrder
+    status?: SortOrder
+    adminNote?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SupportTicketMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    category?: SortOrder
+    subject?: SortOrder
+    message?: SortOrder
+    status?: SortOrder
+    adminNote?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SupportTicketMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    category?: SortOrder
+    subject?: SortOrder
+    message?: SortOrder
+    status?: SortOrder
+    adminNote?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EnumSupportCategoryWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SupportCategory | EnumSupportCategoryFieldRefInput<$PrismaModel>
+    in?: $Enums.SupportCategory[] | ListEnumSupportCategoryFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SupportCategory[] | ListEnumSupportCategoryFieldRefInput<$PrismaModel>
+    not?: NestedEnumSupportCategoryWithAggregatesFilter<$PrismaModel> | $Enums.SupportCategory
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSupportCategoryFilter<$PrismaModel>
+    _max?: NestedEnumSupportCategoryFilter<$PrismaModel>
+  }
+
+  export type EnumSupportStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SupportStatus | EnumSupportStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.SupportStatus[] | ListEnumSupportStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SupportStatus[] | ListEnumSupportStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumSupportStatusWithAggregatesFilter<$PrismaModel> | $Enums.SupportStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSupportStatusFilter<$PrismaModel>
+    _max?: NestedEnumSupportStatusFilter<$PrismaModel>
+  }
+
   export type MatrimonyProfileCreateNestedManyWithoutCreatedByInput = {
     create?: XOR<MatrimonyProfileCreateWithoutCreatedByInput, MatrimonyProfileUncheckedCreateWithoutCreatedByInput> | MatrimonyProfileCreateWithoutCreatedByInput[] | MatrimonyProfileUncheckedCreateWithoutCreatedByInput[]
     connectOrCreate?: MatrimonyProfileCreateOrConnectWithoutCreatedByInput | MatrimonyProfileCreateOrConnectWithoutCreatedByInput[]
@@ -33416,6 +35074,13 @@ export namespace Prisma {
     connectOrCreate?: NotificationCreateOrConnectWithoutUserInput | NotificationCreateOrConnectWithoutUserInput[]
     createMany?: NotificationCreateManyUserInputEnvelope
     connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+  }
+
+  export type SupportTicketCreateNestedManyWithoutUserInput = {
+    create?: XOR<SupportTicketCreateWithoutUserInput, SupportTicketUncheckedCreateWithoutUserInput> | SupportTicketCreateWithoutUserInput[] | SupportTicketUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SupportTicketCreateOrConnectWithoutUserInput | SupportTicketCreateOrConnectWithoutUserInput[]
+    createMany?: SupportTicketCreateManyUserInputEnvelope
+    connect?: SupportTicketWhereUniqueInput | SupportTicketWhereUniqueInput[]
   }
 
   export type CommunityPostCreateNestedManyWithoutCreatedByInput = {
@@ -33493,6 +35158,13 @@ export namespace Prisma {
     connectOrCreate?: NotificationCreateOrConnectWithoutUserInput | NotificationCreateOrConnectWithoutUserInput[]
     createMany?: NotificationCreateManyUserInputEnvelope
     connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+  }
+
+  export type SupportTicketUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<SupportTicketCreateWithoutUserInput, SupportTicketUncheckedCreateWithoutUserInput> | SupportTicketCreateWithoutUserInput[] | SupportTicketUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SupportTicketCreateOrConnectWithoutUserInput | SupportTicketCreateOrConnectWithoutUserInput[]
+    createMany?: SupportTicketCreateManyUserInputEnvelope
+    connect?: SupportTicketWhereUniqueInput | SupportTicketWhereUniqueInput[]
   }
 
   export type CommunityPostUncheckedCreateNestedManyWithoutCreatedByInput = {
@@ -33626,6 +35298,20 @@ export namespace Prisma {
     update?: NotificationUpdateWithWhereUniqueWithoutUserInput | NotificationUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: NotificationUpdateManyWithWhereWithoutUserInput | NotificationUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
+  }
+
+  export type SupportTicketUpdateManyWithoutUserNestedInput = {
+    create?: XOR<SupportTicketCreateWithoutUserInput, SupportTicketUncheckedCreateWithoutUserInput> | SupportTicketCreateWithoutUserInput[] | SupportTicketUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SupportTicketCreateOrConnectWithoutUserInput | SupportTicketCreateOrConnectWithoutUserInput[]
+    upsert?: SupportTicketUpsertWithWhereUniqueWithoutUserInput | SupportTicketUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: SupportTicketCreateManyUserInputEnvelope
+    set?: SupportTicketWhereUniqueInput | SupportTicketWhereUniqueInput[]
+    disconnect?: SupportTicketWhereUniqueInput | SupportTicketWhereUniqueInput[]
+    delete?: SupportTicketWhereUniqueInput | SupportTicketWhereUniqueInput[]
+    connect?: SupportTicketWhereUniqueInput | SupportTicketWhereUniqueInput[]
+    update?: SupportTicketUpdateWithWhereUniqueWithoutUserInput | SupportTicketUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: SupportTicketUpdateManyWithWhereWithoutUserInput | SupportTicketUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: SupportTicketScalarWhereInput | SupportTicketScalarWhereInput[]
   }
 
   export type CommunityPostUpdateManyWithoutCreatedByNestedInput = {
@@ -33780,6 +35466,20 @@ export namespace Prisma {
     update?: NotificationUpdateWithWhereUniqueWithoutUserInput | NotificationUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: NotificationUpdateManyWithWhereWithoutUserInput | NotificationUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
+  }
+
+  export type SupportTicketUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<SupportTicketCreateWithoutUserInput, SupportTicketUncheckedCreateWithoutUserInput> | SupportTicketCreateWithoutUserInput[] | SupportTicketUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SupportTicketCreateOrConnectWithoutUserInput | SupportTicketCreateOrConnectWithoutUserInput[]
+    upsert?: SupportTicketUpsertWithWhereUniqueWithoutUserInput | SupportTicketUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: SupportTicketCreateManyUserInputEnvelope
+    set?: SupportTicketWhereUniqueInput | SupportTicketWhereUniqueInput[]
+    disconnect?: SupportTicketWhereUniqueInput | SupportTicketWhereUniqueInput[]
+    delete?: SupportTicketWhereUniqueInput | SupportTicketWhereUniqueInput[]
+    connect?: SupportTicketWhereUniqueInput | SupportTicketWhereUniqueInput[]
+    update?: SupportTicketUpdateWithWhereUniqueWithoutUserInput | SupportTicketUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: SupportTicketUpdateManyWithWhereWithoutUserInput | SupportTicketUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: SupportTicketScalarWhereInput | SupportTicketScalarWhereInput[]
   }
 
   export type CommunityPostUncheckedUpdateManyWithoutCreatedByNestedInput = {
@@ -34911,6 +36611,30 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAuditLogsInput, UserUpdateWithoutAuditLogsInput>, UserUncheckedUpdateWithoutAuditLogsInput>
   }
 
+  export type UserCreateNestedOneWithoutSupportTicketsInput = {
+    create?: XOR<UserCreateWithoutSupportTicketsInput, UserUncheckedCreateWithoutSupportTicketsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSupportTicketsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type EnumSupportCategoryFieldUpdateOperationsInput = {
+    set?: $Enums.SupportCategory
+  }
+
+  export type EnumSupportStatusFieldUpdateOperationsInput = {
+    set?: $Enums.SupportStatus
+  }
+
+  export type UserUpdateOneWithoutSupportTicketsNestedInput = {
+    create?: XOR<UserCreateWithoutSupportTicketsInput, UserUncheckedCreateWithoutSupportTicketsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSupportTicketsInput
+    upsert?: UserUpsertWithoutSupportTicketsInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSupportTicketsInput, UserUpdateWithoutSupportTicketsInput>, UserUncheckedUpdateWithoutSupportTicketsInput>
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -35471,6 +37195,40 @@ export namespace Prisma {
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
+  export type NestedEnumSupportCategoryFilter<$PrismaModel = never> = {
+    equals?: $Enums.SupportCategory | EnumSupportCategoryFieldRefInput<$PrismaModel>
+    in?: $Enums.SupportCategory[] | ListEnumSupportCategoryFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SupportCategory[] | ListEnumSupportCategoryFieldRefInput<$PrismaModel>
+    not?: NestedEnumSupportCategoryFilter<$PrismaModel> | $Enums.SupportCategory
+  }
+
+  export type NestedEnumSupportStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.SupportStatus | EnumSupportStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.SupportStatus[] | ListEnumSupportStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SupportStatus[] | ListEnumSupportStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumSupportStatusFilter<$PrismaModel> | $Enums.SupportStatus
+  }
+
+  export type NestedEnumSupportCategoryWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SupportCategory | EnumSupportCategoryFieldRefInput<$PrismaModel>
+    in?: $Enums.SupportCategory[] | ListEnumSupportCategoryFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SupportCategory[] | ListEnumSupportCategoryFieldRefInput<$PrismaModel>
+    not?: NestedEnumSupportCategoryWithAggregatesFilter<$PrismaModel> | $Enums.SupportCategory
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSupportCategoryFilter<$PrismaModel>
+    _max?: NestedEnumSupportCategoryFilter<$PrismaModel>
+  }
+
+  export type NestedEnumSupportStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SupportStatus | EnumSupportStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.SupportStatus[] | ListEnumSupportStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SupportStatus[] | ListEnumSupportStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumSupportStatusWithAggregatesFilter<$PrismaModel> | $Enums.SupportStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSupportStatusFilter<$PrismaModel>
+    _max?: NestedEnumSupportStatusFilter<$PrismaModel>
+  }
+
   export type MatrimonyProfileCreateWithoutCreatedByInput = {
     id?: string
     profileFor: $Enums.ProfileFor
@@ -35681,6 +37439,38 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type SupportTicketCreateWithoutUserInput = {
+    id?: string
+    category: $Enums.SupportCategory
+    subject: string
+    message: string
+    status?: $Enums.SupportStatus
+    adminNote?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SupportTicketUncheckedCreateWithoutUserInput = {
+    id?: string
+    category: $Enums.SupportCategory
+    subject: string
+    message: string
+    status?: $Enums.SupportStatus
+    adminNote?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SupportTicketCreateOrConnectWithoutUserInput = {
+    where: SupportTicketWhereUniqueInput
+    create: XOR<SupportTicketCreateWithoutUserInput, SupportTicketUncheckedCreateWithoutUserInput>
+  }
+
+  export type SupportTicketCreateManyUserInputEnvelope = {
+    data: SupportTicketCreateManyUserInput | SupportTicketCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type CommunityPostCreateWithoutCreatedByInput = {
     id?: string
     category: $Enums.PostCategory
@@ -35690,6 +37480,9 @@ export namespace Prisma {
     contactName?: string | null
     contactPhone?: string | null
     location?: string | null
+    state?: string | null
+    cityId?: string | null
+    postDate?: Date | string | null
     eventDate?: Date | string | null
     obituaryType?: $Enums.ObituaryType | null
     deceasedName?: string | null
@@ -35715,6 +37508,9 @@ export namespace Prisma {
     contactName?: string | null
     contactPhone?: string | null
     location?: string | null
+    state?: string | null
+    cityId?: string | null
+    postDate?: Date | string | null
     eventDate?: Date | string | null
     obituaryType?: $Enums.ObituaryType | null
     deceasedName?: string | null
@@ -36092,6 +37888,37 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Notification"> | Date | string
   }
 
+  export type SupportTicketUpsertWithWhereUniqueWithoutUserInput = {
+    where: SupportTicketWhereUniqueInput
+    update: XOR<SupportTicketUpdateWithoutUserInput, SupportTicketUncheckedUpdateWithoutUserInput>
+    create: XOR<SupportTicketCreateWithoutUserInput, SupportTicketUncheckedCreateWithoutUserInput>
+  }
+
+  export type SupportTicketUpdateWithWhereUniqueWithoutUserInput = {
+    where: SupportTicketWhereUniqueInput
+    data: XOR<SupportTicketUpdateWithoutUserInput, SupportTicketUncheckedUpdateWithoutUserInput>
+  }
+
+  export type SupportTicketUpdateManyWithWhereWithoutUserInput = {
+    where: SupportTicketScalarWhereInput
+    data: XOR<SupportTicketUpdateManyMutationInput, SupportTicketUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type SupportTicketScalarWhereInput = {
+    AND?: SupportTicketScalarWhereInput | SupportTicketScalarWhereInput[]
+    OR?: SupportTicketScalarWhereInput[]
+    NOT?: SupportTicketScalarWhereInput | SupportTicketScalarWhereInput[]
+    id?: StringFilter<"SupportTicket"> | string
+    userId?: StringNullableFilter<"SupportTicket"> | string | null
+    category?: EnumSupportCategoryFilter<"SupportTicket"> | $Enums.SupportCategory
+    subject?: StringFilter<"SupportTicket"> | string
+    message?: StringFilter<"SupportTicket"> | string
+    status?: EnumSupportStatusFilter<"SupportTicket"> | $Enums.SupportStatus
+    adminNote?: StringFilter<"SupportTicket"> | string
+    createdAt?: DateTimeFilter<"SupportTicket"> | Date | string
+    updatedAt?: DateTimeFilter<"SupportTicket"> | Date | string
+  }
+
   export type CommunityPostUpsertWithWhereUniqueWithoutCreatedByInput = {
     where: CommunityPostWhereUniqueInput
     update: XOR<CommunityPostUpdateWithoutCreatedByInput, CommunityPostUncheckedUpdateWithoutCreatedByInput>
@@ -36121,6 +37948,9 @@ export namespace Prisma {
     contactName?: StringNullableFilter<"CommunityPost"> | string | null
     contactPhone?: StringNullableFilter<"CommunityPost"> | string | null
     location?: StringNullableFilter<"CommunityPost"> | string | null
+    state?: StringNullableFilter<"CommunityPost"> | string | null
+    cityId?: StringNullableFilter<"CommunityPost"> | string | null
+    postDate?: DateTimeNullableFilter<"CommunityPost"> | Date | string | null
     eventDate?: DateTimeNullableFilter<"CommunityPost"> | Date | string | null
     obituaryType?: EnumObituaryTypeNullableFilter<"CommunityPost"> | $Enums.ObituaryType | null
     deceasedName?: StringNullableFilter<"CommunityPost"> | string | null
@@ -36340,6 +38170,7 @@ export namespace Prisma {
     shortlists?: ShortlistCreateNestedManyWithoutUserInput
     reports?: ProfileReportCreateNestedManyWithoutReporterInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    supportTickets?: SupportTicketCreateNestedManyWithoutUserInput
     communityPosts?: CommunityPostCreateNestedManyWithoutCreatedByInput
     committees?: CommitteeCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -36367,6 +38198,7 @@ export namespace Prisma {
     shortlists?: ShortlistUncheckedCreateNestedManyWithoutUserInput
     reports?: ProfileReportUncheckedCreateNestedManyWithoutReporterInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    supportTickets?: SupportTicketUncheckedCreateNestedManyWithoutUserInput
     communityPosts?: CommunityPostUncheckedCreateNestedManyWithoutCreatedByInput
     committees?: CommitteeUncheckedCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -36410,6 +38242,7 @@ export namespace Prisma {
     shortlists?: ShortlistUpdateManyWithoutUserNestedInput
     reports?: ProfileReportUpdateManyWithoutReporterNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    supportTickets?: SupportTicketUpdateManyWithoutUserNestedInput
     communityPosts?: CommunityPostUpdateManyWithoutCreatedByNestedInput
     committees?: CommitteeUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -36437,6 +38270,7 @@ export namespace Prisma {
     shortlists?: ShortlistUncheckedUpdateManyWithoutUserNestedInput
     reports?: ProfileReportUncheckedUpdateManyWithoutReporterNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    supportTickets?: SupportTicketUncheckedUpdateManyWithoutUserNestedInput
     communityPosts?: CommunityPostUncheckedUpdateManyWithoutCreatedByNestedInput
     committees?: CommitteeUncheckedUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -36463,6 +38297,7 @@ export namespace Prisma {
     shortlists?: ShortlistCreateNestedManyWithoutUserInput
     reports?: ProfileReportCreateNestedManyWithoutReporterInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    supportTickets?: SupportTicketCreateNestedManyWithoutUserInput
     communityPosts?: CommunityPostCreateNestedManyWithoutCreatedByInput
     committees?: CommitteeCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -36490,6 +38325,7 @@ export namespace Prisma {
     shortlists?: ShortlistUncheckedCreateNestedManyWithoutUserInput
     reports?: ProfileReportUncheckedCreateNestedManyWithoutReporterInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    supportTickets?: SupportTicketUncheckedCreateNestedManyWithoutUserInput
     communityPosts?: CommunityPostUncheckedCreateNestedManyWithoutCreatedByInput
     committees?: CommitteeUncheckedCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -36836,6 +38672,7 @@ export namespace Prisma {
     shortlists?: ShortlistUpdateManyWithoutUserNestedInput
     reports?: ProfileReportUpdateManyWithoutReporterNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    supportTickets?: SupportTicketUpdateManyWithoutUserNestedInput
     communityPosts?: CommunityPostUpdateManyWithoutCreatedByNestedInput
     committees?: CommitteeUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -36863,6 +38700,7 @@ export namespace Prisma {
     shortlists?: ShortlistUncheckedUpdateManyWithoutUserNestedInput
     reports?: ProfileReportUncheckedUpdateManyWithoutReporterNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    supportTickets?: SupportTicketUncheckedUpdateManyWithoutUserNestedInput
     communityPosts?: CommunityPostUncheckedUpdateManyWithoutCreatedByNestedInput
     committees?: CommitteeUncheckedUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -37248,6 +39086,7 @@ export namespace Prisma {
     shortlists?: ShortlistCreateNestedManyWithoutUserInput
     reports?: ProfileReportCreateNestedManyWithoutReporterInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    supportTickets?: SupportTicketCreateNestedManyWithoutUserInput
     communityPosts?: CommunityPostCreateNestedManyWithoutCreatedByInput
     committees?: CommitteeCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -37275,6 +39114,7 @@ export namespace Prisma {
     shortlists?: ShortlistUncheckedCreateNestedManyWithoutUserInput
     reports?: ProfileReportUncheckedCreateNestedManyWithoutReporterInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    supportTickets?: SupportTicketUncheckedCreateNestedManyWithoutUserInput
     communityPosts?: CommunityPostUncheckedCreateNestedManyWithoutCreatedByInput
     committees?: CommitteeUncheckedCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -37439,6 +39279,7 @@ export namespace Prisma {
     shortlists?: ShortlistUpdateManyWithoutUserNestedInput
     reports?: ProfileReportUpdateManyWithoutReporterNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    supportTickets?: SupportTicketUpdateManyWithoutUserNestedInput
     communityPosts?: CommunityPostUpdateManyWithoutCreatedByNestedInput
     committees?: CommitteeUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -37466,6 +39307,7 @@ export namespace Prisma {
     shortlists?: ShortlistUncheckedUpdateManyWithoutUserNestedInput
     reports?: ProfileReportUncheckedUpdateManyWithoutReporterNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    supportTickets?: SupportTicketUncheckedUpdateManyWithoutUserNestedInput
     communityPosts?: CommunityPostUncheckedUpdateManyWithoutCreatedByNestedInput
     committees?: CommitteeUncheckedUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -39144,6 +40986,7 @@ export namespace Prisma {
     matrimonyProfiles?: MatrimonyProfileCreateNestedManyWithoutCreatedByInput
     reports?: ProfileReportCreateNestedManyWithoutReporterInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    supportTickets?: SupportTicketCreateNestedManyWithoutUserInput
     communityPosts?: CommunityPostCreateNestedManyWithoutCreatedByInput
     committees?: CommitteeCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -39171,6 +41014,7 @@ export namespace Prisma {
     matrimonyProfiles?: MatrimonyProfileUncheckedCreateNestedManyWithoutCreatedByInput
     reports?: ProfileReportUncheckedCreateNestedManyWithoutReporterInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    supportTickets?: SupportTicketUncheckedCreateNestedManyWithoutUserInput
     communityPosts?: CommunityPostUncheckedCreateNestedManyWithoutCreatedByInput
     committees?: CommitteeUncheckedCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -39329,6 +41173,7 @@ export namespace Prisma {
     matrimonyProfiles?: MatrimonyProfileUpdateManyWithoutCreatedByNestedInput
     reports?: ProfileReportUpdateManyWithoutReporterNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    supportTickets?: SupportTicketUpdateManyWithoutUserNestedInput
     communityPosts?: CommunityPostUpdateManyWithoutCreatedByNestedInput
     committees?: CommitteeUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -39356,6 +41201,7 @@ export namespace Prisma {
     matrimonyProfiles?: MatrimonyProfileUncheckedUpdateManyWithoutCreatedByNestedInput
     reports?: ProfileReportUncheckedUpdateManyWithoutReporterNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    supportTickets?: SupportTicketUncheckedUpdateManyWithoutUserNestedInput
     communityPosts?: CommunityPostUncheckedUpdateManyWithoutCreatedByNestedInput
     committees?: CommitteeUncheckedUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -39504,6 +41350,7 @@ export namespace Prisma {
     matrimonyProfiles?: MatrimonyProfileCreateNestedManyWithoutCreatedByInput
     shortlists?: ShortlistCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    supportTickets?: SupportTicketCreateNestedManyWithoutUserInput
     communityPosts?: CommunityPostCreateNestedManyWithoutCreatedByInput
     committees?: CommitteeCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -39531,6 +41378,7 @@ export namespace Prisma {
     matrimonyProfiles?: MatrimonyProfileUncheckedCreateNestedManyWithoutCreatedByInput
     shortlists?: ShortlistUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    supportTickets?: SupportTicketUncheckedCreateNestedManyWithoutUserInput
     communityPosts?: CommunityPostUncheckedCreateNestedManyWithoutCreatedByInput
     committees?: CommitteeUncheckedCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -39689,6 +41537,7 @@ export namespace Prisma {
     matrimonyProfiles?: MatrimonyProfileUpdateManyWithoutCreatedByNestedInput
     shortlists?: ShortlistUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    supportTickets?: SupportTicketUpdateManyWithoutUserNestedInput
     communityPosts?: CommunityPostUpdateManyWithoutCreatedByNestedInput
     committees?: CommitteeUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -39716,6 +41565,7 @@ export namespace Prisma {
     matrimonyProfiles?: MatrimonyProfileUncheckedUpdateManyWithoutCreatedByNestedInput
     shortlists?: ShortlistUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    supportTickets?: SupportTicketUncheckedUpdateManyWithoutUserNestedInput
     communityPosts?: CommunityPostUncheckedUpdateManyWithoutCreatedByNestedInput
     committees?: CommitteeUncheckedUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -39865,6 +41715,7 @@ export namespace Prisma {
     shortlists?: ShortlistCreateNestedManyWithoutUserInput
     reports?: ProfileReportCreateNestedManyWithoutReporterInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    supportTickets?: SupportTicketCreateNestedManyWithoutUserInput
     committees?: CommitteeCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestCreateNestedManyWithoutRequestedByInput
@@ -39892,6 +41743,7 @@ export namespace Prisma {
     shortlists?: ShortlistUncheckedCreateNestedManyWithoutUserInput
     reports?: ProfileReportUncheckedCreateNestedManyWithoutReporterInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    supportTickets?: SupportTicketUncheckedCreateNestedManyWithoutUserInput
     committees?: CommitteeUncheckedCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedCreateNestedManyWithoutRequestedByInput
@@ -39985,6 +41837,7 @@ export namespace Prisma {
     shortlists?: ShortlistUpdateManyWithoutUserNestedInput
     reports?: ProfileReportUpdateManyWithoutReporterNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    supportTickets?: SupportTicketUpdateManyWithoutUserNestedInput
     committees?: CommitteeUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestUpdateManyWithoutRequestedByNestedInput
@@ -40012,6 +41865,7 @@ export namespace Prisma {
     shortlists?: ShortlistUncheckedUpdateManyWithoutUserNestedInput
     reports?: ProfileReportUncheckedUpdateManyWithoutReporterNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    supportTickets?: SupportTicketUncheckedUpdateManyWithoutUserNestedInput
     committees?: CommitteeUncheckedUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedUpdateManyWithoutRequestedByNestedInput
@@ -40074,6 +41928,9 @@ export namespace Prisma {
     contactName?: string | null
     contactPhone?: string | null
     location?: string | null
+    state?: string | null
+    cityId?: string | null
+    postDate?: Date | string | null
     eventDate?: Date | string | null
     obituaryType?: $Enums.ObituaryType | null
     deceasedName?: string | null
@@ -40100,6 +41957,9 @@ export namespace Prisma {
     contactName?: string | null
     contactPhone?: string | null
     location?: string | null
+    state?: string | null
+    cityId?: string | null
+    postDate?: Date | string | null
     eventDate?: Date | string | null
     obituaryType?: $Enums.ObituaryType | null
     deceasedName?: string | null
@@ -40139,6 +41999,7 @@ export namespace Prisma {
     shortlists?: ShortlistCreateNestedManyWithoutUserInput
     reports?: ProfileReportCreateNestedManyWithoutReporterInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    supportTickets?: SupportTicketCreateNestedManyWithoutUserInput
     communityPosts?: CommunityPostCreateNestedManyWithoutCreatedByInput
     committees?: CommitteeCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -40166,6 +42027,7 @@ export namespace Prisma {
     shortlists?: ShortlistUncheckedCreateNestedManyWithoutUserInput
     reports?: ProfileReportUncheckedCreateNestedManyWithoutReporterInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    supportTickets?: SupportTicketUncheckedCreateNestedManyWithoutUserInput
     communityPosts?: CommunityPostUncheckedCreateNestedManyWithoutCreatedByInput
     committees?: CommitteeUncheckedCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -40199,6 +42061,9 @@ export namespace Prisma {
     contactName?: NullableStringFieldUpdateOperationsInput | string | null
     contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     location?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    cityId?: NullableStringFieldUpdateOperationsInput | string | null
+    postDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     eventDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     obituaryType?: NullableEnumObituaryTypeFieldUpdateOperationsInput | $Enums.ObituaryType | null
     deceasedName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -40225,6 +42090,9 @@ export namespace Prisma {
     contactName?: NullableStringFieldUpdateOperationsInput | string | null
     contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     location?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    cityId?: NullableStringFieldUpdateOperationsInput | string | null
+    postDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     eventDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     obituaryType?: NullableEnumObituaryTypeFieldUpdateOperationsInput | $Enums.ObituaryType | null
     deceasedName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -40270,6 +42138,7 @@ export namespace Prisma {
     shortlists?: ShortlistUpdateManyWithoutUserNestedInput
     reports?: ProfileReportUpdateManyWithoutReporterNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    supportTickets?: SupportTicketUpdateManyWithoutUserNestedInput
     communityPosts?: CommunityPostUpdateManyWithoutCreatedByNestedInput
     committees?: CommitteeUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -40297,6 +42166,7 @@ export namespace Prisma {
     shortlists?: ShortlistUncheckedUpdateManyWithoutUserNestedInput
     reports?: ProfileReportUncheckedUpdateManyWithoutReporterNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    supportTickets?: SupportTicketUncheckedUpdateManyWithoutUserNestedInput
     communityPosts?: CommunityPostUncheckedUpdateManyWithoutCreatedByNestedInput
     committees?: CommitteeUncheckedUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -40314,6 +42184,9 @@ export namespace Prisma {
     contactName?: string | null
     contactPhone?: string | null
     location?: string | null
+    state?: string | null
+    cityId?: string | null
+    postDate?: Date | string | null
     eventDate?: Date | string | null
     obituaryType?: $Enums.ObituaryType | null
     deceasedName?: string | null
@@ -40340,6 +42213,9 @@ export namespace Prisma {
     contactName?: string | null
     contactPhone?: string | null
     location?: string | null
+    state?: string | null
+    cityId?: string | null
+    postDate?: Date | string | null
     eventDate?: Date | string | null
     obituaryType?: $Enums.ObituaryType | null
     deceasedName?: string | null
@@ -40380,6 +42256,9 @@ export namespace Prisma {
     contactName?: NullableStringFieldUpdateOperationsInput | string | null
     contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     location?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    cityId?: NullableStringFieldUpdateOperationsInput | string | null
+    postDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     eventDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     obituaryType?: NullableEnumObituaryTypeFieldUpdateOperationsInput | $Enums.ObituaryType | null
     deceasedName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -40406,6 +42285,9 @@ export namespace Prisma {
     contactName?: NullableStringFieldUpdateOperationsInput | string | null
     contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     location?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    cityId?: NullableStringFieldUpdateOperationsInput | string | null
+    postDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     eventDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     obituaryType?: NullableEnumObituaryTypeFieldUpdateOperationsInput | $Enums.ObituaryType | null
     deceasedName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -40440,6 +42322,7 @@ export namespace Prisma {
     shortlists?: ShortlistCreateNestedManyWithoutUserInput
     reports?: ProfileReportCreateNestedManyWithoutReporterInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    supportTickets?: SupportTicketCreateNestedManyWithoutUserInput
     communityPosts?: CommunityPostCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestCreateNestedManyWithoutRequestedByInput
@@ -40467,6 +42350,7 @@ export namespace Prisma {
     shortlists?: ShortlistUncheckedCreateNestedManyWithoutUserInput
     reports?: ProfileReportUncheckedCreateNestedManyWithoutReporterInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    supportTickets?: SupportTicketUncheckedCreateNestedManyWithoutUserInput
     communityPosts?: CommunityPostUncheckedCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedCreateNestedManyWithoutRequestedByInput
@@ -40576,6 +42460,7 @@ export namespace Prisma {
     shortlists?: ShortlistUpdateManyWithoutUserNestedInput
     reports?: ProfileReportUpdateManyWithoutReporterNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    supportTickets?: SupportTicketUpdateManyWithoutUserNestedInput
     communityPosts?: CommunityPostUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestUpdateManyWithoutRequestedByNestedInput
@@ -40603,6 +42488,7 @@ export namespace Prisma {
     shortlists?: ShortlistUncheckedUpdateManyWithoutUserNestedInput
     reports?: ProfileReportUncheckedUpdateManyWithoutReporterNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    supportTickets?: SupportTicketUncheckedUpdateManyWithoutUserNestedInput
     communityPosts?: CommunityPostUncheckedUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedUpdateManyWithoutRequestedByNestedInput
@@ -40909,6 +42795,7 @@ export namespace Prisma {
     shortlists?: ShortlistCreateNestedManyWithoutUserInput
     reports?: ProfileReportCreateNestedManyWithoutReporterInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    supportTickets?: SupportTicketCreateNestedManyWithoutUserInput
     communityPosts?: CommunityPostCreateNestedManyWithoutCreatedByInput
     committees?: CommitteeCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -40936,6 +42823,7 @@ export namespace Prisma {
     shortlists?: ShortlistUncheckedCreateNestedManyWithoutUserInput
     reports?: ProfileReportUncheckedCreateNestedManyWithoutReporterInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    supportTickets?: SupportTicketUncheckedCreateNestedManyWithoutUserInput
     communityPosts?: CommunityPostUncheckedCreateNestedManyWithoutCreatedByInput
     committees?: CommitteeUncheckedCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -40979,6 +42867,7 @@ export namespace Prisma {
     shortlists?: ShortlistUpdateManyWithoutUserNestedInput
     reports?: ProfileReportUpdateManyWithoutReporterNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    supportTickets?: SupportTicketUpdateManyWithoutUserNestedInput
     communityPosts?: CommunityPostUpdateManyWithoutCreatedByNestedInput
     committees?: CommitteeUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -41006,6 +42895,7 @@ export namespace Prisma {
     shortlists?: ShortlistUncheckedUpdateManyWithoutUserNestedInput
     reports?: ProfileReportUncheckedUpdateManyWithoutReporterNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    supportTickets?: SupportTicketUncheckedUpdateManyWithoutUserNestedInput
     communityPosts?: CommunityPostUncheckedUpdateManyWithoutCreatedByNestedInput
     committees?: CommitteeUncheckedUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -41032,6 +42922,7 @@ export namespace Prisma {
     matrimonyProfiles?: MatrimonyProfileCreateNestedManyWithoutCreatedByInput
     shortlists?: ShortlistCreateNestedManyWithoutUserInput
     reports?: ProfileReportCreateNestedManyWithoutReporterInput
+    supportTickets?: SupportTicketCreateNestedManyWithoutUserInput
     communityPosts?: CommunityPostCreateNestedManyWithoutCreatedByInput
     committees?: CommitteeCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -41059,6 +42950,7 @@ export namespace Prisma {
     matrimonyProfiles?: MatrimonyProfileUncheckedCreateNestedManyWithoutCreatedByInput
     shortlists?: ShortlistUncheckedCreateNestedManyWithoutUserInput
     reports?: ProfileReportUncheckedCreateNestedManyWithoutReporterInput
+    supportTickets?: SupportTicketUncheckedCreateNestedManyWithoutUserInput
     communityPosts?: CommunityPostUncheckedCreateNestedManyWithoutCreatedByInput
     committees?: CommitteeUncheckedCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -41102,6 +42994,7 @@ export namespace Prisma {
     matrimonyProfiles?: MatrimonyProfileUpdateManyWithoutCreatedByNestedInput
     shortlists?: ShortlistUpdateManyWithoutUserNestedInput
     reports?: ProfileReportUpdateManyWithoutReporterNestedInput
+    supportTickets?: SupportTicketUpdateManyWithoutUserNestedInput
     communityPosts?: CommunityPostUpdateManyWithoutCreatedByNestedInput
     committees?: CommitteeUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -41129,6 +43022,7 @@ export namespace Prisma {
     matrimonyProfiles?: MatrimonyProfileUncheckedUpdateManyWithoutCreatedByNestedInput
     shortlists?: ShortlistUncheckedUpdateManyWithoutUserNestedInput
     reports?: ProfileReportUncheckedUpdateManyWithoutReporterNestedInput
+    supportTickets?: SupportTicketUncheckedUpdateManyWithoutUserNestedInput
     communityPosts?: CommunityPostUncheckedUpdateManyWithoutCreatedByNestedInput
     committees?: CommitteeUncheckedUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -41157,6 +43051,7 @@ export namespace Prisma {
     shortlists?: ShortlistCreateNestedManyWithoutUserInput
     reports?: ProfileReportCreateNestedManyWithoutReporterInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    supportTickets?: SupportTicketCreateNestedManyWithoutUserInput
     communityPosts?: CommunityPostCreateNestedManyWithoutCreatedByInput
     committees?: CommitteeCreateNestedManyWithoutCreatedByInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestCreateNestedManyWithoutRequestedByInput
@@ -41184,6 +43079,7 @@ export namespace Prisma {
     shortlists?: ShortlistUncheckedCreateNestedManyWithoutUserInput
     reports?: ProfileReportUncheckedCreateNestedManyWithoutReporterInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    supportTickets?: SupportTicketUncheckedCreateNestedManyWithoutUserInput
     communityPosts?: CommunityPostUncheckedCreateNestedManyWithoutCreatedByInput
     committees?: CommitteeUncheckedCreateNestedManyWithoutCreatedByInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedCreateNestedManyWithoutRequestedByInput
@@ -41227,6 +43123,7 @@ export namespace Prisma {
     shortlists?: ShortlistUpdateManyWithoutUserNestedInput
     reports?: ProfileReportUpdateManyWithoutReporterNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    supportTickets?: SupportTicketUpdateManyWithoutUserNestedInput
     communityPosts?: CommunityPostUpdateManyWithoutCreatedByNestedInput
     committees?: CommitteeUpdateManyWithoutCreatedByNestedInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestUpdateManyWithoutRequestedByNestedInput
@@ -41254,8 +43151,137 @@ export namespace Prisma {
     shortlists?: ShortlistUncheckedUpdateManyWithoutUserNestedInput
     reports?: ProfileReportUncheckedUpdateManyWithoutReporterNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    supportTickets?: SupportTicketUncheckedUpdateManyWithoutUserNestedInput
     communityPosts?: CommunityPostUncheckedUpdateManyWithoutCreatedByNestedInput
     committees?: CommitteeUncheckedUpdateManyWithoutCreatedByNestedInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    communityPostLikes?: CommunityPostLikeUncheckedUpdateManyWithoutUserNestedInput
+    pushTokens?: PushTokenUncheckedUpdateManyWithoutUserNestedInput
+    accountDeleteRequests?: AccountDeleteRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+  }
+
+  export type UserCreateWithoutSupportTicketsInput = {
+    id?: string
+    phone: string
+    email?: string | null
+    googleSub?: string | null
+    firstName?: string | null
+    lastName?: string | null
+    preferredLanguage?: $Enums.Language
+    role?: $Enums.UserRole
+    isPhoneVerified?: boolean
+    isActive?: boolean
+    lastLoginAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    matrimonyProfiles?: MatrimonyProfileCreateNestedManyWithoutCreatedByInput
+    shortlists?: ShortlistCreateNestedManyWithoutUserInput
+    reports?: ProfileReportCreateNestedManyWithoutReporterInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    communityPosts?: CommunityPostCreateNestedManyWithoutCreatedByInput
+    committees?: CommitteeCreateNestedManyWithoutCreatedByInput
+    auditLogs?: AuditLogCreateNestedManyWithoutActorInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestCreateNestedManyWithoutRequestedByInput
+    communityPostLikes?: CommunityPostLikeCreateNestedManyWithoutUserInput
+    pushTokens?: PushTokenCreateNestedManyWithoutUserInput
+    accountDeleteRequests?: AccountDeleteRequestCreateNestedManyWithoutRequestedByInput
+  }
+
+  export type UserUncheckedCreateWithoutSupportTicketsInput = {
+    id?: string
+    phone: string
+    email?: string | null
+    googleSub?: string | null
+    firstName?: string | null
+    lastName?: string | null
+    preferredLanguage?: $Enums.Language
+    role?: $Enums.UserRole
+    isPhoneVerified?: boolean
+    isActive?: boolean
+    lastLoginAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    matrimonyProfiles?: MatrimonyProfileUncheckedCreateNestedManyWithoutCreatedByInput
+    shortlists?: ShortlistUncheckedCreateNestedManyWithoutUserInput
+    reports?: ProfileReportUncheckedCreateNestedManyWithoutReporterInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    communityPosts?: CommunityPostUncheckedCreateNestedManyWithoutCreatedByInput
+    committees?: CommitteeUncheckedCreateNestedManyWithoutCreatedByInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    communityPostLikes?: CommunityPostLikeUncheckedCreateNestedManyWithoutUserInput
+    pushTokens?: PushTokenUncheckedCreateNestedManyWithoutUserInput
+    accountDeleteRequests?: AccountDeleteRequestUncheckedCreateNestedManyWithoutRequestedByInput
+  }
+
+  export type UserCreateOrConnectWithoutSupportTicketsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutSupportTicketsInput, UserUncheckedCreateWithoutSupportTicketsInput>
+  }
+
+  export type UserUpsertWithoutSupportTicketsInput = {
+    update: XOR<UserUpdateWithoutSupportTicketsInput, UserUncheckedUpdateWithoutSupportTicketsInput>
+    create: XOR<UserCreateWithoutSupportTicketsInput, UserUncheckedCreateWithoutSupportTicketsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutSupportTicketsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutSupportTicketsInput, UserUncheckedUpdateWithoutSupportTicketsInput>
+  }
+
+  export type UserUpdateWithoutSupportTicketsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    googleSub?: NullableStringFieldUpdateOperationsInput | string | null
+    firstName?: NullableStringFieldUpdateOperationsInput | string | null
+    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    preferredLanguage?: EnumLanguageFieldUpdateOperationsInput | $Enums.Language
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isPhoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    matrimonyProfiles?: MatrimonyProfileUpdateManyWithoutCreatedByNestedInput
+    shortlists?: ShortlistUpdateManyWithoutUserNestedInput
+    reports?: ProfileReportUpdateManyWithoutReporterNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    communityPosts?: CommunityPostUpdateManyWithoutCreatedByNestedInput
+    committees?: CommitteeUpdateManyWithoutCreatedByNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestUpdateManyWithoutRequestedByNestedInput
+    communityPostLikes?: CommunityPostLikeUpdateManyWithoutUserNestedInput
+    pushTokens?: PushTokenUpdateManyWithoutUserNestedInput
+    accountDeleteRequests?: AccountDeleteRequestUpdateManyWithoutRequestedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutSupportTicketsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    googleSub?: NullableStringFieldUpdateOperationsInput | string | null
+    firstName?: NullableStringFieldUpdateOperationsInput | string | null
+    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    preferredLanguage?: EnumLanguageFieldUpdateOperationsInput | $Enums.Language
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isPhoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    matrimonyProfiles?: MatrimonyProfileUncheckedUpdateManyWithoutCreatedByNestedInput
+    shortlists?: ShortlistUncheckedUpdateManyWithoutUserNestedInput
+    reports?: ProfileReportUncheckedUpdateManyWithoutReporterNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    communityPosts?: CommunityPostUncheckedUpdateManyWithoutCreatedByNestedInput
+    committees?: CommitteeUncheckedUpdateManyWithoutCreatedByNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     communityPostLikes?: CommunityPostLikeUncheckedUpdateManyWithoutUserNestedInput
     pushTokens?: PushTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -41337,6 +43363,17 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
+  export type SupportTicketCreateManyUserInput = {
+    id?: string
+    category: $Enums.SupportCategory
+    subject: string
+    message: string
+    status?: $Enums.SupportStatus
+    adminNote?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type CommunityPostCreateManyCreatedByInput = {
     id?: string
     category: $Enums.PostCategory
@@ -41346,6 +43383,9 @@ export namespace Prisma {
     contactName?: string | null
     contactPhone?: string | null
     location?: string | null
+    state?: string | null
+    cityId?: string | null
+    postDate?: Date | string | null
     eventDate?: Date | string | null
     obituaryType?: $Enums.ObituaryType | null
     deceasedName?: string | null
@@ -41671,6 +43711,39 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type SupportTicketUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    category?: EnumSupportCategoryFieldUpdateOperationsInput | $Enums.SupportCategory
+    subject?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    status?: EnumSupportStatusFieldUpdateOperationsInput | $Enums.SupportStatus
+    adminNote?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SupportTicketUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    category?: EnumSupportCategoryFieldUpdateOperationsInput | $Enums.SupportCategory
+    subject?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    status?: EnumSupportStatusFieldUpdateOperationsInput | $Enums.SupportStatus
+    adminNote?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SupportTicketUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    category?: EnumSupportCategoryFieldUpdateOperationsInput | $Enums.SupportCategory
+    subject?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    status?: EnumSupportStatusFieldUpdateOperationsInput | $Enums.SupportStatus
+    adminNote?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type CommunityPostUpdateWithoutCreatedByInput = {
     id?: StringFieldUpdateOperationsInput | string
     category?: EnumPostCategoryFieldUpdateOperationsInput | $Enums.PostCategory
@@ -41680,6 +43753,9 @@ export namespace Prisma {
     contactName?: NullableStringFieldUpdateOperationsInput | string | null
     contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     location?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    cityId?: NullableStringFieldUpdateOperationsInput | string | null
+    postDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     eventDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     obituaryType?: NullableEnumObituaryTypeFieldUpdateOperationsInput | $Enums.ObituaryType | null
     deceasedName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -41705,6 +43781,9 @@ export namespace Prisma {
     contactName?: NullableStringFieldUpdateOperationsInput | string | null
     contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     location?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    cityId?: NullableStringFieldUpdateOperationsInput | string | null
+    postDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     eventDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     obituaryType?: NullableEnumObituaryTypeFieldUpdateOperationsInput | $Enums.ObituaryType | null
     deceasedName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -41730,6 +43809,9 @@ export namespace Prisma {
     contactName?: NullableStringFieldUpdateOperationsInput | string | null
     contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     location?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    cityId?: NullableStringFieldUpdateOperationsInput | string | null
+    postDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     eventDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     obituaryType?: NullableEnumObituaryTypeFieldUpdateOperationsInput | $Enums.ObituaryType | null
     deceasedName?: NullableStringFieldUpdateOperationsInput | string | null
