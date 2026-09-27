@@ -13,6 +13,7 @@ import { router } from 'expo-router';
 import { Image } from 'expo-image';
 import { SymbolView } from 'expo-symbols';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { CommunityShortcuts } from '@/features/home/community-shortcuts';
 import { ONBOARDING_KEY } from './onboarding';
 import { calculateAge } from '@/lib/profile-format';
 import { useLanguageText } from '@/hooks/use-language-text';
@@ -25,48 +26,6 @@ import { useAppSelector } from '@/store/hooks';
 const GURU_BANNER = require('../../assets/images/home-guru-banner.png');
 const COUPLE = require('../../assets/images/home-matrimony-couple.webp');
 const LOGO = require('../../assets/images/icon.png');
-const actions = [
-  {
-    category: 'NEWS',
-    hi: 'समाचार',
-    en: 'News',
-    descriptionHi: 'समाज की ताज़ा खबरें',
-    descriptionEn: 'Latest community news',
-    bg: '#FFF0F2',
-    border: '#F3CDD3',
-    icon: { ios: 'newspaper', android: 'newspaper', web: 'newspaper' },
-  },
-  {
-    category: 'ADVERTISEMENT',
-    hi: 'विज्ञापन',
-    en: 'Ads',
-    descriptionHi: 'व्यापार और सेवाएँ',
-    descriptionEn: 'Businesses and services',
-    bg: '#FFF8E8',
-    border: '#F2D9A8',
-    icon: { ios: 'megaphone', android: 'campaign', web: 'campaign' },
-  },
-  {
-    category: 'EVENT',
-    hi: 'समारोह',
-    en: 'Events',
-    descriptionHi: 'आने वाले आयोजन',
-    descriptionEn: 'Upcoming events',
-    bg: '#FFF1E8',
-    border: '#F3D4BD',
-    icon: { ios: 'calendar', android: 'event', web: 'event' },
-  },
-  {
-    category: 'OBITUARY',
-    hi: 'शोक संदेश',
-    en: 'Obituaries',
-    descriptionHi: 'श्रद्धांजलि और शोक सूचना',
-    descriptionEn: 'Tributes and notices',
-    bg: '#F5F0FC',
-    border: '#DDD0EF',
-    icon: { ios: 'flame', android: 'local_florist', web: 'local_florist' },
-  },
-] as const;
 
 function Icon({
   name,
@@ -377,58 +336,27 @@ export default function HomeScreen() {
             </View>
           ) : null}
         </ScrollView>
-        <View style={styles.sectionHeader}>
-          <View style={styles.sectionTitleRow}>
-            <Icon name={{ ios: 'person.3.fill', android: 'groups', web: 'groups' }} />
-            <Text style={styles.sectionTitle}>
-              {text('समाज से जुड़ें', 'Connect with your community')}
-            </Text>
-          </View>
-        </View>
-        <View style={styles.actionGrid}>
-          {actions.map((action) => (
-            <Pressable
-              key={action.category}
-              style={[
-                styles.actionCard,
-                { backgroundColor: action.bg, borderColor: action.border },
-              ]}
-              onPress={() =>
-                router.push({ pathname: '/community', params: { category: action.category } })
-              }
-              accessibilityRole="button"
-            >
-              <View style={styles.actionTop}>
-                <Icon name={action.icon} size={36} />
-                <Text style={styles.arrow}>›</Text>
-              </View>
-              <Text style={styles.actionTitle}>{text(action.hi, action.en)}</Text>
-              <Text style={styles.actionDescription}>
-                {text(action.descriptionHi, action.descriptionEn)}
-              </Text>
-            </Pressable>
-          ))}
-        </View>
+        <CommunityShortcuts />
         <Pressable
-          style={styles.committeeBanner}
-          onPress={() => router.push('/samiti')}
           accessibilityRole="button"
+          style={[styles.committeeBanner, { marginTop: 12 }]}
+          onPress={() => router.push('/support')}
         >
-          <Icon name={{ ios: 'person.3.fill', android: 'groups', web: 'groups' }} size={42} />
+          <Icon
+            name={{
+              ios: 'bubble.left.and.bubble.right.fill',
+              android: 'support_agent',
+              web: 'support_agent',
+            }}
+            size={28}
+          />
           <View style={styles.committeeCopy}>
-            <Text style={styles.actionTitle}>{text('समितियाँ', 'Committees')}</Text>
+            <Text style={styles.actionTitle}>{text('सहायता और संपर्क', 'Help & contact')}</Text>
             <Text style={styles.actionDescription}>
-              {text('अपने क्षेत्र की समिति से जुड़ें', 'Connect with your local committee')}
+              {text('सुझाव या शिकायत हमें भेजें', 'Share feedback or report a concern')}
             </Text>
           </View>
           <Text style={styles.arrow}>›</Text>
-        </Pressable>
-        <Pressable accessibilityRole="button" style={[styles.committeeBanner, { marginTop: 12 }]} onPress={() => router.push('/support')}>
-          <Icon name={{ ios: 'bubble.left.and.bubble.right.fill', android: 'support_agent', web: 'support_agent' }} size={28} />
-          <View style={styles.committeeCopy}>
-            <Text style={styles.actionTitle}>{text('सहायता और संपर्क', 'Help & contact')}</Text>
-            <Text style={styles.actionDescription}>{text('सुझाव या शिकायत हमें भेजें', 'Share feedback or report a concern')}</Text>
-          </View><Text style={styles.arrow}>›</Text>
         </Pressable>
       </ScrollView>
     </SafeAreaView>
