@@ -68,6 +68,12 @@ enum MatrimonyDeleteRequestStatus {
   REJECTED
 }
 
+enum AccountDeleteRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 enum InterestStatus {
   PENDING
   ACCEPTED
@@ -82,6 +88,13 @@ enum ContactRequestStatus {
   WITHDRAWN
 }
 
+enum CommitteeStatus {
+  PENDING
+  PUBLISHED
+  REJECTED
+  ARCHIVED
+}
+
 enum PostCategory {
   NEWS
   EVENT
@@ -89,6 +102,15 @@ enum PostCategory {
   REQUEST
   GRATITUDE
   WISHES
+  OBITUARY
+}
+
+enum ObituaryType {
+  DEATH_NOTICE
+  UTHAWNA
+  CHAUTHA
+  TRIBUTE
+  OTHER
 }
 
 enum PostStatus {
@@ -131,6 +153,7 @@ model User {
   id                String    @id @default(cuid())
   phone             String    @unique
   email             String?   @unique
+  googleSub         String?   @unique
   firstName         String?
   lastName          String?
   preferredLanguage Language  @default(HI)
@@ -150,8 +173,26 @@ model User {
   committees              Committee[]
   auditLogs               AuditLog[]               @relation("AuditActor")
   matrimonyDeleteRequests MatrimonyDeleteRequest[]
+  communityPostLikes      CommunityPostLike[]
+  pushTokens              PushToken[]
+  accountDeleteRequests   AccountDeleteRequest[]
 
   @@index([isActive, createdAt])
+}
+
+model AccountDeleteRequest {
+  id            String                     @id @default(cuid())
+  requestedById String
+  requestedBy   User                       @relation(fields: [requestedById], references: [id], onDelete: Restrict)
+  reason        String?
+  status        AccountDeleteRequestStatus @default(PENDING)
+  adminNote     String?
+  reviewedAt    DateTime?
+  createdAt     DateTime                   @default(now())
+  updatedAt     DateTime                   @updatedAt
+
+  @@index([requestedById, status, createdAt])
+  @@index([status, createdAt])
 }
 
 model MatrimonyProfile {
@@ -352,30 +393,48 @@ model ProfileReport {
 }
 
 model CommunityPost {
-  id               String       @id @default(cuid())
+  id               String        @id @default(cuid())
   createdById      String?
-  createdBy        User?        @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  createdBy        User?         @relation(fields: [createdById], references: [id], onDelete: SetNull)
   category         PostCategory
-  status           PostStatus   @default(DRAFT)
+  status           PostStatus    @default(DRAFT)
   bannerUrl        String?
   bannerStorageKey String?
   contactName      String?
   contactPhone     String?
   location         String?
   eventDate        DateTime?
+  obituaryType     ObituaryType?
+  deceasedName     String?
+  deathDate        DateTime?
+  eventTime        String?
   publishedAt      DateTime?
   expiresAt        DateTime?
-  isFeatured       Boolean      @default(false)
+  isFeatured       Boolean       @default(false)
   rejectionReason  String?
-  createdAt        DateTime     @default(now())
-  updatedAt        DateTime     @updatedAt
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
   deletedAt        DateTime?
 
   translations CommunityPostTranslation[]
+  likes        CommunityPostLike[]
 
   @@index([status, category, publishedAt])
   @@index([isFeatured, status, publishedAt])
   @@index([expiresAt])
+}
+
+model CommunityPostLike {
+  id        String        @id @default(cuid())
+  postId    String
+  userId    String
+  post      CommunityPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime      @default(now())
+
+  @@unique([postId, userId])
+  @@index([postId, createdAt])
+  @@index([userId, createdAt])
 }
 
 model CommunityPostTranslation {
@@ -392,9 +451,9 @@ model CommunityPostTranslation {
 }
 
 model Committee {
-  id               String    @id @default(cuid())
+  id               String          @id @default(cuid())
   createdById      String?
-  createdBy        User?     @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  createdBy        User?           @relation(fields: [createdById], references: [id], onDelete: SetNull)
   bannerUrl        String?
   bannerStorageKey String?
   logoUrl          String?
@@ -404,16 +463,20 @@ model Committee {
   address          String?
   phone            String?
   email            String?
-  isActive         Boolean   @default(true)
-  sortOrder        Int       @default(0)
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  status           CommitteeStatus @default(PENDING)
+  rejectionReason  String?
+  publishedAt      DateTime?
+  isActive         Boolean         @default(true)
+  sortOrder        Int             @default(0)
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
   deletedAt        DateTime?
 
   translations CommitteeTranslation[]
   members      CommitteeMember[]
 
   @@index([isActive, sortOrder])
+  @@index([status, isActive, sortOrder])
   @@index([state, district, city])
 }
 
@@ -446,6 +509,19 @@ model CommitteeMember {
   updatedAt     DateTime  @updatedAt
 
   @@index([committeeId, isActive, sortOrder])
+}
+
+model PushToken {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String   @unique
+  platform  String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, isActive])
 }
 
 model Notification {

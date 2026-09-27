@@ -19,6 +19,11 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
  */
 export type User = $Result.DefaultSelection<Prisma.$UserPayload>
 /**
+ * Model AccountDeleteRequest
+ * 
+ */
+export type AccountDeleteRequest = $Result.DefaultSelection<Prisma.$AccountDeleteRequestPayload>
+/**
  * Model MatrimonyProfile
  * 
  */
@@ -69,6 +74,11 @@ export type ProfileReport = $Result.DefaultSelection<Prisma.$ProfileReportPayloa
  */
 export type CommunityPost = $Result.DefaultSelection<Prisma.$CommunityPostPayload>
 /**
+ * Model CommunityPostLike
+ * 
+ */
+export type CommunityPostLike = $Result.DefaultSelection<Prisma.$CommunityPostLikePayload>
+/**
  * Model CommunityPostTranslation
  * 
  */
@@ -88,6 +98,11 @@ export type CommitteeTranslation = $Result.DefaultSelection<Prisma.$CommitteeTra
  * 
  */
 export type CommitteeMember = $Result.DefaultSelection<Prisma.$CommitteeMemberPayload>
+/**
+ * Model PushToken
+ * 
+ */
+export type PushToken = $Result.DefaultSelection<Prisma.$PushTokenPayload>
 /**
  * Model Notification
  * 
@@ -190,6 +205,15 @@ export const MatrimonyDeleteRequestStatus: {
 export type MatrimonyDeleteRequestStatus = (typeof MatrimonyDeleteRequestStatus)[keyof typeof MatrimonyDeleteRequestStatus]
 
 
+export const AccountDeleteRequestStatus: {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+};
+
+export type AccountDeleteRequestStatus = (typeof AccountDeleteRequestStatus)[keyof typeof AccountDeleteRequestStatus]
+
+
 export const InterestStatus: {
   PENDING: 'PENDING',
   ACCEPTED: 'ACCEPTED',
@@ -210,16 +234,38 @@ export const ContactRequestStatus: {
 export type ContactRequestStatus = (typeof ContactRequestStatus)[keyof typeof ContactRequestStatus]
 
 
+export const CommitteeStatus: {
+  PENDING: 'PENDING',
+  PUBLISHED: 'PUBLISHED',
+  REJECTED: 'REJECTED',
+  ARCHIVED: 'ARCHIVED'
+};
+
+export type CommitteeStatus = (typeof CommitteeStatus)[keyof typeof CommitteeStatus]
+
+
 export const PostCategory: {
   NEWS: 'NEWS',
   EVENT: 'EVENT',
   ADVERTISEMENT: 'ADVERTISEMENT',
   REQUEST: 'REQUEST',
   GRATITUDE: 'GRATITUDE',
-  WISHES: 'WISHES'
+  WISHES: 'WISHES',
+  OBITUARY: 'OBITUARY'
 };
 
 export type PostCategory = (typeof PostCategory)[keyof typeof PostCategory]
+
+
+export const ObituaryType: {
+  DEATH_NOTICE: 'DEATH_NOTICE',
+  UTHAWNA: 'UTHAWNA',
+  CHAUTHA: 'CHAUTHA',
+  TRIBUTE: 'TRIBUTE',
+  OTHER: 'OTHER'
+};
+
+export type ObituaryType = (typeof ObituaryType)[keyof typeof ObituaryType]
 
 
 export const PostStatus: {
@@ -307,6 +353,10 @@ export type MatrimonyDeleteRequestStatus = $Enums.MatrimonyDeleteRequestStatus
 
 export const MatrimonyDeleteRequestStatus: typeof $Enums.MatrimonyDeleteRequestStatus
 
+export type AccountDeleteRequestStatus = $Enums.AccountDeleteRequestStatus
+
+export const AccountDeleteRequestStatus: typeof $Enums.AccountDeleteRequestStatus
+
 export type InterestStatus = $Enums.InterestStatus
 
 export const InterestStatus: typeof $Enums.InterestStatus
@@ -315,9 +365,17 @@ export type ContactRequestStatus = $Enums.ContactRequestStatus
 
 export const ContactRequestStatus: typeof $Enums.ContactRequestStatus
 
+export type CommitteeStatus = $Enums.CommitteeStatus
+
+export const CommitteeStatus: typeof $Enums.CommitteeStatus
+
 export type PostCategory = $Enums.PostCategory
 
 export const PostCategory: typeof $Enums.PostCategory
+
+export type ObituaryType = $Enums.ObituaryType
+
+export const ObituaryType: typeof $Enums.ObituaryType
 
 export type PostStatus = $Enums.PostStatus
 
@@ -464,6 +522,16 @@ export class PrismaClient<
   get user(): Prisma.UserDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.accountDeleteRequest`: Exposes CRUD operations for the **AccountDeleteRequest** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more AccountDeleteRequests
+    * const accountDeleteRequests = await prisma.accountDeleteRequest.findMany()
+    * ```
+    */
+  get accountDeleteRequest(): Prisma.AccountDeleteRequestDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.matrimonyProfile`: Exposes CRUD operations for the **MatrimonyProfile** model.
     * Example usage:
     * ```ts
@@ -564,6 +632,16 @@ export class PrismaClient<
   get communityPost(): Prisma.CommunityPostDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.communityPostLike`: Exposes CRUD operations for the **CommunityPostLike** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more CommunityPostLikes
+    * const communityPostLikes = await prisma.communityPostLike.findMany()
+    * ```
+    */
+  get communityPostLike(): Prisma.CommunityPostLikeDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.communityPostTranslation`: Exposes CRUD operations for the **CommunityPostTranslation** model.
     * Example usage:
     * ```ts
@@ -602,6 +680,16 @@ export class PrismaClient<
     * ```
     */
   get committeeMember(): Prisma.CommitteeMemberDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.pushToken`: Exposes CRUD operations for the **PushToken** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more PushTokens
+    * const pushTokens = await prisma.pushToken.findMany()
+    * ```
+    */
+  get pushToken(): Prisma.PushTokenDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.notification`: Exposes CRUD operations for the **Notification** model.
@@ -1064,6 +1152,7 @@ export namespace Prisma {
 
   export const ModelName: {
     User: 'User',
+    AccountDeleteRequest: 'AccountDeleteRequest',
     MatrimonyProfile: 'MatrimonyProfile',
     MatrimonyDeleteRequest: 'MatrimonyDeleteRequest',
     PartnerPreference: 'PartnerPreference',
@@ -1074,10 +1163,12 @@ export namespace Prisma {
     Shortlist: 'Shortlist',
     ProfileReport: 'ProfileReport',
     CommunityPost: 'CommunityPost',
+    CommunityPostLike: 'CommunityPostLike',
     CommunityPostTranslation: 'CommunityPostTranslation',
     Committee: 'Committee',
     CommitteeTranslation: 'CommitteeTranslation',
     CommitteeMember: 'CommitteeMember',
+    PushToken: 'PushToken',
     Notification: 'Notification',
     AuditLog: 'AuditLog'
   };
@@ -1098,7 +1189,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "matrimonyProfile" | "matrimonyDeleteRequest" | "partnerPreference" | "profilePhoto" | "kundali" | "interest" | "contactRequest" | "shortlist" | "profileReport" | "communityPost" | "communityPostTranslation" | "committee" | "committeeTranslation" | "committeeMember" | "notification" | "auditLog"
+      modelProps: "user" | "accountDeleteRequest" | "matrimonyProfile" | "matrimonyDeleteRequest" | "partnerPreference" | "profilePhoto" | "kundali" | "interest" | "contactRequest" | "shortlist" | "profileReport" | "communityPost" | "communityPostLike" | "communityPostTranslation" | "committee" | "committeeTranslation" | "committeeMember" | "pushToken" | "notification" | "auditLog"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1173,6 +1264,80 @@ export namespace Prisma {
           count: {
             args: Prisma.UserCountArgs<ExtArgs>
             result: $Utils.Optional<UserCountAggregateOutputType> | number
+          }
+        }
+      }
+      AccountDeleteRequest: {
+        payload: Prisma.$AccountDeleteRequestPayload<ExtArgs>
+        fields: Prisma.AccountDeleteRequestFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AccountDeleteRequestFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AccountDeleteRequestPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AccountDeleteRequestFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AccountDeleteRequestPayload>
+          }
+          findFirst: {
+            args: Prisma.AccountDeleteRequestFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AccountDeleteRequestPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AccountDeleteRequestFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AccountDeleteRequestPayload>
+          }
+          findMany: {
+            args: Prisma.AccountDeleteRequestFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AccountDeleteRequestPayload>[]
+          }
+          create: {
+            args: Prisma.AccountDeleteRequestCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AccountDeleteRequestPayload>
+          }
+          createMany: {
+            args: Prisma.AccountDeleteRequestCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.AccountDeleteRequestCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AccountDeleteRequestPayload>[]
+          }
+          delete: {
+            args: Prisma.AccountDeleteRequestDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AccountDeleteRequestPayload>
+          }
+          update: {
+            args: Prisma.AccountDeleteRequestUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AccountDeleteRequestPayload>
+          }
+          deleteMany: {
+            args: Prisma.AccountDeleteRequestDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AccountDeleteRequestUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.AccountDeleteRequestUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AccountDeleteRequestPayload>[]
+          }
+          upsert: {
+            args: Prisma.AccountDeleteRequestUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AccountDeleteRequestPayload>
+          }
+          aggregate: {
+            args: Prisma.AccountDeleteRequestAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAccountDeleteRequest>
+          }
+          groupBy: {
+            args: Prisma.AccountDeleteRequestGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AccountDeleteRequestGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AccountDeleteRequestCountArgs<ExtArgs>
+            result: $Utils.Optional<AccountDeleteRequestCountAggregateOutputType> | number
           }
         }
       }
@@ -1916,6 +2081,80 @@ export namespace Prisma {
           }
         }
       }
+      CommunityPostLike: {
+        payload: Prisma.$CommunityPostLikePayload<ExtArgs>
+        fields: Prisma.CommunityPostLikeFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.CommunityPostLikeFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommunityPostLikePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.CommunityPostLikeFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommunityPostLikePayload>
+          }
+          findFirst: {
+            args: Prisma.CommunityPostLikeFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommunityPostLikePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.CommunityPostLikeFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommunityPostLikePayload>
+          }
+          findMany: {
+            args: Prisma.CommunityPostLikeFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommunityPostLikePayload>[]
+          }
+          create: {
+            args: Prisma.CommunityPostLikeCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommunityPostLikePayload>
+          }
+          createMany: {
+            args: Prisma.CommunityPostLikeCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.CommunityPostLikeCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommunityPostLikePayload>[]
+          }
+          delete: {
+            args: Prisma.CommunityPostLikeDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommunityPostLikePayload>
+          }
+          update: {
+            args: Prisma.CommunityPostLikeUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommunityPostLikePayload>
+          }
+          deleteMany: {
+            args: Prisma.CommunityPostLikeDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.CommunityPostLikeUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.CommunityPostLikeUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommunityPostLikePayload>[]
+          }
+          upsert: {
+            args: Prisma.CommunityPostLikeUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommunityPostLikePayload>
+          }
+          aggregate: {
+            args: Prisma.CommunityPostLikeAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCommunityPostLike>
+          }
+          groupBy: {
+            args: Prisma.CommunityPostLikeGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CommunityPostLikeGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.CommunityPostLikeCountArgs<ExtArgs>
+            result: $Utils.Optional<CommunityPostLikeCountAggregateOutputType> | number
+          }
+        }
+      }
       CommunityPostTranslation: {
         payload: Prisma.$CommunityPostTranslationPayload<ExtArgs>
         fields: Prisma.CommunityPostTranslationFieldRefs
@@ -2212,6 +2451,80 @@ export namespace Prisma {
           }
         }
       }
+      PushToken: {
+        payload: Prisma.$PushTokenPayload<ExtArgs>
+        fields: Prisma.PushTokenFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PushTokenFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PushTokenPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PushTokenFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PushTokenPayload>
+          }
+          findFirst: {
+            args: Prisma.PushTokenFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PushTokenPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PushTokenFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PushTokenPayload>
+          }
+          findMany: {
+            args: Prisma.PushTokenFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PushTokenPayload>[]
+          }
+          create: {
+            args: Prisma.PushTokenCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PushTokenPayload>
+          }
+          createMany: {
+            args: Prisma.PushTokenCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.PushTokenCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PushTokenPayload>[]
+          }
+          delete: {
+            args: Prisma.PushTokenDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PushTokenPayload>
+          }
+          update: {
+            args: Prisma.PushTokenUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PushTokenPayload>
+          }
+          deleteMany: {
+            args: Prisma.PushTokenDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PushTokenUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.PushTokenUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PushTokenPayload>[]
+          }
+          upsert: {
+            args: Prisma.PushTokenUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PushTokenPayload>
+          }
+          aggregate: {
+            args: Prisma.PushTokenAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePushToken>
+          }
+          groupBy: {
+            args: Prisma.PushTokenGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PushTokenGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.PushTokenCountArgs<ExtArgs>
+            result: $Utils.Optional<PushTokenCountAggregateOutputType> | number
+          }
+        }
+      }
       Notification: {
         payload: Prisma.$NotificationPayload<ExtArgs>
         fields: Prisma.NotificationFieldRefs
@@ -2457,6 +2770,7 @@ export namespace Prisma {
   }
   export type GlobalOmitConfig = {
     user?: UserOmit
+    accountDeleteRequest?: AccountDeleteRequestOmit
     matrimonyProfile?: MatrimonyProfileOmit
     matrimonyDeleteRequest?: MatrimonyDeleteRequestOmit
     partnerPreference?: PartnerPreferenceOmit
@@ -2467,10 +2781,12 @@ export namespace Prisma {
     shortlist?: ShortlistOmit
     profileReport?: ProfileReportOmit
     communityPost?: CommunityPostOmit
+    communityPostLike?: CommunityPostLikeOmit
     communityPostTranslation?: CommunityPostTranslationOmit
     committee?: CommitteeOmit
     committeeTranslation?: CommitteeTranslationOmit
     committeeMember?: CommitteeMemberOmit
+    pushToken?: PushTokenOmit
     notification?: NotificationOmit
     auditLog?: AuditLogOmit
   }
@@ -2561,6 +2877,9 @@ export namespace Prisma {
     committees: number
     auditLogs: number
     matrimonyDeleteRequests: number
+    communityPostLikes: number
+    pushTokens: number
+    accountDeleteRequests: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2572,6 +2891,9 @@ export namespace Prisma {
     committees?: boolean | UserCountOutputTypeCountCommitteesArgs
     auditLogs?: boolean | UserCountOutputTypeCountAuditLogsArgs
     matrimonyDeleteRequests?: boolean | UserCountOutputTypeCountMatrimonyDeleteRequestsArgs
+    communityPostLikes?: boolean | UserCountOutputTypeCountCommunityPostLikesArgs
+    pushTokens?: boolean | UserCountOutputTypeCountPushTokensArgs
+    accountDeleteRequests?: boolean | UserCountOutputTypeCountAccountDeleteRequestsArgs
   }
 
   // Custom InputTypes
@@ -2639,6 +2961,27 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountMatrimonyDeleteRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: MatrimonyDeleteRequestWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountCommunityPostLikesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CommunityPostLikeWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountPushTokensArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PushTokenWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountAccountDeleteRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AccountDeleteRequestWhereInput
   }
 
 
@@ -2751,10 +3094,12 @@ export namespace Prisma {
 
   export type CommunityPostCountOutputType = {
     translations: number
+    likes: number
   }
 
   export type CommunityPostCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     translations?: boolean | CommunityPostCountOutputTypeCountTranslationsArgs
+    likes?: boolean | CommunityPostCountOutputTypeCountLikesArgs
   }
 
   // Custom InputTypes
@@ -2773,6 +3118,13 @@ export namespace Prisma {
    */
   export type CommunityPostCountOutputTypeCountTranslationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: CommunityPostTranslationWhereInput
+  }
+
+  /**
+   * CommunityPostCountOutputType without action
+   */
+  export type CommunityPostCountOutputTypeCountLikesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CommunityPostLikeWhereInput
   }
 
 
@@ -2834,6 +3186,7 @@ export namespace Prisma {
     id: string | null
     phone: string | null
     email: string | null
+    googleSub: string | null
     firstName: string | null
     lastName: string | null
     preferredLanguage: $Enums.Language | null
@@ -2850,6 +3203,7 @@ export namespace Prisma {
     id: string | null
     phone: string | null
     email: string | null
+    googleSub: string | null
     firstName: string | null
     lastName: string | null
     preferredLanguage: $Enums.Language | null
@@ -2866,6 +3220,7 @@ export namespace Prisma {
     id: number
     phone: number
     email: number
+    googleSub: number
     firstName: number
     lastName: number
     preferredLanguage: number
@@ -2884,6 +3239,7 @@ export namespace Prisma {
     id?: true
     phone?: true
     email?: true
+    googleSub?: true
     firstName?: true
     lastName?: true
     preferredLanguage?: true
@@ -2900,6 +3256,7 @@ export namespace Prisma {
     id?: true
     phone?: true
     email?: true
+    googleSub?: true
     firstName?: true
     lastName?: true
     preferredLanguage?: true
@@ -2916,6 +3273,7 @@ export namespace Prisma {
     id?: true
     phone?: true
     email?: true
+    googleSub?: true
     firstName?: true
     lastName?: true
     preferredLanguage?: true
@@ -3005,6 +3363,7 @@ export namespace Prisma {
     id: string
     phone: string
     email: string | null
+    googleSub: string | null
     firstName: string | null
     lastName: string | null
     preferredLanguage: $Enums.Language
@@ -3038,6 +3397,7 @@ export namespace Prisma {
     id?: boolean
     phone?: boolean
     email?: boolean
+    googleSub?: boolean
     firstName?: boolean
     lastName?: boolean
     preferredLanguage?: boolean
@@ -3056,6 +3416,9 @@ export namespace Prisma {
     committees?: boolean | User$committeesArgs<ExtArgs>
     auditLogs?: boolean | User$auditLogsArgs<ExtArgs>
     matrimonyDeleteRequests?: boolean | User$matrimonyDeleteRequestsArgs<ExtArgs>
+    communityPostLikes?: boolean | User$communityPostLikesArgs<ExtArgs>
+    pushTokens?: boolean | User$pushTokensArgs<ExtArgs>
+    accountDeleteRequests?: boolean | User$accountDeleteRequestsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -3063,6 +3426,7 @@ export namespace Prisma {
     id?: boolean
     phone?: boolean
     email?: boolean
+    googleSub?: boolean
     firstName?: boolean
     lastName?: boolean
     preferredLanguage?: boolean
@@ -3079,6 +3443,7 @@ export namespace Prisma {
     id?: boolean
     phone?: boolean
     email?: boolean
+    googleSub?: boolean
     firstName?: boolean
     lastName?: boolean
     preferredLanguage?: boolean
@@ -3095,6 +3460,7 @@ export namespace Prisma {
     id?: boolean
     phone?: boolean
     email?: boolean
+    googleSub?: boolean
     firstName?: boolean
     lastName?: boolean
     preferredLanguage?: boolean
@@ -3107,7 +3473,7 @@ export namespace Prisma {
     deletedAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "phone" | "email" | "firstName" | "lastName" | "preferredLanguage" | "role" | "isPhoneVerified" | "isActive" | "lastLoginAt" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "phone" | "email" | "googleSub" | "firstName" | "lastName" | "preferredLanguage" | "role" | "isPhoneVerified" | "isActive" | "lastLoginAt" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     matrimonyProfiles?: boolean | User$matrimonyProfilesArgs<ExtArgs>
     shortlists?: boolean | User$shortlistsArgs<ExtArgs>
@@ -3117,6 +3483,9 @@ export namespace Prisma {
     committees?: boolean | User$committeesArgs<ExtArgs>
     auditLogs?: boolean | User$auditLogsArgs<ExtArgs>
     matrimonyDeleteRequests?: boolean | User$matrimonyDeleteRequestsArgs<ExtArgs>
+    communityPostLikes?: boolean | User$communityPostLikesArgs<ExtArgs>
+    pushTokens?: boolean | User$pushTokensArgs<ExtArgs>
+    accountDeleteRequests?: boolean | User$accountDeleteRequestsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -3133,11 +3502,15 @@ export namespace Prisma {
       committees: Prisma.$CommitteePayload<ExtArgs>[]
       auditLogs: Prisma.$AuditLogPayload<ExtArgs>[]
       matrimonyDeleteRequests: Prisma.$MatrimonyDeleteRequestPayload<ExtArgs>[]
+      communityPostLikes: Prisma.$CommunityPostLikePayload<ExtArgs>[]
+      pushTokens: Prisma.$PushTokenPayload<ExtArgs>[]
+      accountDeleteRequests: Prisma.$AccountDeleteRequestPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       phone: string
       email: string | null
+      googleSub: string | null
       firstName: string | null
       lastName: string | null
       preferredLanguage: $Enums.Language
@@ -3550,6 +3923,9 @@ export namespace Prisma {
     committees<T extends User$committeesArgs<ExtArgs> = {}>(args?: Subset<T, User$committeesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommitteePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     auditLogs<T extends User$auditLogsArgs<ExtArgs> = {}>(args?: Subset<T, User$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     matrimonyDeleteRequests<T extends User$matrimonyDeleteRequestsArgs<ExtArgs> = {}>(args?: Subset<T, User$matrimonyDeleteRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MatrimonyDeleteRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    communityPostLikes<T extends User$communityPostLikesArgs<ExtArgs> = {}>(args?: Subset<T, User$communityPostLikesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommunityPostLikePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    pushTokens<T extends User$pushTokensArgs<ExtArgs> = {}>(args?: Subset<T, User$pushTokensArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PushTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    accountDeleteRequests<T extends User$accountDeleteRequestsArgs<ExtArgs> = {}>(args?: Subset<T, User$accountDeleteRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AccountDeleteRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3582,6 +3958,7 @@ export namespace Prisma {
     readonly id: FieldRef<"User", 'String'>
     readonly phone: FieldRef<"User", 'String'>
     readonly email: FieldRef<"User", 'String'>
+    readonly googleSub: FieldRef<"User", 'String'>
     readonly firstName: FieldRef<"User", 'String'>
     readonly lastName: FieldRef<"User", 'String'>
     readonly preferredLanguage: FieldRef<"User", 'Language'>
@@ -4172,6 +4549,78 @@ export namespace Prisma {
   }
 
   /**
+   * User.communityPostLikes
+   */
+  export type User$communityPostLikesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CommunityPostLike
+     */
+    select?: CommunityPostLikeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CommunityPostLike
+     */
+    omit?: CommunityPostLikeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommunityPostLikeInclude<ExtArgs> | null
+    where?: CommunityPostLikeWhereInput
+    orderBy?: CommunityPostLikeOrderByWithRelationInput | CommunityPostLikeOrderByWithRelationInput[]
+    cursor?: CommunityPostLikeWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CommunityPostLikeScalarFieldEnum | CommunityPostLikeScalarFieldEnum[]
+  }
+
+  /**
+   * User.pushTokens
+   */
+  export type User$pushTokensArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PushToken
+     */
+    select?: PushTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PushToken
+     */
+    omit?: PushTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PushTokenInclude<ExtArgs> | null
+    where?: PushTokenWhereInput
+    orderBy?: PushTokenOrderByWithRelationInput | PushTokenOrderByWithRelationInput[]
+    cursor?: PushTokenWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PushTokenScalarFieldEnum | PushTokenScalarFieldEnum[]
+  }
+
+  /**
+   * User.accountDeleteRequests
+   */
+  export type User$accountDeleteRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AccountDeleteRequest
+     */
+    select?: AccountDeleteRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AccountDeleteRequest
+     */
+    omit?: AccountDeleteRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AccountDeleteRequestInclude<ExtArgs> | null
+    where?: AccountDeleteRequestWhereInput
+    orderBy?: AccountDeleteRequestOrderByWithRelationInput | AccountDeleteRequestOrderByWithRelationInput[]
+    cursor?: AccountDeleteRequestWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: AccountDeleteRequestScalarFieldEnum | AccountDeleteRequestScalarFieldEnum[]
+  }
+
+  /**
    * User without action
    */
   export type UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4187,6 +4636,1103 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: UserInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model AccountDeleteRequest
+   */
+
+  export type AggregateAccountDeleteRequest = {
+    _count: AccountDeleteRequestCountAggregateOutputType | null
+    _min: AccountDeleteRequestMinAggregateOutputType | null
+    _max: AccountDeleteRequestMaxAggregateOutputType | null
+  }
+
+  export type AccountDeleteRequestMinAggregateOutputType = {
+    id: string | null
+    requestedById: string | null
+    reason: string | null
+    status: $Enums.AccountDeleteRequestStatus | null
+    adminNote: string | null
+    reviewedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type AccountDeleteRequestMaxAggregateOutputType = {
+    id: string | null
+    requestedById: string | null
+    reason: string | null
+    status: $Enums.AccountDeleteRequestStatus | null
+    adminNote: string | null
+    reviewedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type AccountDeleteRequestCountAggregateOutputType = {
+    id: number
+    requestedById: number
+    reason: number
+    status: number
+    adminNote: number
+    reviewedAt: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type AccountDeleteRequestMinAggregateInputType = {
+    id?: true
+    requestedById?: true
+    reason?: true
+    status?: true
+    adminNote?: true
+    reviewedAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type AccountDeleteRequestMaxAggregateInputType = {
+    id?: true
+    requestedById?: true
+    reason?: true
+    status?: true
+    adminNote?: true
+    reviewedAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type AccountDeleteRequestCountAggregateInputType = {
+    id?: true
+    requestedById?: true
+    reason?: true
+    status?: true
+    adminNote?: true
+    reviewedAt?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type AccountDeleteRequestAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AccountDeleteRequest to aggregate.
+     */
+    where?: AccountDeleteRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AccountDeleteRequests to fetch.
+     */
+    orderBy?: AccountDeleteRequestOrderByWithRelationInput | AccountDeleteRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AccountDeleteRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AccountDeleteRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AccountDeleteRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned AccountDeleteRequests
+    **/
+    _count?: true | AccountDeleteRequestCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AccountDeleteRequestMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AccountDeleteRequestMaxAggregateInputType
+  }
+
+  export type GetAccountDeleteRequestAggregateType<T extends AccountDeleteRequestAggregateArgs> = {
+        [P in keyof T & keyof AggregateAccountDeleteRequest]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAccountDeleteRequest[P]>
+      : GetScalarType<T[P], AggregateAccountDeleteRequest[P]>
+  }
+
+
+
+
+  export type AccountDeleteRequestGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AccountDeleteRequestWhereInput
+    orderBy?: AccountDeleteRequestOrderByWithAggregationInput | AccountDeleteRequestOrderByWithAggregationInput[]
+    by: AccountDeleteRequestScalarFieldEnum[] | AccountDeleteRequestScalarFieldEnum
+    having?: AccountDeleteRequestScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AccountDeleteRequestCountAggregateInputType | true
+    _min?: AccountDeleteRequestMinAggregateInputType
+    _max?: AccountDeleteRequestMaxAggregateInputType
+  }
+
+  export type AccountDeleteRequestGroupByOutputType = {
+    id: string
+    requestedById: string
+    reason: string | null
+    status: $Enums.AccountDeleteRequestStatus
+    adminNote: string | null
+    reviewedAt: Date | null
+    createdAt: Date
+    updatedAt: Date
+    _count: AccountDeleteRequestCountAggregateOutputType | null
+    _min: AccountDeleteRequestMinAggregateOutputType | null
+    _max: AccountDeleteRequestMaxAggregateOutputType | null
+  }
+
+  type GetAccountDeleteRequestGroupByPayload<T extends AccountDeleteRequestGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AccountDeleteRequestGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AccountDeleteRequestGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AccountDeleteRequestGroupByOutputType[P]>
+            : GetScalarType<T[P], AccountDeleteRequestGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AccountDeleteRequestSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    requestedById?: boolean
+    reason?: boolean
+    status?: boolean
+    adminNote?: boolean
+    reviewedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    requestedBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["accountDeleteRequest"]>
+
+  export type AccountDeleteRequestSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    requestedById?: boolean
+    reason?: boolean
+    status?: boolean
+    adminNote?: boolean
+    reviewedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    requestedBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["accountDeleteRequest"]>
+
+  export type AccountDeleteRequestSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    requestedById?: boolean
+    reason?: boolean
+    status?: boolean
+    adminNote?: boolean
+    reviewedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    requestedBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["accountDeleteRequest"]>
+
+  export type AccountDeleteRequestSelectScalar = {
+    id?: boolean
+    requestedById?: boolean
+    reason?: boolean
+    status?: boolean
+    adminNote?: boolean
+    reviewedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type AccountDeleteRequestOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "requestedById" | "reason" | "status" | "adminNote" | "reviewedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["accountDeleteRequest"]>
+  export type AccountDeleteRequestInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    requestedBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type AccountDeleteRequestIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    requestedBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type AccountDeleteRequestIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    requestedBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $AccountDeleteRequestPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "AccountDeleteRequest"
+    objects: {
+      requestedBy: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      requestedById: string
+      reason: string | null
+      status: $Enums.AccountDeleteRequestStatus
+      adminNote: string | null
+      reviewedAt: Date | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["accountDeleteRequest"]>
+    composites: {}
+  }
+
+  type AccountDeleteRequestGetPayload<S extends boolean | null | undefined | AccountDeleteRequestDefaultArgs> = $Result.GetResult<Prisma.$AccountDeleteRequestPayload, S>
+
+  type AccountDeleteRequestCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<AccountDeleteRequestFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: AccountDeleteRequestCountAggregateInputType | true
+    }
+
+  export interface AccountDeleteRequestDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['AccountDeleteRequest'], meta: { name: 'AccountDeleteRequest' } }
+    /**
+     * Find zero or one AccountDeleteRequest that matches the filter.
+     * @param {AccountDeleteRequestFindUniqueArgs} args - Arguments to find a AccountDeleteRequest
+     * @example
+     * // Get one AccountDeleteRequest
+     * const accountDeleteRequest = await prisma.accountDeleteRequest.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AccountDeleteRequestFindUniqueArgs>(args: SelectSubset<T, AccountDeleteRequestFindUniqueArgs<ExtArgs>>): Prisma__AccountDeleteRequestClient<$Result.GetResult<Prisma.$AccountDeleteRequestPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one AccountDeleteRequest that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {AccountDeleteRequestFindUniqueOrThrowArgs} args - Arguments to find a AccountDeleteRequest
+     * @example
+     * // Get one AccountDeleteRequest
+     * const accountDeleteRequest = await prisma.accountDeleteRequest.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AccountDeleteRequestFindUniqueOrThrowArgs>(args: SelectSubset<T, AccountDeleteRequestFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AccountDeleteRequestClient<$Result.GetResult<Prisma.$AccountDeleteRequestPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AccountDeleteRequest that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AccountDeleteRequestFindFirstArgs} args - Arguments to find a AccountDeleteRequest
+     * @example
+     * // Get one AccountDeleteRequest
+     * const accountDeleteRequest = await prisma.accountDeleteRequest.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AccountDeleteRequestFindFirstArgs>(args?: SelectSubset<T, AccountDeleteRequestFindFirstArgs<ExtArgs>>): Prisma__AccountDeleteRequestClient<$Result.GetResult<Prisma.$AccountDeleteRequestPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AccountDeleteRequest that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AccountDeleteRequestFindFirstOrThrowArgs} args - Arguments to find a AccountDeleteRequest
+     * @example
+     * // Get one AccountDeleteRequest
+     * const accountDeleteRequest = await prisma.accountDeleteRequest.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AccountDeleteRequestFindFirstOrThrowArgs>(args?: SelectSubset<T, AccountDeleteRequestFindFirstOrThrowArgs<ExtArgs>>): Prisma__AccountDeleteRequestClient<$Result.GetResult<Prisma.$AccountDeleteRequestPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more AccountDeleteRequests that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AccountDeleteRequestFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all AccountDeleteRequests
+     * const accountDeleteRequests = await prisma.accountDeleteRequest.findMany()
+     * 
+     * // Get first 10 AccountDeleteRequests
+     * const accountDeleteRequests = await prisma.accountDeleteRequest.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const accountDeleteRequestWithIdOnly = await prisma.accountDeleteRequest.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends AccountDeleteRequestFindManyArgs>(args?: SelectSubset<T, AccountDeleteRequestFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AccountDeleteRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a AccountDeleteRequest.
+     * @param {AccountDeleteRequestCreateArgs} args - Arguments to create a AccountDeleteRequest.
+     * @example
+     * // Create one AccountDeleteRequest
+     * const AccountDeleteRequest = await prisma.accountDeleteRequest.create({
+     *   data: {
+     *     // ... data to create a AccountDeleteRequest
+     *   }
+     * })
+     * 
+     */
+    create<T extends AccountDeleteRequestCreateArgs>(args: SelectSubset<T, AccountDeleteRequestCreateArgs<ExtArgs>>): Prisma__AccountDeleteRequestClient<$Result.GetResult<Prisma.$AccountDeleteRequestPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many AccountDeleteRequests.
+     * @param {AccountDeleteRequestCreateManyArgs} args - Arguments to create many AccountDeleteRequests.
+     * @example
+     * // Create many AccountDeleteRequests
+     * const accountDeleteRequest = await prisma.accountDeleteRequest.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AccountDeleteRequestCreateManyArgs>(args?: SelectSubset<T, AccountDeleteRequestCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many AccountDeleteRequests and returns the data saved in the database.
+     * @param {AccountDeleteRequestCreateManyAndReturnArgs} args - Arguments to create many AccountDeleteRequests.
+     * @example
+     * // Create many AccountDeleteRequests
+     * const accountDeleteRequest = await prisma.accountDeleteRequest.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many AccountDeleteRequests and only return the `id`
+     * const accountDeleteRequestWithIdOnly = await prisma.accountDeleteRequest.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends AccountDeleteRequestCreateManyAndReturnArgs>(args?: SelectSubset<T, AccountDeleteRequestCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AccountDeleteRequestPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a AccountDeleteRequest.
+     * @param {AccountDeleteRequestDeleteArgs} args - Arguments to delete one AccountDeleteRequest.
+     * @example
+     * // Delete one AccountDeleteRequest
+     * const AccountDeleteRequest = await prisma.accountDeleteRequest.delete({
+     *   where: {
+     *     // ... filter to delete one AccountDeleteRequest
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AccountDeleteRequestDeleteArgs>(args: SelectSubset<T, AccountDeleteRequestDeleteArgs<ExtArgs>>): Prisma__AccountDeleteRequestClient<$Result.GetResult<Prisma.$AccountDeleteRequestPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one AccountDeleteRequest.
+     * @param {AccountDeleteRequestUpdateArgs} args - Arguments to update one AccountDeleteRequest.
+     * @example
+     * // Update one AccountDeleteRequest
+     * const accountDeleteRequest = await prisma.accountDeleteRequest.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AccountDeleteRequestUpdateArgs>(args: SelectSubset<T, AccountDeleteRequestUpdateArgs<ExtArgs>>): Prisma__AccountDeleteRequestClient<$Result.GetResult<Prisma.$AccountDeleteRequestPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more AccountDeleteRequests.
+     * @param {AccountDeleteRequestDeleteManyArgs} args - Arguments to filter AccountDeleteRequests to delete.
+     * @example
+     * // Delete a few AccountDeleteRequests
+     * const { count } = await prisma.accountDeleteRequest.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AccountDeleteRequestDeleteManyArgs>(args?: SelectSubset<T, AccountDeleteRequestDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AccountDeleteRequests.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AccountDeleteRequestUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many AccountDeleteRequests
+     * const accountDeleteRequest = await prisma.accountDeleteRequest.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AccountDeleteRequestUpdateManyArgs>(args: SelectSubset<T, AccountDeleteRequestUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AccountDeleteRequests and returns the data updated in the database.
+     * @param {AccountDeleteRequestUpdateManyAndReturnArgs} args - Arguments to update many AccountDeleteRequests.
+     * @example
+     * // Update many AccountDeleteRequests
+     * const accountDeleteRequest = await prisma.accountDeleteRequest.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more AccountDeleteRequests and only return the `id`
+     * const accountDeleteRequestWithIdOnly = await prisma.accountDeleteRequest.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends AccountDeleteRequestUpdateManyAndReturnArgs>(args: SelectSubset<T, AccountDeleteRequestUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AccountDeleteRequestPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one AccountDeleteRequest.
+     * @param {AccountDeleteRequestUpsertArgs} args - Arguments to update or create a AccountDeleteRequest.
+     * @example
+     * // Update or create a AccountDeleteRequest
+     * const accountDeleteRequest = await prisma.accountDeleteRequest.upsert({
+     *   create: {
+     *     // ... data to create a AccountDeleteRequest
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the AccountDeleteRequest we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AccountDeleteRequestUpsertArgs>(args: SelectSubset<T, AccountDeleteRequestUpsertArgs<ExtArgs>>): Prisma__AccountDeleteRequestClient<$Result.GetResult<Prisma.$AccountDeleteRequestPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of AccountDeleteRequests.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AccountDeleteRequestCountArgs} args - Arguments to filter AccountDeleteRequests to count.
+     * @example
+     * // Count the number of AccountDeleteRequests
+     * const count = await prisma.accountDeleteRequest.count({
+     *   where: {
+     *     // ... the filter for the AccountDeleteRequests we want to count
+     *   }
+     * })
+    **/
+    count<T extends AccountDeleteRequestCountArgs>(
+      args?: Subset<T, AccountDeleteRequestCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AccountDeleteRequestCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a AccountDeleteRequest.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AccountDeleteRequestAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AccountDeleteRequestAggregateArgs>(args: Subset<T, AccountDeleteRequestAggregateArgs>): Prisma.PrismaPromise<GetAccountDeleteRequestAggregateType<T>>
+
+    /**
+     * Group by AccountDeleteRequest.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AccountDeleteRequestGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AccountDeleteRequestGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AccountDeleteRequestGroupByArgs['orderBy'] }
+        : { orderBy?: AccountDeleteRequestGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AccountDeleteRequestGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAccountDeleteRequestGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the AccountDeleteRequest model
+   */
+  readonly fields: AccountDeleteRequestFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for AccountDeleteRequest.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AccountDeleteRequestClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    requestedBy<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the AccountDeleteRequest model
+   */
+  interface AccountDeleteRequestFieldRefs {
+    readonly id: FieldRef<"AccountDeleteRequest", 'String'>
+    readonly requestedById: FieldRef<"AccountDeleteRequest", 'String'>
+    readonly reason: FieldRef<"AccountDeleteRequest", 'String'>
+    readonly status: FieldRef<"AccountDeleteRequest", 'AccountDeleteRequestStatus'>
+    readonly adminNote: FieldRef<"AccountDeleteRequest", 'String'>
+    readonly reviewedAt: FieldRef<"AccountDeleteRequest", 'DateTime'>
+    readonly createdAt: FieldRef<"AccountDeleteRequest", 'DateTime'>
+    readonly updatedAt: FieldRef<"AccountDeleteRequest", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * AccountDeleteRequest findUnique
+   */
+  export type AccountDeleteRequestFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AccountDeleteRequest
+     */
+    select?: AccountDeleteRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AccountDeleteRequest
+     */
+    omit?: AccountDeleteRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AccountDeleteRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which AccountDeleteRequest to fetch.
+     */
+    where: AccountDeleteRequestWhereUniqueInput
+  }
+
+  /**
+   * AccountDeleteRequest findUniqueOrThrow
+   */
+  export type AccountDeleteRequestFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AccountDeleteRequest
+     */
+    select?: AccountDeleteRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AccountDeleteRequest
+     */
+    omit?: AccountDeleteRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AccountDeleteRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which AccountDeleteRequest to fetch.
+     */
+    where: AccountDeleteRequestWhereUniqueInput
+  }
+
+  /**
+   * AccountDeleteRequest findFirst
+   */
+  export type AccountDeleteRequestFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AccountDeleteRequest
+     */
+    select?: AccountDeleteRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AccountDeleteRequest
+     */
+    omit?: AccountDeleteRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AccountDeleteRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which AccountDeleteRequest to fetch.
+     */
+    where?: AccountDeleteRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AccountDeleteRequests to fetch.
+     */
+    orderBy?: AccountDeleteRequestOrderByWithRelationInput | AccountDeleteRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AccountDeleteRequests.
+     */
+    cursor?: AccountDeleteRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AccountDeleteRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AccountDeleteRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AccountDeleteRequests.
+     */
+    distinct?: AccountDeleteRequestScalarFieldEnum | AccountDeleteRequestScalarFieldEnum[]
+  }
+
+  /**
+   * AccountDeleteRequest findFirstOrThrow
+   */
+  export type AccountDeleteRequestFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AccountDeleteRequest
+     */
+    select?: AccountDeleteRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AccountDeleteRequest
+     */
+    omit?: AccountDeleteRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AccountDeleteRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which AccountDeleteRequest to fetch.
+     */
+    where?: AccountDeleteRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AccountDeleteRequests to fetch.
+     */
+    orderBy?: AccountDeleteRequestOrderByWithRelationInput | AccountDeleteRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AccountDeleteRequests.
+     */
+    cursor?: AccountDeleteRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AccountDeleteRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AccountDeleteRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AccountDeleteRequests.
+     */
+    distinct?: AccountDeleteRequestScalarFieldEnum | AccountDeleteRequestScalarFieldEnum[]
+  }
+
+  /**
+   * AccountDeleteRequest findMany
+   */
+  export type AccountDeleteRequestFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AccountDeleteRequest
+     */
+    select?: AccountDeleteRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AccountDeleteRequest
+     */
+    omit?: AccountDeleteRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AccountDeleteRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which AccountDeleteRequests to fetch.
+     */
+    where?: AccountDeleteRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AccountDeleteRequests to fetch.
+     */
+    orderBy?: AccountDeleteRequestOrderByWithRelationInput | AccountDeleteRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing AccountDeleteRequests.
+     */
+    cursor?: AccountDeleteRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AccountDeleteRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AccountDeleteRequests.
+     */
+    skip?: number
+    distinct?: AccountDeleteRequestScalarFieldEnum | AccountDeleteRequestScalarFieldEnum[]
+  }
+
+  /**
+   * AccountDeleteRequest create
+   */
+  export type AccountDeleteRequestCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AccountDeleteRequest
+     */
+    select?: AccountDeleteRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AccountDeleteRequest
+     */
+    omit?: AccountDeleteRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AccountDeleteRequestInclude<ExtArgs> | null
+    /**
+     * The data needed to create a AccountDeleteRequest.
+     */
+    data: XOR<AccountDeleteRequestCreateInput, AccountDeleteRequestUncheckedCreateInput>
+  }
+
+  /**
+   * AccountDeleteRequest createMany
+   */
+  export type AccountDeleteRequestCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many AccountDeleteRequests.
+     */
+    data: AccountDeleteRequestCreateManyInput | AccountDeleteRequestCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AccountDeleteRequest createManyAndReturn
+   */
+  export type AccountDeleteRequestCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AccountDeleteRequest
+     */
+    select?: AccountDeleteRequestSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AccountDeleteRequest
+     */
+    omit?: AccountDeleteRequestOmit<ExtArgs> | null
+    /**
+     * The data used to create many AccountDeleteRequests.
+     */
+    data: AccountDeleteRequestCreateManyInput | AccountDeleteRequestCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AccountDeleteRequestIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * AccountDeleteRequest update
+   */
+  export type AccountDeleteRequestUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AccountDeleteRequest
+     */
+    select?: AccountDeleteRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AccountDeleteRequest
+     */
+    omit?: AccountDeleteRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AccountDeleteRequestInclude<ExtArgs> | null
+    /**
+     * The data needed to update a AccountDeleteRequest.
+     */
+    data: XOR<AccountDeleteRequestUpdateInput, AccountDeleteRequestUncheckedUpdateInput>
+    /**
+     * Choose, which AccountDeleteRequest to update.
+     */
+    where: AccountDeleteRequestWhereUniqueInput
+  }
+
+  /**
+   * AccountDeleteRequest updateMany
+   */
+  export type AccountDeleteRequestUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update AccountDeleteRequests.
+     */
+    data: XOR<AccountDeleteRequestUpdateManyMutationInput, AccountDeleteRequestUncheckedUpdateManyInput>
+    /**
+     * Filter which AccountDeleteRequests to update
+     */
+    where?: AccountDeleteRequestWhereInput
+    /**
+     * Limit how many AccountDeleteRequests to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * AccountDeleteRequest updateManyAndReturn
+   */
+  export type AccountDeleteRequestUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AccountDeleteRequest
+     */
+    select?: AccountDeleteRequestSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AccountDeleteRequest
+     */
+    omit?: AccountDeleteRequestOmit<ExtArgs> | null
+    /**
+     * The data used to update AccountDeleteRequests.
+     */
+    data: XOR<AccountDeleteRequestUpdateManyMutationInput, AccountDeleteRequestUncheckedUpdateManyInput>
+    /**
+     * Filter which AccountDeleteRequests to update
+     */
+    where?: AccountDeleteRequestWhereInput
+    /**
+     * Limit how many AccountDeleteRequests to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AccountDeleteRequestIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * AccountDeleteRequest upsert
+   */
+  export type AccountDeleteRequestUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AccountDeleteRequest
+     */
+    select?: AccountDeleteRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AccountDeleteRequest
+     */
+    omit?: AccountDeleteRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AccountDeleteRequestInclude<ExtArgs> | null
+    /**
+     * The filter to search for the AccountDeleteRequest to update in case it exists.
+     */
+    where: AccountDeleteRequestWhereUniqueInput
+    /**
+     * In case the AccountDeleteRequest found by the `where` argument doesn't exist, create a new AccountDeleteRequest with this data.
+     */
+    create: XOR<AccountDeleteRequestCreateInput, AccountDeleteRequestUncheckedCreateInput>
+    /**
+     * In case the AccountDeleteRequest was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AccountDeleteRequestUpdateInput, AccountDeleteRequestUncheckedUpdateInput>
+  }
+
+  /**
+   * AccountDeleteRequest delete
+   */
+  export type AccountDeleteRequestDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AccountDeleteRequest
+     */
+    select?: AccountDeleteRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AccountDeleteRequest
+     */
+    omit?: AccountDeleteRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AccountDeleteRequestInclude<ExtArgs> | null
+    /**
+     * Filter which AccountDeleteRequest to delete.
+     */
+    where: AccountDeleteRequestWhereUniqueInput
+  }
+
+  /**
+   * AccountDeleteRequest deleteMany
+   */
+  export type AccountDeleteRequestDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AccountDeleteRequests to delete
+     */
+    where?: AccountDeleteRequestWhereInput
+    /**
+     * Limit how many AccountDeleteRequests to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * AccountDeleteRequest without action
+   */
+  export type AccountDeleteRequestDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AccountDeleteRequest
+     */
+    select?: AccountDeleteRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AccountDeleteRequest
+     */
+    omit?: AccountDeleteRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AccountDeleteRequestInclude<ExtArgs> | null
   }
 
 
@@ -15043,6 +16589,10 @@ export namespace Prisma {
     contactPhone: string | null
     location: string | null
     eventDate: Date | null
+    obituaryType: $Enums.ObituaryType | null
+    deceasedName: string | null
+    deathDate: Date | null
+    eventTime: string | null
     publishedAt: Date | null
     expiresAt: Date | null
     isFeatured: boolean | null
@@ -15063,6 +16613,10 @@ export namespace Prisma {
     contactPhone: string | null
     location: string | null
     eventDate: Date | null
+    obituaryType: $Enums.ObituaryType | null
+    deceasedName: string | null
+    deathDate: Date | null
+    eventTime: string | null
     publishedAt: Date | null
     expiresAt: Date | null
     isFeatured: boolean | null
@@ -15083,6 +16637,10 @@ export namespace Prisma {
     contactPhone: number
     location: number
     eventDate: number
+    obituaryType: number
+    deceasedName: number
+    deathDate: number
+    eventTime: number
     publishedAt: number
     expiresAt: number
     isFeatured: number
@@ -15105,6 +16663,10 @@ export namespace Prisma {
     contactPhone?: true
     location?: true
     eventDate?: true
+    obituaryType?: true
+    deceasedName?: true
+    deathDate?: true
+    eventTime?: true
     publishedAt?: true
     expiresAt?: true
     isFeatured?: true
@@ -15125,6 +16687,10 @@ export namespace Prisma {
     contactPhone?: true
     location?: true
     eventDate?: true
+    obituaryType?: true
+    deceasedName?: true
+    deathDate?: true
+    eventTime?: true
     publishedAt?: true
     expiresAt?: true
     isFeatured?: true
@@ -15145,6 +16711,10 @@ export namespace Prisma {
     contactPhone?: true
     location?: true
     eventDate?: true
+    obituaryType?: true
+    deceasedName?: true
+    deathDate?: true
+    eventTime?: true
     publishedAt?: true
     expiresAt?: true
     isFeatured?: true
@@ -15238,6 +16808,10 @@ export namespace Prisma {
     contactPhone: string | null
     location: string | null
     eventDate: Date | null
+    obituaryType: $Enums.ObituaryType | null
+    deceasedName: string | null
+    deathDate: Date | null
+    eventTime: string | null
     publishedAt: Date | null
     expiresAt: Date | null
     isFeatured: boolean
@@ -15275,6 +16849,10 @@ export namespace Prisma {
     contactPhone?: boolean
     location?: boolean
     eventDate?: boolean
+    obituaryType?: boolean
+    deceasedName?: boolean
+    deathDate?: boolean
+    eventTime?: boolean
     publishedAt?: boolean
     expiresAt?: boolean
     isFeatured?: boolean
@@ -15284,6 +16862,7 @@ export namespace Prisma {
     deletedAt?: boolean
     createdBy?: boolean | CommunityPost$createdByArgs<ExtArgs>
     translations?: boolean | CommunityPost$translationsArgs<ExtArgs>
+    likes?: boolean | CommunityPost$likesArgs<ExtArgs>
     _count?: boolean | CommunityPostCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["communityPost"]>
 
@@ -15298,6 +16877,10 @@ export namespace Prisma {
     contactPhone?: boolean
     location?: boolean
     eventDate?: boolean
+    obituaryType?: boolean
+    deceasedName?: boolean
+    deathDate?: boolean
+    eventTime?: boolean
     publishedAt?: boolean
     expiresAt?: boolean
     isFeatured?: boolean
@@ -15319,6 +16902,10 @@ export namespace Prisma {
     contactPhone?: boolean
     location?: boolean
     eventDate?: boolean
+    obituaryType?: boolean
+    deceasedName?: boolean
+    deathDate?: boolean
+    eventTime?: boolean
     publishedAt?: boolean
     expiresAt?: boolean
     isFeatured?: boolean
@@ -15340,6 +16927,10 @@ export namespace Prisma {
     contactPhone?: boolean
     location?: boolean
     eventDate?: boolean
+    obituaryType?: boolean
+    deceasedName?: boolean
+    deathDate?: boolean
+    eventTime?: boolean
     publishedAt?: boolean
     expiresAt?: boolean
     isFeatured?: boolean
@@ -15349,10 +16940,11 @@ export namespace Prisma {
     deletedAt?: boolean
   }
 
-  export type CommunityPostOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdById" | "category" | "status" | "bannerUrl" | "bannerStorageKey" | "contactName" | "contactPhone" | "location" | "eventDate" | "publishedAt" | "expiresAt" | "isFeatured" | "rejectionReason" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["communityPost"]>
+  export type CommunityPostOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdById" | "category" | "status" | "bannerUrl" | "bannerStorageKey" | "contactName" | "contactPhone" | "location" | "eventDate" | "obituaryType" | "deceasedName" | "deathDate" | "eventTime" | "publishedAt" | "expiresAt" | "isFeatured" | "rejectionReason" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["communityPost"]>
   export type CommunityPostInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     createdBy?: boolean | CommunityPost$createdByArgs<ExtArgs>
     translations?: boolean | CommunityPost$translationsArgs<ExtArgs>
+    likes?: boolean | CommunityPost$likesArgs<ExtArgs>
     _count?: boolean | CommunityPostCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type CommunityPostIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -15367,6 +16959,7 @@ export namespace Prisma {
     objects: {
       createdBy: Prisma.$UserPayload<ExtArgs> | null
       translations: Prisma.$CommunityPostTranslationPayload<ExtArgs>[]
+      likes: Prisma.$CommunityPostLikePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -15379,6 +16972,10 @@ export namespace Prisma {
       contactPhone: string | null
       location: string | null
       eventDate: Date | null
+      obituaryType: $Enums.ObituaryType | null
+      deceasedName: string | null
+      deathDate: Date | null
+      eventTime: string | null
       publishedAt: Date | null
       expiresAt: Date | null
       isFeatured: boolean
@@ -15782,6 +17379,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     createdBy<T extends CommunityPost$createdByArgs<ExtArgs> = {}>(args?: Subset<T, CommunityPost$createdByArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     translations<T extends CommunityPost$translationsArgs<ExtArgs> = {}>(args?: Subset<T, CommunityPost$translationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommunityPostTranslationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    likes<T extends CommunityPost$likesArgs<ExtArgs> = {}>(args?: Subset<T, CommunityPost$likesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommunityPostLikePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -15821,6 +17419,10 @@ export namespace Prisma {
     readonly contactPhone: FieldRef<"CommunityPost", 'String'>
     readonly location: FieldRef<"CommunityPost", 'String'>
     readonly eventDate: FieldRef<"CommunityPost", 'DateTime'>
+    readonly obituaryType: FieldRef<"CommunityPost", 'ObituaryType'>
+    readonly deceasedName: FieldRef<"CommunityPost", 'String'>
+    readonly deathDate: FieldRef<"CommunityPost", 'DateTime'>
+    readonly eventTime: FieldRef<"CommunityPost", 'String'>
     readonly publishedAt: FieldRef<"CommunityPost", 'DateTime'>
     readonly expiresAt: FieldRef<"CommunityPost", 'DateTime'>
     readonly isFeatured: FieldRef<"CommunityPost", 'Boolean'>
@@ -16267,6 +17869,30 @@ export namespace Prisma {
   }
 
   /**
+   * CommunityPost.likes
+   */
+  export type CommunityPost$likesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CommunityPostLike
+     */
+    select?: CommunityPostLikeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CommunityPostLike
+     */
+    omit?: CommunityPostLikeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommunityPostLikeInclude<ExtArgs> | null
+    where?: CommunityPostLikeWhereInput
+    orderBy?: CommunityPostLikeOrderByWithRelationInput | CommunityPostLikeOrderByWithRelationInput[]
+    cursor?: CommunityPostLikeWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CommunityPostLikeScalarFieldEnum | CommunityPostLikeScalarFieldEnum[]
+  }
+
+  /**
    * CommunityPost without action
    */
   export type CommunityPostDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -16282,6 +17908,1059 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: CommunityPostInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model CommunityPostLike
+   */
+
+  export type AggregateCommunityPostLike = {
+    _count: CommunityPostLikeCountAggregateOutputType | null
+    _min: CommunityPostLikeMinAggregateOutputType | null
+    _max: CommunityPostLikeMaxAggregateOutputType | null
+  }
+
+  export type CommunityPostLikeMinAggregateOutputType = {
+    id: string | null
+    postId: string | null
+    userId: string | null
+    createdAt: Date | null
+  }
+
+  export type CommunityPostLikeMaxAggregateOutputType = {
+    id: string | null
+    postId: string | null
+    userId: string | null
+    createdAt: Date | null
+  }
+
+  export type CommunityPostLikeCountAggregateOutputType = {
+    id: number
+    postId: number
+    userId: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type CommunityPostLikeMinAggregateInputType = {
+    id?: true
+    postId?: true
+    userId?: true
+    createdAt?: true
+  }
+
+  export type CommunityPostLikeMaxAggregateInputType = {
+    id?: true
+    postId?: true
+    userId?: true
+    createdAt?: true
+  }
+
+  export type CommunityPostLikeCountAggregateInputType = {
+    id?: true
+    postId?: true
+    userId?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type CommunityPostLikeAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CommunityPostLike to aggregate.
+     */
+    where?: CommunityPostLikeWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CommunityPostLikes to fetch.
+     */
+    orderBy?: CommunityPostLikeOrderByWithRelationInput | CommunityPostLikeOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: CommunityPostLikeWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CommunityPostLikes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CommunityPostLikes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned CommunityPostLikes
+    **/
+    _count?: true | CommunityPostLikeCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CommunityPostLikeMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CommunityPostLikeMaxAggregateInputType
+  }
+
+  export type GetCommunityPostLikeAggregateType<T extends CommunityPostLikeAggregateArgs> = {
+        [P in keyof T & keyof AggregateCommunityPostLike]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCommunityPostLike[P]>
+      : GetScalarType<T[P], AggregateCommunityPostLike[P]>
+  }
+
+
+
+
+  export type CommunityPostLikeGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CommunityPostLikeWhereInput
+    orderBy?: CommunityPostLikeOrderByWithAggregationInput | CommunityPostLikeOrderByWithAggregationInput[]
+    by: CommunityPostLikeScalarFieldEnum[] | CommunityPostLikeScalarFieldEnum
+    having?: CommunityPostLikeScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CommunityPostLikeCountAggregateInputType | true
+    _min?: CommunityPostLikeMinAggregateInputType
+    _max?: CommunityPostLikeMaxAggregateInputType
+  }
+
+  export type CommunityPostLikeGroupByOutputType = {
+    id: string
+    postId: string
+    userId: string
+    createdAt: Date
+    _count: CommunityPostLikeCountAggregateOutputType | null
+    _min: CommunityPostLikeMinAggregateOutputType | null
+    _max: CommunityPostLikeMaxAggregateOutputType | null
+  }
+
+  type GetCommunityPostLikeGroupByPayload<T extends CommunityPostLikeGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CommunityPostLikeGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CommunityPostLikeGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CommunityPostLikeGroupByOutputType[P]>
+            : GetScalarType<T[P], CommunityPostLikeGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type CommunityPostLikeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    postId?: boolean
+    userId?: boolean
+    createdAt?: boolean
+    post?: boolean | CommunityPostDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["communityPostLike"]>
+
+  export type CommunityPostLikeSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    postId?: boolean
+    userId?: boolean
+    createdAt?: boolean
+    post?: boolean | CommunityPostDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["communityPostLike"]>
+
+  export type CommunityPostLikeSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    postId?: boolean
+    userId?: boolean
+    createdAt?: boolean
+    post?: boolean | CommunityPostDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["communityPostLike"]>
+
+  export type CommunityPostLikeSelectScalar = {
+    id?: boolean
+    postId?: boolean
+    userId?: boolean
+    createdAt?: boolean
+  }
+
+  export type CommunityPostLikeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "postId" | "userId" | "createdAt", ExtArgs["result"]["communityPostLike"]>
+  export type CommunityPostLikeInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    post?: boolean | CommunityPostDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type CommunityPostLikeIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    post?: boolean | CommunityPostDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type CommunityPostLikeIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    post?: boolean | CommunityPostDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $CommunityPostLikePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "CommunityPostLike"
+    objects: {
+      post: Prisma.$CommunityPostPayload<ExtArgs>
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      postId: string
+      userId: string
+      createdAt: Date
+    }, ExtArgs["result"]["communityPostLike"]>
+    composites: {}
+  }
+
+  type CommunityPostLikeGetPayload<S extends boolean | null | undefined | CommunityPostLikeDefaultArgs> = $Result.GetResult<Prisma.$CommunityPostLikePayload, S>
+
+  type CommunityPostLikeCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<CommunityPostLikeFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CommunityPostLikeCountAggregateInputType | true
+    }
+
+  export interface CommunityPostLikeDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['CommunityPostLike'], meta: { name: 'CommunityPostLike' } }
+    /**
+     * Find zero or one CommunityPostLike that matches the filter.
+     * @param {CommunityPostLikeFindUniqueArgs} args - Arguments to find a CommunityPostLike
+     * @example
+     * // Get one CommunityPostLike
+     * const communityPostLike = await prisma.communityPostLike.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends CommunityPostLikeFindUniqueArgs>(args: SelectSubset<T, CommunityPostLikeFindUniqueArgs<ExtArgs>>): Prisma__CommunityPostLikeClient<$Result.GetResult<Prisma.$CommunityPostLikePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one CommunityPostLike that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {CommunityPostLikeFindUniqueOrThrowArgs} args - Arguments to find a CommunityPostLike
+     * @example
+     * // Get one CommunityPostLike
+     * const communityPostLike = await prisma.communityPostLike.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends CommunityPostLikeFindUniqueOrThrowArgs>(args: SelectSubset<T, CommunityPostLikeFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CommunityPostLikeClient<$Result.GetResult<Prisma.$CommunityPostLikePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first CommunityPostLike that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommunityPostLikeFindFirstArgs} args - Arguments to find a CommunityPostLike
+     * @example
+     * // Get one CommunityPostLike
+     * const communityPostLike = await prisma.communityPostLike.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends CommunityPostLikeFindFirstArgs>(args?: SelectSubset<T, CommunityPostLikeFindFirstArgs<ExtArgs>>): Prisma__CommunityPostLikeClient<$Result.GetResult<Prisma.$CommunityPostLikePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first CommunityPostLike that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommunityPostLikeFindFirstOrThrowArgs} args - Arguments to find a CommunityPostLike
+     * @example
+     * // Get one CommunityPostLike
+     * const communityPostLike = await prisma.communityPostLike.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends CommunityPostLikeFindFirstOrThrowArgs>(args?: SelectSubset<T, CommunityPostLikeFindFirstOrThrowArgs<ExtArgs>>): Prisma__CommunityPostLikeClient<$Result.GetResult<Prisma.$CommunityPostLikePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more CommunityPostLikes that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommunityPostLikeFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all CommunityPostLikes
+     * const communityPostLikes = await prisma.communityPostLike.findMany()
+     * 
+     * // Get first 10 CommunityPostLikes
+     * const communityPostLikes = await prisma.communityPostLike.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const communityPostLikeWithIdOnly = await prisma.communityPostLike.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends CommunityPostLikeFindManyArgs>(args?: SelectSubset<T, CommunityPostLikeFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommunityPostLikePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a CommunityPostLike.
+     * @param {CommunityPostLikeCreateArgs} args - Arguments to create a CommunityPostLike.
+     * @example
+     * // Create one CommunityPostLike
+     * const CommunityPostLike = await prisma.communityPostLike.create({
+     *   data: {
+     *     // ... data to create a CommunityPostLike
+     *   }
+     * })
+     * 
+     */
+    create<T extends CommunityPostLikeCreateArgs>(args: SelectSubset<T, CommunityPostLikeCreateArgs<ExtArgs>>): Prisma__CommunityPostLikeClient<$Result.GetResult<Prisma.$CommunityPostLikePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many CommunityPostLikes.
+     * @param {CommunityPostLikeCreateManyArgs} args - Arguments to create many CommunityPostLikes.
+     * @example
+     * // Create many CommunityPostLikes
+     * const communityPostLike = await prisma.communityPostLike.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends CommunityPostLikeCreateManyArgs>(args?: SelectSubset<T, CommunityPostLikeCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many CommunityPostLikes and returns the data saved in the database.
+     * @param {CommunityPostLikeCreateManyAndReturnArgs} args - Arguments to create many CommunityPostLikes.
+     * @example
+     * // Create many CommunityPostLikes
+     * const communityPostLike = await prisma.communityPostLike.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many CommunityPostLikes and only return the `id`
+     * const communityPostLikeWithIdOnly = await prisma.communityPostLike.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends CommunityPostLikeCreateManyAndReturnArgs>(args?: SelectSubset<T, CommunityPostLikeCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommunityPostLikePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a CommunityPostLike.
+     * @param {CommunityPostLikeDeleteArgs} args - Arguments to delete one CommunityPostLike.
+     * @example
+     * // Delete one CommunityPostLike
+     * const CommunityPostLike = await prisma.communityPostLike.delete({
+     *   where: {
+     *     // ... filter to delete one CommunityPostLike
+     *   }
+     * })
+     * 
+     */
+    delete<T extends CommunityPostLikeDeleteArgs>(args: SelectSubset<T, CommunityPostLikeDeleteArgs<ExtArgs>>): Prisma__CommunityPostLikeClient<$Result.GetResult<Prisma.$CommunityPostLikePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one CommunityPostLike.
+     * @param {CommunityPostLikeUpdateArgs} args - Arguments to update one CommunityPostLike.
+     * @example
+     * // Update one CommunityPostLike
+     * const communityPostLike = await prisma.communityPostLike.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends CommunityPostLikeUpdateArgs>(args: SelectSubset<T, CommunityPostLikeUpdateArgs<ExtArgs>>): Prisma__CommunityPostLikeClient<$Result.GetResult<Prisma.$CommunityPostLikePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more CommunityPostLikes.
+     * @param {CommunityPostLikeDeleteManyArgs} args - Arguments to filter CommunityPostLikes to delete.
+     * @example
+     * // Delete a few CommunityPostLikes
+     * const { count } = await prisma.communityPostLike.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends CommunityPostLikeDeleteManyArgs>(args?: SelectSubset<T, CommunityPostLikeDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more CommunityPostLikes.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommunityPostLikeUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many CommunityPostLikes
+     * const communityPostLike = await prisma.communityPostLike.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends CommunityPostLikeUpdateManyArgs>(args: SelectSubset<T, CommunityPostLikeUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more CommunityPostLikes and returns the data updated in the database.
+     * @param {CommunityPostLikeUpdateManyAndReturnArgs} args - Arguments to update many CommunityPostLikes.
+     * @example
+     * // Update many CommunityPostLikes
+     * const communityPostLike = await prisma.communityPostLike.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more CommunityPostLikes and only return the `id`
+     * const communityPostLikeWithIdOnly = await prisma.communityPostLike.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends CommunityPostLikeUpdateManyAndReturnArgs>(args: SelectSubset<T, CommunityPostLikeUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommunityPostLikePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one CommunityPostLike.
+     * @param {CommunityPostLikeUpsertArgs} args - Arguments to update or create a CommunityPostLike.
+     * @example
+     * // Update or create a CommunityPostLike
+     * const communityPostLike = await prisma.communityPostLike.upsert({
+     *   create: {
+     *     // ... data to create a CommunityPostLike
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the CommunityPostLike we want to update
+     *   }
+     * })
+     */
+    upsert<T extends CommunityPostLikeUpsertArgs>(args: SelectSubset<T, CommunityPostLikeUpsertArgs<ExtArgs>>): Prisma__CommunityPostLikeClient<$Result.GetResult<Prisma.$CommunityPostLikePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of CommunityPostLikes.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommunityPostLikeCountArgs} args - Arguments to filter CommunityPostLikes to count.
+     * @example
+     * // Count the number of CommunityPostLikes
+     * const count = await prisma.communityPostLike.count({
+     *   where: {
+     *     // ... the filter for the CommunityPostLikes we want to count
+     *   }
+     * })
+    **/
+    count<T extends CommunityPostLikeCountArgs>(
+      args?: Subset<T, CommunityPostLikeCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CommunityPostLikeCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a CommunityPostLike.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommunityPostLikeAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CommunityPostLikeAggregateArgs>(args: Subset<T, CommunityPostLikeAggregateArgs>): Prisma.PrismaPromise<GetCommunityPostLikeAggregateType<T>>
+
+    /**
+     * Group by CommunityPostLike.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommunityPostLikeGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends CommunityPostLikeGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: CommunityPostLikeGroupByArgs['orderBy'] }
+        : { orderBy?: CommunityPostLikeGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, CommunityPostLikeGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCommunityPostLikeGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the CommunityPostLike model
+   */
+  readonly fields: CommunityPostLikeFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for CommunityPostLike.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__CommunityPostLikeClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    post<T extends CommunityPostDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CommunityPostDefaultArgs<ExtArgs>>): Prisma__CommunityPostClient<$Result.GetResult<Prisma.$CommunityPostPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the CommunityPostLike model
+   */
+  interface CommunityPostLikeFieldRefs {
+    readonly id: FieldRef<"CommunityPostLike", 'String'>
+    readonly postId: FieldRef<"CommunityPostLike", 'String'>
+    readonly userId: FieldRef<"CommunityPostLike", 'String'>
+    readonly createdAt: FieldRef<"CommunityPostLike", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * CommunityPostLike findUnique
+   */
+  export type CommunityPostLikeFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CommunityPostLike
+     */
+    select?: CommunityPostLikeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CommunityPostLike
+     */
+    omit?: CommunityPostLikeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommunityPostLikeInclude<ExtArgs> | null
+    /**
+     * Filter, which CommunityPostLike to fetch.
+     */
+    where: CommunityPostLikeWhereUniqueInput
+  }
+
+  /**
+   * CommunityPostLike findUniqueOrThrow
+   */
+  export type CommunityPostLikeFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CommunityPostLike
+     */
+    select?: CommunityPostLikeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CommunityPostLike
+     */
+    omit?: CommunityPostLikeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommunityPostLikeInclude<ExtArgs> | null
+    /**
+     * Filter, which CommunityPostLike to fetch.
+     */
+    where: CommunityPostLikeWhereUniqueInput
+  }
+
+  /**
+   * CommunityPostLike findFirst
+   */
+  export type CommunityPostLikeFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CommunityPostLike
+     */
+    select?: CommunityPostLikeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CommunityPostLike
+     */
+    omit?: CommunityPostLikeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommunityPostLikeInclude<ExtArgs> | null
+    /**
+     * Filter, which CommunityPostLike to fetch.
+     */
+    where?: CommunityPostLikeWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CommunityPostLikes to fetch.
+     */
+    orderBy?: CommunityPostLikeOrderByWithRelationInput | CommunityPostLikeOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CommunityPostLikes.
+     */
+    cursor?: CommunityPostLikeWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CommunityPostLikes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CommunityPostLikes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CommunityPostLikes.
+     */
+    distinct?: CommunityPostLikeScalarFieldEnum | CommunityPostLikeScalarFieldEnum[]
+  }
+
+  /**
+   * CommunityPostLike findFirstOrThrow
+   */
+  export type CommunityPostLikeFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CommunityPostLike
+     */
+    select?: CommunityPostLikeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CommunityPostLike
+     */
+    omit?: CommunityPostLikeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommunityPostLikeInclude<ExtArgs> | null
+    /**
+     * Filter, which CommunityPostLike to fetch.
+     */
+    where?: CommunityPostLikeWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CommunityPostLikes to fetch.
+     */
+    orderBy?: CommunityPostLikeOrderByWithRelationInput | CommunityPostLikeOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CommunityPostLikes.
+     */
+    cursor?: CommunityPostLikeWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CommunityPostLikes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CommunityPostLikes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CommunityPostLikes.
+     */
+    distinct?: CommunityPostLikeScalarFieldEnum | CommunityPostLikeScalarFieldEnum[]
+  }
+
+  /**
+   * CommunityPostLike findMany
+   */
+  export type CommunityPostLikeFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CommunityPostLike
+     */
+    select?: CommunityPostLikeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CommunityPostLike
+     */
+    omit?: CommunityPostLikeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommunityPostLikeInclude<ExtArgs> | null
+    /**
+     * Filter, which CommunityPostLikes to fetch.
+     */
+    where?: CommunityPostLikeWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CommunityPostLikes to fetch.
+     */
+    orderBy?: CommunityPostLikeOrderByWithRelationInput | CommunityPostLikeOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing CommunityPostLikes.
+     */
+    cursor?: CommunityPostLikeWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CommunityPostLikes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CommunityPostLikes.
+     */
+    skip?: number
+    distinct?: CommunityPostLikeScalarFieldEnum | CommunityPostLikeScalarFieldEnum[]
+  }
+
+  /**
+   * CommunityPostLike create
+   */
+  export type CommunityPostLikeCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CommunityPostLike
+     */
+    select?: CommunityPostLikeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CommunityPostLike
+     */
+    omit?: CommunityPostLikeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommunityPostLikeInclude<ExtArgs> | null
+    /**
+     * The data needed to create a CommunityPostLike.
+     */
+    data: XOR<CommunityPostLikeCreateInput, CommunityPostLikeUncheckedCreateInput>
+  }
+
+  /**
+   * CommunityPostLike createMany
+   */
+  export type CommunityPostLikeCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many CommunityPostLikes.
+     */
+    data: CommunityPostLikeCreateManyInput | CommunityPostLikeCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * CommunityPostLike createManyAndReturn
+   */
+  export type CommunityPostLikeCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CommunityPostLike
+     */
+    select?: CommunityPostLikeSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the CommunityPostLike
+     */
+    omit?: CommunityPostLikeOmit<ExtArgs> | null
+    /**
+     * The data used to create many CommunityPostLikes.
+     */
+    data: CommunityPostLikeCreateManyInput | CommunityPostLikeCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommunityPostLikeIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * CommunityPostLike update
+   */
+  export type CommunityPostLikeUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CommunityPostLike
+     */
+    select?: CommunityPostLikeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CommunityPostLike
+     */
+    omit?: CommunityPostLikeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommunityPostLikeInclude<ExtArgs> | null
+    /**
+     * The data needed to update a CommunityPostLike.
+     */
+    data: XOR<CommunityPostLikeUpdateInput, CommunityPostLikeUncheckedUpdateInput>
+    /**
+     * Choose, which CommunityPostLike to update.
+     */
+    where: CommunityPostLikeWhereUniqueInput
+  }
+
+  /**
+   * CommunityPostLike updateMany
+   */
+  export type CommunityPostLikeUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update CommunityPostLikes.
+     */
+    data: XOR<CommunityPostLikeUpdateManyMutationInput, CommunityPostLikeUncheckedUpdateManyInput>
+    /**
+     * Filter which CommunityPostLikes to update
+     */
+    where?: CommunityPostLikeWhereInput
+    /**
+     * Limit how many CommunityPostLikes to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * CommunityPostLike updateManyAndReturn
+   */
+  export type CommunityPostLikeUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CommunityPostLike
+     */
+    select?: CommunityPostLikeSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the CommunityPostLike
+     */
+    omit?: CommunityPostLikeOmit<ExtArgs> | null
+    /**
+     * The data used to update CommunityPostLikes.
+     */
+    data: XOR<CommunityPostLikeUpdateManyMutationInput, CommunityPostLikeUncheckedUpdateManyInput>
+    /**
+     * Filter which CommunityPostLikes to update
+     */
+    where?: CommunityPostLikeWhereInput
+    /**
+     * Limit how many CommunityPostLikes to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommunityPostLikeIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * CommunityPostLike upsert
+   */
+  export type CommunityPostLikeUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CommunityPostLike
+     */
+    select?: CommunityPostLikeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CommunityPostLike
+     */
+    omit?: CommunityPostLikeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommunityPostLikeInclude<ExtArgs> | null
+    /**
+     * The filter to search for the CommunityPostLike to update in case it exists.
+     */
+    where: CommunityPostLikeWhereUniqueInput
+    /**
+     * In case the CommunityPostLike found by the `where` argument doesn't exist, create a new CommunityPostLike with this data.
+     */
+    create: XOR<CommunityPostLikeCreateInput, CommunityPostLikeUncheckedCreateInput>
+    /**
+     * In case the CommunityPostLike was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<CommunityPostLikeUpdateInput, CommunityPostLikeUncheckedUpdateInput>
+  }
+
+  /**
+   * CommunityPostLike delete
+   */
+  export type CommunityPostLikeDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CommunityPostLike
+     */
+    select?: CommunityPostLikeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CommunityPostLike
+     */
+    omit?: CommunityPostLikeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommunityPostLikeInclude<ExtArgs> | null
+    /**
+     * Filter which CommunityPostLike to delete.
+     */
+    where: CommunityPostLikeWhereUniqueInput
+  }
+
+  /**
+   * CommunityPostLike deleteMany
+   */
+  export type CommunityPostLikeDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CommunityPostLikes to delete
+     */
+    where?: CommunityPostLikeWhereInput
+    /**
+     * Limit how many CommunityPostLikes to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * CommunityPostLike without action
+   */
+  export type CommunityPostLikeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CommunityPostLike
+     */
+    select?: CommunityPostLikeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CommunityPostLike
+     */
+    omit?: CommunityPostLikeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommunityPostLikeInclude<ExtArgs> | null
   }
 
 
@@ -17401,6 +20080,9 @@ export namespace Prisma {
     address: string | null
     phone: string | null
     email: string | null
+    status: $Enums.CommitteeStatus | null
+    rejectionReason: string | null
+    publishedAt: Date | null
     isActive: boolean | null
     sortOrder: number | null
     createdAt: Date | null
@@ -17420,6 +20102,9 @@ export namespace Prisma {
     address: string | null
     phone: string | null
     email: string | null
+    status: $Enums.CommitteeStatus | null
+    rejectionReason: string | null
+    publishedAt: Date | null
     isActive: boolean | null
     sortOrder: number | null
     createdAt: Date | null
@@ -17439,6 +20124,9 @@ export namespace Prisma {
     address: number
     phone: number
     email: number
+    status: number
+    rejectionReason: number
+    publishedAt: number
     isActive: number
     sortOrder: number
     createdAt: number
@@ -17468,6 +20156,9 @@ export namespace Prisma {
     address?: true
     phone?: true
     email?: true
+    status?: true
+    rejectionReason?: true
+    publishedAt?: true
     isActive?: true
     sortOrder?: true
     createdAt?: true
@@ -17487,6 +20178,9 @@ export namespace Prisma {
     address?: true
     phone?: true
     email?: true
+    status?: true
+    rejectionReason?: true
+    publishedAt?: true
     isActive?: true
     sortOrder?: true
     createdAt?: true
@@ -17506,6 +20200,9 @@ export namespace Prisma {
     address?: true
     phone?: true
     email?: true
+    status?: true
+    rejectionReason?: true
+    publishedAt?: true
     isActive?: true
     sortOrder?: true
     createdAt?: true
@@ -17612,6 +20309,9 @@ export namespace Prisma {
     address: string | null
     phone: string | null
     email: string | null
+    status: $Enums.CommitteeStatus
+    rejectionReason: string | null
+    publishedAt: Date | null
     isActive: boolean
     sortOrder: number
     createdAt: Date
@@ -17650,6 +20350,9 @@ export namespace Prisma {
     address?: boolean
     phone?: boolean
     email?: boolean
+    status?: boolean
+    rejectionReason?: boolean
+    publishedAt?: boolean
     isActive?: boolean
     sortOrder?: boolean
     createdAt?: boolean
@@ -17673,6 +20376,9 @@ export namespace Prisma {
     address?: boolean
     phone?: boolean
     email?: boolean
+    status?: boolean
+    rejectionReason?: boolean
+    publishedAt?: boolean
     isActive?: boolean
     sortOrder?: boolean
     createdAt?: boolean
@@ -17693,6 +20399,9 @@ export namespace Prisma {
     address?: boolean
     phone?: boolean
     email?: boolean
+    status?: boolean
+    rejectionReason?: boolean
+    publishedAt?: boolean
     isActive?: boolean
     sortOrder?: boolean
     createdAt?: boolean
@@ -17713,6 +20422,9 @@ export namespace Prisma {
     address?: boolean
     phone?: boolean
     email?: boolean
+    status?: boolean
+    rejectionReason?: boolean
+    publishedAt?: boolean
     isActive?: boolean
     sortOrder?: boolean
     createdAt?: boolean
@@ -17720,7 +20432,7 @@ export namespace Prisma {
     deletedAt?: boolean
   }
 
-  export type CommitteeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdById" | "bannerUrl" | "bannerStorageKey" | "logoUrl" | "city" | "district" | "state" | "address" | "phone" | "email" | "isActive" | "sortOrder" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["committee"]>
+  export type CommitteeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdById" | "bannerUrl" | "bannerStorageKey" | "logoUrl" | "city" | "district" | "state" | "address" | "phone" | "email" | "status" | "rejectionReason" | "publishedAt" | "isActive" | "sortOrder" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["committee"]>
   export type CommitteeInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     createdBy?: boolean | Committee$createdByArgs<ExtArgs>
     translations?: boolean | Committee$translationsArgs<ExtArgs>
@@ -17753,6 +20465,9 @@ export namespace Prisma {
       address: string | null
       phone: string | null
       email: string | null
+      status: $Enums.CommitteeStatus
+      rejectionReason: string | null
+      publishedAt: Date | null
       isActive: boolean
       sortOrder: number
       createdAt: Date
@@ -18195,6 +20910,9 @@ export namespace Prisma {
     readonly address: FieldRef<"Committee", 'String'>
     readonly phone: FieldRef<"Committee", 'String'>
     readonly email: FieldRef<"Committee", 'String'>
+    readonly status: FieldRef<"Committee", 'CommitteeStatus'>
+    readonly rejectionReason: FieldRef<"Committee", 'String'>
+    readonly publishedAt: FieldRef<"Committee", 'DateTime'>
     readonly isActive: FieldRef<"Committee", 'Boolean'>
     readonly sortOrder: FieldRef<"Committee", 'Int'>
     readonly createdAt: FieldRef<"Committee", 'DateTime'>
@@ -20949,6 +23667,1090 @@ export namespace Prisma {
 
 
   /**
+   * Model PushToken
+   */
+
+  export type AggregatePushToken = {
+    _count: PushTokenCountAggregateOutputType | null
+    _min: PushTokenMinAggregateOutputType | null
+    _max: PushTokenMaxAggregateOutputType | null
+  }
+
+  export type PushTokenMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    token: string | null
+    platform: string | null
+    isActive: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type PushTokenMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    token: string | null
+    platform: string | null
+    isActive: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type PushTokenCountAggregateOutputType = {
+    id: number
+    userId: number
+    token: number
+    platform: number
+    isActive: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type PushTokenMinAggregateInputType = {
+    id?: true
+    userId?: true
+    token?: true
+    platform?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type PushTokenMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    token?: true
+    platform?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type PushTokenCountAggregateInputType = {
+    id?: true
+    userId?: true
+    token?: true
+    platform?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type PushTokenAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PushToken to aggregate.
+     */
+    where?: PushTokenWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PushTokens to fetch.
+     */
+    orderBy?: PushTokenOrderByWithRelationInput | PushTokenOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PushTokenWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PushTokens from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PushTokens.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned PushTokens
+    **/
+    _count?: true | PushTokenCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PushTokenMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PushTokenMaxAggregateInputType
+  }
+
+  export type GetPushTokenAggregateType<T extends PushTokenAggregateArgs> = {
+        [P in keyof T & keyof AggregatePushToken]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePushToken[P]>
+      : GetScalarType<T[P], AggregatePushToken[P]>
+  }
+
+
+
+
+  export type PushTokenGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PushTokenWhereInput
+    orderBy?: PushTokenOrderByWithAggregationInput | PushTokenOrderByWithAggregationInput[]
+    by: PushTokenScalarFieldEnum[] | PushTokenScalarFieldEnum
+    having?: PushTokenScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PushTokenCountAggregateInputType | true
+    _min?: PushTokenMinAggregateInputType
+    _max?: PushTokenMaxAggregateInputType
+  }
+
+  export type PushTokenGroupByOutputType = {
+    id: string
+    userId: string
+    token: string
+    platform: string | null
+    isActive: boolean
+    createdAt: Date
+    updatedAt: Date
+    _count: PushTokenCountAggregateOutputType | null
+    _min: PushTokenMinAggregateOutputType | null
+    _max: PushTokenMaxAggregateOutputType | null
+  }
+
+  type GetPushTokenGroupByPayload<T extends PushTokenGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PushTokenGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PushTokenGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PushTokenGroupByOutputType[P]>
+            : GetScalarType<T[P], PushTokenGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PushTokenSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    token?: boolean
+    platform?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["pushToken"]>
+
+  export type PushTokenSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    token?: boolean
+    platform?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["pushToken"]>
+
+  export type PushTokenSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    token?: boolean
+    platform?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["pushToken"]>
+
+  export type PushTokenSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    token?: boolean
+    platform?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type PushTokenOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "token" | "platform" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["pushToken"]>
+  export type PushTokenInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type PushTokenIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type PushTokenIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $PushTokenPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "PushToken"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      token: string
+      platform: string | null
+      isActive: boolean
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["pushToken"]>
+    composites: {}
+  }
+
+  type PushTokenGetPayload<S extends boolean | null | undefined | PushTokenDefaultArgs> = $Result.GetResult<Prisma.$PushTokenPayload, S>
+
+  type PushTokenCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<PushTokenFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: PushTokenCountAggregateInputType | true
+    }
+
+  export interface PushTokenDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['PushToken'], meta: { name: 'PushToken' } }
+    /**
+     * Find zero or one PushToken that matches the filter.
+     * @param {PushTokenFindUniqueArgs} args - Arguments to find a PushToken
+     * @example
+     * // Get one PushToken
+     * const pushToken = await prisma.pushToken.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PushTokenFindUniqueArgs>(args: SelectSubset<T, PushTokenFindUniqueArgs<ExtArgs>>): Prisma__PushTokenClient<$Result.GetResult<Prisma.$PushTokenPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one PushToken that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {PushTokenFindUniqueOrThrowArgs} args - Arguments to find a PushToken
+     * @example
+     * // Get one PushToken
+     * const pushToken = await prisma.pushToken.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PushTokenFindUniqueOrThrowArgs>(args: SelectSubset<T, PushTokenFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PushTokenClient<$Result.GetResult<Prisma.$PushTokenPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PushToken that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PushTokenFindFirstArgs} args - Arguments to find a PushToken
+     * @example
+     * // Get one PushToken
+     * const pushToken = await prisma.pushToken.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PushTokenFindFirstArgs>(args?: SelectSubset<T, PushTokenFindFirstArgs<ExtArgs>>): Prisma__PushTokenClient<$Result.GetResult<Prisma.$PushTokenPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PushToken that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PushTokenFindFirstOrThrowArgs} args - Arguments to find a PushToken
+     * @example
+     * // Get one PushToken
+     * const pushToken = await prisma.pushToken.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PushTokenFindFirstOrThrowArgs>(args?: SelectSubset<T, PushTokenFindFirstOrThrowArgs<ExtArgs>>): Prisma__PushTokenClient<$Result.GetResult<Prisma.$PushTokenPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more PushTokens that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PushTokenFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all PushTokens
+     * const pushTokens = await prisma.pushToken.findMany()
+     * 
+     * // Get first 10 PushTokens
+     * const pushTokens = await prisma.pushToken.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const pushTokenWithIdOnly = await prisma.pushToken.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends PushTokenFindManyArgs>(args?: SelectSubset<T, PushTokenFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PushTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a PushToken.
+     * @param {PushTokenCreateArgs} args - Arguments to create a PushToken.
+     * @example
+     * // Create one PushToken
+     * const PushToken = await prisma.pushToken.create({
+     *   data: {
+     *     // ... data to create a PushToken
+     *   }
+     * })
+     * 
+     */
+    create<T extends PushTokenCreateArgs>(args: SelectSubset<T, PushTokenCreateArgs<ExtArgs>>): Prisma__PushTokenClient<$Result.GetResult<Prisma.$PushTokenPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many PushTokens.
+     * @param {PushTokenCreateManyArgs} args - Arguments to create many PushTokens.
+     * @example
+     * // Create many PushTokens
+     * const pushToken = await prisma.pushToken.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PushTokenCreateManyArgs>(args?: SelectSubset<T, PushTokenCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many PushTokens and returns the data saved in the database.
+     * @param {PushTokenCreateManyAndReturnArgs} args - Arguments to create many PushTokens.
+     * @example
+     * // Create many PushTokens
+     * const pushToken = await prisma.pushToken.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many PushTokens and only return the `id`
+     * const pushTokenWithIdOnly = await prisma.pushToken.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends PushTokenCreateManyAndReturnArgs>(args?: SelectSubset<T, PushTokenCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PushTokenPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a PushToken.
+     * @param {PushTokenDeleteArgs} args - Arguments to delete one PushToken.
+     * @example
+     * // Delete one PushToken
+     * const PushToken = await prisma.pushToken.delete({
+     *   where: {
+     *     // ... filter to delete one PushToken
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PushTokenDeleteArgs>(args: SelectSubset<T, PushTokenDeleteArgs<ExtArgs>>): Prisma__PushTokenClient<$Result.GetResult<Prisma.$PushTokenPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one PushToken.
+     * @param {PushTokenUpdateArgs} args - Arguments to update one PushToken.
+     * @example
+     * // Update one PushToken
+     * const pushToken = await prisma.pushToken.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PushTokenUpdateArgs>(args: SelectSubset<T, PushTokenUpdateArgs<ExtArgs>>): Prisma__PushTokenClient<$Result.GetResult<Prisma.$PushTokenPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more PushTokens.
+     * @param {PushTokenDeleteManyArgs} args - Arguments to filter PushTokens to delete.
+     * @example
+     * // Delete a few PushTokens
+     * const { count } = await prisma.pushToken.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PushTokenDeleteManyArgs>(args?: SelectSubset<T, PushTokenDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PushTokens.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PushTokenUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many PushTokens
+     * const pushToken = await prisma.pushToken.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PushTokenUpdateManyArgs>(args: SelectSubset<T, PushTokenUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PushTokens and returns the data updated in the database.
+     * @param {PushTokenUpdateManyAndReturnArgs} args - Arguments to update many PushTokens.
+     * @example
+     * // Update many PushTokens
+     * const pushToken = await prisma.pushToken.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more PushTokens and only return the `id`
+     * const pushTokenWithIdOnly = await prisma.pushToken.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends PushTokenUpdateManyAndReturnArgs>(args: SelectSubset<T, PushTokenUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PushTokenPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one PushToken.
+     * @param {PushTokenUpsertArgs} args - Arguments to update or create a PushToken.
+     * @example
+     * // Update or create a PushToken
+     * const pushToken = await prisma.pushToken.upsert({
+     *   create: {
+     *     // ... data to create a PushToken
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the PushToken we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PushTokenUpsertArgs>(args: SelectSubset<T, PushTokenUpsertArgs<ExtArgs>>): Prisma__PushTokenClient<$Result.GetResult<Prisma.$PushTokenPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of PushTokens.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PushTokenCountArgs} args - Arguments to filter PushTokens to count.
+     * @example
+     * // Count the number of PushTokens
+     * const count = await prisma.pushToken.count({
+     *   where: {
+     *     // ... the filter for the PushTokens we want to count
+     *   }
+     * })
+    **/
+    count<T extends PushTokenCountArgs>(
+      args?: Subset<T, PushTokenCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PushTokenCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a PushToken.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PushTokenAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PushTokenAggregateArgs>(args: Subset<T, PushTokenAggregateArgs>): Prisma.PrismaPromise<GetPushTokenAggregateType<T>>
+
+    /**
+     * Group by PushToken.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PushTokenGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PushTokenGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PushTokenGroupByArgs['orderBy'] }
+        : { orderBy?: PushTokenGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PushTokenGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPushTokenGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the PushToken model
+   */
+  readonly fields: PushTokenFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for PushToken.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PushTokenClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the PushToken model
+   */
+  interface PushTokenFieldRefs {
+    readonly id: FieldRef<"PushToken", 'String'>
+    readonly userId: FieldRef<"PushToken", 'String'>
+    readonly token: FieldRef<"PushToken", 'String'>
+    readonly platform: FieldRef<"PushToken", 'String'>
+    readonly isActive: FieldRef<"PushToken", 'Boolean'>
+    readonly createdAt: FieldRef<"PushToken", 'DateTime'>
+    readonly updatedAt: FieldRef<"PushToken", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * PushToken findUnique
+   */
+  export type PushTokenFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PushToken
+     */
+    select?: PushTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PushToken
+     */
+    omit?: PushTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PushTokenInclude<ExtArgs> | null
+    /**
+     * Filter, which PushToken to fetch.
+     */
+    where: PushTokenWhereUniqueInput
+  }
+
+  /**
+   * PushToken findUniqueOrThrow
+   */
+  export type PushTokenFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PushToken
+     */
+    select?: PushTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PushToken
+     */
+    omit?: PushTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PushTokenInclude<ExtArgs> | null
+    /**
+     * Filter, which PushToken to fetch.
+     */
+    where: PushTokenWhereUniqueInput
+  }
+
+  /**
+   * PushToken findFirst
+   */
+  export type PushTokenFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PushToken
+     */
+    select?: PushTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PushToken
+     */
+    omit?: PushTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PushTokenInclude<ExtArgs> | null
+    /**
+     * Filter, which PushToken to fetch.
+     */
+    where?: PushTokenWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PushTokens to fetch.
+     */
+    orderBy?: PushTokenOrderByWithRelationInput | PushTokenOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PushTokens.
+     */
+    cursor?: PushTokenWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PushTokens from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PushTokens.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PushTokens.
+     */
+    distinct?: PushTokenScalarFieldEnum | PushTokenScalarFieldEnum[]
+  }
+
+  /**
+   * PushToken findFirstOrThrow
+   */
+  export type PushTokenFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PushToken
+     */
+    select?: PushTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PushToken
+     */
+    omit?: PushTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PushTokenInclude<ExtArgs> | null
+    /**
+     * Filter, which PushToken to fetch.
+     */
+    where?: PushTokenWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PushTokens to fetch.
+     */
+    orderBy?: PushTokenOrderByWithRelationInput | PushTokenOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PushTokens.
+     */
+    cursor?: PushTokenWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PushTokens from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PushTokens.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PushTokens.
+     */
+    distinct?: PushTokenScalarFieldEnum | PushTokenScalarFieldEnum[]
+  }
+
+  /**
+   * PushToken findMany
+   */
+  export type PushTokenFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PushToken
+     */
+    select?: PushTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PushToken
+     */
+    omit?: PushTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PushTokenInclude<ExtArgs> | null
+    /**
+     * Filter, which PushTokens to fetch.
+     */
+    where?: PushTokenWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PushTokens to fetch.
+     */
+    orderBy?: PushTokenOrderByWithRelationInput | PushTokenOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing PushTokens.
+     */
+    cursor?: PushTokenWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PushTokens from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PushTokens.
+     */
+    skip?: number
+    distinct?: PushTokenScalarFieldEnum | PushTokenScalarFieldEnum[]
+  }
+
+  /**
+   * PushToken create
+   */
+  export type PushTokenCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PushToken
+     */
+    select?: PushTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PushToken
+     */
+    omit?: PushTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PushTokenInclude<ExtArgs> | null
+    /**
+     * The data needed to create a PushToken.
+     */
+    data: XOR<PushTokenCreateInput, PushTokenUncheckedCreateInput>
+  }
+
+  /**
+   * PushToken createMany
+   */
+  export type PushTokenCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many PushTokens.
+     */
+    data: PushTokenCreateManyInput | PushTokenCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * PushToken createManyAndReturn
+   */
+  export type PushTokenCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PushToken
+     */
+    select?: PushTokenSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PushToken
+     */
+    omit?: PushTokenOmit<ExtArgs> | null
+    /**
+     * The data used to create many PushTokens.
+     */
+    data: PushTokenCreateManyInput | PushTokenCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PushTokenIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PushToken update
+   */
+  export type PushTokenUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PushToken
+     */
+    select?: PushTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PushToken
+     */
+    omit?: PushTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PushTokenInclude<ExtArgs> | null
+    /**
+     * The data needed to update a PushToken.
+     */
+    data: XOR<PushTokenUpdateInput, PushTokenUncheckedUpdateInput>
+    /**
+     * Choose, which PushToken to update.
+     */
+    where: PushTokenWhereUniqueInput
+  }
+
+  /**
+   * PushToken updateMany
+   */
+  export type PushTokenUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update PushTokens.
+     */
+    data: XOR<PushTokenUpdateManyMutationInput, PushTokenUncheckedUpdateManyInput>
+    /**
+     * Filter which PushTokens to update
+     */
+    where?: PushTokenWhereInput
+    /**
+     * Limit how many PushTokens to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * PushToken updateManyAndReturn
+   */
+  export type PushTokenUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PushToken
+     */
+    select?: PushTokenSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PushToken
+     */
+    omit?: PushTokenOmit<ExtArgs> | null
+    /**
+     * The data used to update PushTokens.
+     */
+    data: XOR<PushTokenUpdateManyMutationInput, PushTokenUncheckedUpdateManyInput>
+    /**
+     * Filter which PushTokens to update
+     */
+    where?: PushTokenWhereInput
+    /**
+     * Limit how many PushTokens to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PushTokenIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PushToken upsert
+   */
+  export type PushTokenUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PushToken
+     */
+    select?: PushTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PushToken
+     */
+    omit?: PushTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PushTokenInclude<ExtArgs> | null
+    /**
+     * The filter to search for the PushToken to update in case it exists.
+     */
+    where: PushTokenWhereUniqueInput
+    /**
+     * In case the PushToken found by the `where` argument doesn't exist, create a new PushToken with this data.
+     */
+    create: XOR<PushTokenCreateInput, PushTokenUncheckedCreateInput>
+    /**
+     * In case the PushToken was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PushTokenUpdateInput, PushTokenUncheckedUpdateInput>
+  }
+
+  /**
+   * PushToken delete
+   */
+  export type PushTokenDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PushToken
+     */
+    select?: PushTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PushToken
+     */
+    omit?: PushTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PushTokenInclude<ExtArgs> | null
+    /**
+     * Filter which PushToken to delete.
+     */
+    where: PushTokenWhereUniqueInput
+  }
+
+  /**
+   * PushToken deleteMany
+   */
+  export type PushTokenDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PushTokens to delete
+     */
+    where?: PushTokenWhereInput
+    /**
+     * Limit how many PushTokens to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * PushToken without action
+   */
+  export type PushTokenDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PushToken
+     */
+    select?: PushTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PushToken
+     */
+    omit?: PushTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PushTokenInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model Notification
    */
 
@@ -23184,6 +26986,7 @@ export namespace Prisma {
     id: 'id',
     phone: 'phone',
     email: 'email',
+    googleSub: 'googleSub',
     firstName: 'firstName',
     lastName: 'lastName',
     preferredLanguage: 'preferredLanguage',
@@ -23197,6 +27000,20 @@ export namespace Prisma {
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+  export const AccountDeleteRequestScalarFieldEnum: {
+    id: 'id',
+    requestedById: 'requestedById',
+    reason: 'reason',
+    status: 'status',
+    adminNote: 'adminNote',
+    reviewedAt: 'reviewedAt',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type AccountDeleteRequestScalarFieldEnum = (typeof AccountDeleteRequestScalarFieldEnum)[keyof typeof AccountDeleteRequestScalarFieldEnum]
 
 
   export const MatrimonyProfileScalarFieldEnum: {
@@ -23376,6 +27193,10 @@ export namespace Prisma {
     contactPhone: 'contactPhone',
     location: 'location',
     eventDate: 'eventDate',
+    obituaryType: 'obituaryType',
+    deceasedName: 'deceasedName',
+    deathDate: 'deathDate',
+    eventTime: 'eventTime',
     publishedAt: 'publishedAt',
     expiresAt: 'expiresAt',
     isFeatured: 'isFeatured',
@@ -23386,6 +27207,16 @@ export namespace Prisma {
   };
 
   export type CommunityPostScalarFieldEnum = (typeof CommunityPostScalarFieldEnum)[keyof typeof CommunityPostScalarFieldEnum]
+
+
+  export const CommunityPostLikeScalarFieldEnum: {
+    id: 'id',
+    postId: 'postId',
+    userId: 'userId',
+    createdAt: 'createdAt'
+  };
+
+  export type CommunityPostLikeScalarFieldEnum = (typeof CommunityPostLikeScalarFieldEnum)[keyof typeof CommunityPostLikeScalarFieldEnum]
 
 
   export const CommunityPostTranslationScalarFieldEnum: {
@@ -23413,6 +27244,9 @@ export namespace Prisma {
     address: 'address',
     phone: 'phone',
     email: 'email',
+    status: 'status',
+    rejectionReason: 'rejectionReason',
+    publishedAt: 'publishedAt',
     isActive: 'isActive',
     sortOrder: 'sortOrder',
     createdAt: 'createdAt',
@@ -23452,6 +27286,19 @@ export namespace Prisma {
   };
 
   export type CommitteeMemberScalarFieldEnum = (typeof CommitteeMemberScalarFieldEnum)[keyof typeof CommitteeMemberScalarFieldEnum]
+
+
+  export const PushTokenScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    token: 'token',
+    platform: 'platform',
+    isActive: 'isActive',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type PushTokenScalarFieldEnum = (typeof PushTokenScalarFieldEnum)[keyof typeof PushTokenScalarFieldEnum]
 
 
   export const NotificationScalarFieldEnum: {
@@ -23589,6 +27436,20 @@ export namespace Prisma {
    * Reference to a field of type 'DateTime[]'
    */
   export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'AccountDeleteRequestStatus'
+   */
+  export type EnumAccountDeleteRequestStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AccountDeleteRequestStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'AccountDeleteRequestStatus[]'
+   */
+  export type ListEnumAccountDeleteRequestStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AccountDeleteRequestStatus[]'>
     
 
 
@@ -23789,6 +27650,34 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'ObituaryType'
+   */
+  export type EnumObituaryTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ObituaryType'>
+    
+
+
+  /**
+   * Reference to a field of type 'ObituaryType[]'
+   */
+  export type ListEnumObituaryTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ObituaryType[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'CommitteeStatus'
+   */
+  export type EnumCommitteeStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CommitteeStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'CommitteeStatus[]'
+   */
+  export type ListEnumCommitteeStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CommitteeStatus[]'>
+    
+
+
+  /**
    * Reference to a field of type 'NotificationType'
    */
   export type EnumNotificationTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'NotificationType'>
@@ -23840,6 +27729,7 @@ export namespace Prisma {
     id?: StringFilter<"User"> | string
     phone?: StringFilter<"User"> | string
     email?: StringNullableFilter<"User"> | string | null
+    googleSub?: StringNullableFilter<"User"> | string | null
     firstName?: StringNullableFilter<"User"> | string | null
     lastName?: StringNullableFilter<"User"> | string | null
     preferredLanguage?: EnumLanguageFilter<"User"> | $Enums.Language
@@ -23858,12 +27748,16 @@ export namespace Prisma {
     committees?: CommitteeListRelationFilter
     auditLogs?: AuditLogListRelationFilter
     matrimonyDeleteRequests?: MatrimonyDeleteRequestListRelationFilter
+    communityPostLikes?: CommunityPostLikeListRelationFilter
+    pushTokens?: PushTokenListRelationFilter
+    accountDeleteRequests?: AccountDeleteRequestListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
     id?: SortOrder
     phone?: SortOrder
     email?: SortOrderInput | SortOrder
+    googleSub?: SortOrderInput | SortOrder
     firstName?: SortOrderInput | SortOrder
     lastName?: SortOrderInput | SortOrder
     preferredLanguage?: SortOrder
@@ -23882,12 +27776,16 @@ export namespace Prisma {
     committees?: CommitteeOrderByRelationAggregateInput
     auditLogs?: AuditLogOrderByRelationAggregateInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestOrderByRelationAggregateInput
+    communityPostLikes?: CommunityPostLikeOrderByRelationAggregateInput
+    pushTokens?: PushTokenOrderByRelationAggregateInput
+    accountDeleteRequests?: AccountDeleteRequestOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
     id?: string
     phone?: string
     email?: string
+    googleSub?: string
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
@@ -23909,12 +27807,16 @@ export namespace Prisma {
     committees?: CommitteeListRelationFilter
     auditLogs?: AuditLogListRelationFilter
     matrimonyDeleteRequests?: MatrimonyDeleteRequestListRelationFilter
-  }, "id" | "phone" | "email">
+    communityPostLikes?: CommunityPostLikeListRelationFilter
+    pushTokens?: PushTokenListRelationFilter
+    accountDeleteRequests?: AccountDeleteRequestListRelationFilter
+  }, "id" | "phone" | "email" | "googleSub">
 
   export type UserOrderByWithAggregationInput = {
     id?: SortOrder
     phone?: SortOrder
     email?: SortOrderInput | SortOrder
+    googleSub?: SortOrderInput | SortOrder
     firstName?: SortOrderInput | SortOrder
     lastName?: SortOrderInput | SortOrder
     preferredLanguage?: SortOrder
@@ -23937,6 +27839,7 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"User"> | string
     phone?: StringWithAggregatesFilter<"User"> | string
     email?: StringNullableWithAggregatesFilter<"User"> | string | null
+    googleSub?: StringNullableWithAggregatesFilter<"User"> | string | null
     firstName?: StringNullableWithAggregatesFilter<"User"> | string | null
     lastName?: StringNullableWithAggregatesFilter<"User"> | string | null
     preferredLanguage?: EnumLanguageWithAggregatesFilter<"User"> | $Enums.Language
@@ -23947,6 +27850,76 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     deletedAt?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  }
+
+  export type AccountDeleteRequestWhereInput = {
+    AND?: AccountDeleteRequestWhereInput | AccountDeleteRequestWhereInput[]
+    OR?: AccountDeleteRequestWhereInput[]
+    NOT?: AccountDeleteRequestWhereInput | AccountDeleteRequestWhereInput[]
+    id?: StringFilter<"AccountDeleteRequest"> | string
+    requestedById?: StringFilter<"AccountDeleteRequest"> | string
+    reason?: StringNullableFilter<"AccountDeleteRequest"> | string | null
+    status?: EnumAccountDeleteRequestStatusFilter<"AccountDeleteRequest"> | $Enums.AccountDeleteRequestStatus
+    adminNote?: StringNullableFilter<"AccountDeleteRequest"> | string | null
+    reviewedAt?: DateTimeNullableFilter<"AccountDeleteRequest"> | Date | string | null
+    createdAt?: DateTimeFilter<"AccountDeleteRequest"> | Date | string
+    updatedAt?: DateTimeFilter<"AccountDeleteRequest"> | Date | string
+    requestedBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type AccountDeleteRequestOrderByWithRelationInput = {
+    id?: SortOrder
+    requestedById?: SortOrder
+    reason?: SortOrderInput | SortOrder
+    status?: SortOrder
+    adminNote?: SortOrderInput | SortOrder
+    reviewedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    requestedBy?: UserOrderByWithRelationInput
+  }
+
+  export type AccountDeleteRequestWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: AccountDeleteRequestWhereInput | AccountDeleteRequestWhereInput[]
+    OR?: AccountDeleteRequestWhereInput[]
+    NOT?: AccountDeleteRequestWhereInput | AccountDeleteRequestWhereInput[]
+    requestedById?: StringFilter<"AccountDeleteRequest"> | string
+    reason?: StringNullableFilter<"AccountDeleteRequest"> | string | null
+    status?: EnumAccountDeleteRequestStatusFilter<"AccountDeleteRequest"> | $Enums.AccountDeleteRequestStatus
+    adminNote?: StringNullableFilter<"AccountDeleteRequest"> | string | null
+    reviewedAt?: DateTimeNullableFilter<"AccountDeleteRequest"> | Date | string | null
+    createdAt?: DateTimeFilter<"AccountDeleteRequest"> | Date | string
+    updatedAt?: DateTimeFilter<"AccountDeleteRequest"> | Date | string
+    requestedBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type AccountDeleteRequestOrderByWithAggregationInput = {
+    id?: SortOrder
+    requestedById?: SortOrder
+    reason?: SortOrderInput | SortOrder
+    status?: SortOrder
+    adminNote?: SortOrderInput | SortOrder
+    reviewedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: AccountDeleteRequestCountOrderByAggregateInput
+    _max?: AccountDeleteRequestMaxOrderByAggregateInput
+    _min?: AccountDeleteRequestMinOrderByAggregateInput
+  }
+
+  export type AccountDeleteRequestScalarWhereWithAggregatesInput = {
+    AND?: AccountDeleteRequestScalarWhereWithAggregatesInput | AccountDeleteRequestScalarWhereWithAggregatesInput[]
+    OR?: AccountDeleteRequestScalarWhereWithAggregatesInput[]
+    NOT?: AccountDeleteRequestScalarWhereWithAggregatesInput | AccountDeleteRequestScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"AccountDeleteRequest"> | string
+    requestedById?: StringWithAggregatesFilter<"AccountDeleteRequest"> | string
+    reason?: StringNullableWithAggregatesFilter<"AccountDeleteRequest"> | string | null
+    status?: EnumAccountDeleteRequestStatusWithAggregatesFilter<"AccountDeleteRequest"> | $Enums.AccountDeleteRequestStatus
+    adminNote?: StringNullableWithAggregatesFilter<"AccountDeleteRequest"> | string | null
+    reviewedAt?: DateTimeNullableWithAggregatesFilter<"AccountDeleteRequest"> | Date | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"AccountDeleteRequest"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"AccountDeleteRequest"> | Date | string
   }
 
   export type MatrimonyProfileWhereInput = {
@@ -24847,6 +28820,10 @@ export namespace Prisma {
     contactPhone?: StringNullableFilter<"CommunityPost"> | string | null
     location?: StringNullableFilter<"CommunityPost"> | string | null
     eventDate?: DateTimeNullableFilter<"CommunityPost"> | Date | string | null
+    obituaryType?: EnumObituaryTypeNullableFilter<"CommunityPost"> | $Enums.ObituaryType | null
+    deceasedName?: StringNullableFilter<"CommunityPost"> | string | null
+    deathDate?: DateTimeNullableFilter<"CommunityPost"> | Date | string | null
+    eventTime?: StringNullableFilter<"CommunityPost"> | string | null
     publishedAt?: DateTimeNullableFilter<"CommunityPost"> | Date | string | null
     expiresAt?: DateTimeNullableFilter<"CommunityPost"> | Date | string | null
     isFeatured?: BoolFilter<"CommunityPost"> | boolean
@@ -24856,6 +28833,7 @@ export namespace Prisma {
     deletedAt?: DateTimeNullableFilter<"CommunityPost"> | Date | string | null
     createdBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     translations?: CommunityPostTranslationListRelationFilter
+    likes?: CommunityPostLikeListRelationFilter
   }
 
   export type CommunityPostOrderByWithRelationInput = {
@@ -24869,6 +28847,10 @@ export namespace Prisma {
     contactPhone?: SortOrderInput | SortOrder
     location?: SortOrderInput | SortOrder
     eventDate?: SortOrderInput | SortOrder
+    obituaryType?: SortOrderInput | SortOrder
+    deceasedName?: SortOrderInput | SortOrder
+    deathDate?: SortOrderInput | SortOrder
+    eventTime?: SortOrderInput | SortOrder
     publishedAt?: SortOrderInput | SortOrder
     expiresAt?: SortOrderInput | SortOrder
     isFeatured?: SortOrder
@@ -24878,6 +28860,7 @@ export namespace Prisma {
     deletedAt?: SortOrderInput | SortOrder
     createdBy?: UserOrderByWithRelationInput
     translations?: CommunityPostTranslationOrderByRelationAggregateInput
+    likes?: CommunityPostLikeOrderByRelationAggregateInput
   }
 
   export type CommunityPostWhereUniqueInput = Prisma.AtLeast<{
@@ -24894,6 +28877,10 @@ export namespace Prisma {
     contactPhone?: StringNullableFilter<"CommunityPost"> | string | null
     location?: StringNullableFilter<"CommunityPost"> | string | null
     eventDate?: DateTimeNullableFilter<"CommunityPost"> | Date | string | null
+    obituaryType?: EnumObituaryTypeNullableFilter<"CommunityPost"> | $Enums.ObituaryType | null
+    deceasedName?: StringNullableFilter<"CommunityPost"> | string | null
+    deathDate?: DateTimeNullableFilter<"CommunityPost"> | Date | string | null
+    eventTime?: StringNullableFilter<"CommunityPost"> | string | null
     publishedAt?: DateTimeNullableFilter<"CommunityPost"> | Date | string | null
     expiresAt?: DateTimeNullableFilter<"CommunityPost"> | Date | string | null
     isFeatured?: BoolFilter<"CommunityPost"> | boolean
@@ -24903,6 +28890,7 @@ export namespace Prisma {
     deletedAt?: DateTimeNullableFilter<"CommunityPost"> | Date | string | null
     createdBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     translations?: CommunityPostTranslationListRelationFilter
+    likes?: CommunityPostLikeListRelationFilter
   }, "id">
 
   export type CommunityPostOrderByWithAggregationInput = {
@@ -24916,6 +28904,10 @@ export namespace Prisma {
     contactPhone?: SortOrderInput | SortOrder
     location?: SortOrderInput | SortOrder
     eventDate?: SortOrderInput | SortOrder
+    obituaryType?: SortOrderInput | SortOrder
+    deceasedName?: SortOrderInput | SortOrder
+    deathDate?: SortOrderInput | SortOrder
+    eventTime?: SortOrderInput | SortOrder
     publishedAt?: SortOrderInput | SortOrder
     expiresAt?: SortOrderInput | SortOrder
     isFeatured?: SortOrder
@@ -24942,6 +28934,10 @@ export namespace Prisma {
     contactPhone?: StringNullableWithAggregatesFilter<"CommunityPost"> | string | null
     location?: StringNullableWithAggregatesFilter<"CommunityPost"> | string | null
     eventDate?: DateTimeNullableWithAggregatesFilter<"CommunityPost"> | Date | string | null
+    obituaryType?: EnumObituaryTypeNullableWithAggregatesFilter<"CommunityPost"> | $Enums.ObituaryType | null
+    deceasedName?: StringNullableWithAggregatesFilter<"CommunityPost"> | string | null
+    deathDate?: DateTimeNullableWithAggregatesFilter<"CommunityPost"> | Date | string | null
+    eventTime?: StringNullableWithAggregatesFilter<"CommunityPost"> | string | null
     publishedAt?: DateTimeNullableWithAggregatesFilter<"CommunityPost"> | Date | string | null
     expiresAt?: DateTimeNullableWithAggregatesFilter<"CommunityPost"> | Date | string | null
     isFeatured?: BoolWithAggregatesFilter<"CommunityPost"> | boolean
@@ -24949,6 +28945,60 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"CommunityPost"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"CommunityPost"> | Date | string
     deletedAt?: DateTimeNullableWithAggregatesFilter<"CommunityPost"> | Date | string | null
+  }
+
+  export type CommunityPostLikeWhereInput = {
+    AND?: CommunityPostLikeWhereInput | CommunityPostLikeWhereInput[]
+    OR?: CommunityPostLikeWhereInput[]
+    NOT?: CommunityPostLikeWhereInput | CommunityPostLikeWhereInput[]
+    id?: StringFilter<"CommunityPostLike"> | string
+    postId?: StringFilter<"CommunityPostLike"> | string
+    userId?: StringFilter<"CommunityPostLike"> | string
+    createdAt?: DateTimeFilter<"CommunityPostLike"> | Date | string
+    post?: XOR<CommunityPostScalarRelationFilter, CommunityPostWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type CommunityPostLikeOrderByWithRelationInput = {
+    id?: SortOrder
+    postId?: SortOrder
+    userId?: SortOrder
+    createdAt?: SortOrder
+    post?: CommunityPostOrderByWithRelationInput
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type CommunityPostLikeWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    postId_userId?: CommunityPostLikePostIdUserIdCompoundUniqueInput
+    AND?: CommunityPostLikeWhereInput | CommunityPostLikeWhereInput[]
+    OR?: CommunityPostLikeWhereInput[]
+    NOT?: CommunityPostLikeWhereInput | CommunityPostLikeWhereInput[]
+    postId?: StringFilter<"CommunityPostLike"> | string
+    userId?: StringFilter<"CommunityPostLike"> | string
+    createdAt?: DateTimeFilter<"CommunityPostLike"> | Date | string
+    post?: XOR<CommunityPostScalarRelationFilter, CommunityPostWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id" | "postId_userId">
+
+  export type CommunityPostLikeOrderByWithAggregationInput = {
+    id?: SortOrder
+    postId?: SortOrder
+    userId?: SortOrder
+    createdAt?: SortOrder
+    _count?: CommunityPostLikeCountOrderByAggregateInput
+    _max?: CommunityPostLikeMaxOrderByAggregateInput
+    _min?: CommunityPostLikeMinOrderByAggregateInput
+  }
+
+  export type CommunityPostLikeScalarWhereWithAggregatesInput = {
+    AND?: CommunityPostLikeScalarWhereWithAggregatesInput | CommunityPostLikeScalarWhereWithAggregatesInput[]
+    OR?: CommunityPostLikeScalarWhereWithAggregatesInput[]
+    NOT?: CommunityPostLikeScalarWhereWithAggregatesInput | CommunityPostLikeScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"CommunityPostLike"> | string
+    postId?: StringWithAggregatesFilter<"CommunityPostLike"> | string
+    userId?: StringWithAggregatesFilter<"CommunityPostLike"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"CommunityPostLike"> | Date | string
   }
 
   export type CommunityPostTranslationWhereInput = {
@@ -25032,6 +29082,9 @@ export namespace Prisma {
     address?: StringNullableFilter<"Committee"> | string | null
     phone?: StringNullableFilter<"Committee"> | string | null
     email?: StringNullableFilter<"Committee"> | string | null
+    status?: EnumCommitteeStatusFilter<"Committee"> | $Enums.CommitteeStatus
+    rejectionReason?: StringNullableFilter<"Committee"> | string | null
+    publishedAt?: DateTimeNullableFilter<"Committee"> | Date | string | null
     isActive?: BoolFilter<"Committee"> | boolean
     sortOrder?: IntFilter<"Committee"> | number
     createdAt?: DateTimeFilter<"Committee"> | Date | string
@@ -25054,6 +29107,9 @@ export namespace Prisma {
     address?: SortOrderInput | SortOrder
     phone?: SortOrderInput | SortOrder
     email?: SortOrderInput | SortOrder
+    status?: SortOrder
+    rejectionReason?: SortOrderInput | SortOrder
+    publishedAt?: SortOrderInput | SortOrder
     isActive?: SortOrder
     sortOrder?: SortOrder
     createdAt?: SortOrder
@@ -25079,6 +29135,9 @@ export namespace Prisma {
     address?: StringNullableFilter<"Committee"> | string | null
     phone?: StringNullableFilter<"Committee"> | string | null
     email?: StringNullableFilter<"Committee"> | string | null
+    status?: EnumCommitteeStatusFilter<"Committee"> | $Enums.CommitteeStatus
+    rejectionReason?: StringNullableFilter<"Committee"> | string | null
+    publishedAt?: DateTimeNullableFilter<"Committee"> | Date | string | null
     isActive?: BoolFilter<"Committee"> | boolean
     sortOrder?: IntFilter<"Committee"> | number
     createdAt?: DateTimeFilter<"Committee"> | Date | string
@@ -25101,6 +29160,9 @@ export namespace Prisma {
     address?: SortOrderInput | SortOrder
     phone?: SortOrderInput | SortOrder
     email?: SortOrderInput | SortOrder
+    status?: SortOrder
+    rejectionReason?: SortOrderInput | SortOrder
+    publishedAt?: SortOrderInput | SortOrder
     isActive?: SortOrder
     sortOrder?: SortOrder
     createdAt?: SortOrder
@@ -25128,6 +29190,9 @@ export namespace Prisma {
     address?: StringNullableWithAggregatesFilter<"Committee"> | string | null
     phone?: StringNullableWithAggregatesFilter<"Committee"> | string | null
     email?: StringNullableWithAggregatesFilter<"Committee"> | string | null
+    status?: EnumCommitteeStatusWithAggregatesFilter<"Committee"> | $Enums.CommitteeStatus
+    rejectionReason?: StringNullableWithAggregatesFilter<"Committee"> | string | null
+    publishedAt?: DateTimeNullableWithAggregatesFilter<"Committee"> | Date | string | null
     isActive?: BoolWithAggregatesFilter<"Committee"> | boolean
     sortOrder?: IntWithAggregatesFilter<"Committee"> | number
     createdAt?: DateTimeWithAggregatesFilter<"Committee"> | Date | string
@@ -25293,6 +29358,71 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"CommitteeMember"> | Date | string
   }
 
+  export type PushTokenWhereInput = {
+    AND?: PushTokenWhereInput | PushTokenWhereInput[]
+    OR?: PushTokenWhereInput[]
+    NOT?: PushTokenWhereInput | PushTokenWhereInput[]
+    id?: StringFilter<"PushToken"> | string
+    userId?: StringFilter<"PushToken"> | string
+    token?: StringFilter<"PushToken"> | string
+    platform?: StringNullableFilter<"PushToken"> | string | null
+    isActive?: BoolFilter<"PushToken"> | boolean
+    createdAt?: DateTimeFilter<"PushToken"> | Date | string
+    updatedAt?: DateTimeFilter<"PushToken"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type PushTokenOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    token?: SortOrder
+    platform?: SortOrderInput | SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type PushTokenWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    token?: string
+    AND?: PushTokenWhereInput | PushTokenWhereInput[]
+    OR?: PushTokenWhereInput[]
+    NOT?: PushTokenWhereInput | PushTokenWhereInput[]
+    userId?: StringFilter<"PushToken"> | string
+    platform?: StringNullableFilter<"PushToken"> | string | null
+    isActive?: BoolFilter<"PushToken"> | boolean
+    createdAt?: DateTimeFilter<"PushToken"> | Date | string
+    updatedAt?: DateTimeFilter<"PushToken"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id" | "token">
+
+  export type PushTokenOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    token?: SortOrder
+    platform?: SortOrderInput | SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: PushTokenCountOrderByAggregateInput
+    _max?: PushTokenMaxOrderByAggregateInput
+    _min?: PushTokenMinOrderByAggregateInput
+  }
+
+  export type PushTokenScalarWhereWithAggregatesInput = {
+    AND?: PushTokenScalarWhereWithAggregatesInput | PushTokenScalarWhereWithAggregatesInput[]
+    OR?: PushTokenScalarWhereWithAggregatesInput[]
+    NOT?: PushTokenScalarWhereWithAggregatesInput | PushTokenScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"PushToken"> | string
+    userId?: StringWithAggregatesFilter<"PushToken"> | string
+    token?: StringWithAggregatesFilter<"PushToken"> | string
+    platform?: StringNullableWithAggregatesFilter<"PushToken"> | string | null
+    isActive?: BoolWithAggregatesFilter<"PushToken"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"PushToken"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"PushToken"> | Date | string
+  }
+
   export type NotificationWhereInput = {
     AND?: NotificationWhereInput | NotificationWhereInput[]
     OR?: NotificationWhereInput[]
@@ -25442,6 +29572,7 @@ export namespace Prisma {
     id?: string
     phone: string
     email?: string | null
+    googleSub?: string | null
     firstName?: string | null
     lastName?: string | null
     preferredLanguage?: $Enums.Language
@@ -25460,12 +29591,16 @@ export namespace Prisma {
     committees?: CommitteeCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestCreateNestedManyWithoutRequestedByInput
+    communityPostLikes?: CommunityPostLikeCreateNestedManyWithoutUserInput
+    pushTokens?: PushTokenCreateNestedManyWithoutUserInput
+    accountDeleteRequests?: AccountDeleteRequestCreateNestedManyWithoutRequestedByInput
   }
 
   export type UserUncheckedCreateInput = {
     id?: string
     phone: string
     email?: string | null
+    googleSub?: string | null
     firstName?: string | null
     lastName?: string | null
     preferredLanguage?: $Enums.Language
@@ -25484,12 +29619,16 @@ export namespace Prisma {
     committees?: CommitteeUncheckedCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    communityPostLikes?: CommunityPostLikeUncheckedCreateNestedManyWithoutUserInput
+    pushTokens?: PushTokenUncheckedCreateNestedManyWithoutUserInput
+    accountDeleteRequests?: AccountDeleteRequestUncheckedCreateNestedManyWithoutRequestedByInput
   }
 
   export type UserUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    googleSub?: NullableStringFieldUpdateOperationsInput | string | null
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     preferredLanguage?: EnumLanguageFieldUpdateOperationsInput | $Enums.Language
@@ -25508,12 +29647,16 @@ export namespace Prisma {
     committees?: CommitteeUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestUpdateManyWithoutRequestedByNestedInput
+    communityPostLikes?: CommunityPostLikeUpdateManyWithoutUserNestedInput
+    pushTokens?: PushTokenUpdateManyWithoutUserNestedInput
+    accountDeleteRequests?: AccountDeleteRequestUpdateManyWithoutRequestedByNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    googleSub?: NullableStringFieldUpdateOperationsInput | string | null
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     preferredLanguage?: EnumLanguageFieldUpdateOperationsInput | $Enums.Language
@@ -25532,12 +29675,16 @@ export namespace Prisma {
     committees?: CommitteeUncheckedUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    communityPostLikes?: CommunityPostLikeUncheckedUpdateManyWithoutUserNestedInput
+    pushTokens?: PushTokenUncheckedUpdateManyWithoutUserNestedInput
+    accountDeleteRequests?: AccountDeleteRequestUncheckedUpdateManyWithoutRequestedByNestedInput
   }
 
   export type UserCreateManyInput = {
     id?: string
     phone: string
     email?: string | null
+    googleSub?: string | null
     firstName?: string | null
     lastName?: string | null
     preferredLanguage?: $Enums.Language
@@ -25554,6 +29701,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    googleSub?: NullableStringFieldUpdateOperationsInput | string | null
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     preferredLanguage?: EnumLanguageFieldUpdateOperationsInput | $Enums.Language
@@ -25570,6 +29718,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    googleSub?: NullableStringFieldUpdateOperationsInput | string | null
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     preferredLanguage?: EnumLanguageFieldUpdateOperationsInput | $Enums.Language
@@ -25580,6 +29729,82 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type AccountDeleteRequestCreateInput = {
+    id?: string
+    reason?: string | null
+    status?: $Enums.AccountDeleteRequestStatus
+    adminNote?: string | null
+    reviewedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    requestedBy: UserCreateNestedOneWithoutAccountDeleteRequestsInput
+  }
+
+  export type AccountDeleteRequestUncheckedCreateInput = {
+    id?: string
+    requestedById: string
+    reason?: string | null
+    status?: $Enums.AccountDeleteRequestStatus
+    adminNote?: string | null
+    reviewedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type AccountDeleteRequestUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumAccountDeleteRequestStatusFieldUpdateOperationsInput | $Enums.AccountDeleteRequestStatus
+    adminNote?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    requestedBy?: UserUpdateOneRequiredWithoutAccountDeleteRequestsNestedInput
+  }
+
+  export type AccountDeleteRequestUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    requestedById?: StringFieldUpdateOperationsInput | string
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumAccountDeleteRequestStatusFieldUpdateOperationsInput | $Enums.AccountDeleteRequestStatus
+    adminNote?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AccountDeleteRequestCreateManyInput = {
+    id?: string
+    requestedById: string
+    reason?: string | null
+    status?: $Enums.AccountDeleteRequestStatus
+    adminNote?: string | null
+    reviewedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type AccountDeleteRequestUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumAccountDeleteRequestStatusFieldUpdateOperationsInput | $Enums.AccountDeleteRequestStatus
+    adminNote?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AccountDeleteRequestUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    requestedById?: StringFieldUpdateOperationsInput | string
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumAccountDeleteRequestStatusFieldUpdateOperationsInput | $Enums.AccountDeleteRequestStatus
+    adminNote?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type MatrimonyProfileCreateInput = {
@@ -26591,6 +30816,10 @@ export namespace Prisma {
     contactPhone?: string | null
     location?: string | null
     eventDate?: Date | string | null
+    obituaryType?: $Enums.ObituaryType | null
+    deceasedName?: string | null
+    deathDate?: Date | string | null
+    eventTime?: string | null
     publishedAt?: Date | string | null
     expiresAt?: Date | string | null
     isFeatured?: boolean
@@ -26600,6 +30829,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     createdBy?: UserCreateNestedOneWithoutCommunityPostsInput
     translations?: CommunityPostTranslationCreateNestedManyWithoutPostInput
+    likes?: CommunityPostLikeCreateNestedManyWithoutPostInput
   }
 
   export type CommunityPostUncheckedCreateInput = {
@@ -26613,6 +30843,10 @@ export namespace Prisma {
     contactPhone?: string | null
     location?: string | null
     eventDate?: Date | string | null
+    obituaryType?: $Enums.ObituaryType | null
+    deceasedName?: string | null
+    deathDate?: Date | string | null
+    eventTime?: string | null
     publishedAt?: Date | string | null
     expiresAt?: Date | string | null
     isFeatured?: boolean
@@ -26621,6 +30855,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     deletedAt?: Date | string | null
     translations?: CommunityPostTranslationUncheckedCreateNestedManyWithoutPostInput
+    likes?: CommunityPostLikeUncheckedCreateNestedManyWithoutPostInput
   }
 
   export type CommunityPostUpdateInput = {
@@ -26633,6 +30868,10 @@ export namespace Prisma {
     contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     location?: NullableStringFieldUpdateOperationsInput | string | null
     eventDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    obituaryType?: NullableEnumObituaryTypeFieldUpdateOperationsInput | $Enums.ObituaryType | null
+    deceasedName?: NullableStringFieldUpdateOperationsInput | string | null
+    deathDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    eventTime?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
@@ -26642,6 +30881,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdBy?: UserUpdateOneWithoutCommunityPostsNestedInput
     translations?: CommunityPostTranslationUpdateManyWithoutPostNestedInput
+    likes?: CommunityPostLikeUpdateManyWithoutPostNestedInput
   }
 
   export type CommunityPostUncheckedUpdateInput = {
@@ -26655,6 +30895,10 @@ export namespace Prisma {
     contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     location?: NullableStringFieldUpdateOperationsInput | string | null
     eventDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    obituaryType?: NullableEnumObituaryTypeFieldUpdateOperationsInput | $Enums.ObituaryType | null
+    deceasedName?: NullableStringFieldUpdateOperationsInput | string | null
+    deathDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    eventTime?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
@@ -26663,6 +30907,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     translations?: CommunityPostTranslationUncheckedUpdateManyWithoutPostNestedInput
+    likes?: CommunityPostLikeUncheckedUpdateManyWithoutPostNestedInput
   }
 
   export type CommunityPostCreateManyInput = {
@@ -26676,6 +30921,10 @@ export namespace Prisma {
     contactPhone?: string | null
     location?: string | null
     eventDate?: Date | string | null
+    obituaryType?: $Enums.ObituaryType | null
+    deceasedName?: string | null
+    deathDate?: Date | string | null
+    eventTime?: string | null
     publishedAt?: Date | string | null
     expiresAt?: Date | string | null
     isFeatured?: boolean
@@ -26695,6 +30944,10 @@ export namespace Prisma {
     contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     location?: NullableStringFieldUpdateOperationsInput | string | null
     eventDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    obituaryType?: NullableEnumObituaryTypeFieldUpdateOperationsInput | $Enums.ObituaryType | null
+    deceasedName?: NullableStringFieldUpdateOperationsInput | string | null
+    deathDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    eventTime?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
@@ -26715,6 +30968,10 @@ export namespace Prisma {
     contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     location?: NullableStringFieldUpdateOperationsInput | string | null
     eventDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    obituaryType?: NullableEnumObituaryTypeFieldUpdateOperationsInput | $Enums.ObituaryType | null
+    deceasedName?: NullableStringFieldUpdateOperationsInput | string | null
+    deathDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    eventTime?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
@@ -26722,6 +30979,53 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type CommunityPostLikeCreateInput = {
+    id?: string
+    createdAt?: Date | string
+    post: CommunityPostCreateNestedOneWithoutLikesInput
+    user: UserCreateNestedOneWithoutCommunityPostLikesInput
+  }
+
+  export type CommunityPostLikeUncheckedCreateInput = {
+    id?: string
+    postId: string
+    userId: string
+    createdAt?: Date | string
+  }
+
+  export type CommunityPostLikeUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    post?: CommunityPostUpdateOneRequiredWithoutLikesNestedInput
+    user?: UserUpdateOneRequiredWithoutCommunityPostLikesNestedInput
+  }
+
+  export type CommunityPostLikeUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    postId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CommunityPostLikeCreateManyInput = {
+    id?: string
+    postId: string
+    userId: string
+    createdAt?: Date | string
+  }
+
+  export type CommunityPostLikeUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CommunityPostLikeUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    postId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type CommunityPostTranslationCreateInput = {
@@ -26804,6 +31108,9 @@ export namespace Prisma {
     address?: string | null
     phone?: string | null
     email?: string | null
+    status?: $Enums.CommitteeStatus
+    rejectionReason?: string | null
+    publishedAt?: Date | string | null
     isActive?: boolean
     sortOrder?: number
     createdAt?: Date | string
@@ -26826,6 +31133,9 @@ export namespace Prisma {
     address?: string | null
     phone?: string | null
     email?: string | null
+    status?: $Enums.CommitteeStatus
+    rejectionReason?: string | null
+    publishedAt?: Date | string | null
     isActive?: boolean
     sortOrder?: number
     createdAt?: Date | string
@@ -26846,6 +31156,9 @@ export namespace Prisma {
     address?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumCommitteeStatusFieldUpdateOperationsInput | $Enums.CommitteeStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     sortOrder?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -26868,6 +31181,9 @@ export namespace Prisma {
     address?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumCommitteeStatusFieldUpdateOperationsInput | $Enums.CommitteeStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     sortOrder?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -26889,6 +31205,9 @@ export namespace Prisma {
     address?: string | null
     phone?: string | null
     email?: string | null
+    status?: $Enums.CommitteeStatus
+    rejectionReason?: string | null
+    publishedAt?: Date | string | null
     isActive?: boolean
     sortOrder?: number
     createdAt?: Date | string
@@ -26907,6 +31226,9 @@ export namespace Prisma {
     address?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumCommitteeStatusFieldUpdateOperationsInput | $Enums.CommitteeStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     sortOrder?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -26926,6 +31248,9 @@ export namespace Prisma {
     address?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumCommitteeStatusFieldUpdateOperationsInput | $Enums.CommitteeStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     sortOrder?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -27101,6 +31426,75 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     photoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     sortOrder?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PushTokenCreateInput = {
+    id?: string
+    token: string
+    platform?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutPushTokensInput
+  }
+
+  export type PushTokenUncheckedCreateInput = {
+    id?: string
+    userId: string
+    token: string
+    platform?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PushTokenUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    platform?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutPushTokensNestedInput
+  }
+
+  export type PushTokenUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    platform?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PushTokenCreateManyInput = {
+    id?: string
+    userId: string
+    token: string
+    platform?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PushTokenUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    platform?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PushTokenUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    platform?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -27384,6 +31778,24 @@ export namespace Prisma {
     none?: MatrimonyDeleteRequestWhereInput
   }
 
+  export type CommunityPostLikeListRelationFilter = {
+    every?: CommunityPostLikeWhereInput
+    some?: CommunityPostLikeWhereInput
+    none?: CommunityPostLikeWhereInput
+  }
+
+  export type PushTokenListRelationFilter = {
+    every?: PushTokenWhereInput
+    some?: PushTokenWhereInput
+    none?: PushTokenWhereInput
+  }
+
+  export type AccountDeleteRequestListRelationFilter = {
+    every?: AccountDeleteRequestWhereInput
+    some?: AccountDeleteRequestWhereInput
+    none?: AccountDeleteRequestWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -27421,10 +31833,23 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
+  export type CommunityPostLikeOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type PushTokenOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type AccountDeleteRequestOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type UserCountOrderByAggregateInput = {
     id?: SortOrder
     phone?: SortOrder
     email?: SortOrder
+    googleSub?: SortOrder
     firstName?: SortOrder
     lastName?: SortOrder
     preferredLanguage?: SortOrder
@@ -27441,6 +31866,7 @@ export namespace Prisma {
     id?: SortOrder
     phone?: SortOrder
     email?: SortOrder
+    googleSub?: SortOrder
     firstName?: SortOrder
     lastName?: SortOrder
     preferredLanguage?: SortOrder
@@ -27457,6 +31883,7 @@ export namespace Prisma {
     id?: SortOrder
     phone?: SortOrder
     email?: SortOrder
+    googleSub?: SortOrder
     firstName?: SortOrder
     lastName?: SortOrder
     preferredLanguage?: SortOrder
@@ -27561,6 +31988,61 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type EnumAccountDeleteRequestStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.AccountDeleteRequestStatus | EnumAccountDeleteRequestStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.AccountDeleteRequestStatus[] | ListEnumAccountDeleteRequestStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AccountDeleteRequestStatus[] | ListEnumAccountDeleteRequestStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumAccountDeleteRequestStatusFilter<$PrismaModel> | $Enums.AccountDeleteRequestStatus
+  }
+
+  export type UserScalarRelationFilter = {
+    is?: UserWhereInput
+    isNot?: UserWhereInput
+  }
+
+  export type AccountDeleteRequestCountOrderByAggregateInput = {
+    id?: SortOrder
+    requestedById?: SortOrder
+    reason?: SortOrder
+    status?: SortOrder
+    adminNote?: SortOrder
+    reviewedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type AccountDeleteRequestMaxOrderByAggregateInput = {
+    id?: SortOrder
+    requestedById?: SortOrder
+    reason?: SortOrder
+    status?: SortOrder
+    adminNote?: SortOrder
+    reviewedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type AccountDeleteRequestMinOrderByAggregateInput = {
+    id?: SortOrder
+    requestedById?: SortOrder
+    reason?: SortOrder
+    status?: SortOrder
+    adminNote?: SortOrder
+    reviewedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EnumAccountDeleteRequestStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AccountDeleteRequestStatus | EnumAccountDeleteRequestStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.AccountDeleteRequestStatus[] | ListEnumAccountDeleteRequestStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AccountDeleteRequestStatus[] | ListEnumAccountDeleteRequestStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumAccountDeleteRequestStatusWithAggregatesFilter<$PrismaModel> | $Enums.AccountDeleteRequestStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAccountDeleteRequestStatusFilter<$PrismaModel>
+    _max?: NestedEnumAccountDeleteRequestStatusFilter<$PrismaModel>
+  }
+
   export type EnumProfileForFilter<$PrismaModel = never> = {
     equals?: $Enums.ProfileFor | EnumProfileForFieldRefInput<$PrismaModel>
     in?: $Enums.ProfileFor[] | ListEnumProfileForFieldRefInput<$PrismaModel>
@@ -27621,11 +32103,6 @@ export namespace Prisma {
     in?: $Enums.MatrimonyProfileStatus[] | ListEnumMatrimonyProfileStatusFieldRefInput<$PrismaModel>
     notIn?: $Enums.MatrimonyProfileStatus[] | ListEnumMatrimonyProfileStatusFieldRefInput<$PrismaModel>
     not?: NestedEnumMatrimonyProfileStatusFilter<$PrismaModel> | $Enums.MatrimonyProfileStatus
-  }
-
-  export type UserScalarRelationFilter = {
-    is?: UserWhereInput
-    isNot?: UserWhereInput
   }
 
   export type ProfilePhotoListRelationFilter = {
@@ -28358,6 +32835,13 @@ export namespace Prisma {
     not?: NestedEnumPostStatusFilter<$PrismaModel> | $Enums.PostStatus
   }
 
+  export type EnumObituaryTypeNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.ObituaryType | EnumObituaryTypeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.ObituaryType[] | ListEnumObituaryTypeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.ObituaryType[] | ListEnumObituaryTypeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumObituaryTypeNullableFilter<$PrismaModel> | $Enums.ObituaryType | null
+  }
+
   export type UserNullableScalarRelationFilter = {
     is?: UserWhereInput | null
     isNot?: UserWhereInput | null
@@ -28384,6 +32868,10 @@ export namespace Prisma {
     contactPhone?: SortOrder
     location?: SortOrder
     eventDate?: SortOrder
+    obituaryType?: SortOrder
+    deceasedName?: SortOrder
+    deathDate?: SortOrder
+    eventTime?: SortOrder
     publishedAt?: SortOrder
     expiresAt?: SortOrder
     isFeatured?: SortOrder
@@ -28404,6 +32892,10 @@ export namespace Prisma {
     contactPhone?: SortOrder
     location?: SortOrder
     eventDate?: SortOrder
+    obituaryType?: SortOrder
+    deceasedName?: SortOrder
+    deathDate?: SortOrder
+    eventTime?: SortOrder
     publishedAt?: SortOrder
     expiresAt?: SortOrder
     isFeatured?: SortOrder
@@ -28424,6 +32916,10 @@ export namespace Prisma {
     contactPhone?: SortOrder
     location?: SortOrder
     eventDate?: SortOrder
+    obituaryType?: SortOrder
+    deceasedName?: SortOrder
+    deathDate?: SortOrder
+    eventTime?: SortOrder
     publishedAt?: SortOrder
     expiresAt?: SortOrder
     isFeatured?: SortOrder
@@ -28453,9 +32949,45 @@ export namespace Prisma {
     _max?: NestedEnumPostStatusFilter<$PrismaModel>
   }
 
+  export type EnumObituaryTypeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ObituaryType | EnumObituaryTypeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.ObituaryType[] | ListEnumObituaryTypeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.ObituaryType[] | ListEnumObituaryTypeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumObituaryTypeNullableWithAggregatesFilter<$PrismaModel> | $Enums.ObituaryType | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumObituaryTypeNullableFilter<$PrismaModel>
+    _max?: NestedEnumObituaryTypeNullableFilter<$PrismaModel>
+  }
+
   export type CommunityPostScalarRelationFilter = {
     is?: CommunityPostWhereInput
     isNot?: CommunityPostWhereInput
+  }
+
+  export type CommunityPostLikePostIdUserIdCompoundUniqueInput = {
+    postId: string
+    userId: string
+  }
+
+  export type CommunityPostLikeCountOrderByAggregateInput = {
+    id?: SortOrder
+    postId?: SortOrder
+    userId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type CommunityPostLikeMaxOrderByAggregateInput = {
+    id?: SortOrder
+    postId?: SortOrder
+    userId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type CommunityPostLikeMinOrderByAggregateInput = {
+    id?: SortOrder
+    postId?: SortOrder
+    userId?: SortOrder
+    createdAt?: SortOrder
   }
 
   export type CommunityPostTranslationPostIdLanguageCompoundUniqueInput = {
@@ -28493,6 +33025,13 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
+  export type EnumCommitteeStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.CommitteeStatus | EnumCommitteeStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.CommitteeStatus[] | ListEnumCommitteeStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CommitteeStatus[] | ListEnumCommitteeStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumCommitteeStatusFilter<$PrismaModel> | $Enums.CommitteeStatus
+  }
+
   export type CommitteeTranslationListRelationFilter = {
     every?: CommitteeTranslationWhereInput
     some?: CommitteeTranslationWhereInput
@@ -28525,6 +33064,9 @@ export namespace Prisma {
     address?: SortOrder
     phone?: SortOrder
     email?: SortOrder
+    status?: SortOrder
+    rejectionReason?: SortOrder
+    publishedAt?: SortOrder
     isActive?: SortOrder
     sortOrder?: SortOrder
     createdAt?: SortOrder
@@ -28548,6 +33090,9 @@ export namespace Prisma {
     address?: SortOrder
     phone?: SortOrder
     email?: SortOrder
+    status?: SortOrder
+    rejectionReason?: SortOrder
+    publishedAt?: SortOrder
     isActive?: SortOrder
     sortOrder?: SortOrder
     createdAt?: SortOrder
@@ -28567,6 +33112,9 @@ export namespace Prisma {
     address?: SortOrder
     phone?: SortOrder
     email?: SortOrder
+    status?: SortOrder
+    rejectionReason?: SortOrder
+    publishedAt?: SortOrder
     isActive?: SortOrder
     sortOrder?: SortOrder
     createdAt?: SortOrder
@@ -28576,6 +33124,16 @@ export namespace Prisma {
 
   export type CommitteeSumOrderByAggregateInput = {
     sortOrder?: SortOrder
+  }
+
+  export type EnumCommitteeStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.CommitteeStatus | EnumCommitteeStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.CommitteeStatus[] | ListEnumCommitteeStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CommitteeStatus[] | ListEnumCommitteeStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumCommitteeStatusWithAggregatesFilter<$PrismaModel> | $Enums.CommitteeStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumCommitteeStatusFilter<$PrismaModel>
+    _max?: NestedEnumCommitteeStatusFilter<$PrismaModel>
   }
 
   export type CommitteeScalarRelationFilter = {
@@ -28669,6 +33227,36 @@ export namespace Prisma {
 
   export type CommitteeMemberSumOrderByAggregateInput = {
     sortOrder?: SortOrder
+  }
+
+  export type PushTokenCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    token?: SortOrder
+    platform?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PushTokenMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    token?: SortOrder
+    platform?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PushTokenMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    token?: SortOrder
+    platform?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type EnumNotificationTypeFilter<$PrismaModel = never> = {
@@ -28858,6 +33446,27 @@ export namespace Prisma {
     connect?: MatrimonyDeleteRequestWhereUniqueInput | MatrimonyDeleteRequestWhereUniqueInput[]
   }
 
+  export type CommunityPostLikeCreateNestedManyWithoutUserInput = {
+    create?: XOR<CommunityPostLikeCreateWithoutUserInput, CommunityPostLikeUncheckedCreateWithoutUserInput> | CommunityPostLikeCreateWithoutUserInput[] | CommunityPostLikeUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CommunityPostLikeCreateOrConnectWithoutUserInput | CommunityPostLikeCreateOrConnectWithoutUserInput[]
+    createMany?: CommunityPostLikeCreateManyUserInputEnvelope
+    connect?: CommunityPostLikeWhereUniqueInput | CommunityPostLikeWhereUniqueInput[]
+  }
+
+  export type PushTokenCreateNestedManyWithoutUserInput = {
+    create?: XOR<PushTokenCreateWithoutUserInput, PushTokenUncheckedCreateWithoutUserInput> | PushTokenCreateWithoutUserInput[] | PushTokenUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: PushTokenCreateOrConnectWithoutUserInput | PushTokenCreateOrConnectWithoutUserInput[]
+    createMany?: PushTokenCreateManyUserInputEnvelope
+    connect?: PushTokenWhereUniqueInput | PushTokenWhereUniqueInput[]
+  }
+
+  export type AccountDeleteRequestCreateNestedManyWithoutRequestedByInput = {
+    create?: XOR<AccountDeleteRequestCreateWithoutRequestedByInput, AccountDeleteRequestUncheckedCreateWithoutRequestedByInput> | AccountDeleteRequestCreateWithoutRequestedByInput[] | AccountDeleteRequestUncheckedCreateWithoutRequestedByInput[]
+    connectOrCreate?: AccountDeleteRequestCreateOrConnectWithoutRequestedByInput | AccountDeleteRequestCreateOrConnectWithoutRequestedByInput[]
+    createMany?: AccountDeleteRequestCreateManyRequestedByInputEnvelope
+    connect?: AccountDeleteRequestWhereUniqueInput | AccountDeleteRequestWhereUniqueInput[]
+  }
+
   export type MatrimonyProfileUncheckedCreateNestedManyWithoutCreatedByInput = {
     create?: XOR<MatrimonyProfileCreateWithoutCreatedByInput, MatrimonyProfileUncheckedCreateWithoutCreatedByInput> | MatrimonyProfileCreateWithoutCreatedByInput[] | MatrimonyProfileUncheckedCreateWithoutCreatedByInput[]
     connectOrCreate?: MatrimonyProfileCreateOrConnectWithoutCreatedByInput | MatrimonyProfileCreateOrConnectWithoutCreatedByInput[]
@@ -28912,6 +33521,27 @@ export namespace Prisma {
     connectOrCreate?: MatrimonyDeleteRequestCreateOrConnectWithoutRequestedByInput | MatrimonyDeleteRequestCreateOrConnectWithoutRequestedByInput[]
     createMany?: MatrimonyDeleteRequestCreateManyRequestedByInputEnvelope
     connect?: MatrimonyDeleteRequestWhereUniqueInput | MatrimonyDeleteRequestWhereUniqueInput[]
+  }
+
+  export type CommunityPostLikeUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<CommunityPostLikeCreateWithoutUserInput, CommunityPostLikeUncheckedCreateWithoutUserInput> | CommunityPostLikeCreateWithoutUserInput[] | CommunityPostLikeUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CommunityPostLikeCreateOrConnectWithoutUserInput | CommunityPostLikeCreateOrConnectWithoutUserInput[]
+    createMany?: CommunityPostLikeCreateManyUserInputEnvelope
+    connect?: CommunityPostLikeWhereUniqueInput | CommunityPostLikeWhereUniqueInput[]
+  }
+
+  export type PushTokenUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<PushTokenCreateWithoutUserInput, PushTokenUncheckedCreateWithoutUserInput> | PushTokenCreateWithoutUserInput[] | PushTokenUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: PushTokenCreateOrConnectWithoutUserInput | PushTokenCreateOrConnectWithoutUserInput[]
+    createMany?: PushTokenCreateManyUserInputEnvelope
+    connect?: PushTokenWhereUniqueInput | PushTokenWhereUniqueInput[]
+  }
+
+  export type AccountDeleteRequestUncheckedCreateNestedManyWithoutRequestedByInput = {
+    create?: XOR<AccountDeleteRequestCreateWithoutRequestedByInput, AccountDeleteRequestUncheckedCreateWithoutRequestedByInput> | AccountDeleteRequestCreateWithoutRequestedByInput[] | AccountDeleteRequestUncheckedCreateWithoutRequestedByInput[]
+    connectOrCreate?: AccountDeleteRequestCreateOrConnectWithoutRequestedByInput | AccountDeleteRequestCreateOrConnectWithoutRequestedByInput[]
+    createMany?: AccountDeleteRequestCreateManyRequestedByInputEnvelope
+    connect?: AccountDeleteRequestWhereUniqueInput | AccountDeleteRequestWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -29054,6 +33684,48 @@ export namespace Prisma {
     deleteMany?: MatrimonyDeleteRequestScalarWhereInput | MatrimonyDeleteRequestScalarWhereInput[]
   }
 
+  export type CommunityPostLikeUpdateManyWithoutUserNestedInput = {
+    create?: XOR<CommunityPostLikeCreateWithoutUserInput, CommunityPostLikeUncheckedCreateWithoutUserInput> | CommunityPostLikeCreateWithoutUserInput[] | CommunityPostLikeUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CommunityPostLikeCreateOrConnectWithoutUserInput | CommunityPostLikeCreateOrConnectWithoutUserInput[]
+    upsert?: CommunityPostLikeUpsertWithWhereUniqueWithoutUserInput | CommunityPostLikeUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: CommunityPostLikeCreateManyUserInputEnvelope
+    set?: CommunityPostLikeWhereUniqueInput | CommunityPostLikeWhereUniqueInput[]
+    disconnect?: CommunityPostLikeWhereUniqueInput | CommunityPostLikeWhereUniqueInput[]
+    delete?: CommunityPostLikeWhereUniqueInput | CommunityPostLikeWhereUniqueInput[]
+    connect?: CommunityPostLikeWhereUniqueInput | CommunityPostLikeWhereUniqueInput[]
+    update?: CommunityPostLikeUpdateWithWhereUniqueWithoutUserInput | CommunityPostLikeUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: CommunityPostLikeUpdateManyWithWhereWithoutUserInput | CommunityPostLikeUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: CommunityPostLikeScalarWhereInput | CommunityPostLikeScalarWhereInput[]
+  }
+
+  export type PushTokenUpdateManyWithoutUserNestedInput = {
+    create?: XOR<PushTokenCreateWithoutUserInput, PushTokenUncheckedCreateWithoutUserInput> | PushTokenCreateWithoutUserInput[] | PushTokenUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: PushTokenCreateOrConnectWithoutUserInput | PushTokenCreateOrConnectWithoutUserInput[]
+    upsert?: PushTokenUpsertWithWhereUniqueWithoutUserInput | PushTokenUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: PushTokenCreateManyUserInputEnvelope
+    set?: PushTokenWhereUniqueInput | PushTokenWhereUniqueInput[]
+    disconnect?: PushTokenWhereUniqueInput | PushTokenWhereUniqueInput[]
+    delete?: PushTokenWhereUniqueInput | PushTokenWhereUniqueInput[]
+    connect?: PushTokenWhereUniqueInput | PushTokenWhereUniqueInput[]
+    update?: PushTokenUpdateWithWhereUniqueWithoutUserInput | PushTokenUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: PushTokenUpdateManyWithWhereWithoutUserInput | PushTokenUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: PushTokenScalarWhereInput | PushTokenScalarWhereInput[]
+  }
+
+  export type AccountDeleteRequestUpdateManyWithoutRequestedByNestedInput = {
+    create?: XOR<AccountDeleteRequestCreateWithoutRequestedByInput, AccountDeleteRequestUncheckedCreateWithoutRequestedByInput> | AccountDeleteRequestCreateWithoutRequestedByInput[] | AccountDeleteRequestUncheckedCreateWithoutRequestedByInput[]
+    connectOrCreate?: AccountDeleteRequestCreateOrConnectWithoutRequestedByInput | AccountDeleteRequestCreateOrConnectWithoutRequestedByInput[]
+    upsert?: AccountDeleteRequestUpsertWithWhereUniqueWithoutRequestedByInput | AccountDeleteRequestUpsertWithWhereUniqueWithoutRequestedByInput[]
+    createMany?: AccountDeleteRequestCreateManyRequestedByInputEnvelope
+    set?: AccountDeleteRequestWhereUniqueInput | AccountDeleteRequestWhereUniqueInput[]
+    disconnect?: AccountDeleteRequestWhereUniqueInput | AccountDeleteRequestWhereUniqueInput[]
+    delete?: AccountDeleteRequestWhereUniqueInput | AccountDeleteRequestWhereUniqueInput[]
+    connect?: AccountDeleteRequestWhereUniqueInput | AccountDeleteRequestWhereUniqueInput[]
+    update?: AccountDeleteRequestUpdateWithWhereUniqueWithoutRequestedByInput | AccountDeleteRequestUpdateWithWhereUniqueWithoutRequestedByInput[]
+    updateMany?: AccountDeleteRequestUpdateManyWithWhereWithoutRequestedByInput | AccountDeleteRequestUpdateManyWithWhereWithoutRequestedByInput[]
+    deleteMany?: AccountDeleteRequestScalarWhereInput | AccountDeleteRequestScalarWhereInput[]
+  }
+
   export type MatrimonyProfileUncheckedUpdateManyWithoutCreatedByNestedInput = {
     create?: XOR<MatrimonyProfileCreateWithoutCreatedByInput, MatrimonyProfileUncheckedCreateWithoutCreatedByInput> | MatrimonyProfileCreateWithoutCreatedByInput[] | MatrimonyProfileUncheckedCreateWithoutCreatedByInput[]
     connectOrCreate?: MatrimonyProfileCreateOrConnectWithoutCreatedByInput | MatrimonyProfileCreateOrConnectWithoutCreatedByInput[]
@@ -29164,6 +33836,66 @@ export namespace Prisma {
     update?: MatrimonyDeleteRequestUpdateWithWhereUniqueWithoutRequestedByInput | MatrimonyDeleteRequestUpdateWithWhereUniqueWithoutRequestedByInput[]
     updateMany?: MatrimonyDeleteRequestUpdateManyWithWhereWithoutRequestedByInput | MatrimonyDeleteRequestUpdateManyWithWhereWithoutRequestedByInput[]
     deleteMany?: MatrimonyDeleteRequestScalarWhereInput | MatrimonyDeleteRequestScalarWhereInput[]
+  }
+
+  export type CommunityPostLikeUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<CommunityPostLikeCreateWithoutUserInput, CommunityPostLikeUncheckedCreateWithoutUserInput> | CommunityPostLikeCreateWithoutUserInput[] | CommunityPostLikeUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CommunityPostLikeCreateOrConnectWithoutUserInput | CommunityPostLikeCreateOrConnectWithoutUserInput[]
+    upsert?: CommunityPostLikeUpsertWithWhereUniqueWithoutUserInput | CommunityPostLikeUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: CommunityPostLikeCreateManyUserInputEnvelope
+    set?: CommunityPostLikeWhereUniqueInput | CommunityPostLikeWhereUniqueInput[]
+    disconnect?: CommunityPostLikeWhereUniqueInput | CommunityPostLikeWhereUniqueInput[]
+    delete?: CommunityPostLikeWhereUniqueInput | CommunityPostLikeWhereUniqueInput[]
+    connect?: CommunityPostLikeWhereUniqueInput | CommunityPostLikeWhereUniqueInput[]
+    update?: CommunityPostLikeUpdateWithWhereUniqueWithoutUserInput | CommunityPostLikeUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: CommunityPostLikeUpdateManyWithWhereWithoutUserInput | CommunityPostLikeUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: CommunityPostLikeScalarWhereInput | CommunityPostLikeScalarWhereInput[]
+  }
+
+  export type PushTokenUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<PushTokenCreateWithoutUserInput, PushTokenUncheckedCreateWithoutUserInput> | PushTokenCreateWithoutUserInput[] | PushTokenUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: PushTokenCreateOrConnectWithoutUserInput | PushTokenCreateOrConnectWithoutUserInput[]
+    upsert?: PushTokenUpsertWithWhereUniqueWithoutUserInput | PushTokenUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: PushTokenCreateManyUserInputEnvelope
+    set?: PushTokenWhereUniqueInput | PushTokenWhereUniqueInput[]
+    disconnect?: PushTokenWhereUniqueInput | PushTokenWhereUniqueInput[]
+    delete?: PushTokenWhereUniqueInput | PushTokenWhereUniqueInput[]
+    connect?: PushTokenWhereUniqueInput | PushTokenWhereUniqueInput[]
+    update?: PushTokenUpdateWithWhereUniqueWithoutUserInput | PushTokenUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: PushTokenUpdateManyWithWhereWithoutUserInput | PushTokenUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: PushTokenScalarWhereInput | PushTokenScalarWhereInput[]
+  }
+
+  export type AccountDeleteRequestUncheckedUpdateManyWithoutRequestedByNestedInput = {
+    create?: XOR<AccountDeleteRequestCreateWithoutRequestedByInput, AccountDeleteRequestUncheckedCreateWithoutRequestedByInput> | AccountDeleteRequestCreateWithoutRequestedByInput[] | AccountDeleteRequestUncheckedCreateWithoutRequestedByInput[]
+    connectOrCreate?: AccountDeleteRequestCreateOrConnectWithoutRequestedByInput | AccountDeleteRequestCreateOrConnectWithoutRequestedByInput[]
+    upsert?: AccountDeleteRequestUpsertWithWhereUniqueWithoutRequestedByInput | AccountDeleteRequestUpsertWithWhereUniqueWithoutRequestedByInput[]
+    createMany?: AccountDeleteRequestCreateManyRequestedByInputEnvelope
+    set?: AccountDeleteRequestWhereUniqueInput | AccountDeleteRequestWhereUniqueInput[]
+    disconnect?: AccountDeleteRequestWhereUniqueInput | AccountDeleteRequestWhereUniqueInput[]
+    delete?: AccountDeleteRequestWhereUniqueInput | AccountDeleteRequestWhereUniqueInput[]
+    connect?: AccountDeleteRequestWhereUniqueInput | AccountDeleteRequestWhereUniqueInput[]
+    update?: AccountDeleteRequestUpdateWithWhereUniqueWithoutRequestedByInput | AccountDeleteRequestUpdateWithWhereUniqueWithoutRequestedByInput[]
+    updateMany?: AccountDeleteRequestUpdateManyWithWhereWithoutRequestedByInput | AccountDeleteRequestUpdateManyWithWhereWithoutRequestedByInput[]
+    deleteMany?: AccountDeleteRequestScalarWhereInput | AccountDeleteRequestScalarWhereInput[]
+  }
+
+  export type UserCreateNestedOneWithoutAccountDeleteRequestsInput = {
+    create?: XOR<UserCreateWithoutAccountDeleteRequestsInput, UserUncheckedCreateWithoutAccountDeleteRequestsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAccountDeleteRequestsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type EnumAccountDeleteRequestStatusFieldUpdateOperationsInput = {
+    set?: $Enums.AccountDeleteRequestStatus
+  }
+
+  export type UserUpdateOneRequiredWithoutAccountDeleteRequestsNestedInput = {
+    create?: XOR<UserCreateWithoutAccountDeleteRequestsInput, UserUncheckedCreateWithoutAccountDeleteRequestsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAccountDeleteRequestsInput
+    upsert?: UserUpsertWithoutAccountDeleteRequestsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAccountDeleteRequestsInput, UserUpdateWithoutAccountDeleteRequestsInput>, UserUncheckedUpdateWithoutAccountDeleteRequestsInput>
   }
 
   export type UserCreateNestedOneWithoutMatrimonyProfilesInput = {
@@ -29858,11 +34590,25 @@ export namespace Prisma {
     connect?: CommunityPostTranslationWhereUniqueInput | CommunityPostTranslationWhereUniqueInput[]
   }
 
+  export type CommunityPostLikeCreateNestedManyWithoutPostInput = {
+    create?: XOR<CommunityPostLikeCreateWithoutPostInput, CommunityPostLikeUncheckedCreateWithoutPostInput> | CommunityPostLikeCreateWithoutPostInput[] | CommunityPostLikeUncheckedCreateWithoutPostInput[]
+    connectOrCreate?: CommunityPostLikeCreateOrConnectWithoutPostInput | CommunityPostLikeCreateOrConnectWithoutPostInput[]
+    createMany?: CommunityPostLikeCreateManyPostInputEnvelope
+    connect?: CommunityPostLikeWhereUniqueInput | CommunityPostLikeWhereUniqueInput[]
+  }
+
   export type CommunityPostTranslationUncheckedCreateNestedManyWithoutPostInput = {
     create?: XOR<CommunityPostTranslationCreateWithoutPostInput, CommunityPostTranslationUncheckedCreateWithoutPostInput> | CommunityPostTranslationCreateWithoutPostInput[] | CommunityPostTranslationUncheckedCreateWithoutPostInput[]
     connectOrCreate?: CommunityPostTranslationCreateOrConnectWithoutPostInput | CommunityPostTranslationCreateOrConnectWithoutPostInput[]
     createMany?: CommunityPostTranslationCreateManyPostInputEnvelope
     connect?: CommunityPostTranslationWhereUniqueInput | CommunityPostTranslationWhereUniqueInput[]
+  }
+
+  export type CommunityPostLikeUncheckedCreateNestedManyWithoutPostInput = {
+    create?: XOR<CommunityPostLikeCreateWithoutPostInput, CommunityPostLikeUncheckedCreateWithoutPostInput> | CommunityPostLikeCreateWithoutPostInput[] | CommunityPostLikeUncheckedCreateWithoutPostInput[]
+    connectOrCreate?: CommunityPostLikeCreateOrConnectWithoutPostInput | CommunityPostLikeCreateOrConnectWithoutPostInput[]
+    createMany?: CommunityPostLikeCreateManyPostInputEnvelope
+    connect?: CommunityPostLikeWhereUniqueInput | CommunityPostLikeWhereUniqueInput[]
   }
 
   export type EnumPostCategoryFieldUpdateOperationsInput = {
@@ -29871,6 +34617,10 @@ export namespace Prisma {
 
   export type EnumPostStatusFieldUpdateOperationsInput = {
     set?: $Enums.PostStatus
+  }
+
+  export type NullableEnumObituaryTypeFieldUpdateOperationsInput = {
+    set?: $Enums.ObituaryType | null
   }
 
   export type UserUpdateOneWithoutCommunityPostsNestedInput = {
@@ -29897,6 +34647,20 @@ export namespace Prisma {
     deleteMany?: CommunityPostTranslationScalarWhereInput | CommunityPostTranslationScalarWhereInput[]
   }
 
+  export type CommunityPostLikeUpdateManyWithoutPostNestedInput = {
+    create?: XOR<CommunityPostLikeCreateWithoutPostInput, CommunityPostLikeUncheckedCreateWithoutPostInput> | CommunityPostLikeCreateWithoutPostInput[] | CommunityPostLikeUncheckedCreateWithoutPostInput[]
+    connectOrCreate?: CommunityPostLikeCreateOrConnectWithoutPostInput | CommunityPostLikeCreateOrConnectWithoutPostInput[]
+    upsert?: CommunityPostLikeUpsertWithWhereUniqueWithoutPostInput | CommunityPostLikeUpsertWithWhereUniqueWithoutPostInput[]
+    createMany?: CommunityPostLikeCreateManyPostInputEnvelope
+    set?: CommunityPostLikeWhereUniqueInput | CommunityPostLikeWhereUniqueInput[]
+    disconnect?: CommunityPostLikeWhereUniqueInput | CommunityPostLikeWhereUniqueInput[]
+    delete?: CommunityPostLikeWhereUniqueInput | CommunityPostLikeWhereUniqueInput[]
+    connect?: CommunityPostLikeWhereUniqueInput | CommunityPostLikeWhereUniqueInput[]
+    update?: CommunityPostLikeUpdateWithWhereUniqueWithoutPostInput | CommunityPostLikeUpdateWithWhereUniqueWithoutPostInput[]
+    updateMany?: CommunityPostLikeUpdateManyWithWhereWithoutPostInput | CommunityPostLikeUpdateManyWithWhereWithoutPostInput[]
+    deleteMany?: CommunityPostLikeScalarWhereInput | CommunityPostLikeScalarWhereInput[]
+  }
+
   export type CommunityPostTranslationUncheckedUpdateManyWithoutPostNestedInput = {
     create?: XOR<CommunityPostTranslationCreateWithoutPostInput, CommunityPostTranslationUncheckedCreateWithoutPostInput> | CommunityPostTranslationCreateWithoutPostInput[] | CommunityPostTranslationUncheckedCreateWithoutPostInput[]
     connectOrCreate?: CommunityPostTranslationCreateOrConnectWithoutPostInput | CommunityPostTranslationCreateOrConnectWithoutPostInput[]
@@ -29909,6 +34673,48 @@ export namespace Prisma {
     update?: CommunityPostTranslationUpdateWithWhereUniqueWithoutPostInput | CommunityPostTranslationUpdateWithWhereUniqueWithoutPostInput[]
     updateMany?: CommunityPostTranslationUpdateManyWithWhereWithoutPostInput | CommunityPostTranslationUpdateManyWithWhereWithoutPostInput[]
     deleteMany?: CommunityPostTranslationScalarWhereInput | CommunityPostTranslationScalarWhereInput[]
+  }
+
+  export type CommunityPostLikeUncheckedUpdateManyWithoutPostNestedInput = {
+    create?: XOR<CommunityPostLikeCreateWithoutPostInput, CommunityPostLikeUncheckedCreateWithoutPostInput> | CommunityPostLikeCreateWithoutPostInput[] | CommunityPostLikeUncheckedCreateWithoutPostInput[]
+    connectOrCreate?: CommunityPostLikeCreateOrConnectWithoutPostInput | CommunityPostLikeCreateOrConnectWithoutPostInput[]
+    upsert?: CommunityPostLikeUpsertWithWhereUniqueWithoutPostInput | CommunityPostLikeUpsertWithWhereUniqueWithoutPostInput[]
+    createMany?: CommunityPostLikeCreateManyPostInputEnvelope
+    set?: CommunityPostLikeWhereUniqueInput | CommunityPostLikeWhereUniqueInput[]
+    disconnect?: CommunityPostLikeWhereUniqueInput | CommunityPostLikeWhereUniqueInput[]
+    delete?: CommunityPostLikeWhereUniqueInput | CommunityPostLikeWhereUniqueInput[]
+    connect?: CommunityPostLikeWhereUniqueInput | CommunityPostLikeWhereUniqueInput[]
+    update?: CommunityPostLikeUpdateWithWhereUniqueWithoutPostInput | CommunityPostLikeUpdateWithWhereUniqueWithoutPostInput[]
+    updateMany?: CommunityPostLikeUpdateManyWithWhereWithoutPostInput | CommunityPostLikeUpdateManyWithWhereWithoutPostInput[]
+    deleteMany?: CommunityPostLikeScalarWhereInput | CommunityPostLikeScalarWhereInput[]
+  }
+
+  export type CommunityPostCreateNestedOneWithoutLikesInput = {
+    create?: XOR<CommunityPostCreateWithoutLikesInput, CommunityPostUncheckedCreateWithoutLikesInput>
+    connectOrCreate?: CommunityPostCreateOrConnectWithoutLikesInput
+    connect?: CommunityPostWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutCommunityPostLikesInput = {
+    create?: XOR<UserCreateWithoutCommunityPostLikesInput, UserUncheckedCreateWithoutCommunityPostLikesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCommunityPostLikesInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type CommunityPostUpdateOneRequiredWithoutLikesNestedInput = {
+    create?: XOR<CommunityPostCreateWithoutLikesInput, CommunityPostUncheckedCreateWithoutLikesInput>
+    connectOrCreate?: CommunityPostCreateOrConnectWithoutLikesInput
+    upsert?: CommunityPostUpsertWithoutLikesInput
+    connect?: CommunityPostWhereUniqueInput
+    update?: XOR<XOR<CommunityPostUpdateToOneWithWhereWithoutLikesInput, CommunityPostUpdateWithoutLikesInput>, CommunityPostUncheckedUpdateWithoutLikesInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutCommunityPostLikesNestedInput = {
+    create?: XOR<UserCreateWithoutCommunityPostLikesInput, UserUncheckedCreateWithoutCommunityPostLikesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCommunityPostLikesInput
+    upsert?: UserUpsertWithoutCommunityPostLikesInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCommunityPostLikesInput, UserUpdateWithoutCommunityPostLikesInput>, UserUncheckedUpdateWithoutCommunityPostLikesInput>
   }
 
   export type CommunityPostCreateNestedOneWithoutTranslationsInput = {
@@ -29957,6 +34763,10 @@ export namespace Prisma {
     connectOrCreate?: CommitteeMemberCreateOrConnectWithoutCommitteeInput | CommitteeMemberCreateOrConnectWithoutCommitteeInput[]
     createMany?: CommitteeMemberCreateManyCommitteeInputEnvelope
     connect?: CommitteeMemberWhereUniqueInput | CommitteeMemberWhereUniqueInput[]
+  }
+
+  export type EnumCommitteeStatusFieldUpdateOperationsInput = {
+    set?: $Enums.CommitteeStatus
   }
 
   export type UserUpdateOneWithoutCommitteesNestedInput = {
@@ -30051,6 +34861,20 @@ export namespace Prisma {
     upsert?: CommitteeUpsertWithoutMembersInput
     connect?: CommitteeWhereUniqueInput
     update?: XOR<XOR<CommitteeUpdateToOneWithWhereWithoutMembersInput, CommitteeUpdateWithoutMembersInput>, CommitteeUncheckedUpdateWithoutMembersInput>
+  }
+
+  export type UserCreateNestedOneWithoutPushTokensInput = {
+    create?: XOR<UserCreateWithoutPushTokensInput, UserUncheckedCreateWithoutPushTokensInput>
+    connectOrCreate?: UserCreateOrConnectWithoutPushTokensInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutPushTokensNestedInput = {
+    create?: XOR<UserCreateWithoutPushTokensInput, UserUncheckedCreateWithoutPushTokensInput>
+    connectOrCreate?: UserCreateOrConnectWithoutPushTokensInput
+    upsert?: UserUpsertWithoutPushTokensInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutPushTokensInput, UserUpdateWithoutPushTokensInput>, UserUncheckedUpdateWithoutPushTokensInput>
   }
 
   export type UserCreateNestedOneWithoutNotificationsInput = {
@@ -30266,6 +35090,23 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type NestedEnumAccountDeleteRequestStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.AccountDeleteRequestStatus | EnumAccountDeleteRequestStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.AccountDeleteRequestStatus[] | ListEnumAccountDeleteRequestStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AccountDeleteRequestStatus[] | ListEnumAccountDeleteRequestStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumAccountDeleteRequestStatusFilter<$PrismaModel> | $Enums.AccountDeleteRequestStatus
+  }
+
+  export type NestedEnumAccountDeleteRequestStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AccountDeleteRequestStatus | EnumAccountDeleteRequestStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.AccountDeleteRequestStatus[] | ListEnumAccountDeleteRequestStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AccountDeleteRequestStatus[] | ListEnumAccountDeleteRequestStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumAccountDeleteRequestStatusWithAggregatesFilter<$PrismaModel> | $Enums.AccountDeleteRequestStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAccountDeleteRequestStatusFilter<$PrismaModel>
+    _max?: NestedEnumAccountDeleteRequestStatusFilter<$PrismaModel>
   }
 
   export type NestedEnumProfileForFilter<$PrismaModel = never> = {
@@ -30536,6 +35377,13 @@ export namespace Prisma {
     not?: NestedEnumPostStatusFilter<$PrismaModel> | $Enums.PostStatus
   }
 
+  export type NestedEnumObituaryTypeNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.ObituaryType | EnumObituaryTypeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.ObituaryType[] | ListEnumObituaryTypeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.ObituaryType[] | ListEnumObituaryTypeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumObituaryTypeNullableFilter<$PrismaModel> | $Enums.ObituaryType | null
+  }
+
   export type NestedEnumPostCategoryWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.PostCategory | EnumPostCategoryFieldRefInput<$PrismaModel>
     in?: $Enums.PostCategory[] | ListEnumPostCategoryFieldRefInput<$PrismaModel>
@@ -30554,6 +35402,33 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumPostStatusFilter<$PrismaModel>
     _max?: NestedEnumPostStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumObituaryTypeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ObituaryType | EnumObituaryTypeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.ObituaryType[] | ListEnumObituaryTypeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.ObituaryType[] | ListEnumObituaryTypeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumObituaryTypeNullableWithAggregatesFilter<$PrismaModel> | $Enums.ObituaryType | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumObituaryTypeNullableFilter<$PrismaModel>
+    _max?: NestedEnumObituaryTypeNullableFilter<$PrismaModel>
+  }
+
+  export type NestedEnumCommitteeStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.CommitteeStatus | EnumCommitteeStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.CommitteeStatus[] | ListEnumCommitteeStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CommitteeStatus[] | ListEnumCommitteeStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumCommitteeStatusFilter<$PrismaModel> | $Enums.CommitteeStatus
+  }
+
+  export type NestedEnumCommitteeStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.CommitteeStatus | EnumCommitteeStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.CommitteeStatus[] | ListEnumCommitteeStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CommitteeStatus[] | ListEnumCommitteeStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumCommitteeStatusWithAggregatesFilter<$PrismaModel> | $Enums.CommitteeStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumCommitteeStatusFilter<$PrismaModel>
+    _max?: NestedEnumCommitteeStatusFilter<$PrismaModel>
   }
 
   export type NestedEnumNotificationTypeFilter<$PrismaModel = never> = {
@@ -30816,6 +35691,10 @@ export namespace Prisma {
     contactPhone?: string | null
     location?: string | null
     eventDate?: Date | string | null
+    obituaryType?: $Enums.ObituaryType | null
+    deceasedName?: string | null
+    deathDate?: Date | string | null
+    eventTime?: string | null
     publishedAt?: Date | string | null
     expiresAt?: Date | string | null
     isFeatured?: boolean
@@ -30824,6 +35703,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     deletedAt?: Date | string | null
     translations?: CommunityPostTranslationCreateNestedManyWithoutPostInput
+    likes?: CommunityPostLikeCreateNestedManyWithoutPostInput
   }
 
   export type CommunityPostUncheckedCreateWithoutCreatedByInput = {
@@ -30836,6 +35716,10 @@ export namespace Prisma {
     contactPhone?: string | null
     location?: string | null
     eventDate?: Date | string | null
+    obituaryType?: $Enums.ObituaryType | null
+    deceasedName?: string | null
+    deathDate?: Date | string | null
+    eventTime?: string | null
     publishedAt?: Date | string | null
     expiresAt?: Date | string | null
     isFeatured?: boolean
@@ -30844,6 +35728,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     deletedAt?: Date | string | null
     translations?: CommunityPostTranslationUncheckedCreateNestedManyWithoutPostInput
+    likes?: CommunityPostLikeUncheckedCreateNestedManyWithoutPostInput
   }
 
   export type CommunityPostCreateOrConnectWithoutCreatedByInput = {
@@ -30867,6 +35752,9 @@ export namespace Prisma {
     address?: string | null
     phone?: string | null
     email?: string | null
+    status?: $Enums.CommitteeStatus
+    rejectionReason?: string | null
+    publishedAt?: Date | string | null
     isActive?: boolean
     sortOrder?: number
     createdAt?: Date | string
@@ -30887,6 +35775,9 @@ export namespace Prisma {
     address?: string | null
     phone?: string | null
     email?: string | null
+    status?: $Enums.CommitteeStatus
+    rejectionReason?: string | null
+    publishedAt?: Date | string | null
     isActive?: boolean
     sortOrder?: number
     createdAt?: Date | string
@@ -30963,6 +35854,86 @@ export namespace Prisma {
 
   export type MatrimonyDeleteRequestCreateManyRequestedByInputEnvelope = {
     data: MatrimonyDeleteRequestCreateManyRequestedByInput | MatrimonyDeleteRequestCreateManyRequestedByInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type CommunityPostLikeCreateWithoutUserInput = {
+    id?: string
+    createdAt?: Date | string
+    post: CommunityPostCreateNestedOneWithoutLikesInput
+  }
+
+  export type CommunityPostLikeUncheckedCreateWithoutUserInput = {
+    id?: string
+    postId: string
+    createdAt?: Date | string
+  }
+
+  export type CommunityPostLikeCreateOrConnectWithoutUserInput = {
+    where: CommunityPostLikeWhereUniqueInput
+    create: XOR<CommunityPostLikeCreateWithoutUserInput, CommunityPostLikeUncheckedCreateWithoutUserInput>
+  }
+
+  export type CommunityPostLikeCreateManyUserInputEnvelope = {
+    data: CommunityPostLikeCreateManyUserInput | CommunityPostLikeCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type PushTokenCreateWithoutUserInput = {
+    id?: string
+    token: string
+    platform?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PushTokenUncheckedCreateWithoutUserInput = {
+    id?: string
+    token: string
+    platform?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PushTokenCreateOrConnectWithoutUserInput = {
+    where: PushTokenWhereUniqueInput
+    create: XOR<PushTokenCreateWithoutUserInput, PushTokenUncheckedCreateWithoutUserInput>
+  }
+
+  export type PushTokenCreateManyUserInputEnvelope = {
+    data: PushTokenCreateManyUserInput | PushTokenCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type AccountDeleteRequestCreateWithoutRequestedByInput = {
+    id?: string
+    reason?: string | null
+    status?: $Enums.AccountDeleteRequestStatus
+    adminNote?: string | null
+    reviewedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type AccountDeleteRequestUncheckedCreateWithoutRequestedByInput = {
+    id?: string
+    reason?: string | null
+    status?: $Enums.AccountDeleteRequestStatus
+    adminNote?: string | null
+    reviewedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type AccountDeleteRequestCreateOrConnectWithoutRequestedByInput = {
+    where: AccountDeleteRequestWhereUniqueInput
+    create: XOR<AccountDeleteRequestCreateWithoutRequestedByInput, AccountDeleteRequestUncheckedCreateWithoutRequestedByInput>
+  }
+
+  export type AccountDeleteRequestCreateManyRequestedByInputEnvelope = {
+    data: AccountDeleteRequestCreateManyRequestedByInput | AccountDeleteRequestCreateManyRequestedByInput[]
     skipDuplicates?: boolean
   }
 
@@ -31151,6 +36122,10 @@ export namespace Prisma {
     contactPhone?: StringNullableFilter<"CommunityPost"> | string | null
     location?: StringNullableFilter<"CommunityPost"> | string | null
     eventDate?: DateTimeNullableFilter<"CommunityPost"> | Date | string | null
+    obituaryType?: EnumObituaryTypeNullableFilter<"CommunityPost"> | $Enums.ObituaryType | null
+    deceasedName?: StringNullableFilter<"CommunityPost"> | string | null
+    deathDate?: DateTimeNullableFilter<"CommunityPost"> | Date | string | null
+    eventTime?: StringNullableFilter<"CommunityPost"> | string | null
     publishedAt?: DateTimeNullableFilter<"CommunityPost"> | Date | string | null
     expiresAt?: DateTimeNullableFilter<"CommunityPost"> | Date | string | null
     isFeatured?: BoolFilter<"CommunityPost"> | boolean
@@ -31191,6 +36166,9 @@ export namespace Prisma {
     address?: StringNullableFilter<"Committee"> | string | null
     phone?: StringNullableFilter<"Committee"> | string | null
     email?: StringNullableFilter<"Committee"> | string | null
+    status?: EnumCommitteeStatusFilter<"Committee"> | $Enums.CommitteeStatus
+    rejectionReason?: StringNullableFilter<"Committee"> | string | null
+    publishedAt?: DateTimeNullableFilter<"Committee"> | Date | string | null
     isActive?: BoolFilter<"Committee"> | boolean
     sortOrder?: IntFilter<"Committee"> | number
     createdAt?: DateTimeFilter<"Committee"> | Date | string
@@ -31258,10 +36236,220 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"MatrimonyDeleteRequest"> | Date | string
   }
 
+  export type CommunityPostLikeUpsertWithWhereUniqueWithoutUserInput = {
+    where: CommunityPostLikeWhereUniqueInput
+    update: XOR<CommunityPostLikeUpdateWithoutUserInput, CommunityPostLikeUncheckedUpdateWithoutUserInput>
+    create: XOR<CommunityPostLikeCreateWithoutUserInput, CommunityPostLikeUncheckedCreateWithoutUserInput>
+  }
+
+  export type CommunityPostLikeUpdateWithWhereUniqueWithoutUserInput = {
+    where: CommunityPostLikeWhereUniqueInput
+    data: XOR<CommunityPostLikeUpdateWithoutUserInput, CommunityPostLikeUncheckedUpdateWithoutUserInput>
+  }
+
+  export type CommunityPostLikeUpdateManyWithWhereWithoutUserInput = {
+    where: CommunityPostLikeScalarWhereInput
+    data: XOR<CommunityPostLikeUpdateManyMutationInput, CommunityPostLikeUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type CommunityPostLikeScalarWhereInput = {
+    AND?: CommunityPostLikeScalarWhereInput | CommunityPostLikeScalarWhereInput[]
+    OR?: CommunityPostLikeScalarWhereInput[]
+    NOT?: CommunityPostLikeScalarWhereInput | CommunityPostLikeScalarWhereInput[]
+    id?: StringFilter<"CommunityPostLike"> | string
+    postId?: StringFilter<"CommunityPostLike"> | string
+    userId?: StringFilter<"CommunityPostLike"> | string
+    createdAt?: DateTimeFilter<"CommunityPostLike"> | Date | string
+  }
+
+  export type PushTokenUpsertWithWhereUniqueWithoutUserInput = {
+    where: PushTokenWhereUniqueInput
+    update: XOR<PushTokenUpdateWithoutUserInput, PushTokenUncheckedUpdateWithoutUserInput>
+    create: XOR<PushTokenCreateWithoutUserInput, PushTokenUncheckedCreateWithoutUserInput>
+  }
+
+  export type PushTokenUpdateWithWhereUniqueWithoutUserInput = {
+    where: PushTokenWhereUniqueInput
+    data: XOR<PushTokenUpdateWithoutUserInput, PushTokenUncheckedUpdateWithoutUserInput>
+  }
+
+  export type PushTokenUpdateManyWithWhereWithoutUserInput = {
+    where: PushTokenScalarWhereInput
+    data: XOR<PushTokenUpdateManyMutationInput, PushTokenUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type PushTokenScalarWhereInput = {
+    AND?: PushTokenScalarWhereInput | PushTokenScalarWhereInput[]
+    OR?: PushTokenScalarWhereInput[]
+    NOT?: PushTokenScalarWhereInput | PushTokenScalarWhereInput[]
+    id?: StringFilter<"PushToken"> | string
+    userId?: StringFilter<"PushToken"> | string
+    token?: StringFilter<"PushToken"> | string
+    platform?: StringNullableFilter<"PushToken"> | string | null
+    isActive?: BoolFilter<"PushToken"> | boolean
+    createdAt?: DateTimeFilter<"PushToken"> | Date | string
+    updatedAt?: DateTimeFilter<"PushToken"> | Date | string
+  }
+
+  export type AccountDeleteRequestUpsertWithWhereUniqueWithoutRequestedByInput = {
+    where: AccountDeleteRequestWhereUniqueInput
+    update: XOR<AccountDeleteRequestUpdateWithoutRequestedByInput, AccountDeleteRequestUncheckedUpdateWithoutRequestedByInput>
+    create: XOR<AccountDeleteRequestCreateWithoutRequestedByInput, AccountDeleteRequestUncheckedCreateWithoutRequestedByInput>
+  }
+
+  export type AccountDeleteRequestUpdateWithWhereUniqueWithoutRequestedByInput = {
+    where: AccountDeleteRequestWhereUniqueInput
+    data: XOR<AccountDeleteRequestUpdateWithoutRequestedByInput, AccountDeleteRequestUncheckedUpdateWithoutRequestedByInput>
+  }
+
+  export type AccountDeleteRequestUpdateManyWithWhereWithoutRequestedByInput = {
+    where: AccountDeleteRequestScalarWhereInput
+    data: XOR<AccountDeleteRequestUpdateManyMutationInput, AccountDeleteRequestUncheckedUpdateManyWithoutRequestedByInput>
+  }
+
+  export type AccountDeleteRequestScalarWhereInput = {
+    AND?: AccountDeleteRequestScalarWhereInput | AccountDeleteRequestScalarWhereInput[]
+    OR?: AccountDeleteRequestScalarWhereInput[]
+    NOT?: AccountDeleteRequestScalarWhereInput | AccountDeleteRequestScalarWhereInput[]
+    id?: StringFilter<"AccountDeleteRequest"> | string
+    requestedById?: StringFilter<"AccountDeleteRequest"> | string
+    reason?: StringNullableFilter<"AccountDeleteRequest"> | string | null
+    status?: EnumAccountDeleteRequestStatusFilter<"AccountDeleteRequest"> | $Enums.AccountDeleteRequestStatus
+    adminNote?: StringNullableFilter<"AccountDeleteRequest"> | string | null
+    reviewedAt?: DateTimeNullableFilter<"AccountDeleteRequest"> | Date | string | null
+    createdAt?: DateTimeFilter<"AccountDeleteRequest"> | Date | string
+    updatedAt?: DateTimeFilter<"AccountDeleteRequest"> | Date | string
+  }
+
+  export type UserCreateWithoutAccountDeleteRequestsInput = {
+    id?: string
+    phone: string
+    email?: string | null
+    googleSub?: string | null
+    firstName?: string | null
+    lastName?: string | null
+    preferredLanguage?: $Enums.Language
+    role?: $Enums.UserRole
+    isPhoneVerified?: boolean
+    isActive?: boolean
+    lastLoginAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    matrimonyProfiles?: MatrimonyProfileCreateNestedManyWithoutCreatedByInput
+    shortlists?: ShortlistCreateNestedManyWithoutUserInput
+    reports?: ProfileReportCreateNestedManyWithoutReporterInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    communityPosts?: CommunityPostCreateNestedManyWithoutCreatedByInput
+    committees?: CommitteeCreateNestedManyWithoutCreatedByInput
+    auditLogs?: AuditLogCreateNestedManyWithoutActorInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestCreateNestedManyWithoutRequestedByInput
+    communityPostLikes?: CommunityPostLikeCreateNestedManyWithoutUserInput
+    pushTokens?: PushTokenCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutAccountDeleteRequestsInput = {
+    id?: string
+    phone: string
+    email?: string | null
+    googleSub?: string | null
+    firstName?: string | null
+    lastName?: string | null
+    preferredLanguage?: $Enums.Language
+    role?: $Enums.UserRole
+    isPhoneVerified?: boolean
+    isActive?: boolean
+    lastLoginAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    matrimonyProfiles?: MatrimonyProfileUncheckedCreateNestedManyWithoutCreatedByInput
+    shortlists?: ShortlistUncheckedCreateNestedManyWithoutUserInput
+    reports?: ProfileReportUncheckedCreateNestedManyWithoutReporterInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    communityPosts?: CommunityPostUncheckedCreateNestedManyWithoutCreatedByInput
+    committees?: CommitteeUncheckedCreateNestedManyWithoutCreatedByInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    communityPostLikes?: CommunityPostLikeUncheckedCreateNestedManyWithoutUserInput
+    pushTokens?: PushTokenUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutAccountDeleteRequestsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutAccountDeleteRequestsInput, UserUncheckedCreateWithoutAccountDeleteRequestsInput>
+  }
+
+  export type UserUpsertWithoutAccountDeleteRequestsInput = {
+    update: XOR<UserUpdateWithoutAccountDeleteRequestsInput, UserUncheckedUpdateWithoutAccountDeleteRequestsInput>
+    create: XOR<UserCreateWithoutAccountDeleteRequestsInput, UserUncheckedCreateWithoutAccountDeleteRequestsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutAccountDeleteRequestsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutAccountDeleteRequestsInput, UserUncheckedUpdateWithoutAccountDeleteRequestsInput>
+  }
+
+  export type UserUpdateWithoutAccountDeleteRequestsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    googleSub?: NullableStringFieldUpdateOperationsInput | string | null
+    firstName?: NullableStringFieldUpdateOperationsInput | string | null
+    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    preferredLanguage?: EnumLanguageFieldUpdateOperationsInput | $Enums.Language
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isPhoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    matrimonyProfiles?: MatrimonyProfileUpdateManyWithoutCreatedByNestedInput
+    shortlists?: ShortlistUpdateManyWithoutUserNestedInput
+    reports?: ProfileReportUpdateManyWithoutReporterNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    communityPosts?: CommunityPostUpdateManyWithoutCreatedByNestedInput
+    committees?: CommitteeUpdateManyWithoutCreatedByNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestUpdateManyWithoutRequestedByNestedInput
+    communityPostLikes?: CommunityPostLikeUpdateManyWithoutUserNestedInput
+    pushTokens?: PushTokenUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutAccountDeleteRequestsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    googleSub?: NullableStringFieldUpdateOperationsInput | string | null
+    firstName?: NullableStringFieldUpdateOperationsInput | string | null
+    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    preferredLanguage?: EnumLanguageFieldUpdateOperationsInput | $Enums.Language
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isPhoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    matrimonyProfiles?: MatrimonyProfileUncheckedUpdateManyWithoutCreatedByNestedInput
+    shortlists?: ShortlistUncheckedUpdateManyWithoutUserNestedInput
+    reports?: ProfileReportUncheckedUpdateManyWithoutReporterNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    communityPosts?: CommunityPostUncheckedUpdateManyWithoutCreatedByNestedInput
+    committees?: CommitteeUncheckedUpdateManyWithoutCreatedByNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    communityPostLikes?: CommunityPostLikeUncheckedUpdateManyWithoutUserNestedInput
+    pushTokens?: PushTokenUncheckedUpdateManyWithoutUserNestedInput
+  }
+
   export type UserCreateWithoutMatrimonyProfilesInput = {
     id?: string
     phone: string
     email?: string | null
+    googleSub?: string | null
     firstName?: string | null
     lastName?: string | null
     preferredLanguage?: $Enums.Language
@@ -31279,12 +36467,16 @@ export namespace Prisma {
     committees?: CommitteeCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestCreateNestedManyWithoutRequestedByInput
+    communityPostLikes?: CommunityPostLikeCreateNestedManyWithoutUserInput
+    pushTokens?: PushTokenCreateNestedManyWithoutUserInput
+    accountDeleteRequests?: AccountDeleteRequestCreateNestedManyWithoutRequestedByInput
   }
 
   export type UserUncheckedCreateWithoutMatrimonyProfilesInput = {
     id?: string
     phone: string
     email?: string | null
+    googleSub?: string | null
     firstName?: string | null
     lastName?: string | null
     preferredLanguage?: $Enums.Language
@@ -31302,6 +36494,9 @@ export namespace Prisma {
     committees?: CommitteeUncheckedCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    communityPostLikes?: CommunityPostLikeUncheckedCreateNestedManyWithoutUserInput
+    pushTokens?: PushTokenUncheckedCreateNestedManyWithoutUserInput
+    accountDeleteRequests?: AccountDeleteRequestUncheckedCreateNestedManyWithoutRequestedByInput
   }
 
   export type UserCreateOrConnectWithoutMatrimonyProfilesInput = {
@@ -31627,6 +36822,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    googleSub?: NullableStringFieldUpdateOperationsInput | string | null
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     preferredLanguage?: EnumLanguageFieldUpdateOperationsInput | $Enums.Language
@@ -31644,12 +36840,16 @@ export namespace Prisma {
     committees?: CommitteeUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestUpdateManyWithoutRequestedByNestedInput
+    communityPostLikes?: CommunityPostLikeUpdateManyWithoutUserNestedInput
+    pushTokens?: PushTokenUpdateManyWithoutUserNestedInput
+    accountDeleteRequests?: AccountDeleteRequestUpdateManyWithoutRequestedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutMatrimonyProfilesInput = {
     id?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    googleSub?: NullableStringFieldUpdateOperationsInput | string | null
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     preferredLanguage?: EnumLanguageFieldUpdateOperationsInput | $Enums.Language
@@ -31667,6 +36867,9 @@ export namespace Prisma {
     committees?: CommitteeUncheckedUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    communityPostLikes?: CommunityPostLikeUncheckedUpdateManyWithoutUserNestedInput
+    pushTokens?: PushTokenUncheckedUpdateManyWithoutUserNestedInput
+    accountDeleteRequests?: AccountDeleteRequestUncheckedUpdateManyWithoutRequestedByNestedInput
   }
 
   export type ProfilePhotoUpsertWithWhereUniqueWithoutMatrimonyProfileInput = {
@@ -32030,6 +37233,7 @@ export namespace Prisma {
     id?: string
     phone: string
     email?: string | null
+    googleSub?: string | null
     firstName?: string | null
     lastName?: string | null
     preferredLanguage?: $Enums.Language
@@ -32047,12 +37251,16 @@ export namespace Prisma {
     communityPosts?: CommunityPostCreateNestedManyWithoutCreatedByInput
     committees?: CommitteeCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
+    communityPostLikes?: CommunityPostLikeCreateNestedManyWithoutUserInput
+    pushTokens?: PushTokenCreateNestedManyWithoutUserInput
+    accountDeleteRequests?: AccountDeleteRequestCreateNestedManyWithoutRequestedByInput
   }
 
   export type UserUncheckedCreateWithoutMatrimonyDeleteRequestsInput = {
     id?: string
     phone: string
     email?: string | null
+    googleSub?: string | null
     firstName?: string | null
     lastName?: string | null
     preferredLanguage?: $Enums.Language
@@ -32070,6 +37278,9 @@ export namespace Prisma {
     communityPosts?: CommunityPostUncheckedCreateNestedManyWithoutCreatedByInput
     committees?: CommitteeUncheckedCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
+    communityPostLikes?: CommunityPostLikeUncheckedCreateNestedManyWithoutUserInput
+    pushTokens?: PushTokenUncheckedCreateNestedManyWithoutUserInput
+    accountDeleteRequests?: AccountDeleteRequestUncheckedCreateNestedManyWithoutRequestedByInput
   }
 
   export type UserCreateOrConnectWithoutMatrimonyDeleteRequestsInput = {
@@ -32213,6 +37424,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    googleSub?: NullableStringFieldUpdateOperationsInput | string | null
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     preferredLanguage?: EnumLanguageFieldUpdateOperationsInput | $Enums.Language
@@ -32230,12 +37442,16 @@ export namespace Prisma {
     communityPosts?: CommunityPostUpdateManyWithoutCreatedByNestedInput
     committees?: CommitteeUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
+    communityPostLikes?: CommunityPostLikeUpdateManyWithoutUserNestedInput
+    pushTokens?: PushTokenUpdateManyWithoutUserNestedInput
+    accountDeleteRequests?: AccountDeleteRequestUpdateManyWithoutRequestedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutMatrimonyDeleteRequestsInput = {
     id?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    googleSub?: NullableStringFieldUpdateOperationsInput | string | null
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     preferredLanguage?: EnumLanguageFieldUpdateOperationsInput | $Enums.Language
@@ -32253,6 +37469,9 @@ export namespace Prisma {
     communityPosts?: CommunityPostUncheckedUpdateManyWithoutCreatedByNestedInput
     committees?: CommitteeUncheckedUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
+    communityPostLikes?: CommunityPostLikeUncheckedUpdateManyWithoutUserNestedInput
+    pushTokens?: PushTokenUncheckedUpdateManyWithoutUserNestedInput
+    accountDeleteRequests?: AccountDeleteRequestUncheckedUpdateManyWithoutRequestedByNestedInput
   }
 
   export type MatrimonyProfileCreateWithoutPartnerPreferenceInput = {
@@ -33911,6 +39130,7 @@ export namespace Prisma {
     id?: string
     phone: string
     email?: string | null
+    googleSub?: string | null
     firstName?: string | null
     lastName?: string | null
     preferredLanguage?: $Enums.Language
@@ -33928,12 +39148,16 @@ export namespace Prisma {
     committees?: CommitteeCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestCreateNestedManyWithoutRequestedByInput
+    communityPostLikes?: CommunityPostLikeCreateNestedManyWithoutUserInput
+    pushTokens?: PushTokenCreateNestedManyWithoutUserInput
+    accountDeleteRequests?: AccountDeleteRequestCreateNestedManyWithoutRequestedByInput
   }
 
   export type UserUncheckedCreateWithoutShortlistsInput = {
     id?: string
     phone: string
     email?: string | null
+    googleSub?: string | null
     firstName?: string | null
     lastName?: string | null
     preferredLanguage?: $Enums.Language
@@ -33951,6 +39175,9 @@ export namespace Prisma {
     committees?: CommitteeUncheckedCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    communityPostLikes?: CommunityPostLikeUncheckedCreateNestedManyWithoutUserInput
+    pushTokens?: PushTokenUncheckedCreateNestedManyWithoutUserInput
+    accountDeleteRequests?: AccountDeleteRequestUncheckedCreateNestedManyWithoutRequestedByInput
   }
 
   export type UserCreateOrConnectWithoutShortlistsInput = {
@@ -34088,6 +39315,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    googleSub?: NullableStringFieldUpdateOperationsInput | string | null
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     preferredLanguage?: EnumLanguageFieldUpdateOperationsInput | $Enums.Language
@@ -34105,12 +39333,16 @@ export namespace Prisma {
     committees?: CommitteeUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestUpdateManyWithoutRequestedByNestedInput
+    communityPostLikes?: CommunityPostLikeUpdateManyWithoutUserNestedInput
+    pushTokens?: PushTokenUpdateManyWithoutUserNestedInput
+    accountDeleteRequests?: AccountDeleteRequestUpdateManyWithoutRequestedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutShortlistsInput = {
     id?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    googleSub?: NullableStringFieldUpdateOperationsInput | string | null
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     preferredLanguage?: EnumLanguageFieldUpdateOperationsInput | $Enums.Language
@@ -34128,6 +39360,9 @@ export namespace Prisma {
     committees?: CommitteeUncheckedUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    communityPostLikes?: CommunityPostLikeUncheckedUpdateManyWithoutUserNestedInput
+    pushTokens?: PushTokenUncheckedUpdateManyWithoutUserNestedInput
+    accountDeleteRequests?: AccountDeleteRequestUncheckedUpdateManyWithoutRequestedByNestedInput
   }
 
   export type MatrimonyProfileUpsertWithoutShortlistedByInput = {
@@ -34255,6 +39490,7 @@ export namespace Prisma {
     id?: string
     phone: string
     email?: string | null
+    googleSub?: string | null
     firstName?: string | null
     lastName?: string | null
     preferredLanguage?: $Enums.Language
@@ -34272,12 +39508,16 @@ export namespace Prisma {
     committees?: CommitteeCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestCreateNestedManyWithoutRequestedByInput
+    communityPostLikes?: CommunityPostLikeCreateNestedManyWithoutUserInput
+    pushTokens?: PushTokenCreateNestedManyWithoutUserInput
+    accountDeleteRequests?: AccountDeleteRequestCreateNestedManyWithoutRequestedByInput
   }
 
   export type UserUncheckedCreateWithoutReportsInput = {
     id?: string
     phone: string
     email?: string | null
+    googleSub?: string | null
     firstName?: string | null
     lastName?: string | null
     preferredLanguage?: $Enums.Language
@@ -34295,6 +39535,9 @@ export namespace Prisma {
     committees?: CommitteeUncheckedCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    communityPostLikes?: CommunityPostLikeUncheckedCreateNestedManyWithoutUserInput
+    pushTokens?: PushTokenUncheckedCreateNestedManyWithoutUserInput
+    accountDeleteRequests?: AccountDeleteRequestUncheckedCreateNestedManyWithoutRequestedByInput
   }
 
   export type UserCreateOrConnectWithoutReportsInput = {
@@ -34432,6 +39675,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    googleSub?: NullableStringFieldUpdateOperationsInput | string | null
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     preferredLanguage?: EnumLanguageFieldUpdateOperationsInput | $Enums.Language
@@ -34449,12 +39693,16 @@ export namespace Prisma {
     committees?: CommitteeUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestUpdateManyWithoutRequestedByNestedInput
+    communityPostLikes?: CommunityPostLikeUpdateManyWithoutUserNestedInput
+    pushTokens?: PushTokenUpdateManyWithoutUserNestedInput
+    accountDeleteRequests?: AccountDeleteRequestUpdateManyWithoutRequestedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReportsInput = {
     id?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    googleSub?: NullableStringFieldUpdateOperationsInput | string | null
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     preferredLanguage?: EnumLanguageFieldUpdateOperationsInput | $Enums.Language
@@ -34472,6 +39720,9 @@ export namespace Prisma {
     committees?: CommitteeUncheckedUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    communityPostLikes?: CommunityPostLikeUncheckedUpdateManyWithoutUserNestedInput
+    pushTokens?: PushTokenUncheckedUpdateManyWithoutUserNestedInput
+    accountDeleteRequests?: AccountDeleteRequestUncheckedUpdateManyWithoutRequestedByNestedInput
   }
 
   export type MatrimonyProfileUpsertWithoutReportsInput = {
@@ -34599,6 +39850,7 @@ export namespace Prisma {
     id?: string
     phone: string
     email?: string | null
+    googleSub?: string | null
     firstName?: string | null
     lastName?: string | null
     preferredLanguage?: $Enums.Language
@@ -34616,12 +39868,16 @@ export namespace Prisma {
     committees?: CommitteeCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestCreateNestedManyWithoutRequestedByInput
+    communityPostLikes?: CommunityPostLikeCreateNestedManyWithoutUserInput
+    pushTokens?: PushTokenCreateNestedManyWithoutUserInput
+    accountDeleteRequests?: AccountDeleteRequestCreateNestedManyWithoutRequestedByInput
   }
 
   export type UserUncheckedCreateWithoutCommunityPostsInput = {
     id?: string
     phone: string
     email?: string | null
+    googleSub?: string | null
     firstName?: string | null
     lastName?: string | null
     preferredLanguage?: $Enums.Language
@@ -34639,6 +39895,9 @@ export namespace Prisma {
     committees?: CommitteeUncheckedCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    communityPostLikes?: CommunityPostLikeUncheckedCreateNestedManyWithoutUserInput
+    pushTokens?: PushTokenUncheckedCreateNestedManyWithoutUserInput
+    accountDeleteRequests?: AccountDeleteRequestUncheckedCreateNestedManyWithoutRequestedByInput
   }
 
   export type UserCreateOrConnectWithoutCommunityPostsInput = {
@@ -34674,6 +39933,28 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type CommunityPostLikeCreateWithoutPostInput = {
+    id?: string
+    createdAt?: Date | string
+    user: UserCreateNestedOneWithoutCommunityPostLikesInput
+  }
+
+  export type CommunityPostLikeUncheckedCreateWithoutPostInput = {
+    id?: string
+    userId: string
+    createdAt?: Date | string
+  }
+
+  export type CommunityPostLikeCreateOrConnectWithoutPostInput = {
+    where: CommunityPostLikeWhereUniqueInput
+    create: XOR<CommunityPostLikeCreateWithoutPostInput, CommunityPostLikeUncheckedCreateWithoutPostInput>
+  }
+
+  export type CommunityPostLikeCreateManyPostInputEnvelope = {
+    data: CommunityPostLikeCreateManyPostInput | CommunityPostLikeCreateManyPostInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithoutCommunityPostsInput = {
     update: XOR<UserUpdateWithoutCommunityPostsInput, UserUncheckedUpdateWithoutCommunityPostsInput>
     create: XOR<UserCreateWithoutCommunityPostsInput, UserUncheckedCreateWithoutCommunityPostsInput>
@@ -34689,6 +39970,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    googleSub?: NullableStringFieldUpdateOperationsInput | string | null
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     preferredLanguage?: EnumLanguageFieldUpdateOperationsInput | $Enums.Language
@@ -34706,12 +39988,16 @@ export namespace Prisma {
     committees?: CommitteeUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestUpdateManyWithoutRequestedByNestedInput
+    communityPostLikes?: CommunityPostLikeUpdateManyWithoutUserNestedInput
+    pushTokens?: PushTokenUpdateManyWithoutUserNestedInput
+    accountDeleteRequests?: AccountDeleteRequestUpdateManyWithoutRequestedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCommunityPostsInput = {
     id?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    googleSub?: NullableStringFieldUpdateOperationsInput | string | null
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     preferredLanguage?: EnumLanguageFieldUpdateOperationsInput | $Enums.Language
@@ -34729,6 +40015,9 @@ export namespace Prisma {
     committees?: CommitteeUncheckedUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    communityPostLikes?: CommunityPostLikeUncheckedUpdateManyWithoutUserNestedInput
+    pushTokens?: PushTokenUncheckedUpdateManyWithoutUserNestedInput
+    accountDeleteRequests?: AccountDeleteRequestUncheckedUpdateManyWithoutRequestedByNestedInput
   }
 
   export type CommunityPostTranslationUpsertWithWhereUniqueWithoutPostInput = {
@@ -34760,6 +40049,262 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"CommunityPostTranslation"> | Date | string
   }
 
+  export type CommunityPostLikeUpsertWithWhereUniqueWithoutPostInput = {
+    where: CommunityPostLikeWhereUniqueInput
+    update: XOR<CommunityPostLikeUpdateWithoutPostInput, CommunityPostLikeUncheckedUpdateWithoutPostInput>
+    create: XOR<CommunityPostLikeCreateWithoutPostInput, CommunityPostLikeUncheckedCreateWithoutPostInput>
+  }
+
+  export type CommunityPostLikeUpdateWithWhereUniqueWithoutPostInput = {
+    where: CommunityPostLikeWhereUniqueInput
+    data: XOR<CommunityPostLikeUpdateWithoutPostInput, CommunityPostLikeUncheckedUpdateWithoutPostInput>
+  }
+
+  export type CommunityPostLikeUpdateManyWithWhereWithoutPostInput = {
+    where: CommunityPostLikeScalarWhereInput
+    data: XOR<CommunityPostLikeUpdateManyMutationInput, CommunityPostLikeUncheckedUpdateManyWithoutPostInput>
+  }
+
+  export type CommunityPostCreateWithoutLikesInput = {
+    id?: string
+    category: $Enums.PostCategory
+    status?: $Enums.PostStatus
+    bannerUrl?: string | null
+    bannerStorageKey?: string | null
+    contactName?: string | null
+    contactPhone?: string | null
+    location?: string | null
+    eventDate?: Date | string | null
+    obituaryType?: $Enums.ObituaryType | null
+    deceasedName?: string | null
+    deathDate?: Date | string | null
+    eventTime?: string | null
+    publishedAt?: Date | string | null
+    expiresAt?: Date | string | null
+    isFeatured?: boolean
+    rejectionReason?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    createdBy?: UserCreateNestedOneWithoutCommunityPostsInput
+    translations?: CommunityPostTranslationCreateNestedManyWithoutPostInput
+  }
+
+  export type CommunityPostUncheckedCreateWithoutLikesInput = {
+    id?: string
+    createdById?: string | null
+    category: $Enums.PostCategory
+    status?: $Enums.PostStatus
+    bannerUrl?: string | null
+    bannerStorageKey?: string | null
+    contactName?: string | null
+    contactPhone?: string | null
+    location?: string | null
+    eventDate?: Date | string | null
+    obituaryType?: $Enums.ObituaryType | null
+    deceasedName?: string | null
+    deathDate?: Date | string | null
+    eventTime?: string | null
+    publishedAt?: Date | string | null
+    expiresAt?: Date | string | null
+    isFeatured?: boolean
+    rejectionReason?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    translations?: CommunityPostTranslationUncheckedCreateNestedManyWithoutPostInput
+  }
+
+  export type CommunityPostCreateOrConnectWithoutLikesInput = {
+    where: CommunityPostWhereUniqueInput
+    create: XOR<CommunityPostCreateWithoutLikesInput, CommunityPostUncheckedCreateWithoutLikesInput>
+  }
+
+  export type UserCreateWithoutCommunityPostLikesInput = {
+    id?: string
+    phone: string
+    email?: string | null
+    googleSub?: string | null
+    firstName?: string | null
+    lastName?: string | null
+    preferredLanguage?: $Enums.Language
+    role?: $Enums.UserRole
+    isPhoneVerified?: boolean
+    isActive?: boolean
+    lastLoginAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    matrimonyProfiles?: MatrimonyProfileCreateNestedManyWithoutCreatedByInput
+    shortlists?: ShortlistCreateNestedManyWithoutUserInput
+    reports?: ProfileReportCreateNestedManyWithoutReporterInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    communityPosts?: CommunityPostCreateNestedManyWithoutCreatedByInput
+    committees?: CommitteeCreateNestedManyWithoutCreatedByInput
+    auditLogs?: AuditLogCreateNestedManyWithoutActorInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestCreateNestedManyWithoutRequestedByInput
+    pushTokens?: PushTokenCreateNestedManyWithoutUserInput
+    accountDeleteRequests?: AccountDeleteRequestCreateNestedManyWithoutRequestedByInput
+  }
+
+  export type UserUncheckedCreateWithoutCommunityPostLikesInput = {
+    id?: string
+    phone: string
+    email?: string | null
+    googleSub?: string | null
+    firstName?: string | null
+    lastName?: string | null
+    preferredLanguage?: $Enums.Language
+    role?: $Enums.UserRole
+    isPhoneVerified?: boolean
+    isActive?: boolean
+    lastLoginAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    matrimonyProfiles?: MatrimonyProfileUncheckedCreateNestedManyWithoutCreatedByInput
+    shortlists?: ShortlistUncheckedCreateNestedManyWithoutUserInput
+    reports?: ProfileReportUncheckedCreateNestedManyWithoutReporterInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    communityPosts?: CommunityPostUncheckedCreateNestedManyWithoutCreatedByInput
+    committees?: CommitteeUncheckedCreateNestedManyWithoutCreatedByInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    pushTokens?: PushTokenUncheckedCreateNestedManyWithoutUserInput
+    accountDeleteRequests?: AccountDeleteRequestUncheckedCreateNestedManyWithoutRequestedByInput
+  }
+
+  export type UserCreateOrConnectWithoutCommunityPostLikesInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutCommunityPostLikesInput, UserUncheckedCreateWithoutCommunityPostLikesInput>
+  }
+
+  export type CommunityPostUpsertWithoutLikesInput = {
+    update: XOR<CommunityPostUpdateWithoutLikesInput, CommunityPostUncheckedUpdateWithoutLikesInput>
+    create: XOR<CommunityPostCreateWithoutLikesInput, CommunityPostUncheckedCreateWithoutLikesInput>
+    where?: CommunityPostWhereInput
+  }
+
+  export type CommunityPostUpdateToOneWithWhereWithoutLikesInput = {
+    where?: CommunityPostWhereInput
+    data: XOR<CommunityPostUpdateWithoutLikesInput, CommunityPostUncheckedUpdateWithoutLikesInput>
+  }
+
+  export type CommunityPostUpdateWithoutLikesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    category?: EnumPostCategoryFieldUpdateOperationsInput | $Enums.PostCategory
+    status?: EnumPostStatusFieldUpdateOperationsInput | $Enums.PostStatus
+    bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    bannerStorageKey?: NullableStringFieldUpdateOperationsInput | string | null
+    contactName?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    eventDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    obituaryType?: NullableEnumObituaryTypeFieldUpdateOperationsInput | $Enums.ObituaryType | null
+    deceasedName?: NullableStringFieldUpdateOperationsInput | string | null
+    deathDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    eventTime?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isFeatured?: BoolFieldUpdateOperationsInput | boolean
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdBy?: UserUpdateOneWithoutCommunityPostsNestedInput
+    translations?: CommunityPostTranslationUpdateManyWithoutPostNestedInput
+  }
+
+  export type CommunityPostUncheckedUpdateWithoutLikesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: EnumPostCategoryFieldUpdateOperationsInput | $Enums.PostCategory
+    status?: EnumPostStatusFieldUpdateOperationsInput | $Enums.PostStatus
+    bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    bannerStorageKey?: NullableStringFieldUpdateOperationsInput | string | null
+    contactName?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    eventDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    obituaryType?: NullableEnumObituaryTypeFieldUpdateOperationsInput | $Enums.ObituaryType | null
+    deceasedName?: NullableStringFieldUpdateOperationsInput | string | null
+    deathDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    eventTime?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isFeatured?: BoolFieldUpdateOperationsInput | boolean
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    translations?: CommunityPostTranslationUncheckedUpdateManyWithoutPostNestedInput
+  }
+
+  export type UserUpsertWithoutCommunityPostLikesInput = {
+    update: XOR<UserUpdateWithoutCommunityPostLikesInput, UserUncheckedUpdateWithoutCommunityPostLikesInput>
+    create: XOR<UserCreateWithoutCommunityPostLikesInput, UserUncheckedCreateWithoutCommunityPostLikesInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutCommunityPostLikesInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutCommunityPostLikesInput, UserUncheckedUpdateWithoutCommunityPostLikesInput>
+  }
+
+  export type UserUpdateWithoutCommunityPostLikesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    googleSub?: NullableStringFieldUpdateOperationsInput | string | null
+    firstName?: NullableStringFieldUpdateOperationsInput | string | null
+    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    preferredLanguage?: EnumLanguageFieldUpdateOperationsInput | $Enums.Language
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isPhoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    matrimonyProfiles?: MatrimonyProfileUpdateManyWithoutCreatedByNestedInput
+    shortlists?: ShortlistUpdateManyWithoutUserNestedInput
+    reports?: ProfileReportUpdateManyWithoutReporterNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    communityPosts?: CommunityPostUpdateManyWithoutCreatedByNestedInput
+    committees?: CommitteeUpdateManyWithoutCreatedByNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestUpdateManyWithoutRequestedByNestedInput
+    pushTokens?: PushTokenUpdateManyWithoutUserNestedInput
+    accountDeleteRequests?: AccountDeleteRequestUpdateManyWithoutRequestedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutCommunityPostLikesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    googleSub?: NullableStringFieldUpdateOperationsInput | string | null
+    firstName?: NullableStringFieldUpdateOperationsInput | string | null
+    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    preferredLanguage?: EnumLanguageFieldUpdateOperationsInput | $Enums.Language
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isPhoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    matrimonyProfiles?: MatrimonyProfileUncheckedUpdateManyWithoutCreatedByNestedInput
+    shortlists?: ShortlistUncheckedUpdateManyWithoutUserNestedInput
+    reports?: ProfileReportUncheckedUpdateManyWithoutReporterNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    communityPosts?: CommunityPostUncheckedUpdateManyWithoutCreatedByNestedInput
+    committees?: CommitteeUncheckedUpdateManyWithoutCreatedByNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    pushTokens?: PushTokenUncheckedUpdateManyWithoutUserNestedInput
+    accountDeleteRequests?: AccountDeleteRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+  }
+
   export type CommunityPostCreateWithoutTranslationsInput = {
     id?: string
     category: $Enums.PostCategory
@@ -34770,6 +40315,10 @@ export namespace Prisma {
     contactPhone?: string | null
     location?: string | null
     eventDate?: Date | string | null
+    obituaryType?: $Enums.ObituaryType | null
+    deceasedName?: string | null
+    deathDate?: Date | string | null
+    eventTime?: string | null
     publishedAt?: Date | string | null
     expiresAt?: Date | string | null
     isFeatured?: boolean
@@ -34778,6 +40327,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     deletedAt?: Date | string | null
     createdBy?: UserCreateNestedOneWithoutCommunityPostsInput
+    likes?: CommunityPostLikeCreateNestedManyWithoutPostInput
   }
 
   export type CommunityPostUncheckedCreateWithoutTranslationsInput = {
@@ -34791,6 +40341,10 @@ export namespace Prisma {
     contactPhone?: string | null
     location?: string | null
     eventDate?: Date | string | null
+    obituaryType?: $Enums.ObituaryType | null
+    deceasedName?: string | null
+    deathDate?: Date | string | null
+    eventTime?: string | null
     publishedAt?: Date | string | null
     expiresAt?: Date | string | null
     isFeatured?: boolean
@@ -34798,6 +40352,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    likes?: CommunityPostLikeUncheckedCreateNestedManyWithoutPostInput
   }
 
   export type CommunityPostCreateOrConnectWithoutTranslationsInput = {
@@ -34826,6 +40381,10 @@ export namespace Prisma {
     contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     location?: NullableStringFieldUpdateOperationsInput | string | null
     eventDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    obituaryType?: NullableEnumObituaryTypeFieldUpdateOperationsInput | $Enums.ObituaryType | null
+    deceasedName?: NullableStringFieldUpdateOperationsInput | string | null
+    deathDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    eventTime?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
@@ -34834,6 +40393,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdBy?: UserUpdateOneWithoutCommunityPostsNestedInput
+    likes?: CommunityPostLikeUpdateManyWithoutPostNestedInput
   }
 
   export type CommunityPostUncheckedUpdateWithoutTranslationsInput = {
@@ -34847,6 +40407,10 @@ export namespace Prisma {
     contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     location?: NullableStringFieldUpdateOperationsInput | string | null
     eventDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    obituaryType?: NullableEnumObituaryTypeFieldUpdateOperationsInput | $Enums.ObituaryType | null
+    deceasedName?: NullableStringFieldUpdateOperationsInput | string | null
+    deathDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    eventTime?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
@@ -34854,12 +40418,14 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    likes?: CommunityPostLikeUncheckedUpdateManyWithoutPostNestedInput
   }
 
   export type UserCreateWithoutCommitteesInput = {
     id?: string
     phone: string
     email?: string | null
+    googleSub?: string | null
     firstName?: string | null
     lastName?: string | null
     preferredLanguage?: $Enums.Language
@@ -34877,12 +40443,16 @@ export namespace Prisma {
     communityPosts?: CommunityPostCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestCreateNestedManyWithoutRequestedByInput
+    communityPostLikes?: CommunityPostLikeCreateNestedManyWithoutUserInput
+    pushTokens?: PushTokenCreateNestedManyWithoutUserInput
+    accountDeleteRequests?: AccountDeleteRequestCreateNestedManyWithoutRequestedByInput
   }
 
   export type UserUncheckedCreateWithoutCommitteesInput = {
     id?: string
     phone: string
     email?: string | null
+    googleSub?: string | null
     firstName?: string | null
     lastName?: string | null
     preferredLanguage?: $Enums.Language
@@ -34900,6 +40470,9 @@ export namespace Prisma {
     communityPosts?: CommunityPostUncheckedCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    communityPostLikes?: CommunityPostLikeUncheckedCreateNestedManyWithoutUserInput
+    pushTokens?: PushTokenUncheckedCreateNestedManyWithoutUserInput
+    accountDeleteRequests?: AccountDeleteRequestUncheckedCreateNestedManyWithoutRequestedByInput
   }
 
   export type UserCreateOrConnectWithoutCommitteesInput = {
@@ -34988,6 +40561,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    googleSub?: NullableStringFieldUpdateOperationsInput | string | null
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     preferredLanguage?: EnumLanguageFieldUpdateOperationsInput | $Enums.Language
@@ -35005,12 +40579,16 @@ export namespace Prisma {
     communityPosts?: CommunityPostUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestUpdateManyWithoutRequestedByNestedInput
+    communityPostLikes?: CommunityPostLikeUpdateManyWithoutUserNestedInput
+    pushTokens?: PushTokenUpdateManyWithoutUserNestedInput
+    accountDeleteRequests?: AccountDeleteRequestUpdateManyWithoutRequestedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCommitteesInput = {
     id?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    googleSub?: NullableStringFieldUpdateOperationsInput | string | null
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     preferredLanguage?: EnumLanguageFieldUpdateOperationsInput | $Enums.Language
@@ -35028,6 +40606,9 @@ export namespace Prisma {
     communityPosts?: CommunityPostUncheckedUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    communityPostLikes?: CommunityPostLikeUncheckedUpdateManyWithoutUserNestedInput
+    pushTokens?: PushTokenUncheckedUpdateManyWithoutUserNestedInput
+    accountDeleteRequests?: AccountDeleteRequestUncheckedUpdateManyWithoutRequestedByNestedInput
   }
 
   export type CommitteeTranslationUpsertWithWhereUniqueWithoutCommitteeInput = {
@@ -35104,6 +40685,9 @@ export namespace Prisma {
     address?: string | null
     phone?: string | null
     email?: string | null
+    status?: $Enums.CommitteeStatus
+    rejectionReason?: string | null
+    publishedAt?: Date | string | null
     isActive?: boolean
     sortOrder?: number
     createdAt?: Date | string
@@ -35125,6 +40709,9 @@ export namespace Prisma {
     address?: string | null
     phone?: string | null
     email?: string | null
+    status?: $Enums.CommitteeStatus
+    rejectionReason?: string | null
+    publishedAt?: Date | string | null
     isActive?: boolean
     sortOrder?: number
     createdAt?: Date | string
@@ -35160,6 +40747,9 @@ export namespace Prisma {
     address?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumCommitteeStatusFieldUpdateOperationsInput | $Enums.CommitteeStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     sortOrder?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35181,6 +40771,9 @@ export namespace Prisma {
     address?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumCommitteeStatusFieldUpdateOperationsInput | $Enums.CommitteeStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     sortOrder?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35200,6 +40793,9 @@ export namespace Prisma {
     address?: string | null
     phone?: string | null
     email?: string | null
+    status?: $Enums.CommitteeStatus
+    rejectionReason?: string | null
+    publishedAt?: Date | string | null
     isActive?: boolean
     sortOrder?: number
     createdAt?: Date | string
@@ -35221,6 +40817,9 @@ export namespace Prisma {
     address?: string | null
     phone?: string | null
     email?: string | null
+    status?: $Enums.CommitteeStatus
+    rejectionReason?: string | null
+    publishedAt?: Date | string | null
     isActive?: boolean
     sortOrder?: number
     createdAt?: Date | string
@@ -35256,6 +40855,9 @@ export namespace Prisma {
     address?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumCommitteeStatusFieldUpdateOperationsInput | $Enums.CommitteeStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     sortOrder?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35277,6 +40879,9 @@ export namespace Prisma {
     address?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumCommitteeStatusFieldUpdateOperationsInput | $Enums.CommitteeStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     sortOrder?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35285,10 +40890,135 @@ export namespace Prisma {
     translations?: CommitteeTranslationUncheckedUpdateManyWithoutCommitteeNestedInput
   }
 
+  export type UserCreateWithoutPushTokensInput = {
+    id?: string
+    phone: string
+    email?: string | null
+    googleSub?: string | null
+    firstName?: string | null
+    lastName?: string | null
+    preferredLanguage?: $Enums.Language
+    role?: $Enums.UserRole
+    isPhoneVerified?: boolean
+    isActive?: boolean
+    lastLoginAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    matrimonyProfiles?: MatrimonyProfileCreateNestedManyWithoutCreatedByInput
+    shortlists?: ShortlistCreateNestedManyWithoutUserInput
+    reports?: ProfileReportCreateNestedManyWithoutReporterInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    communityPosts?: CommunityPostCreateNestedManyWithoutCreatedByInput
+    committees?: CommitteeCreateNestedManyWithoutCreatedByInput
+    auditLogs?: AuditLogCreateNestedManyWithoutActorInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestCreateNestedManyWithoutRequestedByInput
+    communityPostLikes?: CommunityPostLikeCreateNestedManyWithoutUserInput
+    accountDeleteRequests?: AccountDeleteRequestCreateNestedManyWithoutRequestedByInput
+  }
+
+  export type UserUncheckedCreateWithoutPushTokensInput = {
+    id?: string
+    phone: string
+    email?: string | null
+    googleSub?: string | null
+    firstName?: string | null
+    lastName?: string | null
+    preferredLanguage?: $Enums.Language
+    role?: $Enums.UserRole
+    isPhoneVerified?: boolean
+    isActive?: boolean
+    lastLoginAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    matrimonyProfiles?: MatrimonyProfileUncheckedCreateNestedManyWithoutCreatedByInput
+    shortlists?: ShortlistUncheckedCreateNestedManyWithoutUserInput
+    reports?: ProfileReportUncheckedCreateNestedManyWithoutReporterInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    communityPosts?: CommunityPostUncheckedCreateNestedManyWithoutCreatedByInput
+    committees?: CommitteeUncheckedCreateNestedManyWithoutCreatedByInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    communityPostLikes?: CommunityPostLikeUncheckedCreateNestedManyWithoutUserInput
+    accountDeleteRequests?: AccountDeleteRequestUncheckedCreateNestedManyWithoutRequestedByInput
+  }
+
+  export type UserCreateOrConnectWithoutPushTokensInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutPushTokensInput, UserUncheckedCreateWithoutPushTokensInput>
+  }
+
+  export type UserUpsertWithoutPushTokensInput = {
+    update: XOR<UserUpdateWithoutPushTokensInput, UserUncheckedUpdateWithoutPushTokensInput>
+    create: XOR<UserCreateWithoutPushTokensInput, UserUncheckedCreateWithoutPushTokensInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutPushTokensInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutPushTokensInput, UserUncheckedUpdateWithoutPushTokensInput>
+  }
+
+  export type UserUpdateWithoutPushTokensInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    googleSub?: NullableStringFieldUpdateOperationsInput | string | null
+    firstName?: NullableStringFieldUpdateOperationsInput | string | null
+    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    preferredLanguage?: EnumLanguageFieldUpdateOperationsInput | $Enums.Language
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isPhoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    matrimonyProfiles?: MatrimonyProfileUpdateManyWithoutCreatedByNestedInput
+    shortlists?: ShortlistUpdateManyWithoutUserNestedInput
+    reports?: ProfileReportUpdateManyWithoutReporterNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    communityPosts?: CommunityPostUpdateManyWithoutCreatedByNestedInput
+    committees?: CommitteeUpdateManyWithoutCreatedByNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestUpdateManyWithoutRequestedByNestedInput
+    communityPostLikes?: CommunityPostLikeUpdateManyWithoutUserNestedInput
+    accountDeleteRequests?: AccountDeleteRequestUpdateManyWithoutRequestedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutPushTokensInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    googleSub?: NullableStringFieldUpdateOperationsInput | string | null
+    firstName?: NullableStringFieldUpdateOperationsInput | string | null
+    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    preferredLanguage?: EnumLanguageFieldUpdateOperationsInput | $Enums.Language
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isPhoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    matrimonyProfiles?: MatrimonyProfileUncheckedUpdateManyWithoutCreatedByNestedInput
+    shortlists?: ShortlistUncheckedUpdateManyWithoutUserNestedInput
+    reports?: ProfileReportUncheckedUpdateManyWithoutReporterNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    communityPosts?: CommunityPostUncheckedUpdateManyWithoutCreatedByNestedInput
+    committees?: CommitteeUncheckedUpdateManyWithoutCreatedByNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
+    matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    communityPostLikes?: CommunityPostLikeUncheckedUpdateManyWithoutUserNestedInput
+    accountDeleteRequests?: AccountDeleteRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+  }
+
   export type UserCreateWithoutNotificationsInput = {
     id?: string
     phone: string
     email?: string | null
+    googleSub?: string | null
     firstName?: string | null
     lastName?: string | null
     preferredLanguage?: $Enums.Language
@@ -35306,12 +41036,16 @@ export namespace Prisma {
     committees?: CommitteeCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestCreateNestedManyWithoutRequestedByInput
+    communityPostLikes?: CommunityPostLikeCreateNestedManyWithoutUserInput
+    pushTokens?: PushTokenCreateNestedManyWithoutUserInput
+    accountDeleteRequests?: AccountDeleteRequestCreateNestedManyWithoutRequestedByInput
   }
 
   export type UserUncheckedCreateWithoutNotificationsInput = {
     id?: string
     phone: string
     email?: string | null
+    googleSub?: string | null
     firstName?: string | null
     lastName?: string | null
     preferredLanguage?: $Enums.Language
@@ -35329,6 +41063,9 @@ export namespace Prisma {
     committees?: CommitteeUncheckedCreateNestedManyWithoutCreatedByInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    communityPostLikes?: CommunityPostLikeUncheckedCreateNestedManyWithoutUserInput
+    pushTokens?: PushTokenUncheckedCreateNestedManyWithoutUserInput
+    accountDeleteRequests?: AccountDeleteRequestUncheckedCreateNestedManyWithoutRequestedByInput
   }
 
   export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -35351,6 +41088,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    googleSub?: NullableStringFieldUpdateOperationsInput | string | null
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     preferredLanguage?: EnumLanguageFieldUpdateOperationsInput | $Enums.Language
@@ -35368,12 +41106,16 @@ export namespace Prisma {
     committees?: CommitteeUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestUpdateManyWithoutRequestedByNestedInput
+    communityPostLikes?: CommunityPostLikeUpdateManyWithoutUserNestedInput
+    pushTokens?: PushTokenUpdateManyWithoutUserNestedInput
+    accountDeleteRequests?: AccountDeleteRequestUpdateManyWithoutRequestedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutNotificationsInput = {
     id?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    googleSub?: NullableStringFieldUpdateOperationsInput | string | null
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     preferredLanguage?: EnumLanguageFieldUpdateOperationsInput | $Enums.Language
@@ -35391,12 +41133,16 @@ export namespace Prisma {
     committees?: CommitteeUncheckedUpdateManyWithoutCreatedByNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    communityPostLikes?: CommunityPostLikeUncheckedUpdateManyWithoutUserNestedInput
+    pushTokens?: PushTokenUncheckedUpdateManyWithoutUserNestedInput
+    accountDeleteRequests?: AccountDeleteRequestUncheckedUpdateManyWithoutRequestedByNestedInput
   }
 
   export type UserCreateWithoutAuditLogsInput = {
     id?: string
     phone: string
     email?: string | null
+    googleSub?: string | null
     firstName?: string | null
     lastName?: string | null
     preferredLanguage?: $Enums.Language
@@ -35414,12 +41160,16 @@ export namespace Prisma {
     communityPosts?: CommunityPostCreateNestedManyWithoutCreatedByInput
     committees?: CommitteeCreateNestedManyWithoutCreatedByInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestCreateNestedManyWithoutRequestedByInput
+    communityPostLikes?: CommunityPostLikeCreateNestedManyWithoutUserInput
+    pushTokens?: PushTokenCreateNestedManyWithoutUserInput
+    accountDeleteRequests?: AccountDeleteRequestCreateNestedManyWithoutRequestedByInput
   }
 
   export type UserUncheckedCreateWithoutAuditLogsInput = {
     id?: string
     phone: string
     email?: string | null
+    googleSub?: string | null
     firstName?: string | null
     lastName?: string | null
     preferredLanguage?: $Enums.Language
@@ -35437,6 +41187,9 @@ export namespace Prisma {
     communityPosts?: CommunityPostUncheckedCreateNestedManyWithoutCreatedByInput
     committees?: CommitteeUncheckedCreateNestedManyWithoutCreatedByInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    communityPostLikes?: CommunityPostLikeUncheckedCreateNestedManyWithoutUserInput
+    pushTokens?: PushTokenUncheckedCreateNestedManyWithoutUserInput
+    accountDeleteRequests?: AccountDeleteRequestUncheckedCreateNestedManyWithoutRequestedByInput
   }
 
   export type UserCreateOrConnectWithoutAuditLogsInput = {
@@ -35459,6 +41212,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    googleSub?: NullableStringFieldUpdateOperationsInput | string | null
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     preferredLanguage?: EnumLanguageFieldUpdateOperationsInput | $Enums.Language
@@ -35476,12 +41230,16 @@ export namespace Prisma {
     communityPosts?: CommunityPostUpdateManyWithoutCreatedByNestedInput
     committees?: CommitteeUpdateManyWithoutCreatedByNestedInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestUpdateManyWithoutRequestedByNestedInput
+    communityPostLikes?: CommunityPostLikeUpdateManyWithoutUserNestedInput
+    pushTokens?: PushTokenUpdateManyWithoutUserNestedInput
+    accountDeleteRequests?: AccountDeleteRequestUpdateManyWithoutRequestedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAuditLogsInput = {
     id?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    googleSub?: NullableStringFieldUpdateOperationsInput | string | null
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     preferredLanguage?: EnumLanguageFieldUpdateOperationsInput | $Enums.Language
@@ -35499,6 +41257,9 @@ export namespace Prisma {
     communityPosts?: CommunityPostUncheckedUpdateManyWithoutCreatedByNestedInput
     committees?: CommitteeUncheckedUpdateManyWithoutCreatedByNestedInput
     matrimonyDeleteRequests?: MatrimonyDeleteRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    communityPostLikes?: CommunityPostLikeUncheckedUpdateManyWithoutUserNestedInput
+    pushTokens?: PushTokenUncheckedUpdateManyWithoutUserNestedInput
+    accountDeleteRequests?: AccountDeleteRequestUncheckedUpdateManyWithoutRequestedByNestedInput
   }
 
   export type MatrimonyProfileCreateManyCreatedByInput = {
@@ -35586,6 +41347,10 @@ export namespace Prisma {
     contactPhone?: string | null
     location?: string | null
     eventDate?: Date | string | null
+    obituaryType?: $Enums.ObituaryType | null
+    deceasedName?: string | null
+    deathDate?: Date | string | null
+    eventTime?: string | null
     publishedAt?: Date | string | null
     expiresAt?: Date | string | null
     isFeatured?: boolean
@@ -35606,6 +41371,9 @@ export namespace Prisma {
     address?: string | null
     phone?: string | null
     email?: string | null
+    status?: $Enums.CommitteeStatus
+    rejectionReason?: string | null
+    publishedAt?: Date | string | null
     isActive?: boolean
     sortOrder?: number
     createdAt?: Date | string
@@ -35627,6 +41395,31 @@ export namespace Prisma {
     matrimonyProfileId: string
     reason: string
     status?: $Enums.MatrimonyDeleteRequestStatus
+    adminNote?: string | null
+    reviewedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CommunityPostLikeCreateManyUserInput = {
+    id?: string
+    postId: string
+    createdAt?: Date | string
+  }
+
+  export type PushTokenCreateManyUserInput = {
+    id?: string
+    token: string
+    platform?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type AccountDeleteRequestCreateManyRequestedByInput = {
+    id?: string
+    reason?: string | null
+    status?: $Enums.AccountDeleteRequestStatus
     adminNote?: string | null
     reviewedAt?: Date | string | null
     createdAt?: Date | string
@@ -35888,6 +41681,10 @@ export namespace Prisma {
     contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     location?: NullableStringFieldUpdateOperationsInput | string | null
     eventDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    obituaryType?: NullableEnumObituaryTypeFieldUpdateOperationsInput | $Enums.ObituaryType | null
+    deceasedName?: NullableStringFieldUpdateOperationsInput | string | null
+    deathDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    eventTime?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
@@ -35896,6 +41693,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     translations?: CommunityPostTranslationUpdateManyWithoutPostNestedInput
+    likes?: CommunityPostLikeUpdateManyWithoutPostNestedInput
   }
 
   export type CommunityPostUncheckedUpdateWithoutCreatedByInput = {
@@ -35908,6 +41706,10 @@ export namespace Prisma {
     contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     location?: NullableStringFieldUpdateOperationsInput | string | null
     eventDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    obituaryType?: NullableEnumObituaryTypeFieldUpdateOperationsInput | $Enums.ObituaryType | null
+    deceasedName?: NullableStringFieldUpdateOperationsInput | string | null
+    deathDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    eventTime?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
@@ -35916,6 +41718,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     translations?: CommunityPostTranslationUncheckedUpdateManyWithoutPostNestedInput
+    likes?: CommunityPostLikeUncheckedUpdateManyWithoutPostNestedInput
   }
 
   export type CommunityPostUncheckedUpdateManyWithoutCreatedByInput = {
@@ -35928,6 +41731,10 @@ export namespace Prisma {
     contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
     location?: NullableStringFieldUpdateOperationsInput | string | null
     eventDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    obituaryType?: NullableEnumObituaryTypeFieldUpdateOperationsInput | $Enums.ObituaryType | null
+    deceasedName?: NullableStringFieldUpdateOperationsInput | string | null
+    deathDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    eventTime?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
@@ -35948,6 +41755,9 @@ export namespace Prisma {
     address?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumCommitteeStatusFieldUpdateOperationsInput | $Enums.CommitteeStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     sortOrder?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35968,6 +41778,9 @@ export namespace Prisma {
     address?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumCommitteeStatusFieldUpdateOperationsInput | $Enums.CommitteeStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     sortOrder?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35988,6 +41801,9 @@ export namespace Prisma {
     address?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumCommitteeStatusFieldUpdateOperationsInput | $Enums.CommitteeStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     sortOrder?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -36049,6 +41865,81 @@ export namespace Prisma {
     matrimonyProfileId?: StringFieldUpdateOperationsInput | string
     reason?: StringFieldUpdateOperationsInput | string
     status?: EnumMatrimonyDeleteRequestStatusFieldUpdateOperationsInput | $Enums.MatrimonyDeleteRequestStatus
+    adminNote?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CommunityPostLikeUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    post?: CommunityPostUpdateOneRequiredWithoutLikesNestedInput
+  }
+
+  export type CommunityPostLikeUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    postId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CommunityPostLikeUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    postId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PushTokenUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    platform?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PushTokenUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    platform?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PushTokenUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    platform?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AccountDeleteRequestUpdateWithoutRequestedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumAccountDeleteRequestStatusFieldUpdateOperationsInput | $Enums.AccountDeleteRequestStatus
+    adminNote?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AccountDeleteRequestUncheckedUpdateWithoutRequestedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumAccountDeleteRequestStatusFieldUpdateOperationsInput | $Enums.AccountDeleteRequestStatus
+    adminNote?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AccountDeleteRequestUncheckedUpdateManyWithoutRequestedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumAccountDeleteRequestStatusFieldUpdateOperationsInput | $Enums.AccountDeleteRequestStatus
     adminNote?: NullableStringFieldUpdateOperationsInput | string | null
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -36420,6 +42311,12 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type CommunityPostLikeCreateManyPostInput = {
+    id?: string
+    userId: string
+    createdAt?: Date | string
+  }
+
   export type CommunityPostTranslationUpdateWithoutPostInput = {
     id?: StringFieldUpdateOperationsInput | string
     language?: EnumLanguageFieldUpdateOperationsInput | $Enums.Language
@@ -36445,6 +42342,24 @@ export namespace Prisma {
     details?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CommunityPostLikeUpdateWithoutPostInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutCommunityPostLikesNestedInput
+  }
+
+  export type CommunityPostLikeUncheckedUpdateWithoutPostInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CommunityPostLikeUncheckedUpdateManyWithoutPostInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type CommitteeTranslationCreateManyCommitteeInput = {

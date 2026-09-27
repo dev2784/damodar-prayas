@@ -125,6 +125,7 @@ exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   phone: 'phone',
   email: 'email',
+  googleSub: 'googleSub',
   firstName: 'firstName',
   lastName: 'lastName',
   preferredLanguage: 'preferredLanguage',
@@ -135,6 +136,17 @@ exports.Prisma.UserScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   deletedAt: 'deletedAt'
+};
+
+exports.Prisma.AccountDeleteRequestScalarFieldEnum = {
+  id: 'id',
+  requestedById: 'requestedById',
+  reason: 'reason',
+  status: 'status',
+  adminNote: 'adminNote',
+  reviewedAt: 'reviewedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.MatrimonyProfileScalarFieldEnum = {
@@ -287,6 +299,10 @@ exports.Prisma.CommunityPostScalarFieldEnum = {
   contactPhone: 'contactPhone',
   location: 'location',
   eventDate: 'eventDate',
+  obituaryType: 'obituaryType',
+  deceasedName: 'deceasedName',
+  deathDate: 'deathDate',
+  eventTime: 'eventTime',
   publishedAt: 'publishedAt',
   expiresAt: 'expiresAt',
   isFeatured: 'isFeatured',
@@ -294,6 +310,13 @@ exports.Prisma.CommunityPostScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   deletedAt: 'deletedAt'
+};
+
+exports.Prisma.CommunityPostLikeScalarFieldEnum = {
+  id: 'id',
+  postId: 'postId',
+  userId: 'userId',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.CommunityPostTranslationScalarFieldEnum = {
@@ -318,6 +341,9 @@ exports.Prisma.CommitteeScalarFieldEnum = {
   address: 'address',
   phone: 'phone',
   email: 'email',
+  status: 'status',
+  rejectionReason: 'rejectionReason',
+  publishedAt: 'publishedAt',
   isActive: 'isActive',
   sortOrder: 'sortOrder',
   createdAt: 'createdAt',
@@ -345,6 +371,16 @@ exports.Prisma.CommitteeMemberScalarFieldEnum = {
   email: 'email',
   photoUrl: 'photoUrl',
   sortOrder: 'sortOrder',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PushTokenScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  token: 'token',
+  platform: 'platform',
   isActive: 'isActive',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -407,6 +443,12 @@ exports.UserRole = exports.$Enums.UserRole = {
   MEMBER: 'MEMBER',
   ADMIN: 'ADMIN',
   SUPER_ADMIN: 'SUPER_ADMIN'
+};
+
+exports.AccountDeleteRequestStatus = exports.$Enums.AccountDeleteRequestStatus = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
 };
 
 exports.ProfileFor = exports.$Enums.ProfileFor = {
@@ -494,11 +536,27 @@ exports.PostCategory = exports.$Enums.PostCategory = {
   ADVERTISEMENT: 'ADVERTISEMENT',
   REQUEST: 'REQUEST',
   GRATITUDE: 'GRATITUDE',
-  WISHES: 'WISHES'
+  WISHES: 'WISHES',
+  OBITUARY: 'OBITUARY'
 };
 
 exports.PostStatus = exports.$Enums.PostStatus = {
   DRAFT: 'DRAFT',
+  PENDING: 'PENDING',
+  PUBLISHED: 'PUBLISHED',
+  REJECTED: 'REJECTED',
+  ARCHIVED: 'ARCHIVED'
+};
+
+exports.ObituaryType = exports.$Enums.ObituaryType = {
+  DEATH_NOTICE: 'DEATH_NOTICE',
+  UTHAWNA: 'UTHAWNA',
+  CHAUTHA: 'CHAUTHA',
+  TRIBUTE: 'TRIBUTE',
+  OTHER: 'OTHER'
+};
+
+exports.CommitteeStatus = exports.$Enums.CommitteeStatus = {
   PENDING: 'PENDING',
   PUBLISHED: 'PUBLISHED',
   REJECTED: 'REJECTED',
@@ -519,6 +577,7 @@ exports.NotificationType = exports.$Enums.NotificationType = {
 
 exports.Prisma.ModelName = {
   User: 'User',
+  AccountDeleteRequest: 'AccountDeleteRequest',
   MatrimonyProfile: 'MatrimonyProfile',
   MatrimonyDeleteRequest: 'MatrimonyDeleteRequest',
   PartnerPreference: 'PartnerPreference',
@@ -529,10 +588,12 @@ exports.Prisma.ModelName = {
   Shortlist: 'Shortlist',
   ProfileReport: 'ProfileReport',
   CommunityPost: 'CommunityPost',
+  CommunityPostLike: 'CommunityPostLike',
   CommunityPostTranslation: 'CommunityPostTranslation',
   Committee: 'Committee',
   CommitteeTranslation: 'CommitteeTranslation',
   CommitteeMember: 'CommitteeMember',
+  PushToken: 'PushToken',
   Notification: 'Notification',
   AuditLog: 'AuditLog'
 };
