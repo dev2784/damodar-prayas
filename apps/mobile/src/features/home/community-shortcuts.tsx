@@ -1,3 +1,4 @@
+import { svgImage } from '@/lib/svg-image';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
@@ -6,9 +7,7 @@ import { useLanguageText } from '@/hooks/use-language-text';
 const MAROON = '#790D21';
 const GOLD = '#BF8B37';
 // Small vector illustrations stay sharp on every screen; labels remain live translated text.
-const svg = (body: string, viewBox = '0 0 64 64') => ({
-  uri: `data:image/svg+xml;utf8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewBox}" fill="none">${body}</svg>`)}`,
-});
+const svg = (body: string, viewBox = '0 0 64 64') => svgImage(body, viewBox);
 const paths = {
   news: '<path d="M15 13h38v42H15zM15 22H8v29a4 4 0 0 0 4 4h7M23 22h13v12H23zM42 23h4m-4 9h4M23 42h23M23 48h23"/>',
   ads: '<path d="m12 29 31-13 8 34-33-1zM12 29l-5 2 4 17 7 1M21 49l5 11h9l-7-12M53 23q9 8 5 19M49 28q5 5 3 11"/>',
@@ -26,6 +25,10 @@ const icons = Object.fromEntries(
       `<g stroke="${MAROON}" stroke-width="3.3" stroke-linecap="round" stroke-linejoin="round">${path}</g>`,
     ),
   ]),
+);
+const ornament = svg(
+  '<path d="M1 16h25m-8 0 7-7 7 7-7 7-7-7Zm13 0c14-15-4-20-3-11 1 5 8 3 10 11-2 8-9 6-10 11-1 9 17 4 3-11Z" stroke="#BF8B37" stroke-width="1.5" stroke-linecap="round"/>',
+  '0 0 44 32',
 );
 const petals = Array.from(
   { length: 8 },
@@ -92,15 +95,11 @@ export function CommunityShortcuts() {
     <View style={s.section}>
       <View style={s.headingRow}>
         <View style={s.rule} />
-        <Text accessible={false} style={s.ornament}>
-          ❧
-        </Text>
+        <Image accessible={false} source={ornament} style={s.ornament} />
         <Text accessibilityRole="header" style={s.heading}>
           {text('समाज से जुड़ें', 'Connect with community')}
         </Text>
-        <Text accessible={false} style={[s.ornament, s.mirror]}>
-          ❧
-        </Text>
+        <Image accessible={false} source={ornament} style={[s.ornament, s.mirror]} />
         <View style={s.rule} />
       </View>
       <View style={s.grid}>
@@ -172,7 +171,7 @@ const s = StyleSheet.create({
   section: { marginHorizontal: 14, marginTop: 26 },
   headingRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 18 },
   rule: { height: 1, backgroundColor: '#D7B578', flex: 1, minWidth: 8 },
-  ornament: { color: GOLD, fontSize: 24 },
+  ornament: { width: 26, height: 22 },
   mirror: { transform: [{ scaleX: -1 }] },
   heading: {
     color: MAROON,
@@ -187,7 +186,7 @@ const s = StyleSheet.create({
     flexBasis: '45%',
     flexGrow: 1,
     minWidth: 0,
-    minHeight: 152,
+    minHeight: 134,
     borderWidth: 1,
     borderRadius: 18,
     padding: 16,
@@ -195,12 +194,12 @@ const s = StyleSheet.create({
   },
   flower: { position: 'absolute', width: 88, height: 88, right: -41, top: 15, opacity: 0.16 },
   badge: {
-    width: 66,
-    height: 66,
-    borderRadius: 33,
+    width: 62,
+    height: 62,
+    borderRadius: 31,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 12,
+    marginBottom: 8,
   },
   icon: { width: 43, height: 43 },
   labelRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 'auto' },
@@ -238,7 +237,7 @@ const s = StyleSheet.create({
     height: 105,
     opacity: 0.18,
   },
-  waves: { position: 'absolute', bottom: -1, left: 0, width: '62%', height: 47 },
+  waves: { position: 'absolute', bottom: -1, left: 0, width: '72%', height: 60 },
   copy: { flex: 1, minWidth: 0 },
   committeeTitle: { color: MAROON, fontSize: 24, fontWeight: '800' },
   subtitle: { color: '#655D55', fontSize: 14, lineHeight: 21, marginTop: 5 },

@@ -1,3 +1,4 @@
+import { svgImage } from '@/lib/svg-image';
 import { calculateAge } from '@/lib/profile-format';
 import { C, styles } from '@/styles/matrimony.styles';
 import { useMemo, useState } from 'react';
@@ -16,9 +17,7 @@ import {
 import { useAppSelector } from '@/store/hooks';
 import { useLanguageText } from '@/hooks/use-language-text';
 
-const vector = (body: string) => ({
-  uri: `data:image/svg+xml;utf8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">${body}</svg>`)}`,
-});
+const vector = svgImage;
 const FLORAL = vector(
   '<g stroke="#C69649" stroke-width="1.1"><path d="M95 5Q40 30 15 95M82 12Q55 0 55 26Q72 30 82 12ZM65 28Q35 14 38 44Q56 44 65 28ZM46 49Q15 39 20 66Q38 66 46 49ZM31 70Q4 68 8 90Q23 88 31 70ZM75 20Q95 22 88 42Q69 44 75 20ZM57 39Q81 44 70 62Q50 60 57 39ZM39 62Q64 66 53 83Q34 82 39 62Z"/></g>',
 );
