@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import {
-  ActivityIndicator,
   FlatList,
   Modal,
   Platform,
@@ -13,7 +12,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useLanguageText } from '@/hooks/use-language-text';
-import { useGetCommunityLocationsQuery } from '@/services/community-api';
+import { mpCities } from './mp-cities';
 
 export function todayInIndia() {
   return new Date(Date.now() + 330 * 60000).toISOString().slice(0, 10);
@@ -33,12 +32,10 @@ export function CitySelect({
   const { text } = useLanguageText();
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
-  const { data, isLoading, isError, refetch } = useGetCommunityLocationsQuery();
-  const selected = data?.cities.find((city) => city.id === value);
-  const cities =
-    data?.cities.filter((city) =>
-      `${city.name} ${city.district}`.toLowerCase().includes(search.trim().toLowerCase()),
-    ) ?? [];
+  const selected = mpCities.find((city) => city.id === value);
+  const cities = mpCities.filter((city) =>
+    `${city.name} ${city.district}`.toLowerCase().includes(search.trim().toLowerCase()),
+  );
   return (
     <>
       <Pressable
@@ -78,54 +75,44 @@ export function CitySelect({
             placeholder={text('शहर या जिला (English में)', 'City or district')}
             autoCorrect={false}
           />
-          {isLoading ? (
-            <ActivityIndicator />
-          ) : isError ? (
-            <Pressable style={s.action} onPress={() => void refetch()}>
-              <Text>
-                {text('शहर लोड नहीं हुए · फिर कोशिश करें', 'Could not load cities · Retry')}
-              </Text>
-            </Pressable>
-          ) : (
-            <FlatList
-              keyboardShouldPersistTaps="handled"
-              data={cities}
-              keyExtractor={(city) => city.id}
-              ListHeaderComponent={
-                optional ? (
-                  <Pressable
-                    style={s.option}
-                    onPress={() => {
-                      onChange('');
-                      setOpen(false);
-                    }}
-                  >
-                    <Text style={s.value}>{text('सभी शहर', 'All cities')}</Text>
-                  </Pressable>
-                ) : null
-              }
-              ListEmptyComponent={
-                <Text style={s.hint}>{text('कोई शहर नहीं मिला', 'No city found')}</Text>
-              }
-              renderItem={({ item }) => (
+          <FlatList
+            keyboardShouldPersistTaps="handled"
+            data={cities}
+            keyExtractor={(city) => city.id}
+            ListHeaderComponent={
+              optional ? (
                 <Pressable
-                  accessibilityRole="button"
-                  accessibilityState={{ selected: item.id === value }}
                   style={s.option}
                   onPress={() => {
-                    onChange(item.id);
+                    onChange('');
                     setOpen(false);
                   }}
                 >
-                  <Text style={s.value}>
-                    {item.name}
-                    {item.id === value ? ' ✓' : ''}
-                  </Text>
-                  <Text style={s.hint}>{item.district}</Text>
+                  <Text style={s.value}>{text('सभी शहर', 'All cities')}</Text>
                 </Pressable>
-              )}
-            />
-          )}
+              ) : null
+            }
+            ListEmptyComponent={
+              <Text style={s.hint}>{text('कोई शहर नहीं मिला', 'No city found')}</Text>
+            }
+            renderItem={({ item }) => (
+              <Pressable
+                accessibilityRole="button"
+                accessibilityState={{ selected: item.id === value }}
+                style={s.option}
+                onPress={() => {
+                  onChange(item.id);
+                  setOpen(false);
+                }}
+              >
+                <Text style={s.value}>
+                  {item.name}
+                  {item.id === value ? ' ✓' : ''}
+                </Text>
+                <Text style={s.hint}>{item.district}</Text>
+              </Pressable>
+            )}
+          />
         </SafeAreaView>
       </Modal>
     </>
