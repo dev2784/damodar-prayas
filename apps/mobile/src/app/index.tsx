@@ -24,7 +24,7 @@ import { useGetUnreadNotificationCountQuery } from '@/services/notification-api'
 import { useAppSelector } from '@/store/hooks';
 
 const GURU_BANNER = require('../../assets/images/home-guru-banner.png');
-const COUPLE = require('../../assets/images/home-matrimony-couple.webp');
+const COUPLE = require('../../assets/images/home-matrimony-magenta.webp');
 const LOGO = require('../../assets/images/icon.png');
 
 function Icon({
@@ -138,23 +138,35 @@ export default function HomeScreen() {
           accessibilityRole="button"
           accessibilityLabel={text('वैवाहिक प्रोफाइल देखें', 'Browse matrimony profiles')}
         >
-          <View style={styles.bannerCopy}>
-            <Text style={styles.bannerTitle}>
-              {text('अपने जीवनसाथी से मिलें', 'Meet your life partner')}
-            </Text>
-            <Text style={styles.bannerSubtitle}>
-              {text('अपने समाज में रिश्तों की नई शुरुआत', 'A new beginning within your community')}
-            </Text>
-            <View style={styles.bannerButton}>
-              <Text style={styles.buttonText}>{text('प्रोफाइल देखें →', 'View profiles →')}</Text>
-            </View>
-          </View>
           <Image
             source={COUPLE}
             style={styles.bannerArtwork}
-            contentFit="cover"
-            contentPosition="center"
+            contentFit="contain"
+            accessible={false}
+            pointerEvents="none"
           />
+          <View style={styles.bannerCopy}>
+            <Text style={styles.bannerEyebrow}>
+              {text('दर्जी समाज मैट्रिमोनी', 'Darzi Samaj Matrimony')}
+            </Text>
+            <Text style={styles.bannerTitle}>
+              {text(
+                'रिश्ता अपनेपन का,\nसाथ जीवनभर का',
+                'A bond of belonging,\na lifetime together',
+              )}
+            </Text>
+            <Text style={styles.bannerSubtitle}>
+              {text(
+                'अपने समाज में खोजें अपना जीवनसाथी',
+                'Find your life partner within your community',
+              )}
+            </Text>
+            <View style={styles.bannerButton}>
+              <Text style={styles.bannerButtonText}>
+                {text('प्रोफाइल देखें →', 'View profiles →')}
+              </Text>
+            </View>
+          </View>
         </Pressable>
         <View style={styles.sectionHeader}>
           <View style={styles.sectionTitleRow}>
